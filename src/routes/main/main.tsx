@@ -1,11 +1,12 @@
+import { Typography } from '@mui/material';
+import React from 'react';
 
-
-function main(){
+function Main(){
   return (
-    <div>
-      
-    </div>
+    <Typography variant="h1">
+      메인임당..
+    </Typography>
   );
 };
 
-export default main;
+export default Main;

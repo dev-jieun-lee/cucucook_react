@@ -9,6 +9,7 @@ import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 // styled-components
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
+import Main from './routes/main/Main';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -33,6 +34,7 @@ function App() {
           <BrowserRouter>
             <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
             <Routes>
+              <Route path="/main" element={< Main/>}></Route>
               <Route path="/test" element={<TestPage />}></Route>
             </Routes>
             {/* <Footer /> */}

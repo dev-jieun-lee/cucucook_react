@@ -12,13 +12,6 @@ export const Nav = styled.nav`
     transform: scale(1.3);
   
   }
-  .search-icon{
-    margin-top: 10px;
-    margin-right: 5px;
-    &:hover{
-      cursor: pointer;
-    }
-  }
   .mode-icon{
     margin: 0 20px;
   }
@@ -89,10 +82,12 @@ export const MainMenu = styled.div`
 `;
 export const SubMenu = styled.div`
   display: none;
+  margin-top: 1.5px;
   padding-top: 5px;
   position: absolute;
   color: ${(props) => props.theme.bgColor};;
-  /* border: 1px solid #ccc; */
+  background-color: ${(props) => props.theme.bgColor};
+  border: 0px 1px 1px 1px solid #ccc;
   /* box-shadow: 1px 1px 0px 0px #ccc; */
   border-radius: 5px;
   z-index: 1000;
@@ -116,9 +111,8 @@ export const LinkItem = styled(Link)`
   }
 `;
 
-
 export const MotionSearch = styled.form`
-  color: white;
+  color: ${(props) => props.theme.mainColor};;
   display: flex;
   align-items: center;
   position: relative;
@@ -128,15 +122,22 @@ export const MotionSearch = styled.form`
 `;
 
 export const MotionInput = styled(motion.input)`
-  width: 250px;
+  width: 210px;
   transform-origin: right center;
   position: absolute;
   right: 0px;
   padding: 5px 10px;
-  padding-left: 40px;
-  z-index: -1;
-  color: white;
+  /* padding-left: 40px; */
+  z-index: 1; 
+  color: grey;
   font-size: 16px;
   background-color: transparent;
-  border: 1px solid ${(props) => props.theme.white.lighter};
+  border: 0;
+  border-bottom: 1px solid ${(props) => props.theme.mainColor};
+  outline: none;
+`;
+
+export const MotionIconButton  = styled(motion.div)`
+  display: flex;
+  align-items: center;
 `;
