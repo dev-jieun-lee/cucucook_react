@@ -3,11 +3,12 @@ import axios from 'axios';
 import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider,  Typography } from '@mui/material';
 import { muiDarkTheme, muiLightTheme, styledDarkTheme, styledLightTheme } from './theme';
 import Header from './components/Header';
-import { BrowserRouter, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // material-ui
 import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 // styled-components
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
+import TestPage from './TestPage';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -32,6 +33,7 @@ function App() {
           <BrowserRouter>
             <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
             <Routes>
+              <Route path="/test" element={<TestPage />}></Route>
             </Routes>
             {/* <Footer /> */}
           </BrowserRouter>
