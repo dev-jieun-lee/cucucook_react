@@ -37,7 +37,7 @@ function App() {
             <Routes>
               <Route path="/main" element={< Main/>}></Route>
               <Route path="/test" element={<TestPage />}></Route>
-              <Route path="/MyPage" element={<myPage />}></Route>
+              <Route path="/myPage" element={<MyPage />}></Route>
             </Routes>
             {/* <Footer /> */}
           </BrowserRouter>

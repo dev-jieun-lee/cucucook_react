@@ -1,12 +1,12 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 
-function myPage(){
+function MyPage(){
   return (
     <Typography variant="h1">
-      myPage
+      My Page
     </Typography>
   );
 };
 
-export default Main;
+export default MyPage;
