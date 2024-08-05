@@ -1,6 +1,15 @@
-import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider, ThemeProvider, Typography } from "@mui/material";
-import { useState } from "react";
-import { darkTheme, lightTheme } from "./theme";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider,  Typography } from '@mui/material';
+import { muiDarkTheme, muiLightTheme, styledDarkTheme, styledLightTheme } from './theme';
+import Header from './components/Header';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+// material-ui
+import {ThemeProvider as MuiThemeProvider} from "@mui/material";
+// styled-components
+import {ThemeProvider as StyledThemeProvider} from "styled-components"
+import TestPage from './TestPage';
+import Main from './routes/main/Main';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -10,35 +19,31 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <StyledEngineProvider injectFirst>
-      <CssBaseline />
-      <Box
-        sx={{
-          backgroundColor: 'background.default',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Container>
-          <Button variant="contained" color="primary" onClick={handleToggleTheme}>
-            Toggle Theme
-          </Button>
-          <Typography variant="h1">Hello</Typography>
-          <Typography variant="h2">Hello</Typography>
-          <Typography variant="h3">Hello</Typography>
-          <Typography variant="h4">Hello</Typography>
-          <p>This is an example of {isDarkMode ? 'Dark' : 'Light'} Mode</p>
-          <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
-            This is a Paper component
-          </Paper>
-        </Container>
-      </Box>
-      </StyledEngineProvider>
-    </ThemeProvider>
+    <MuiThemeProvider theme={isDarkMode ? muiDarkTheme : muiLightTheme}>
+      <StyledThemeProvider theme={isDarkMode ? styledDarkTheme : styledLightTheme}>
+        <StyledEngineProvider injectFirst>
+        <CssBaseline />
+        <Box
+          sx={{
+            backgroundColor: 'background.default',
+            minHeight: '100vh',
+            width: '70%',
+            margin: '0 auto'
+          }}
+        >
+          <BrowserRouter>
+            <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
+            <Routes>
+              <Route path="/main" element={< Main/>}></Route>
+              <Route path="/test" element={<TestPage />}></Route>
+            </Routes>
+            {/* <Footer /> */}
+          </BrowserRouter>
+        </Box>
+        </StyledEngineProvider>
+      </StyledThemeProvider>
+
+  </MuiThemeProvider>
   );
 }
 
