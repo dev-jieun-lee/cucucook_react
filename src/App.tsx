@@ -10,7 +10,7 @@ import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
 import Main from './routes/main/Main';
-import myPage from './routes/myPage/myPage';
+import MyPage from './routes/myPage/MyPage'; 
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -37,7 +37,7 @@ function App() {
             <Routes>
               <Route path="/main" element={< Main/>}></Route>
               <Route path="/test" element={<TestPage />}></Route>
-              <Route path="/myPage" element={<myPage />}></Route>
+              <Route path="/MyPage" element={<myPage />}></Route>
             </Routes>
             {/* <Footer /> */}
           </BrowserRouter>
