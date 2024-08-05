@@ -7,6 +7,6 @@ function MyPage(){
       My Page
     </Typography>
   );
-};
+}
 
 export default MyPage;
