@@ -9,7 +9,8 @@ import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 // styled-components
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
-import Main from './routes/main/main';
+import Main from './routes/main/Main';
+
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
