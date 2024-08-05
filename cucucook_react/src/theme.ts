@@ -1,5 +1,4 @@
 import { createTheme, PaletteMode } from "@mui/material";
-import { DefaultTheme } from "styled-components";
 
 ///테마 지정 색깔
 //라이트모드
@@ -12,21 +11,9 @@ import { DefaultTheme } from "styled-components";
 //글씨 #FDA47E
 //배경 #3D3737
 
-//*****************************styled-components */
-export const styledLightTheme: DefaultTheme = {
-  bgColor : '#F4F3EF',
-  textColor : '#364C63',
-  mainColor : '#F3B340',
-};
-export const styledDarkTheme: DefaultTheme = {
-  bgColor : '#3D3737',
-  textColor : '#FDA47E',
-  mainColor : '#F2EFDB'
-};
 
-//*****************************mui */
 //라이트모드
-export const muiLightTheme = createTheme({
+export const lightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
@@ -54,14 +41,14 @@ export const muiLightTheme = createTheme({
         },
         h4: {
           color: '#364C63', // 고정 색상
-        }
+        },
       },
     },
   },
 });
 
 //다크모드
-export const muiDarkTheme = createTheme({
+export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
