@@ -11,6 +11,7 @@ import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
 import Main from './routes/main/Main';
 import MyPage from './routes/myPage/MyPage';
+import Profile from './Profile';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -37,7 +38,7 @@ function App() {
             <Routes>
               <Route path="/main" element={< Main/>}></Route>
               <Route path="/test" element={<TestPage />}></Route>
-              <Route path="/myPage" element={<MyPage />}></Route>
+              <Route path="/profile" element={<Profile />}></Route>
               </Routes>
             {/* <Footer /> */}
           </BrowserRouter>
