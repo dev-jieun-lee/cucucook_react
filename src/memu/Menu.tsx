@@ -85,7 +85,7 @@ function Menu() {
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/myPage">내 정보</LinkItem>
+                  <LinkItem to="/profile">내 정보</LinkItem>
                 </li>
                 <li>
                   <LinkItem to="/activity">내 활동</LinkItem>
