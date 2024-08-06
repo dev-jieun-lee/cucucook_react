@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import axios from 'axios';//엑시오스설정
 import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider, ThemeProvider, Typography } from '@mui/material';
 import { darkTheme, lightTheme } from './theme';
+=======
+import axios from 'axios';
+import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider,  Typography } from '@mui/material';
+import { muiDarkTheme, muiLightTheme, styledDarkTheme, styledLightTheme } from './theme';
+import Header from './components/Header';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+// material-ui
+import {ThemeProvider as MuiThemeProvider} from "@mui/material";
+// styled-components
+import {ThemeProvider as StyledThemeProvider} from "styled-components"
+import TestPage from './TestPage';
+import Main from './routes/main/Main';
+import MyPage from './routes/myPage/MyPage'; 
+>>>>>>> 316da2797aed06479354d4b2293974bcff37991f
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -25,13 +40,20 @@ function App() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <StyledEngineProvider injectFirst>
+=======
+    <MuiThemeProvider theme={isDarkMode ? muiDarkTheme : muiLightTheme}>
+      <StyledThemeProvider theme={isDarkMode ? styledDarkTheme : styledLightTheme}>
+        <StyledEngineProvider injectFirst>
+>>>>>>> 316da2797aed06479354d4b2293974bcff37991f
         <CssBaseline />
         <Box
           sx={{
             backgroundColor: 'background.default',
             minHeight: '100vh',
+<<<<<<< HEAD
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -58,6 +80,26 @@ function App() {
         </Box>
       </StyledEngineProvider>
     </ThemeProvider>
+=======
+            width: '70%',
+            margin: '0 auto'
+          }}
+        >
+          <BrowserRouter>
+            <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
+            <Routes>
+              <Route path="/main" element={< Main/>}></Route>
+              <Route path="/test" element={<TestPage />}></Route>
+              <Route path="/myPage" element={<MyPage />}></Route>
+            </Routes>
+            {/* <Footer /> */}
+          </BrowserRouter>
+        </Box>
+        </StyledEngineProvider>
+      </StyledThemeProvider>
+
+  </MuiThemeProvider>
+>>>>>>> 316da2797aed06479354d4b2293974bcff37991f
   );
 }
 
