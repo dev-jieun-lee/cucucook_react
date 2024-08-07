@@ -10,6 +10,7 @@ import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
 import Main from './routes/main/Main';
+import Footer from './components/Footer';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -28,16 +29,16 @@ function App() {
             backgroundColor: 'background.default',
             minHeight: '100vh',
             width: '70%',
-            margin: '0 auto'
+            margin: '130px auto'
           }}
         >
           <BrowserRouter>
             <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
             <Routes>
-              <Route path="/main" element={< Main/>}></Route>
+              <Route path="/main" element={< Main isDarkMode={isDarkMode} />}></Route>
               <Route path="/test" element={<TestPage />}></Route>
             </Routes>
-            {/* <Footer /> */}
+            <Footer isDarkMode={isDarkMode} />
           </BrowserRouter>
         </Box>
         </StyledEngineProvider>
