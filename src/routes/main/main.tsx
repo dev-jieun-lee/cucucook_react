@@ -11,18 +11,19 @@ import {
   Slogan1,
   Slogan2,
 } from "./MainStyle";
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { useTranslation } from "react-i18next";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   //데이터 받아오기
   // const { data: publicRecipe, isLoading: publicRecipeLoading } =
   //   useQuery("movies", () => getPublicRecipe());
   //   console.log(publicRecipe);
+  const { t } = useTranslation();
 
   return (
     <MainWrapper>
-      <Banner isDarkMode = {isDarkMode}>
+      <Banner isDarkMode={isDarkMode}>
         <BannerLeft>
           <div className="card-area">
             <MainCard>
@@ -35,7 +36,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
               <div>
                 <BannerButton variant="contained" color="secondary">
-                  기존 레시피
+                  {t("menu.recipe.public")}
                 </BannerButton>
               </div>
             </MainCard>
@@ -49,7 +50,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
               <div>
                 <BannerButton variant="contained" color="secondary">
-                  회원 레시피
+                  {t("menu.recipe.member")}
                 </BannerButton>
               </div>
             </MainCard>
@@ -63,15 +64,16 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
               <div>
                 <BannerButton variant="contained" color="secondary">
-                  인기 레시피
+                  {t("menu.recipe.popularity")}
                 </BannerButton>
               </div>
             </MainCard>
           </div>
           <Slogan1>
             <h3>Cook Up the Fun, Stir Up the Flavor!</h3>
-            <small>기존 레시피 : </small> <br/>
-            <small>회원 레시피 : 회원들이 직접 등록한 레시피입니다.</small><br/>
+            <small>기존 레시피 : </small> <br />
+            <small>회원 레시피 : 회원들이 직접 등록한 레시피입니다.</small>
+            <br />
             <small>인기 레시피 : 인기 레시피입니다.</small>
           </Slogan1>
         </BannerLeft>
@@ -79,23 +81,27 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
           <Slogan2>
             <div className="box1">
               <span className="strong">Cook</span>
-              <span className="basic">하며</span>
+              <span className="basic">{t("sentence.slogan")}</span>
             </div>
             <div className="box2">
-            <span className="strong">Cucu</span>
-              <span className="basic">웃음을 더하다!</span>
+              <span className="strong">Cucu</span>
+              <span className="basic">{t("sentence.slogan2")}</span>
             </div>
             <div className="box3">
-              <span className="strong">쿠쿠쿡</span>
-              <span className="basic">소리나는 나만의 레시피</span>
+              <span className="strong">{t("sentence.cucucook")}</span>
+              <span className="basic">{t("sentence.slogan3")}</span>
             </div>
           </Slogan2>
-          <Button variant="outlined" color="secondary"  endIcon={<KeyboardDoubleArrowRightIcon />}>올리러 가기</Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            endIcon={<KeyboardDoubleArrowRightIcon />}
+          >
+            {t("text.go_upload")}
+          </Button>
         </BannerRight>
       </Banner>
-      <RecipeWrapper>
-        
-      </RecipeWrapper>
+      <RecipeWrapper></RecipeWrapper>
     </MainWrapper>
   );
 }
