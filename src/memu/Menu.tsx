@@ -95,27 +95,6 @@ function Menu() {
           </li>
           <li
             className="main-menu-item"
-            onMouseEnter={() => handleMouseEnter(2)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div>
-              <span
-                className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
-              >
-                profile
-              </span>
-            </div>
-            <SubMenu className="sub-menu">
-              <ul>
-                <li>
-                  <LinkItem to="/profile">내 정보</LinkItem>
-                </li>
-              </ul>
-            </SubMenu>
-          </li>
-          
-          <li
-            className="main-menu-item"
             onMouseEnter={() => handleMouseEnter(3)}
             onMouseLeave={handleMouseLeave}
           >
