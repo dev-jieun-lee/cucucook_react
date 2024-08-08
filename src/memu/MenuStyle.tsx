@@ -5,24 +5,32 @@ import styled from "styled-components";
 //**헤더, 메뉴 스타일 */
 
 export const Nav = styled.nav`
-  height: 110px;
+  height: 130px;
+  width: 100%;
+  padding-top: 10px;
+  position: fixed;
+  z-index: 1000;
+  top : 0;
+  background-color: ${(props) => props.theme.bgColor};
   /* border-bottom: 1px solid ; */
   align-items: center; 
   .mode-icon, .search-icon, .login{
     transform: scale(1.3);
-  
+    z-index: 1111;
   }
   .mode-icon{
     margin: 0 20px;
   }
   .avatar{
     transform: scale(0.8);
+    z-index: 1111;
   }
 `;
 
 export const Col = styled.div`
   display: flex;
   align-items: center;
+  width: 70%;
   justify-content: space-between;
 `;
 
@@ -46,6 +54,9 @@ export const MainMenu = styled.div`
     margin: 0 10px;
   }
   .menu-title {
+    display: block;
+    z-index: 9999;
+    width: 120px !important;
     display: 'flex';
     height: 100%;
     font-size: 18px;
@@ -82,14 +93,14 @@ export const MainMenu = styled.div`
 `;
 export const SubMenu = styled.div`
   display: none;
-  margin-top: 1.5px;
+  margin-top: 3.6px;
   padding-top: 5px;
   position: absolute;
   color: ${(props) => props.theme.bgColor};;
   background-color: ${(props) => props.theme.bgColor};
-  border: 0px 1px 1px 1px solid #ccc;
-  /* box-shadow: 1px 1px 0px 0px #ccc; */
-  border-radius: 5px;
+  border: 1px solid ;
+  border-color: ${(props) => props.theme.mainColor};
+  /* box-shadow: 1px 1px 0px 0px #050404; */
   z-index: 1000;
   width: 120px;
   ul{
@@ -128,7 +139,7 @@ export const MotionInput = styled(motion.input)`
   right: 0px;
   padding: 5px 10px;
   /* padding-left: 40px; */
-  z-index: 1; 
+  z-index: 1112; 
   color: grey;
   font-size: 16px;
   background-color: transparent;
@@ -140,4 +151,6 @@ export const MotionInput = styled(motion.input)`
 export const MotionIconButton  = styled(motion.div)`
   display: flex;
   align-items: center;
+  z-index: 1111;
 `;
+

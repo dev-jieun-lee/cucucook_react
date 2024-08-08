@@ -1,0 +1,52 @@
+{
+  "language" : {
+    "ko" : "Korean",
+    "en" : "English"
+  },
+  "menu" : {
+    "recipe" : {
+      "original" : "Recipe",
+      "all" : "All",
+      "public" : "Public Recipe",
+      "member" : "Member Recipe"
+    },
+    "board" : {
+      "original" : "Board",
+      "notice" : "Notice",
+      "FAQ" : "FAQ",
+      "QNA" : "Q&A"
+    },
+    "mypage" : {
+      "original" : "My Page",
+      "info" : "My Infomation",
+      "activity" : "My Activity"
+    }
+  },
+  "text" : {
+    "search" : "Search",
+    "mode" : "Mode",
+    "change_mode" : "Change Mode",
+    "go_upload" : "Go uploding"
+  },
+  "sentence" : {
+    "explain1" : "기존 레시피 :",
+    "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
+    "explain3" : "인기 레시피 : 인기 레시피입니다.",
+    "slogan" : "while doing",
+    "slogan2" : "add to one's laughter!",
+    "slogan3" : "My own recipe that makes a sound",
+    "cucucook" : "Cucucook"
+  },
+  "members" : {
+    "original" : "member",
+    "login" : "login",
+    "logout" : "logout",
+    "join" : "join"
+  },
+  "Footer" : {
+    "ceo" : "ceo : jiunerim",
+    "account" : "12345, Happiness-dong, Confession-gu, Sarangsi, Republic of Korea Co., Ltd"
+
+  }
+  
+}
