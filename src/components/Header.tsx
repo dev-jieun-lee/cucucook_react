@@ -10,6 +10,7 @@ import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 
 ///임시 검색 인터페이스
@@ -19,6 +20,7 @@ interface IForm {
 
 
 function Header({ isDarkMode, onToggleTheme }: any) {
+  const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(false);
   const inputAnimation = useAnimation();
   const navigate = useNavigate();
@@ -58,7 +60,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           <Menu />
         </div>
         <div style={{ display: "flex" }}>
-          <Tooltip title="검색">
+          <Tooltip title={t('text.search')}>
             <MotionSearch onSubmit={handleSubmit(onValid)}>
               <MotionIconButton
                 onClick={toggleSearch}
@@ -74,11 +76,11 @@ function Header({ isDarkMode, onToggleTheme }: any) {
                 initial={{ scaleX: 0 }}
                 animate={inputAnimation}
                 transition={{ type: "linear" }}
-                placeholder="검색어를 입력해주세요."
+                placeholder={t('sentence.searching')}
               />
             </MotionSearch>
           </Tooltip>
-          <Tooltip title="모드 변경">
+          <Tooltip title={t('text.change_mode')}>
             <IconButton
               className="mode-icon"
               color="primary"
@@ -88,7 +90,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             </IconButton>
           </Tooltip>
           <div className="profile-area" >
-            <Tooltip title="로그인" >
+            <Tooltip title={t('members.login')} >
               <IconButton className="login" color="primary">
                 <LoginIcon />
               </IconButton>
