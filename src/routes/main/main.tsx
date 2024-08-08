@@ -14,7 +14,7 @@ import {
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 
 
-function Main({ isDarkMode }: any) {
+function Main({ isDarkMode }: { isDarkMode: boolean }) {
   //데이터 받아오기
   // const { data: publicRecipe, isLoading: publicRecipeLoading } =
   //   useQuery("movies", () => getPublicRecipe());

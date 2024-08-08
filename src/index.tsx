@@ -4,7 +4,7 @@ import App from "./App";
 import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createGlobalStyle } from "styled-components";
-
+import "./locales/i18n";
 
 const GlobalStyle = createGlobalStyle`
   //둥근느낌
@@ -28,8 +28,8 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
   }
   body {
-  font-family: "Pretendard-Regular";
-}
+    font-family: 'Pretendard-Regular' !important;
+  }
 `;
 
 const root = ReactDOM.createRoot(
