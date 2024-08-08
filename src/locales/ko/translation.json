@@ -1,0 +1,52 @@
+{
+  "language" : {
+    "ko" : "한국어",
+    "en" : "영어"
+  },
+  "menu" : {
+    "recipe" : {
+      "original" : "레시피",
+      "all" : "전체 레시피",
+      "public" : "기존 레시피",
+      "member" : "회원 레시피"
+    },
+    "board" : {
+      "original" : "게시판",
+      "notice" : "공지사항",
+      "FAQ" : "자주묻는질문",
+      "QNA" : "질의응답"
+    },
+    "mypage" : {
+      "original" : "마이페이지",
+      "info" : "내 정보",
+      "activity" : "내 활동"
+    }
+  },
+  "text" : {
+    "search" : "검색",
+    "mode" : "모드",
+    "change_mode" : "모드 변경",
+    "go_upload" : "올리러 가기"
+  },
+  "sentence" : {
+    "explain1" : "기존 레시피 :",
+    "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
+    "explain3" : "인기 레시피 : 인기 레시피입니다.",
+    "slogan" : "하며",
+    "slogan2" : "웃음을 더하다!",
+    "slogan3" : "소리나는 나만의 레시피",
+    "cucucook" : "쿠쿠쿡"
+  },
+  "members" : {
+    "original" : "회원",
+    "login" : "로그인",
+    "logout" : "로그아웃",
+    "join" : "회원가입"
+  },
+  "Footer" : {
+    "ceo" : "대표 : 지으네림",
+    "account" : "사랑시 고백구 행복동 12345 (주)쿠쿠쿡"
+
+  }
+  
+}

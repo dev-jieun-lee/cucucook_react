@@ -44,6 +44,9 @@ export const muiLightTheme = createTheme({
       paper: '#f5f5f5', // 카드, 모달 등 배경 색상
     },
   },
+  typography: {
+    fontFamily: 'Pretendard-Regular, Arial, sans-serif', // 기본 폰트 설정
+  },
   components: {
     MuiTypography: {
       styleOverrides: {

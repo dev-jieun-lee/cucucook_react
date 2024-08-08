@@ -4,7 +4,9 @@ import styled from "styled-components";
 export const MainWrapper = styled.div`
 `;
 
-export const Banner = styled.div<{ isDarkMode: boolean }>`
+export const Banner = styled(({ isDarkMode, ...rest } : any) => (
+  <div {...rest} />
+))<{ isDarkMode: boolean }>`
   .main-banner {
     width: 100%;
     height: 600px;
@@ -18,6 +20,8 @@ export const Banner = styled.div<{ isDarkMode: boolean }>`
   background-size: cover;
   display: flex;
 `;
+
+
 
 export const BannerLeft = styled.div`
   width: 100%;
