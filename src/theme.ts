@@ -17,11 +17,15 @@ export const styledLightTheme: DefaultTheme = {
   bgColor : '#F4F3EF',
   textColor : '#364C63',
   mainColor : '#F3B340',
+
+  subTextColor : '#253342'
 };
 export const styledDarkTheme: DefaultTheme = {
   bgColor : '#3D3737',
   textColor : '#FDA47E',
-  mainColor : '#F2EFDB'
+  mainColor : '#F2EFDB',
+
+  subTextColor : '#d28c6f'
 };
 
 //*****************************mui */
@@ -33,12 +37,15 @@ export const muiLightTheme = createTheme({
       main: '#F3B340',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#364C63',
     },
     background: {
       default: '#F4F3EF', // 라이트 모드 배경 색상
       paper: '#f5f5f5', // 카드, 모달 등 배경 색상
     },
+  },
+  typography: {
+    fontFamily: 'Pretendard-Regular, Arial, sans-serif', // 기본 폰트 설정
   },
   components: {
     MuiTypography: {
@@ -68,7 +75,7 @@ export const muiDarkTheme = createTheme({
       main: '#F2EFDB',
     },
     secondary: {
-      main: '#f48fb1',
+      main: '#FDA47E',
     },
     background: {
       default: '#3D3737', // 다크 모드 배경 색상

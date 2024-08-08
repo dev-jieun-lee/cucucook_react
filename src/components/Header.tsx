@@ -1,13 +1,13 @@
 import { IconButton, Tooltip } from "@mui/material";
 import Menu from "../memu/Menu";
-import { Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton } from "../memu/MenuStyle";
+import { Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton,  } from "../memu/MenuStyle";
 import Profile from "./Profile";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import SearchIcon from "@mui/icons-material/Search";
 import LoginIcon from "@mui/icons-material/Login";
-import { motion, useAnimation } from "framer-motion";
-import { useState } from "react";
+import { motion, useAnimation, useScroll } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
@@ -35,15 +35,15 @@ function Header({ isDarkMode, onToggleTheme }: any) {
     }
     setSearchOpen((prev) => !prev);
   };
-
   
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data : IForm) => {
     navigate(`/search?keyword=${data.keyword}`)
   }
 
+
   return (
-    <Nav>
+    <Nav >
       <Col>
         <div style={{ display: "flex" }}>
           <Logo>
@@ -87,8 +87,8 @@ function Header({ isDarkMode, onToggleTheme }: any) {
               {isDarkMode ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
           </Tooltip>
-          <div className="profile-area">
-            <Tooltip title="로그인">
+          <div className="profile-area" >
+            <Tooltip title="로그인" >
               <IconButton className="login" color="primary">
                 <LoginIcon />
               </IconButton>
