@@ -8,7 +8,8 @@
       "original" : "레시피",
       "all" : "전체 레시피",
       "public" : "기존 레시피",
-      "member" : "회원 레시피"
+      "member" : "회원 레시피",
+      "popularity" : "인기 레시피"
     },
     "board" : {
       "original" : "게시판",
@@ -35,7 +36,8 @@
     "slogan" : "하며",
     "slogan2" : "웃음을 더하다!",
     "slogan3" : "소리나는 나만의 레시피",
-    "cucucook" : "쿠쿠쿡"
+    "cucucook" : "쿠쿠쿡",
+    "searching" : "검색어를 입력해주세요."
   },
   "members" : {
     "original" : "회원",

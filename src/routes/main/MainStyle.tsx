@@ -21,6 +21,9 @@ export const Banner = styled(({ isDarkMode, ...rest } : any) => (
   display: flex;
 `;
 
+export const CustomBtn = styled(Button)`
+  border-radius: 20px;
+`;
 
 
 export const BannerLeft = styled.div`

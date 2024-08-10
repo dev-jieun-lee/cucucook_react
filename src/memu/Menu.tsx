@@ -2,8 +2,10 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Col, LinkItem, MainMenu, SubMenu } from "./MenuStyle";
+import { useTranslation } from "react-i18next";
 
 function Menu() {
+  const { t } = useTranslation();
   const [activeMenu, setActiveMenu] = useState(null);
 
   const handleMouseEnter = (index: any) => {
@@ -27,19 +29,19 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 0 ? "active" : ""}`}
               >
-                레시피
+                {t('menu.recipe.original')}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/all_recipe">전체</LinkItem>
+                  <LinkItem to="/all_recipe">{t('menu.recipe.all')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/existing_recipe">기존 레시피</LinkItem>
+                  <LinkItem to="/existing_recipe">{t('menu.recipe.public')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/member_recipe">회원 레시피</LinkItem>
+                  <LinkItem to="/member_recipe">{t('menu.recipe.member')}</LinkItem>
                 </li>
               </ul>
             </SubMenu>
@@ -53,19 +55,19 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 1 ? "active" : ""}`}
               >
-                보드
+                {t('menu.board.original')}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/notice">공지사항</LinkItem>
+                  <LinkItem to="/notice">{t('menu.board.notice')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/faq">자주묻는질문</LinkItem>
+                  <LinkItem to="/faq">{t('menu.board.FAQ')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/qna">질의응답</LinkItem>
+                  <LinkItem to="/qna">{t('menu.board.QNA')}</LinkItem>
                 </li>
               </ul>
             </SubMenu>
@@ -79,16 +81,16 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
               >
-                마이페이지
+                {t('menu.mypage.original')}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/profile">내 정보</LinkItem>
+                  <LinkItem to="/profile">{t('menu.mypage.info')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/activity">내 활동</LinkItem>
+                  <LinkItem to="/activity">{t('menu.mypage.activity')}</LinkItem>
                 </li>
               </ul>
             </SubMenu>
