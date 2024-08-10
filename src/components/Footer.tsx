@@ -1,7 +1,16 @@
 import { MenuItem, Select } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import i18n from "../locales/i18n";
 
 function Footer({ isDarkMode }: any) {
+  const { t, i18n } = useTranslation(); // i18next 훅 사용
+
+  const handleLangChange = (event : any) => {
+    const selectedLang = event.target.value;
+    i18n.changeLanguage(selectedLang);
+  };
+
   return (
     <FooterWrapper>
       <div className="top">
@@ -15,18 +24,18 @@ function Footer({ isDarkMode }: any) {
         <div>
           <Select
             labelId="language-select-label"
-            value={"Ko"}
+            value={i18n.language} // 현재 언어 상태
             label="언어"
-            // onChange={handleChange}
+            onChange={handleLangChange} // 언어 변경 핸들러
           >
-            <MenuItem value="Ko">한국어</MenuItem>
-            <MenuItem value="Eng">영어</MenuItem>
+            <MenuItem value="ko">{t('language.ko')}</MenuItem>
+            <MenuItem value="en">{t('language.en')}</MenuItem>
           </Select>
         </div>
       </div>
       <div className="bottom">
-        <p>대표 : 지으네림</p>
-        <p>사랑시 고백구 행복동 12345 (주)쿠쿠쿡</p>
+        <p>{t('Footer.ceo')}</p>
+        <p>{t('Footer.account')}</p>
         <p>02-1234-5678</p>
         <small>© copyright 2024 jiunerim</small>
       </div>

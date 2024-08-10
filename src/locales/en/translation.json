@@ -8,7 +8,8 @@
       "original" : "Recipe",
       "all" : "All",
       "public" : "Public Recipe",
-      "member" : "Member Recipe"
+      "member" : "Member Recipe",
+      "popularity" : "popularity"
     },
     "board" : {
       "original" : "Board",
@@ -35,7 +36,8 @@
     "slogan" : "while doing",
     "slogan2" : "add to one's laughter!",
     "slogan3" : "My own recipe that makes a sound",
-    "cucucook" : "Cucucook"
+    "cucucook" : "Cucucook",
+    "searching" : "Please enter a search term."
   },
   "members" : {
     "original" : "member",
