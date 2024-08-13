@@ -25,6 +25,12 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const inputAnimation = useAnimation();
   const navigate = useNavigate();
 
+  //로그인 페이지로 이동
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
+  //검색창
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({
@@ -90,11 +96,11 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             </IconButton>
           </Tooltip>
           <div className="profile-area" >
-            <Tooltip title={t('members.login')} >
-              <IconButton className="login" color="primary">
-                <LoginIcon />
-              </IconButton>
-            </Tooltip>
+          <Tooltip title={t('members.login')} >
+            <IconButton className="login" color="primary" onClick={handleLoginClick}>
+              <LoginIcon />
+            </IconButton>
+          </Tooltip>
             {/* <Profile /> */}
           </div>
         </div>

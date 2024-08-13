@@ -27,7 +27,11 @@
     "search" : "검색",
     "mode" : "모드",
     "change_mode" : "모드 변경",
-    "go_upload" : "올리러 가기"
+    "go_upload" : "올리러 가기",
+    "save" : "저장",
+    "update" : "수정", 
+    "cancel" : "취소",
+    "delete" : "삭제"
   },
   "sentence" : {
     "explain1" : "기존 레시피 :",
@@ -43,7 +47,13 @@
     "original" : "회원",
     "login" : "로그인",
     "logout" : "로그아웃",
-    "join" : "회원가입"
+    "join" : "회원가입",
+    "id" : "아이디",
+    "save_id" : "아이디 저장",
+    "finding_id" : "아이디 찾기",
+    "password" : "비밀번호",
+    "password_chk" : "비밀번호 확인",
+    "finding_pw" : "비밀번호 찾기"
   },
   "Footer" : {
     "ceo" : "대표 : 지으네림",

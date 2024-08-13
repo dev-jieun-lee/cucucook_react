@@ -35,6 +35,7 @@ export const muiLightTheme = createTheme({
     mode: 'light',
     primary: {
       main: '#F3B340',
+      contrastText : '#fff'
     },
     secondary: {
       main: '#364C63',

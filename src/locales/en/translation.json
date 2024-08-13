@@ -27,7 +27,11 @@
     "search" : "Search",
     "mode" : "Mode",
     "change_mode" : "Change Mode",
-    "go_upload" : "Go uploding"
+    "go_upload" : "Go uploding",
+    "save" : "Save",
+    "update" : "Update", 
+    "cancel" : "Cancel",
+    "delete" : "Delete"
   },
   "sentence" : {
     "explain1" : "기존 레시피 :",
@@ -43,7 +47,13 @@
     "original" : "member",
     "login" : "login",
     "logout" : "logout",
-    "join" : "join"
+    "join" : "join",
+    "id" : "ID",
+    "save_id" : "Save ID",
+    "finding_id" : "Finding Iㅇ",
+    "password" : "Password",
+    "password_chk" : "Password Check",
+    "finding_pw" : "Finding Fassword"
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
