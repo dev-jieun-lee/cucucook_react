@@ -1,8 +1,7 @@
 import { Card, List, Paper } from "@mui/material";
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-  `;
+
 
 export const SideMenu = styled(List)`
   /* margin-top: 30px; */

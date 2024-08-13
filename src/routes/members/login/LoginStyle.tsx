@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const LoginWrapper = styled.div`
   text-align: center;
-  margin: 30px auto;
+  margin: 50px auto;
   width: 35%;
   .title{
     margin-bottom: 30px;

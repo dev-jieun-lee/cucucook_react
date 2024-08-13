@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { SideMenu, Wrapper } from "./SideMenuStyle";
+import { SideMenu } from "./SideMenuStyle";
 import { Divider, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { LinkItem } from "../MenuStyle";
 
 function BoardSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   return (
-    <Wrapper>
       <SideMenu className='list' >
         <ListItem>
           <ListItemText>{t('menu.board.original')}</ListItemText>
@@ -28,7 +27,6 @@ function BoardSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
           </ListItemButton>
         </ListItem>
       </SideMenu>
-    </Wrapper>
   );
 };
 

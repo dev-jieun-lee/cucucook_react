@@ -93,6 +93,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
             </div>
           </Slogan2>
           <Button
+            className="icon-btn"
             variant="outlined"
             color="secondary"
             endIcon={<KeyboardDoubleArrowRightIcon />}

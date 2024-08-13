@@ -15,6 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React from "react";
 import { useFormik } from "formik";
+import { Wrapper } from "../../../styles/CommonStyles";
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); //번역
@@ -65,75 +66,77 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   return (
-    <LoginWrapper>
-      <div className="title">
-        <LockOpenIcon className="title-icon" />
-        <span>{t("members.login")} </span>
-      </div>
-
-      <form className="form" onSubmit={formik.handleSubmit}>
-        <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
-          <InputLabel htmlFor="id">{t('members.id')}</InputLabel>
-            <OutlinedInput
-              id="id"
-              label={t('members.id')}
-              value={formik.values.id} // formik의 id 값
-              onChange={formik.handleChange} // formik의 handleChange 연결
-            />
-        </FormControl>
-        <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
-          <InputLabel htmlFor="password">{t('members.password')}</InputLabel>
-            <OutlinedInput
-              id="password"
-              value={formik.values.password} // formik의 password 값
-              onChange={formik.handleChange} // formik의 handleChange 연결
-              type={showPassword ? 'text' : 'password'}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              label={t('members.password')}
-            />
-        </FormControl>
-        <div className="save-id">
-          <FormControlLabel
-            className="id-chk"
-            control={
-              <Checkbox 
-                checked={saveId} 
-                onChange={handleSaveIdChange} 
-              />
-            }
-            label={t('members.save_id')}
-          />
+    <Wrapper>
+      <LoginWrapper>
+        <div className="title">
+          <LockOpenIcon className="title-icon" />
+          <span>{t("members.login")} </span>
         </div>
-          <Button
-            className="submit-button"
-            color="primary"
-            variant="contained"
-            type="submit"
-            fullWidth
-          >
-            {t("members.login")}
-          </Button>
-      </form>
 
-      <ButtonArea>
-        <button type="button">{t("members.finding_id")}</button>
-        <span />
-        <button type="button">{t("members.finding_pw")}</button>
-        <span />
-        <button type="button">{t("members.join")}</button>
-      </ButtonArea>
-    </LoginWrapper>
+        <form className="form" onSubmit={formik.handleSubmit}>
+          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
+            <InputLabel htmlFor="id">{t('members.id')}</InputLabel>
+              <OutlinedInput
+                id="id"
+                label={t('members.id')}
+                value={formik.values.id} // formik의 id 값
+                onChange={formik.handleChange} // formik의 handleChange 연결
+              />
+          </FormControl>
+          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
+            <InputLabel htmlFor="password">{t('members.password')}</InputLabel>
+              <OutlinedInput
+                id="password"
+                value={formik.values.password} // formik의 password 값
+                onChange={formik.handleChange} // formik의 handleChange 연결
+                type={showPassword ? 'text' : 'password'}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label={t('members.password')}
+              />
+          </FormControl>
+          <div className="save-id">
+            <FormControlLabel
+              className="id-chk"
+              control={
+                <Checkbox 
+                  checked={saveId} 
+                  onChange={handleSaveIdChange} 
+                />
+              }
+              label={t('members.save_id')}
+            />
+          </div>
+            <Button
+              className="submit-button"
+              color="primary"
+              variant="contained"
+              type="submit"
+              fullWidth
+            >
+              {t("members.login")}
+            </Button>
+        </form>
+
+        <ButtonArea>
+          <button type="button">{t("members.finding_id")}</button>
+          <span />
+          <button type="button">{t("members.finding_pw")}</button>
+          <span />
+          <button type="button">{t("members.join")}</button>
+        </ButtonArea>
+      </LoginWrapper>
+    </Wrapper>
   );
 }
 

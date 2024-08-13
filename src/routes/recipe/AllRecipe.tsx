@@ -1,10 +1,11 @@
 import React from 'react';
+import { Wrapper } from '../../styles/CommonStyles';
 
 const AllRecipe = () => {
   return (
-    <div>
+    <Wrapper>
       all
-    </div>
+    </Wrapper>
   );
 };
 

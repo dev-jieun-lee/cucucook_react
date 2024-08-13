@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SideMenu, Wrapper } from './SideMenuStyle';
+import { SideMenu } from './SideMenuStyle';
 import { useTranslation } from 'react-i18next';
 import { LinkItem } from '../MenuStyle';
 import { Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
@@ -8,7 +8,6 @@ import { Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
 function RecipeSideMenu({ isDarkMode }: { isDarkMode: boolean }){
   const { t } = useTranslation();
   return (
-    <Wrapper>
       <SideMenu className='list' >
         <ListItem>
           <ListItemText>{t('menu.recipe.original')}</ListItemText>
@@ -30,7 +29,6 @@ function RecipeSideMenu({ isDarkMode }: { isDarkMode: boolean }){
           </ListItemButton>
         </ListItem>
       </SideMenu>
-    </Wrapper>
   );
 };
 

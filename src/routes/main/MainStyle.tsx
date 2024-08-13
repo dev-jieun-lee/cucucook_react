@@ -12,7 +12,7 @@ export const Banner = styled(({ isDarkMode, ...rest } : any) => (
     height: 600px;
   }
   width: 100%;
-  height: 750px;
+  height: 850px;
   background-image: ${({ isDarkMode }) =>
     isDarkMode
       ? "url('/image/banner_img_dark.png')"
@@ -30,7 +30,7 @@ export const BannerLeft = styled.div`
   width: 100%;
   .card-area{
     display: flex;
-    padding: 250px 15px 0;
+    padding: 250px 50px 0;
   }
 `;
 export const BannerRight = styled.div`
@@ -39,30 +39,39 @@ export const BannerRight = styled.div`
   align-items: flex-end;   /* 요소들을 오른쪽으로 정렬 */
   width: 100%;
   padding-top: 250px;
-  padding-right: 50px;
+  padding-right: 100px;
+  .icon-btn{
+    width: 180px;
+    height: 50px;
+    font-size: 20px;
+    font-weight: 600;
+  }
 `;
 
 export const MainCard = styled.div`
-  width: 190px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   border: 2px solid;
   border-radius: 15px;
   border-color: ${(props) => props.theme.mainColor};
   text-align: center;
-  margin: 0 17px;
+  margin: 0 25px;
   img{
-    width: 80px;
-    margin: 20px 0;
+    width: 100px;
+    margin: 30px 0;
   }
 `;
 
 export const BannerButton = styled(Button)`
   border-radius: 15px;
+  width: 150px;
+  height: 40px;
+  font-size: 17px;
 `;
 
 
 export const Slogan1 = styled.div`
-  margin: 10px 45px;
+  margin: 10px 80px;
   color: ${(props) => props.theme.mainColor};
 `;
 
@@ -80,14 +89,14 @@ export const Slogan2 = styled.div`
   }
   
   .strong{
-    font-size: 40px;
+    font-size: 50px;
     font-weight: 600;
     color: ${(props) => props.theme.textColor};
   }
   .basic{
     margin-left: 10px;
     margin-top: 15px;
-    font-size: 25px;
+    font-size: 30px;
     font-weight: 600;
     color :${(props) => props.theme.subTextColor};
   }
