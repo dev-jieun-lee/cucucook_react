@@ -5,9 +5,11 @@ import styled from "styled-components";
 //**헤더, 메뉴 스타일 */
 
 export const Nav = styled.nav`
-  height: 130px;
+  /* border-bottom: 1px solid;
+  border-color: ${(props) => props.theme.navBorderColor}; */
+  align-items: center;
+  height: 120px;
   width: 100%;
-  padding-top: 10px;
   position: fixed;
   z-index: 1000;
   top : 0;
@@ -28,9 +30,11 @@ export const Nav = styled.nav`
 `;
 
 export const Col = styled.div`
+  padding: 0 55px;
+  margin: 0 auto;
+  /* width: 70%; */
   display: flex;
   align-items: center;
-  width: 70%;
   justify-content: space-between;
 `;
 

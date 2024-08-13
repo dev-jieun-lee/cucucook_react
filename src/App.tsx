@@ -33,16 +33,22 @@ function App() {
         <StyledThemeProvider theme={isDarkMode ? styledDarkTheme : styledLightTheme}>
           <StyledEngineProvider injectFirst>
             <CssBaseline />
-            <Box
-              sx={{
-                backgroundColor: 'background.default',
-                minHeight: '65vh',
-                width: '70%',
-                margin: '150px auto'
-              }}
-            >
-              <BrowserRouter>
+            <BrowserRouter> {/* BrowserRouter를 가장 바깥으로 이동 */}
+              <Box
+                sx={{
+                  width: '100%', // Header의 width를 100%로 설정
+                }}
+              >
                 <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
+              </Box>
+              <Box
+                sx={{
+                  backgroundColor: 'background.default',
+                  minHeight: '65vh',
+                  width: '100%', 
+                  margin: '120px auto',
+                }}
+              >
                 <Routes>
                   <Route path="/*" element={<Main isDarkMode={isDarkMode} />} />
 
@@ -50,19 +56,18 @@ function App() {
                   <Route
                     path="/login"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <Login isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                        <Login isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
-
 
                   {/* 레시피 */}
                   <Route
                     path="/all_recipe"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <RecipeSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <RecipeSideMenu isDarkMode={isDarkMode} />
                         <AllRecipe />
                       </Box>
                     }
@@ -70,7 +75,7 @@ function App() {
                   <Route
                     path="/public_recipe"
                     element={
-                      <Box sx={{ display: 'flex' }}>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <RecipeSideMenu isDarkMode={isDarkMode} />
                         <PublicRecipe />
                       </Box>
@@ -79,8 +84,8 @@ function App() {
                   <Route
                     path="/member_recipe"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <RecipeSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto'}}>
+                        <RecipeSideMenu isDarkMode={isDarkMode} />
                         <MemberRecipe />
                       </Box>
                     }
@@ -90,24 +95,24 @@ function App() {
                   <Route
                     path="/notice"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <BoardSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <BoardSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
                     path="/faq"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <BoardSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <BoardSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
                     path="/qna"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <BoardSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <BoardSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
@@ -116,28 +121,35 @@ function App() {
                   <Route
                     path="/mypage"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <MypageSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <MypageSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
                     path="/activity"
                     element={
-                      <Box sx={{ display: 'flex' }}>
-                        <MypageSideMenu isDarkMode={isDarkMode}/>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <MypageSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
+              </Box>
+              <Box
+                sx={{
+                  width: '100%', // Footer의 width를 100%로 설정
+                }}
+              >
                 <Footer isDarkMode={isDarkMode} />
-              </BrowserRouter>
-            </Box>
+              </Box>
+            </BrowserRouter> {/* BrowserRouter 닫기 */}
           </StyledEngineProvider>
         </StyledThemeProvider>
       </MuiThemeProvider>
     </I18nextProvider>
+
 
   );
 }
