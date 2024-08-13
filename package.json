@@ -14,6 +14,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.2",
+    "formik": "^2.4.6",
     "framer-motion": "^11.3.19",
     "i18next": "^23.12.2",
     "react": "^18.3.1",

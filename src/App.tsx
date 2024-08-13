@@ -19,6 +19,7 @@ import PublicRecipe from './routes/recipe/PublicRecipe';
 import MemberRecipe from './routes/recipe/MemberRecipe';
 import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
 import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
+import Login from './routes/members/login/Login';
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -35,16 +36,27 @@ function App() {
             <Box
               sx={{
                 backgroundColor: 'background.default',
-                minHeight: '100vh',
+                minHeight: '65vh',
                 width: '70%',
-                margin: '130px auto'
+                margin: '150px auto'
               }}
             >
               <BrowserRouter>
                 <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
                 <Routes>
                   <Route path="/*" element={<Main isDarkMode={isDarkMode} />} />
-                  
+
+                  {/* 로그인 */}
+                  <Route
+                    path="/login"
+                    element={
+                      <Box sx={{ display: 'flex' }}>
+                        <Login isDarkMode={isDarkMode}/>
+                      </Box>
+                    }
+                  />
+
+
                   {/* 레시피 */}
                   <Route
                     path="/all_recipe"
