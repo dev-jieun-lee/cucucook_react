@@ -68,7 +68,7 @@ function App() {
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <RecipeSideMenu isDarkMode={isDarkMode} />
-                        <AllRecipe />
+                        <AllRecipe/>
                       </Box>
                     }
                   />

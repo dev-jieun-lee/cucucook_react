@@ -22,8 +22,25 @@ interface IForm {
 function Header({ isDarkMode, onToggleTheme }: any) {
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const inputAnimation = useAnimation();
   const navigate = useNavigate();
+
+  //스크롤이벤트
+  const handleScroll = () => {
+    if (window.scrollY > 0) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   //로그인 페이지로 이동
   const handleLoginClick = () => {
@@ -51,7 +68,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
 
 
   return (
-    <Nav >
+    <Nav className={isScrolled ? 'scrolled' : ''}>
       <Col>
         <div style={{ display: "flex" }}>
           <Logo>
