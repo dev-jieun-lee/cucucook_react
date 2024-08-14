@@ -27,7 +27,8 @@ export const LoginWrapper = styled.div`
   }
 
   .submit-button{
-    margin: 10px 7px 15px;
+    margin: 10px 8px 15px;
+    height: 40px;
   }
 
 
@@ -44,6 +45,7 @@ export const LoginWrapper = styled.div`
 
 export const ButtonArea = styled.div`
   button{
+    font-size: 15px;
     border: 0;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.mainColor};;

@@ -27,6 +27,14 @@ export const Nav = styled.nav`
     transform: scale(0.8);
     z-index: 1111;
   }
+  /* 기본 상태에서는 border-bottom 없음 */
+  border-bottom: none;
+
+  /* 스크롤 시 border-bottom 추가 */
+  &.scrolled {
+    border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+  }
+
 `;
 
 export const Col = styled.div`
@@ -40,6 +48,7 @@ export const Col = styled.div`
 
 export const Logo = styled.div`
   padding: 10px;
+  margin-top: 10px;
   .logo{
     width: 150px;
   }
