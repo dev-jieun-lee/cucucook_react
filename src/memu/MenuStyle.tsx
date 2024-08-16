@@ -1,13 +1,17 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import media from "../styles/MediaQuery";
+import { List, ListItemText } from "@mui/material";
 
 //**헤더, 메뉴 스타일 */
 
 export const Nav = styled.nav`
-  height: 130px;
+  /* border-bottom: 1px solid;
+  border-color: ${(props) => props.theme.navBorderColor}; */
+  align-items: center;
+  height: 120px;
   width: 100%;
-  padding-top: 10px;
   position: fixed;
   z-index: 1000;
   top : 0;
@@ -21,37 +25,84 @@ export const Nav = styled.nav`
   .mode-icon{
     margin: 0 20px;
   }
+  .login{
+    ${media.medium`
+      display: none;
+    `};
+  }
+  .drawer-icon{
+    transform: scale(1.3);
+    z-index: 1111;
+    ${media.large`
+      display: none;
+    `};
+  }
   .avatar{
     transform: scale(0.8);
     z-index: 1111;
   }
+  /* 기본 상태에서는 border-bottom 없음 */
+  border-bottom: none;
+
+  /* 스크롤 시 border-bottom 추가 */
+  &.scrolled {
+    border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+  }
+
+  .menu-box{
+    ${media.medium`
+      display: none;
+    `};
+  }
+
+
 `;
 
 export const Col = styled.div`
+  padding: 0 55px;
+  margin: 0 auto;
+  /* width: 70%; */
   display: flex;
   align-items: center;
-  width: 70%;
   justify-content: space-between;
+  ${media.medium`
+    padding: 0 30px;
+  `};
 `;
 
 export const Logo = styled.div`
   padding: 10px;
+  margin-top: 10px;
   .logo{
     width: 150px;
+    
+  ${media.medium`
+
+    width: 130px;
+  `};
   }
 `;
 
 export const MainMenu = styled.div`
-  margin-top: 30px;
+  margin-top: 50px;
   text-align: center;
   ul {
     list-style-type: none;
+  }
+  .main-menu{
+    ${media.medium`
+      margin-left : -20px
+    `};
   }
   .main-menu-item {
     position: relative;
     display: inline-block;
     width: 120px;
     margin: 0 10px;
+    ${media.medium`
+      width: 90px !important;
+    `};
+    
   }
   .menu-title {
     display: block;
@@ -64,6 +115,12 @@ export const MainMenu = styled.div`
     color: ${(props) => props.theme.textColor};
     position: relative;
     cursor: pointer;
+
+    ${media.medium`
+      /* display : none; */
+      /* font-size: 15px;
+      width: 90px !important; */
+    `};
     
   }
   .menu-title::after {
@@ -91,6 +148,7 @@ export const MainMenu = styled.div`
   }
 
 `;
+
 export const SubMenu = styled.div`
   display: none;
   margin-top: 3.6px;
@@ -110,6 +168,9 @@ export const SubMenu = styled.div`
     text-align: center;
     line-height: 30px;
   }
+  ${media.medium`
+    width: 90px;
+  `};
 `;
 
 export const LinkItem = styled(Link)`
@@ -120,6 +181,9 @@ export const LinkItem = styled(Link)`
   &:hover{
     color: ${(props) => props.theme.mainColor};
   }
+  ${media.medium`
+    font-size: 13px;
+  `};
 `;
 
 export const MotionSearch = styled.form`
@@ -130,6 +194,10 @@ export const MotionSearch = styled.form`
   svg {
     height: 25px;
   }
+  ${media.medium`
+    display : none;
+  `};
+  
 `;
 
 export const MotionInput = styled(motion.input)`
@@ -154,3 +222,39 @@ export const MotionIconButton  = styled(motion.div)`
   z-index: 1111;
 `;
 
+
+
+// drawer 메뉴 스타일
+export const DrawerList = styled(List)`
+  .list-item{
+    line-height: 33px;
+  }
+  .list-text{
+    margin-left: 10px;
+    font-weight: bold;
+    color: ${(props) => props.theme.mainColor};
+  }
+  .list-item-text{
+    font-size: 15px;
+    margin-left: 15px;
+  }
+`;
+
+export const DrawerTop = styled.div`
+  /* height: 50px; */
+  margin: 7px 0;
+  display: flex;
+  justify-content: space-between;
+  .drawer-login-btn{
+    span{
+      color:  ${(props) => props.theme.mainColor};
+      font-size: 13px;
+    }
+    &:hover{
+      cursor: pointer;
+    }
+  }
+  .icon-btn{
+    transform: scale(0.8);
+  }
+`;

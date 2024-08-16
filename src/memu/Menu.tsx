@@ -38,7 +38,7 @@ function Menu() {
                   <LinkItem to="/all_recipe">{t('menu.recipe.all')}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/existing_recipe">{t('menu.recipe.public')}</LinkItem>
+                  <LinkItem to="/public_recipe">{t('menu.recipe.public')}</LinkItem>
                 </li>
                 <li>
                   <LinkItem to="/member_recipe">{t('menu.recipe.member')}</LinkItem>
@@ -87,7 +87,7 @@ function Menu() {
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/profile">{t('menu.mypage.info')}</LinkItem>
+                  <LinkItem to="/mypage">{t('menu.mypage.info')}</LinkItem>
                 </li>
                 <li>
                   <LinkItem to="/activity">{t('menu.mypage.activity')}</LinkItem>
