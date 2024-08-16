@@ -146,8 +146,8 @@ function App() {
                   <Route
                     path="/mypage/activity"
                     element={
-                      <Box sx={{ display: 'flex', width: '100vw', height: '100vh' }}>
-                        <MypageSideMenu isDarkMode={false} />
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
                         <Activity isDarkMode={false} />
                       </Box>
                     }
@@ -155,7 +155,8 @@ function App() {
                   <Route
                     path="/mypage/LikeLists"
                     element={
-                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
                         <LikeLists isDarkMode={false} />
                       </Box>
                     }
@@ -163,7 +164,8 @@ function App() {
                   <Route
                     path="/mypage/MyRecipes"
                     element={
-                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
                         <MyRecipes isDarkMode={false} />
                       </Box>
                     }
@@ -171,7 +173,8 @@ function App() {
                   <Route
                     path="/mypage/MyReplys"
                     element={
-                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
                         <MyReplys isDarkMode={false} />
                       </Box>
                     }

@@ -28,7 +28,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, close
         console.log('Password changed');
         closeModal();
       } else {
-        alert(t('sentence.password_mismatch'));
+        alert(t('menu.mypage.password_mismatch'));
       }
     },
   });
@@ -129,6 +129,17 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     // 취소 버튼 클릭 시 페이지에 머무름
   };
 
+  const handleSaveChangesClick = () => {
+    const confirmSave = window.confirm('변경사항을 저장하시겠습니까?');
+    if (confirmSave) {
+      alert('변경사항이 저장되었습니다.');
+      navigate('/mypage/Profile'); // 변경사항 저장 후 Profile 페이지로 이동
+    } else {
+      alert('취소하였습니다.');
+      navigate('/mypage/Profile'); // 취소 후 Profile 페이지로 이동
+    }
+  };
+
   return (
     <div style={userInfoStyles.container}>
       <ChangePasswordModal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} />
@@ -182,6 +193,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         variant="contained"
         fullWidth
         sx={userInfoStyles.button}
+        onClick={handleSaveChangesClick} // 변경사항 저장 클릭 이벤트
       >
         {t('menu.mypage.save_changes')}
       </Button>

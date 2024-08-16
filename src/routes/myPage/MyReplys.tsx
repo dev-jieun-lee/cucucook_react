@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box, Button, List, ListItem, ListItemText } from '@mui/material';
 import { Link } from 'react-router-dom';
-import MypageSideMenu from '../../memu/sideMenu/MypageSideMenu'; // 사이드 메뉴 컴포넌트
-import { sideMenuStyles } from './myPageStyles'; // 공통 사이드 메뉴 스타일
 
 // 더미 데이터 생성 함수
 const fetchMyReplies = async (page: number, pageSize: number) => {
@@ -35,10 +33,7 @@ const MyReplys: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
-      <Box sx={sideMenuStyles}>
-        <MypageSideMenu isDarkMode={isDarkMode} />
-      </Box>
+    <Box sx={{ display: 'flex', width: '92%'}}>
       <Box
         sx={{
           flexGrow: 1,
