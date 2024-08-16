@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Wrapper } from '../../styles/CommonStyles'; // 기존의 Wrapper 스타일을 사용
 import { useNavigate } from 'react-router-dom';
+import MypageSideMenu from '../../memu/sideMenu/MypageSideMenu'; // 사이드 메뉴 컴포넌트
+import { sideMenuStyles } from './myPageStyles'; // 공통 사이드 메뉴 스타일
 
-function Profile({ isDarkMode }: { isDarkMode: boolean }) {
+const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const { t } = useTranslation();
   const navigate = useNavigate(); // useNavigate 훅 사용
 
@@ -14,9 +15,10 @@ function Profile({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   return (
-    <Wrapper>
+    <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
       <Box
         sx={{
+          flexGrow: 1,
           textAlign: 'center',
           margin: '20px auto',
           maxWidth: '600px',
@@ -37,8 +39,8 @@ function Profile({ isDarkMode }: { isDarkMode: boolean }) {
           {t('menu.mypage.edit_info')}
         </Button>
       </Box>
-    </Wrapper>
+    </Box>
   );
-}
+};
 
 export default Profile;

@@ -23,6 +23,9 @@ import Login from './routes/members/login/Login';
 import Profile from './routes/myPage/Profile';
 import Activity from './routes/myPage/Activity';
 import UserInfo from './routes/myPage/UserInfo'; // 대소문자 맞추어 import
+import LikeLists from './routes/myPage/LikeLists'; // LikeLists 페이지
+import MyRecipes from './routes/myPage/MyRecipes'; // MyRecipes 페이지
+import MyReplys from './routes/myPage/MyReplys'; // MyReplys 페이지
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -131,16 +134,7 @@ function App() {
                       </Box>
                     }
                   />
-                  <Route
-                    path="/mypage/activity"
-                    element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
-                        <MypageSideMenu isDarkMode={isDarkMode} />
-                        <Activity/>
-                      </Box>
-                    }
-                  />
-                  <Route
+                   <Route
                     path="/mypage/UserInfo"
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
@@ -149,7 +143,39 @@ function App() {
                       </Box>
                     }
                   />
-
+                  <Route
+                    path="/mypage/activity"
+                    element={
+                      <Box sx={{ display: 'flex', width: '100vw', height: '100vh' }}>
+                        <MypageSideMenu isDarkMode={false} />
+                        <Activity isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/LikeLists"
+                    element={
+                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                        <LikeLists isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyRecipes"
+                    element={
+                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                        <MyRecipes isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyReplys"
+                    element={
+                      <Box sx={{ width: '100vw', height: '100vh', padding: 2 }}>
+                        <MyReplys isDarkMode={false} />
+                      </Box>
+                    }
+                  />
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
               </Box>
