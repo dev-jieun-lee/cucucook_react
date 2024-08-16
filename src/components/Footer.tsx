@@ -25,7 +25,6 @@ function Footer({ isDarkMode }: any) {
           <Select
             labelId="language-select-label"
             value={i18n.language} // 현재 언어 상태
-            label="언어"
             onChange={handleLangChange} // 언어 변경 핸들러
           >
             <MenuItem value="ko">{t('language.ko')}</MenuItem>
@@ -46,8 +45,9 @@ function Footer({ isDarkMode }: any) {
 export default Footer;
 
 const FooterWrapper = styled.div`
-  margin: 50px 0;
-
+  margin: -120px 0;
+  background-color: ${(props) => props.theme.footerColor};
+  padding: 50px 60px;
   .top{
     display: flex;
     justify-content: space-between;

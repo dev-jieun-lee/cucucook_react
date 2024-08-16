@@ -7,18 +7,14 @@ import {
   BannerRight,
   MainCard,
   MainWrapper,
-  RecipeWrapper,
   Slogan1,
   Slogan2,
+  SloganButton,
 } from "./MainStyle";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { useTranslation } from "react-i18next";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
-  //데이터 받아오기
-  // const { data: publicRecipe, isLoading: publicRecipeLoading } =
-  //   useQuery("movies", () => getPublicRecipe());
-  //   console.log(publicRecipe);
   const { t } = useTranslation();
 
   return (
@@ -76,34 +72,46 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
             <br />
             <small>인기 레시피 : 인기 레시피입니다.</small>
           </Slogan1>
+          <div className="slogan-main">
+            <SloganMain />
+          </div>
         </BannerLeft>
         <BannerRight>
-          <Slogan2>
-            <div className="box1">
-              <span className="strong">Cook</span>
-              <span className="basic">{t("sentence.slogan")}</span>
-            </div>
-            <div className="box2">
-              <span className="strong">Cucu</span>
-              <span className="basic">{t("sentence.slogan2")}</span>
-            </div>
-            <div className="box3">
-              <span className="strong">{t("sentence.cucucook")}</span>
-              <span className="basic">{t("sentence.slogan3")}</span>
-            </div>
-          </Slogan2>
-          <Button
-            variant="outlined"
-            color="secondary"
-            endIcon={<KeyboardDoubleArrowRightIcon />}
-          >
-            {t("text.go_upload")}
-          </Button>
+          <SloganMain />
         </BannerRight>
       </Banner>
-      <RecipeWrapper></RecipeWrapper>
     </MainWrapper>
   );
 }
 
 export default Main;
+
+function SloganMain() {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Slogan2>
+        <div className="box1">
+          <span className="strong">Cook</span>
+          <span className="basic">{t("sentence.slogan")}</span>
+        </div>
+        <div className="box2">
+          <span className="strong">Cucu</span>
+          <span className="basic">{t("sentence.slogan2")}</span>
+        </div>
+        <div className="box3">
+          <span className="strong">{t("sentence.cucucook")}</span>
+          <span className="basic">{t("sentence.slogan3")}</span>
+        </div>
+      </Slogan2>
+      <SloganButton
+        className="icon-btn"
+        variant="outlined"
+        color="secondary"
+        endIcon={<KeyboardDoubleArrowRightIcon />}
+      >
+        {t("text.go_upload")}
+      </SloganButton>
+    </>
+  );
+}
