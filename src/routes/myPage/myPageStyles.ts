@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material/styles';
+import { SxProps, Theme } from '@mui/material/styles';
 import { CSSProperties } from 'react';
 
 export const modalStyles: {
@@ -16,7 +16,7 @@ export const modalStyles: {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    width: '80%',
+    width: '90%', // 반응형: 작은 화면에서는 전체 너비의 90%
     maxWidth: '500px',
     padding: '20px',
     borderRadius: '8px',
@@ -25,11 +25,10 @@ export const modalStyles: {
   },
 };
 
-
 export const userInfoStyles: {
-  container: CSSProperties;
-  formControl: CSSProperties;
-  button: CSSProperties;
+  container: SxProps;
+  formControl: SxProps;
+  button: SxProps;
 } = {
   container: {
     padding: '20px',
@@ -38,22 +37,123 @@ export const userInfoStyles: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    '@media (max-width: 600px)': {
+      padding: '10px',
+      maxWidth: '100%',
+    },
   },
   formControl: {
     marginBottom: '16px',
+    '@media (max-width: 600px)': {
+      marginBottom: '12px',
+    },
   },
   button: {
     marginBottom: '16px',
+    '@media (max-width: 600px)': {
+      marginBottom: '12px',
+    },
+  },
+};
+export const activityStyles: Record<string, SxProps<Theme>> = {
+  container: {
+    display: 'flex',
+    width: '100%',
+    '@media (max-width: 900px)': {
+      flexDirection: 'column',
+    },
+  },
+  content: {
+    flexGrow: 1,
+    padding: '20px',
+    '@media (max-width: 600px)': {
+      padding: '10px',
+    },
+  },
+  section: {
+    flex: 1,
+    padding: '16px',
+    border: '1px solid',
+    borderColor: 'divider',
+    borderRadius: '8px',
+    margin: '8px',
+    '@media (max-width: 600px)': {
+      margin: '4px',
+      padding: '10px',
+    },
+  },
+  welcomeBox: {
+    textAlign: 'center',
+    marginBottom: '20px',
+    padding: '16px',
+    backgroundColor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 1,
+  },
+  statsBox: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginBottom: '20px',
+    padding: '16px',
+    backgroundColor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 1,
+  },
+  statItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  statIcon: {
+    width: '48px',
+    height: '48px',
   },
 };
 
 
-export const sideMenuStyles: SxProps = {
-  width: '250px', // 사이드 메뉴의 너비
-  minHeight: '100vh', // 사이드 메뉴의 최소 높이
-  display: 'flex',
-  flexDirection: 'column',
-  padding: 2,
-  boxSizing: 'border-box',
-  backgroundColor: '#f5f5f5', // 사이드 메뉴 배경색 (원하는 색상으로 변경 가능)
+export const myPageGridStyles: Record<string, SxProps<Theme>> = {
+  gridContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: 2,
+    overflowY: 'auto',
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    '@media (max-width: 600px)': {
+      gridTemplateColumns: 'repeat(1, 1fr)',
+    },
+  },
+  itemBox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '8px',
+    padding: '8px',
+    height: '150px',
+    overflow: 'hidden',
+    '@media (max-width: 600px)': {
+      height: '120px',
+      padding: '4px',
+    },
+  },
 };
+
+export const profileStyles: Record<string, SxProps<Theme>> = {
+  profileContainer: {
+    textAlign: 'center',
+    margin: '20px auto',
+    maxWidth: '600px',
+    padding: '20px',
+    backgroundColor: 'background.default',
+    borderRadius: '8px',
+    boxShadow: 1,
+    '@media (max-width: 600px)': {
+      padding: '10px',
+    },
+  },
+};
+
+
