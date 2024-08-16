@@ -2,8 +2,6 @@ import React from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import MypageSideMenu from '../../memu/sideMenu/MypageSideMenu'; // 사이드 메뉴 컴포넌트
-import { sideMenuStyles } from './myPageStyles'; // 공통 사이드 메뉴 스타일
 
 const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const { t } = useTranslation();
@@ -15,7 +13,8 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+    <Box sx={{ display: 'flex', width: '100%' }}>
+
       <Box
         sx={{
           flexGrow: 1,
