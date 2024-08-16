@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment } from '@mui/material';
+import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
@@ -47,7 +47,6 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, close
     >
       <h2>{t('menu.mypage.change_password')}</h2>
       <form onSubmit={formik.handleSubmit}>
-        {/* 새로운 비밀번호 입력 필드 */}
         <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
           <InputLabel htmlFor="newPassword">{t('menu.mypage.new_password')}</InputLabel>
           <OutlinedInput
@@ -71,7 +70,6 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, close
           />
         </FormControl>
 
-        {/* 비밀번호 확인 입력 필드 */}
         <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
           <InputLabel htmlFor="confirmNewPassword">{t('menu.mypage.confirm_new_password')}</InputLabel>
           <OutlinedInput
@@ -124,41 +122,34 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const handleCancelClick = () => {
     const confirmCancel = window.confirm('정말 수정을 취소하시겠습니까?');
     if (confirmCancel) {
-      navigate('/mypage/Profile'); // 이동할 경로
+      navigate('/mypage/Profile');
     }
-    // 취소 버튼 클릭 시 페이지에 머무름
   };
 
   const handleSaveChangesClick = () => {
     const confirmSave = window.confirm('변경사항을 저장하시겠습니까?');
     if (confirmSave) {
       alert('변경사항이 저장되었습니다.');
-      navigate('/mypage/Profile'); // 변경사항 저장 후 Profile 페이지로 이동
+      navigate('/mypage/Profile');
     } else {
       alert('취소하였습니다.');
-      navigate('/mypage/Profile'); // 취소 후 Profile 페이지로 이동
+      navigate('/mypage/Profile');
     }
   };
 
   return (
-    <div style={userInfoStyles.container}>
+    <Box sx={userInfoStyles.container}>
       <ChangePasswordModal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} />
       <div className="title">
         <span>{t('menu.mypage.edit_info')}</span>
       </div>
       <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
         <InputLabel htmlFor="username">{t('menu.mypage.username')}</InputLabel>
-        <OutlinedInput
-          id="username"
-          label={t('menu.mypage.username')}
-        />
+        <OutlinedInput id="username" label={t('menu.mypage.username')} />
       </FormControl>
       <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
         <InputLabel htmlFor="email">{t('menu.mypage.email')}</InputLabel>
-        <OutlinedInput
-          id="email"
-          label={t('menu.mypage.email')}
-        />
+        <OutlinedInput id="email" label={t('menu.mypage.email')} />
       </FormControl>
 
       <Button
@@ -171,7 +162,6 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         {t('menu.mypage.change_password')}
       </Button>
 
-      {/* SNS 연동 버튼 */}
       <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
         {t('menu.mypage.connect_naver')}
       </Button>
@@ -179,13 +169,9 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         {t('menu.mypage.connect_kakao')}
       </Button>
 
-      {/* 추가 정보 입력 필드 */}
       <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
         <InputLabel htmlFor="phoneNumber">{t('menu.mypage.phone_number')}</InputLabel>
-        <OutlinedInput
-          id="phoneNumber"
-          label={t('menu.mypage.phone_number')}
-        />
+        <OutlinedInput id="phoneNumber" label={t('menu.mypage.phone_number')} />
       </FormControl>
 
       <Button
@@ -193,7 +179,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         variant="contained"
         fullWidth
         sx={userInfoStyles.button}
-        onClick={handleSaveChangesClick} // 변경사항 저장 클릭 이벤트
+        onClick={handleSaveChangesClick}
       >
         {t('menu.mypage.save_changes')}
       </Button>
@@ -206,7 +192,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
       >
         {t('menu.mypage.delete_account')}
       </Button>
-    </div>
+    </Box>
   );
 };
 

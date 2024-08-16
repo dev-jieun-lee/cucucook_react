@@ -22,10 +22,10 @@ import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
 import Profile from './routes/myPage/Profile';
 import Activity from './routes/myPage/Activity';
-import UserInfo from './routes/myPage/UserInfo'; // 대소문자 맞추어 import
-import LikeLists from './routes/myPage/LikeLists'; // LikeLists 페이지
-import MyRecipes from './routes/myPage/MyRecipes'; // MyRecipes 페이지
-import MyReplys from './routes/myPage/MyReplys'; // MyReplys 페이지
+import UserInfo from './routes/myPage/UserInfo';
+import LikeLists from './routes/myPage/LikeLists';
+import MyRecipes from './routes/myPage/MyRecipes';
+import MyReplys from './routes/myPage/MyReplys';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -139,7 +139,7 @@ function App() {
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <MypageSideMenu isDarkMode={isDarkMode} />
-                        <UserInfo isDarkMode={isDarkMode} /> {/* UserInfo 컴포넌트 렌더링 */}
+                        <UserInfo isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
