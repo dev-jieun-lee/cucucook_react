@@ -1,5 +1,6 @@
 import { Card, List, Paper } from "@mui/material";
 import styled from "styled-components";
+import media from "../../styles/MediaQuery";
 
 
 
@@ -31,6 +32,10 @@ export const SideMenu = styled(List)`
   }
   .list-button.active {
   color: ${(props) => props.theme.mainColor};
-}
+  }
+  
+  ${media.medium`
+    display: none;
+  `};
 
 `;

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import media from "../../../styles/MediaQuery";
 
 export const LoginWrapper = styled.div`
   text-align: center;
@@ -9,13 +10,22 @@ export const LoginWrapper = styled.div`
     color: ${(props) => props.theme.mainColor};
     .title-icon{
       transform: scale(1.6);
+      ${media.medium`
+        transform: scale(1.2);
+      `};
     }
     span{
       display: block;
       margin-top: 10px;
       font-size: 25px;
       font-weight: 600;
+      ${media.medium`
+        font-size: 20px;
+      `};
     }
+    ${media.medium`
+      margin-bottom: 20px;
+    `};
   }
 
   .input-form{
@@ -41,6 +51,12 @@ export const LoginWrapper = styled.div`
       color: grey;
     }
   }
+  ${media.medium`
+    width: 60%;
+  `};
+  ${media.small`
+    width: 90%;
+  `};
 `;
 
 export const ButtonArea = styled.div`
