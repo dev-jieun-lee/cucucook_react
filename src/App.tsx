@@ -24,7 +24,7 @@ import Profile from './routes/myPage/Profile';
 import Activity from './routes/myPage/Activity';
 import UserInfo from './routes/myPage/UserInfo';
 import LikeLists from './routes/myPage/LikeLists';
-import MyRecipes from './routes/myPage/MyRecipes';
+import MyWrites from './routes/myPage/MyWrites';
 import MyReplys from './routes/myPage/MyReplys';
 
 function App() {
@@ -146,8 +146,8 @@ function App() {
                   <Route
                     path="/mypage/activity"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
-                      <MypageSideMenu isDarkMode={isDarkMode} />
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto'  }}>
+                        <MypageSideMenu isDarkMode={isDarkMode} />
                         <Activity isDarkMode={false} />
                       </Box>
                     }
@@ -162,11 +162,11 @@ function App() {
                     }
                   />
                   <Route
-                    path="/mypage/MyRecipes"
+                    path="/mypage/MyWrites"
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                       <MypageSideMenu isDarkMode={isDarkMode} />
-                        <MyRecipes isDarkMode={false} />
+                        <MyWrites isDarkMode={false} />
                       </Box>
                     }
                   />

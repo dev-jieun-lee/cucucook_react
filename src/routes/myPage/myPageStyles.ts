@@ -112,32 +112,26 @@ export const activityStyles: Record<string, SxProps<Theme>> = {
 };
 
 
-export const myPageGridStyles: Record<string, SxProps<Theme>> = {
+export const myPageGridStyles = {
   gridContainer: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: 2,
-    overflowY: 'auto',
+    gap: '16px',
+    gridTemplateColumns: 'repeat(5, 1fr)', // 기본 5개
+    '@media (max-width: 1200px)': {
+      gridTemplateColumns: 'repeat(4, 1fr)', // 중간 화면 4개
+    },
     '@media (max-width: 900px)': {
-      gridTemplateColumns: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(3, 1fr)', // 중간 화면 3개
     },
     '@media (max-width: 600px)': {
-      gridTemplateColumns: 'repeat(1, 1fr)',
+      gridTemplateColumns: 'repeat(2, 1fr)', // 작은 화면 2개
     },
   },
   itemBox: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: '16px',
     backgroundColor: '#f0f0f0',
     borderRadius: '8px',
-    padding: '8px',
-    height: '150px',
-    overflow: 'hidden',
-    '@media (max-width: 600px)': {
-      height: '120px',
-      padding: '4px',
-    },
+    textAlign: 'center',
   },
 };
 
@@ -156,4 +150,16 @@ export const profileStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
+//맨위로 가기 스크롤 버튼
+export const scrollButtonStyles: SxProps<Theme> = {
+  position: 'fixed',
+  bottom: 16,
+  right: 16,
+  '@media (max-width: 600px)': {
+    bottom: 8,
+    right: 8,
+    width: '40px',
+    height: '40px',
+  },
+};
 

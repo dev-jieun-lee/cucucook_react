@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, Typography, Button, Avatar } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Button, Avatar, List, ListItem, ListItemText, Fab } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { activityStyles, myPageGridStyles } from './myPageStyles';
+import { KeyboardArrowUp } from '@mui/icons-material';
+import { activityStyles, myPageGridStyles, scrollButtonStyles } from './myPageStyles';
 import { Wrapper } from '../../styles/CommonStyles';
 
 type SectionProps = {
@@ -13,7 +14,7 @@ type SectionProps = {
 const Section: React.FC<SectionProps> = ({ title, linkTo, children }) => {
   return (
     <Box sx={activityStyles.section}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <Typography variant="h6">{title}</Typography>
         <Button component={Link} to={linkTo} variant="contained">
           더보기
@@ -29,72 +30,105 @@ interface ActivityProps {
 }
 
 const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
-  const username = "회원"; // 실제 사용자 이름을 받아오는 로직으로 대체
-  const likeCount = 5; // 실제 찜한 갯수를 받아오는 로직으로 대체
-  const writeCount = 10; // 실제 게시글 갯수를 받아오는 로직으로 대체
-  const replyCount = 3; // 실제 댓글 갯수를 받아오는 로직으로 대체
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const username = "회원";
+  const likeCount = 5;
+  const writeCount = 10;
+  const replyCount = 3;
+
+  const likedRecipes = ["레시피 A", "레시피 B", "레시피 C", "레시피 D", "레시피 E"];
+  const writtenPosts = ["게시글 A", "게시글 B", "게시글 C", "게시글 D", "게시글 E"];
+  const writtenReplies = ["댓글 A", "댓글 B", "댓글 C", "댓글 D", "댓글 E"];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-<Wrapper>
-      <Box sx={activityStyles.content}>
-        {/* 회원 인사 박스 */}
+    <Wrapper>
+      <Box
+        sx={{
+          ...activityStyles.content,
+          minHeight: 'calc(100vh - 200px)',
+        }}
+      >
         <Box sx={activityStyles.welcomeBox}>
           <Typography variant="h5">{username}님 안녕하세요!</Typography>
         </Box>
 
-        {/* 아이콘과 갯수 표시 박스 */}
         <Box sx={activityStyles.statsBox}>
           <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/images/cucucook_like.png" alt="찜 아이콘" sx={activityStyles.statIcon} />
+            <Avatar src="/public/image/cucucook_like.png" alt="찜 아이콘" sx={activityStyles.statIcon} />
             <Typography>{likeCount}개</Typography>
           </Box>
           <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/images/cucucook_write.png" alt="게시글 아이콘" sx={activityStyles.statIcon} />
+            <Avatar src="/public/image/cucucook_write.png" alt="게시글 아이콘" sx={activityStyles.statIcon} />
             <Typography>{writeCount}개</Typography>
           </Box>
           <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/images/cucucook_reply.png" alt="댓글 아이콘" sx={activityStyles.statIcon} />
+            <Avatar src="/public/image/cucucook_reply.png" alt="댓글 아이콘" sx={activityStyles.statIcon} />
             <Typography>{replyCount}개</Typography>
           </Box>
         </Box>
 
-        {/* 찜한 레시피 목록 */}
         <Section title="레시피 찜목록" linkTo="/myPage/LikeLists">
-          <Box sx={myPageGridStyles?.gridContainer ?? {}}>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>레시피 A</Typography>
-            </Box>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>레시피 B</Typography>
-            </Box>
+          <Box sx={myPageGridStyles.gridContainer}>
+            {likedRecipes.map((recipe, index) => (
+              <Box key={index} sx={myPageGridStyles.itemBox}>
+                <Typography>{recipe}</Typography>
+              </Box>
+            ))}
           </Box>
         </Section>
 
-        {/* 내가 쓴 게시글 목록 */}
-        <Section title="내가 쓴 게시글" linkTo="/myPage/MyRecipes">
-          <Box sx={myPageGridStyles?.gridContainer ?? {}}>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>게시글 A</Typography>
-            </Box>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>게시글 B</Typography>
-            </Box>
-          </Box>
+        <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
+          <List>
+            {writtenPosts.map((post, index) => (
+              <ListItem key={index} sx={{ borderBottom: '1px solid #ddd' }}>
+                <ListItemText primary={post} />
+              </ListItem>
+            ))}
+          </List>
         </Section>
 
-        {/* 내가 쓴 댓글 목록 */}
         <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
-          <Box sx={myPageGridStyles?.gridContainer ?? {}}>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>댓글 A</Typography>
-            </Box>
-            <Box sx={myPageGridStyles?.itemBox ?? {}}>
-              <Typography>댓글 B</Typography>
-            </Box>
-          </Box>
+          <List>
+            {writtenReplies.map((reply, index) => (
+              <ListItem key={index} sx={{ borderBottom: '1px solid #ddd' }}>
+                <ListItemText primary={reply} />
+              </ListItem>
+            ))}
+          </List>
         </Section>
       </Box>
-      </Wrapper>
+
+      {showScrollButton && (
+        <Fab
+          color="primary"
+          size="small"
+          sx={scrollButtonStyles}
+          onClick={scrollToTop}
+        >
+          <KeyboardArrowUp />
+        </Fab>
+      )}
+    </Wrapper>
   );
 };
 
