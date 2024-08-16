@@ -47,7 +47,7 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
         <ListItemButton
           className={`list-button ${activeButton === "profile" ? "active" : ""}`}
           selected={selectedIndex === 0}
-          onClick={() => handleListItemClick(0, '/mypage', "profile")}
+          onClick={() => handleListItemClick(0, '/mypage/profile', "profile")}
         >
           {t('menu.mypage.profile')}
         </ListItemButton>
@@ -56,7 +56,7 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
         <ListItemButton
           className={`list-button ${activeButton === "activity" ? "active" : ""}`}
           selected={selectedIndex === 1}
-          onClick={() => handleListItemClick(0, '/activity', "activity")}
+          onClick={() => handleListItemClick(0, '/mypage/activity', "activity")}
         >
           {t('menu.mypage.activity')}
         </ListItemButton>
