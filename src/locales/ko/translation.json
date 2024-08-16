@@ -18,16 +18,28 @@
       "QNA" : "질의응답"
     },
     "mypage" : {
-      "original" : "마이페이지",
-      "profile" : "내 정보",
-      "activity" : "내 활동",
+      "original": "마이페이지",
+      "profile": "내 정보",
+      "activity": "내 활동",
       "edit_info": "정보 수정",
-      "username": "사용자 이름",
+      "username": "아이디",
+      "name": "이름",
       "email": "이메일",
+      "phone": "전화번호",
       "current_password": "현재 비밀번호",
       "new_password": "새 비밀번호",
+      "confirm_new_password": "새 비밀번호 확인",
       "save_changes": "변경 사항 저장",
-      "cancel": "취소"
+      "cancel": "취소",
+      "change_password": "비밀번호 변경",
+      "kakao_login": "카카오 로그인",
+      "kakao_disconnect": "카카오 연결 끊기",
+      "naver_login": "네이버 로그인",
+      "naver_disconnect": "네이버 연결 끊기",
+      "delete_account": "회원 탈퇴",
+      "confirm_cancel": "정말 수정을 취소하시겠습니까?",
+      "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
+      "password_mismatch": "새 비밀번호와 확인 비밀번호가 일치하지 않습니다."
     }
   },
   "text" : {
