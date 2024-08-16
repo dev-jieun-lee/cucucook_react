@@ -27,14 +27,14 @@ function Profile({ isDarkMode }: { isDarkMode: boolean }) {
         }}
       >
         <Typography variant="h5" component="h2" gutterBottom>
-          {t('mypage.profile')}
+          {t('menu.mypage.profile')}
         </Typography>
         <Button
           variant="contained"
           color="primary"
           onClick={handleEditInfoClick}
         >
-          {t('mypage.edit_info')}
+          {t('menu.mypage.edit_info')}
         </Button>
       </Box>
     </Wrapper>
