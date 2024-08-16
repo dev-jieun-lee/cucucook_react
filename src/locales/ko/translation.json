@@ -19,8 +19,15 @@
     },
     "mypage" : {
       "original" : "마이페이지",
-      "info" : "내 정보",
-      "activity" : "내 활동"
+      "profile" : "내 정보",
+      "activity" : "내 활동",
+      "edit_info": "정보 수정",
+      "username": "사용자 이름",
+      "email": "이메일",
+      "current_password": "현재 비밀번호",
+      "new_password": "새 비밀번호",
+      "save_changes": "변경 사항 저장",
+      "cancel": "취소"
     }
   },
   "text" : {
@@ -29,7 +36,7 @@
     "change_mode" : "모드 변경",
     "go_upload" : "올리러 가기",
     "save" : "저장",
-    "update" : "수정", 
+    "update" : "수정",
     "cancel" : "취소",
     "delete" : "삭제"
   },
@@ -60,5 +67,5 @@
     "account" : "사랑시 고백구 행복동 12345 (주)쿠쿠쿡"
 
   }
-  
+
 }

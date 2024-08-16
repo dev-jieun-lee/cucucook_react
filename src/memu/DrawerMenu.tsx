@@ -22,7 +22,7 @@ function DrawerMenu({toggleDrawer}: any )  {
   ];
 
   const MypageMenuItems = [
-    { label: t('menu.mypage.info'), path: '/mypage/info' },
+    { label: t('menu.mypage.profile'), path: '/mypage/profile' },
     { label: t('menu.mypage.activity'), path: '/mypage/activity' },
   ];
 
