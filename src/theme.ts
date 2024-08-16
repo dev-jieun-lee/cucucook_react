@@ -17,6 +17,8 @@ export const styledLightTheme: DefaultTheme = {
   bgColor : '#F4F3EF',
   textColor : '#364C63',
   mainColor : '#F3B340',
+  footerColor : "#f3f0e2",
+  navBorderColor : "#ccc",
 
   subTextColor : '#253342'
 };
@@ -24,6 +26,8 @@ export const styledDarkTheme: DefaultTheme = {
   bgColor : '#3D3737',
   textColor : '#FDA47E',
   mainColor : '#F2EFDB',
+  footerColor : "#363131;",
+  navBorderColor : "#878585c1",
 
   subTextColor : '#d28c6f'
 };
@@ -35,6 +39,7 @@ export const muiLightTheme = createTheme({
     mode: 'light',
     primary: {
       main: '#F3B340',
+      contrastText : '#fff'
     },
     secondary: {
       main: '#364C63',
