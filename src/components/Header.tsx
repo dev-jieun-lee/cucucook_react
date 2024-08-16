@@ -9,7 +9,7 @@ import {
   MotionIconButton,
   DrawerTop,
 } from "../memu/MenuStyle";
-import Profile from "./Profile";
+import Profile from "../routes/myPage/Profile";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import SearchIcon from "@mui/icons-material/Search";

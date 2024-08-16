@@ -20,6 +20,10 @@ import MemberRecipe from './routes/recipe/MemberRecipe';
 import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
 import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
+import Profile from './routes/myPage/Profile';
+import Activity from './routes/myPage/Activity';
+import UserInfo from './routes/myPage/UserInfo'; // 대소문자 맞추어 import
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -45,7 +49,7 @@ function App() {
                 sx={{
                   backgroundColor: 'background.default',
                   minHeight: '65vh',
-                  width: '100%', 
+                  width: '100%',
                   margin: '120px auto',
                 }}
               >
@@ -119,21 +123,33 @@ function App() {
 
                   {/* 마이페이지 */}
                   <Route
-                    path="/mypage"
+                    path="/mypage/profile"
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Profile isDarkMode={false}/>
                       </Box>
                     }
                   />
                   <Route
-                    path="/activity"
+                    path="/mypage/activity"
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Activity/>
                       </Box>
                     }
                   />
+                  <Route
+                    path="/mypage/UserInfo"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <UserInfo isDarkMode={isDarkMode} /> {/* UserInfo 컴포넌트 렌더링 */}
+                      </Box>
+                    }
+                  />
+
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
               </Box>
