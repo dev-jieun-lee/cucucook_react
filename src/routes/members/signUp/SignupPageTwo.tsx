@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, Navigate } from 'react-router-dom';
 import { LoginWrapper } from "../login/LoginStyle";
@@ -14,16 +14,15 @@ const SignupPageTwo = () => {
   const phoneNumber = location.state?.phoneNumber;
 
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
+  const [customDomain, setCustomDomain] = useState('');
 
-  // 이메일 도메인 배열
   const emailDomains = [
     { value: 'gmail.com', label: 'gmail.com' },
     { value: 'naver.com', label: 'naver.com' },
     { value: 'daum.net', label: 'daum.net' },
-    { value: 'custom', label: t('menu.mypage.custom_input') }
+    { value: 'custom', label: t('members.custom_input') }
   ];
 
-  // ID 중복 검사 함수
   const checkIdAvailability = async (id: string) => {
     try {
       const response = await axios.get(`/api/check-id/${id}`);
@@ -42,8 +41,8 @@ const SignupPageTwo = () => {
       password: '',
       confirmPassword: '',
       name: '',
-      email: '',
-      emailDomain: '',
+      emailLocalPart: '',
+      emailDomain: 'gmail.com',
     },
     validationSchema: Yup.object({
       id: Yup.string()
@@ -62,14 +61,15 @@ const SignupPageTwo = () => {
       name: Yup.string()
         .required(t('members.name_required'))
         .matches(/^[가-힣]+$/, t('members.name_korean_only')),
-      email: Yup.string()
+      emailLocalPart: Yup.string()
         .email(t('members.email_invalid'))
         .required(t('members.email_required')),
       emailDomain: Yup.string()
         .required(t('members.email_domain_required'))
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      const fullEmail = values.emailLocalPart + '@' + (values.emailDomain === 'custom' ? customDomain : values.emailDomain);
+      alert(`Registered with email: ${fullEmail}`);
     }
   });
 
@@ -79,14 +79,17 @@ const SignupPageTwo = () => {
     }
   }, [isIdAvailable, formik, t]);
 
-  // phoneNumber가 없는 경우 리다이렉트 처리
   if (!phoneNumber) {
     console.error('Phone number is required but not provided');
     return <Navigate to="/signup/signupPageOne" replace />;
   }
+
   return (
     <Wrapper>
       <LoginWrapper>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h2>{t('members.signup')}</h2>
+        </div>
         <form onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
@@ -140,25 +143,41 @@ const SignupPageTwo = () => {
             name="phone"
             label={t('menu.mypage.phone_number')}
             value={phoneNumber}
-            onChange={formik.handleChange}
             disabled
             margin="normal"
           />
           <FormControl fullWidth margin="normal">
-            <InputLabel>{t('menu.mypage.email')}</InputLabel>
+            <TextField
+              id="emailLocalPart"
+              name="emailLocalPart"
+              label={t('Email ID')}
+              value={formik.values.emailLocalPart}
+              onChange={formik.handleChange}
+              error={formik.touched.emailLocalPart && Boolean(formik.errors.emailLocalPart)}
+              helperText={formik.touched.emailLocalPart && formik.errors.emailLocalPart}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">@</InputAdornment>,
+              }}
+            />
             <Select
+              id="emailDomain"
+              name="emailDomain"
               value={formik.values.emailDomain}
               onChange={formik.handleChange}
-              name="emailDomain"
               displayEmpty
-              inputProps={{ 'aria-label': 'Without label' }}
             >
-              <MenuItem value="">
-                <em>{t('select')}</em>
-              </MenuItem>
               {emailDomains.map(domain => (
                 <MenuItem key={domain.value} value={domain.value}>{domain.label}</MenuItem>
               ))}
+              {formik.values.emailDomain === 'custom' && (
+                <TextField
+                  id="customDomain"
+                  name="customDomain"
+                  label={t('Custom Domain')}
+                  onChange={(e) => setCustomDomain(e.target.value)}
+                  fullWidth
+                />
+              )}
             </Select>
             {formik.touched.emailDomain && <FormHelperText>{formik.errors.emailDomain}</FormHelperText>}
           </FormControl>
