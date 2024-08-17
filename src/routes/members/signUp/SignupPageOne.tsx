@@ -25,10 +25,9 @@ function SignupPageOne() {
       agreeMarketing: Yup.boolean().oneOf([true], t('members.marketing_required'))
     }),
     onSubmit: (values, { setSubmitting }) => {
-      alert(JSON.stringify(values, null, 2)); // 실제 로직에 따라 수정 가능
-      // 실제 휴대폰 인증 로직 구현 후 페이지 이동
+      alert(JSON.stringify(values, null, 2)); // 필요에 따라 제거 가능
       setSubmitting(false);
-      navigate('/signup/signupPageTwo'); // 경로는 실제 프로젝트 설정에 맞게 조정
+      navigate('/signup/signupPageTwo', { state: { phoneNumber: values.phone } }); // 전화번호와 함께 리다이렉트
     }
   });
 
