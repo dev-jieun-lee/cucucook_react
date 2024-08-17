@@ -16,6 +16,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React from "react";
 import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
+import { useNavigate } from 'react-router-dom';
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); //번역
@@ -65,6 +66,12 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     setSaveId(event.target.checked);
   };
 
+  // 회원가입 페이지로 이동하는 함수
+  const navigate = useNavigate(); // useNavigate 훅 사용
+  const handleSignup = () => {
+  navigate('/signup');
+  };
+
   return (
     <Wrapper>
       <LoginWrapper>
@@ -109,9 +116,9 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
             <FormControlLabel
               className="id-chk"
               control={
-                <Checkbox 
-                  checked={saveId} 
-                  onChange={handleSaveIdChange} 
+                <Checkbox
+                  checked={saveId}
+                  onChange={handleSaveIdChange}
                 />
               }
               label={t('members.save_id')}
@@ -133,7 +140,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           <span />
           <button type="button">{t("members.finding_pw")}</button>
           <span />
-          <button type="button">{t("members.join")}</button>
+          <button type="button" onClick={handleSignup}>{t("members.join")}</button> {/* 회원가입 버튼 이벤트 연결 */}
         </ButtonArea>
       </LoginWrapper>
     </Wrapper>

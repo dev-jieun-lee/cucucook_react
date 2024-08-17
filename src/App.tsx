@@ -26,6 +26,8 @@ import UserInfo from './routes/myPage/UserInfo';
 import LikeLists from './routes/myPage/LikeLists';
 import MyWrites from './routes/myPage/MyWrites';
 import MyReplys from './routes/myPage/MyReplys';
+import SignupPageOne from './routes/members/signUp/SignupPageOne';
+import SignupPageTwo from './routes/members/signUp/SignupPageTwo';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -68,6 +70,11 @@ function App() {
                       </Box>
                     }
                   />
+
+                   {/* 회원가입 */}
+                   <Route path="/signup/signupPageOne" element={<SignupPageOne />} />
+                   <Route path="/signup/signupPageTwo" element={<SignupPageTwo />} />
+
 
                   {/* 레시피 */}
                   <Route
@@ -179,6 +186,9 @@ function App() {
                       </Box>
                     }
                   />
+                 {/* 회원가입 */}
+                  <Route path="/signup" element={<SignupPageOne />} />
+
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
               </Box>
