@@ -73,7 +73,7 @@ function App() {
 
                    {/* 회원가입 */}
                    <Route path="/signup/signupPageOne" element={<SignupPageOne />} />
-                   <Route path="/signup/signupPageTwo" element={<SignupPageTwo />} />
+                   <Route path="/signup/signupPageTwo" element={<SignupPageTwo/>} />
 
 
                   {/* 레시피 */}
