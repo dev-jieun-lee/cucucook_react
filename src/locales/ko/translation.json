@@ -86,7 +86,8 @@
     "privacy_required": "개인정보 처리방침에 동의해야 합니다",
     "agree_marketing": "마케팅 정보 수신에 동의합니다",
     "marketing_required": "마케팅 정보 수신에 동의해야 합니다",
-    "verify_continue": "전화번호 인증하고 계속하기"
+    "verify_continue": "전화번호 인증하고 계속하기",
+    "custom_input": "직접입력"
   },
   "Footer" : {
     "ceo" : "대표 : 지으네림",
