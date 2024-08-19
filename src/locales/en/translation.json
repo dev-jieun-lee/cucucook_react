@@ -87,7 +87,20 @@
     "agree_marketing": "I agree to receive marketing communications",
     "marketing_required": "You must agree to receive marketing communications",
     "verify_continue": "Verify Phone and Continue",
-    "custom_input": "write your self"
+    "custom_input": "write your self",
+    "id_required": "ID is a required field.",
+    "id_min": "ID must be at least 4 characters long.",
+    "id_availability": "Checking ID availability...",
+    "id_in_use": "This ID is already in use.",
+    "password_required": "Password is a required field.",
+    "password_rules": "Password must be between 8 to 15 characters and include letters, numbers, and special characters.",
+    "confirm_password_required": "Confirm password is a required field.",
+    "passwords_match": "Passwords do not match.",
+    "name_required": "Name is a required field.",
+    "name_korean_only": "Name can only contain Korean characters.",
+    "email_required": "Email is a required field.",
+    "email_domain_required": "Email domain is a required field."
+
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
