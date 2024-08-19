@@ -53,7 +53,12 @@
     "finding_id" : "Finding Iㅇ",
     "password" : "Password",
     "password_chk" : "Password Check",
-    "finding_pw" : "Finding Fassword"
+    "finding_pw" : "Finding Fassword",
+    "name" : "Name",
+    "phone" : "Phone",
+    "email" : "Email",
+    "Notifiction" : "Notifiction",
+    "duplication_chk" : "Duplication Check"
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
