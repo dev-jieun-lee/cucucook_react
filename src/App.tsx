@@ -20,6 +20,8 @@ import MemberRecipe from './routes/recipe/MemberRecipe';
 import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
 import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
+import Join from './routes/members/login/join/Join';
+import Notice from './routes/board/Notice';
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -61,6 +63,15 @@ function App() {
                       </Box>
                     }
                   />
+                  {/* 회원가입 */}
+                  <Route
+                    path="/join"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                        <Join isDarkMode={isDarkMode} />
+                      </Box>
+                    }
+                  />
 
                   {/* 레시피 */}
                   <Route
@@ -97,6 +108,7 @@ function App() {
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <BoardSideMenu isDarkMode={isDarkMode} />
+                        <Notice/>
                       </Box>
                     }
                   />

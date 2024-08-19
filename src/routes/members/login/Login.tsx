@@ -16,8 +16,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React from "react";
 import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
+import { useNavigate } from "react-router-dom";
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
+  const navigate = useNavigate();
   const { t } = useTranslation(); //번역
   const [showPassword, setShowPassword] = React.useState(false); //비밀번호 상태 관리
   const [saveId, setSaveId] = React.useState(false); // 체크박스 상태 관리
@@ -63,6 +65,11 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   //아이디 저장
   const handleSaveIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSaveId(event.target.checked);
+  };
+
+  //회원가입 페이지로 이동
+  const handleJoinClick = () => {
+    navigate("/join");
   };
 
   return (
@@ -133,7 +140,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           <span />
           <button type="button">{t("members.finding_pw")}</button>
           <span />
-          <button type="button">{t("members.join")}</button>
+          <button type="button" onClick={handleJoinClick}>{t("members.join")}</button>
         </ButtonArea>
       </LoginWrapper>
     </Wrapper>
