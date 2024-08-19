@@ -17,6 +17,7 @@ import React from "react";
 import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); //번역
@@ -37,11 +38,26 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
       id: "",
       password: "",
     },
-    onSubmit: (form, { resetForm }) => {
-      // submit 함수 (input값들을 객체로 받는다)
-      console.log(JSON.stringify(form, null, 2));
-      // saveId가 false일 경우 id 값을 초기화
+    // formik의 onSubmit 함수 내부에서 로그인 요청
+    onSubmit: async (form, { resetForm }) => {
+      try {
+        const response = await axios.post('http://localhost:8080/api/members/login', {
+          userId: form.id,
+          password: form.password,
+        });
 
+        if (response.data === 'Login successful') {
+          // 로그인 성공 처리
+          console.log('로그인 성공');
+        } else {
+          // 로그인 실패 처리
+          console.log('로그인 실패: ', response.data);
+        }
+      } catch (error) {
+        console.error('로그인 오류: ', error);
+      }
+
+      // ID 저장 여부에 따라 입력 값을 초기화
       if (!saveId) {
         resetForm({
           values: {
@@ -50,7 +66,6 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           },
         });
       } else {
-        // saveId가 true일 경우 password만 초기화
         resetForm({
           values: {
             id: form.id,

@@ -25,9 +25,8 @@ function SignupPageOne() {
       agreeMarketing: Yup.boolean().oneOf([true], t('members.marketing_required'))
     }),
     onSubmit: (values, { setSubmitting }) => {
-      alert(JSON.stringify(values, null, 2)); // 필요에 따라 제거 가능
       setSubmitting(false);
-      navigate('/signup/signupPageTwo', { state: { phoneNumber: values.phone } }); // 전화번호와 함께 리다이렉트
+      navigate('/signup/signupPageTwo', { state: { phoneNumber: values.phone } });
     }
   });
 
@@ -62,7 +61,7 @@ function SignupPageOne() {
             control={<Checkbox name="agreeMarketing" checked={formik.values.agreeMarketing} onChange={formik.handleChange} />}
             label={t('members.agree_marketing')}
           />
-           <Button color="primary" variant="contained" fullWidth type="submit">
+          <Button color="primary" variant="contained" fullWidth type="submit">
             {t('members.verify_continue')}
           </Button>
         </form>

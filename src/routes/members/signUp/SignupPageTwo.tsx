@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, InputAdornment } from '@mui/material';
+import { TextField, Button, FormControl, Select, MenuItem, FormHelperText, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useLocation, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 
 const SignupPageTwo = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate(); // useNavigate 훅 추가
   const phoneNumber = location.state?.phoneNumber;
 
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
@@ -25,12 +26,14 @@ const SignupPageTwo = () => {
 
   const checkIdAvailability = async (id: string) => {
     try {
-      const response = await axios.get(`/api/check-id/${id}`);
-      setIsIdAvailable(response.data.isAvailable);
-      return response.data.isAvailable;
+      const response = await axios.get(`/api/members/check-id/${id}`);
+      return response.data;
     } catch (error) {
-      console.error('ID availability check failed:', error);
-      setIsIdAvailable(false);
+      if (axios.isAxiosError(error)) {
+        console.error('ID availability check failed:', error.message, error.response?.data);
+      } else {
+        console.error('Unexpected error:', error);
+      }
       return false;
     }
   };
@@ -49,8 +52,7 @@ const SignupPageTwo = () => {
         .required(t('members.id_required'))
         .min(4, t('members.id_min'))
         .test('id-availability', t('members.id_availability'), async (value) => {
-          const available = await checkIdAvailability(value || '');
-          return available || t('members.id_already_in_use');
+          return await checkIdAvailability(value || '');
         }),
       password: Yup.string()
         .required(t('members.password_required'))
@@ -62,32 +64,40 @@ const SignupPageTwo = () => {
         .required(t('members.name_required'))
         .matches(/^[가-힣]+$/, t('members.name_korean_only')),
       emailLocalPart: Yup.string()
-        .email(t('members.email_invalid'))
         .required(t('members.email_required')),
       emailDomain: Yup.string()
         .required(t('members.email_domain_required'))
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const fullEmail = values.emailLocalPart + '@' + (values.emailDomain === 'custom' ? customDomain : values.emailDomain);
-      alert(`Registered with email: ${fullEmail}`);
+      try {
+        await axios.post('/api/members/register', {
+          userId: values.id,
+          password: values.password,
+          name: values.name,
+          phone: phoneNumber,
+          email: fullEmail,
+          smsNoti: true, // 기본값 설정, 필요시 수정
+          emailNoti: true // 기본값 설정, 필요시 수정
+        });
+        alert('Registration successful!');
+        navigate('/login'); // 회원가입 성공 후 로그인 페이지로 리디렉션
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          // AxiosError 타입으로 캐스팅 후 처리
+          alert('Registration failed: ' + (error.response?.data || 'Unknown error'));
+        } else {
+          console.error('Unexpected error:', error);
+          alert('An unexpected error occurred');
+        }
+      }
     }
   });
-
-  useEffect(() => {
-    if (isIdAvailable === false) {
-      formik.setFieldError('id', t('members.id_in_use'));
-    }
-  }, [isIdAvailable, formik, t]);
-
-  if (!phoneNumber) {
-    console.error('Phone number is required but not provided');
-    return <Navigate to="/signup/signupPageOne" replace />;
-  }
 
   return (
     <Wrapper>
       <LoginWrapper>
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <h2>{t('members.signup')}</h2>
         </div>
         <form onSubmit={formik.handleSubmit}>
