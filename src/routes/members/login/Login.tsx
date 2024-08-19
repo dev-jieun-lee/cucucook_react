@@ -10,35 +10,35 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React from "react";
 import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { t } = useTranslation(); //번역
-  const [showPassword, setShowPassword] = React.useState(false); //비밀번호 상태 관리
-  const [saveId, setSaveId] = React.useState(false); // 체크박스 상태 관리
+  const { t } = useTranslation();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [saveId, setSaveId] = React.useState(false);
+  const [loginError, setLoginError] = React.useState<string | null>(null); // 로그인 오류 메시지 상태
 
-  //비밀번호 토글
+  const navigate = useNavigate();
+  const location = useLocation(); // 이전 페이지 정보
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
   const formik = useFormik({
     initialValues: {
-      // 각 input의 초기값
       id: "",
       password: "",
     },
-    // formik의 onSubmit 함수 내부에서 로그인 요청
     onSubmit: async (form, { resetForm }) => {
       try {
         const response = await axios.post('http://localhost:8080/api/members/login', {
@@ -47,44 +47,38 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         });
 
         if (response.data === 'Login successful') {
-          // 로그인 성공 처리
-          console.log('로그인 성공');
+          // 로그인 성공 시 이전 페이지로 이동
+          const from = location.state?.from || '/'; // 원래 있던 페이지로 이동
+          navigate(from);
         } else {
           // 로그인 실패 처리
-          console.log('로그인 실패: ', response.data);
+          setLoginError(response.data || 'Login failed');
+          resetForm({
+            values: {
+              id: form.id,
+              password: '', // 비밀번호 초기화
+            },
+          });
         }
       } catch (error) {
         console.error('로그인 오류: ', error);
-      }
-
-      // ID 저장 여부에 따라 입력 값을 초기화
-      if (!saveId) {
-        resetForm({
-          values: {
-            id: '',
-            password: '',
-          },
-        });
-      } else {
+        setLoginError('An unexpected error occurred');
         resetForm({
           values: {
             id: form.id,
-            password: '',
+            password: '', // 비밀번호 초기화
           },
         });
       }
     },
   });
 
-  //아이디 저장
   const handleSaveIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSaveId(event.target.checked);
   };
 
-  // 회원가입 페이지로 이동하는 함수
-  const navigate = useNavigate(); // useNavigate 훅 사용
   const handleSignup = () => {
-  navigate('/signup');
+    navigate('/signup');
   };
 
   return (
@@ -92,40 +86,40 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
       <LoginWrapper>
         <div className="title">
           <LockOpenIcon className="title-icon" />
-          <span>{t("members.login")} </span>
+          <span>{t("members.login")}</span>
         </div>
 
         <form className="form" onSubmit={formik.handleSubmit}>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
             <InputLabel htmlFor="id">{t('members.id')}</InputLabel>
-              <OutlinedInput
-                id="id"
-                label={t('members.id')}
-                value={formik.values.id} // formik의 id 값
-                onChange={formik.handleChange} // formik의 handleChange 연결
-              />
+            <OutlinedInput
+              id="id"
+              label={t('members.id')}
+              value={formik.values.id}
+              onChange={formik.handleChange}
+            />
           </FormControl>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
             <InputLabel htmlFor="password">{t('members.password')}</InputLabel>
-              <OutlinedInput
-                id="password"
-                value={formik.values.password} // formik의 password 값
-                onChange={formik.handleChange} // formik의 handleChange 연결
-                type={showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label={t('members.password')}
-              />
+            <OutlinedInput
+              id="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              type={showPassword ? 'text' : 'password'}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label={t('members.password')}
+            />
           </FormControl>
           <div className="save-id">
             <FormControlLabel
@@ -139,15 +133,15 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               label={t('members.save_id')}
             />
           </div>
-            <Button
-              className="submit-button"
-              color="primary"
-              variant="contained"
-              type="submit"
-              fullWidth
-            >
-              {t("members.login")}
-            </Button>
+          <Button
+            className="submit-button"
+            color="primary"
+            variant="contained"
+            type="submit"
+            fullWidth
+          >
+            {t("members.login")}
+          </Button>
         </form>
 
         <ButtonArea>
@@ -155,8 +149,19 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           <span />
           <button type="button">{t("members.finding_pw")}</button>
           <span />
-          <button type="button" onClick={handleSignup}>{t("members.join")}</button> {/* 회원가입 버튼 이벤트 연결 */}
+          <button type="button" onClick={handleSignup}>{t("members.join")}</button>
         </ButtonArea>
+
+        {/* 로그인 오류 메시지 표시 */}
+        <Snackbar
+          open={!!loginError}
+          autoHideDuration={6000}
+          onClose={() => setLoginError(null)}
+        >
+          <Alert onClose={() => setLoginError(null)} severity="error">
+            {loginError}
+          </Alert>
+        </Snackbar>
       </LoginWrapper>
     </Wrapper>
   );

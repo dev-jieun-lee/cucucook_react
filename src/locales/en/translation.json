@@ -99,8 +99,8 @@
     "name_required": "Name is a required field.",
     "name_korean_only": "Name can only contain Korean characters.",
     "email_required": "Email is a required field.",
-    "email_domain_required": "Email domain is a required field."
-
+    "email_domain_required": "Email domain is a required field.",
+    "members.id_available" : "Your ID is available."
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
