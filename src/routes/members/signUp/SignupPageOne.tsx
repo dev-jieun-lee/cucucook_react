@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, TextField, FormHelperText } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 
 function SignupPageOne() {
@@ -49,18 +49,31 @@ function SignupPageOne() {
             helperText={formik.touched.phone && formik.errors.phone}
             margin="normal"
           />
+
           <FormControlLabel
             control={<Checkbox name="agreeTerms" checked={formik.values.agreeTerms} onChange={formik.handleChange} />}
             label={t('members.agree_terms')}
           />
+          {formik.touched.agreeTerms && formik.errors.agreeTerms && (
+            <FormHelperText error>{formik.errors.agreeTerms}</FormHelperText>
+          )}
+
           <FormControlLabel
             control={<Checkbox name="agreePrivacy" checked={formik.values.agreePrivacy} onChange={formik.handleChange} />}
             label={t('members.agree_privacy')}
           />
+          {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
+            <FormHelperText error>{formik.errors.agreePrivacy}</FormHelperText>
+          )}
+
           <FormControlLabel
             control={<Checkbox name="agreeMarketing" checked={formik.values.agreeMarketing} onChange={formik.handleChange} />}
             label={t('members.agree_marketing')}
           />
+          {formik.touched.agreeMarketing && formik.errors.agreeMarketing && (
+            <FormHelperText error>{formik.errors.agreeMarketing}</FormHelperText>
+          )}
+
           <Button color="primary" variant="contained" fullWidth type="submit">
             {t('members.verify_continue')}
           </Button>
