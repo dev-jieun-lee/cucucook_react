@@ -1,69 +1,121 @@
 {
-  "language" : {
-    "ko" : "Korean",
-    "en" : "English"
+  "language": {
+    "ko": "Korean",
+    "en": "English"
   },
-  "menu" : {
-    "recipe" : {
-      "original" : "Recipe",
-      "all" : "All",
-      "public" : "Public Recipe",
-      "member" : "Member Recipe",
-      "popularity" : "popularity"
+  "menu": {
+    "recipe": {
+      "original": "Recipe",
+      "all": "All",
+      "public": "Public Recipe",
+      "member": "Member Recipe",
+      "popularity": "popularity"
     },
-    "board" : {
-      "original" : "Board",
-      "notice" : "Notice",
-      "FAQ" : "FAQ",
-      "QNA" : "Q&A"
+    "board": {
+      "original": "Board",
+      "notice": "Notice",
+      "FAQ": "FAQ",
+      "QNA": "Q&A"
     },
-    "mypage" : {
-      "original" : "My Page",
-      "info" : "My Infomation",
-      "activity" : "My Activity"
+    "mypage": {
+      "original": "My Page",
+      "profile": "My Profile",
+      "activity": "My Activity",
+      "edit_info": "Edit Information",
+      "username": "Username",
+      "name": "Name",
+      "email": "Email",
+      "phone_number": "Phone Number",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "confirm_new_password": "Confirm New Password",
+      "save_changes": "Save Changes",
+      "cancel": "Cancel",
+      "change_password": "Change Password",
+      "kakao_login": "Login with Kakao",
+      "connect_kakao": "Connect with Kakao",
+      "kakao_disconnect": "Disconnect Kakao",
+      "naver_login": "Login with Naver",
+      "connect_naver": "Connect with Naver",
+      "naver_disconnect": "Disconnect Naver",
+      "delete_account": "Delete Account",
+      "confirm_cancel": "Are you sure you want to cancel the changes?",
+      "confirm_delete_account": "Are you sure you want to delete your account?",
+      "password_mismatch": "The new password and confirmation do not match."
     }
   },
-  "text" : {
-    "search" : "Search",
-    "mode" : "Mode",
-    "change_mode" : "Change Mode",
-    "go_upload" : "Go uploding",
-    "save" : "Save",
-    "update" : "Update", 
-    "cancel" : "Cancel",
-    "delete" : "Delete"
+  "text": {
+    "search": "Search",
+    "mode": "Mode",
+    "change_mode": "Change Mode",
+    "go_upload": "Go uploding",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "all_recipe": "전체 레시피",
+    "public_recipe": "기존 레시피",
+    "member_recipe": "회원 레시피",
+    "더보기": "더보기",
+    "최신순": "최신순",
+    "조회수순": "조회수순",
+    "댓글순": "댓글순",
+    "평점순": "평점순",
+    "글쓰기": "글쓰기",
+    "레시피작성": "레시피 작성"
   },
-  "sentence" : {
-    "explain1" : "기존 레시피 :",
-    "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
-    "explain3" : "인기 레시피 : 인기 레시피입니다.",
-    "slogan" : "while doing",
-    "slogan2" : "add to one's laughter!",
-    "slogan3" : "My own recipe that makes a sound",
-    "cucucook" : "Cucucook",
-    "searching" : "Please enter a search term."
+  "sentence": {
+    "explain1": "기존 레시피 :",
+    "explain2": "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
+    "explain3": "인기 레시피 : 인기 레시피입니다.",
+    "slogan": "while doing",
+    "slogan2": "add to one's laughter!",
+    "slogan3": "My own recipe that makes a sound",
+    "cucucook": "Cucucook",
+    "searching": "Please enter a search term."
   },
-  "members" : {
-    "original" : "member",
-    "login" : "login",
-    "logout" : "logout",
-    "join" : "join",
-    "id" : "ID",
-    "save_id" : "Save ID",
-    "finding_id" : "Finding Iㅇ",
-    "password" : "Password",
-    "password_chk" : "Password Check",
-    "finding_pw" : "Finding Fassword",
-    "name" : "Name",
-    "phone" : "Phone",
-    "email" : "Email",
-    "Notifiction" : "Notifiction",
-    "duplication_chk" : "Duplication Check"
+  "members": {
+    "original": "member",
+    "login": "login",
+    "logout": "logout",
+    "join": "join",
+    "signup": "Sign Up",
+    "id": "ID",
+    "save_id": "Save ID",
+    "finding_id": "Finding Iㅇ",
+    "password": "Password",
+    "password_chk": "Password Check",
+    "finding_pw": "Finding Fassword",
+    "terms_title": "Terms and Conditions for Signup",
+    "phone_verification": "Phone Verification",
+    "phone_number": "Phone Number",
+    "phone_number_required": "Phone number is required",
+    "agree_terms": "I agree to the Terms and Conditions",
+    "terms_required": "You must agree to the terms",
+    "agree_privacy": "I agree to the Privacy Policy",
+    "privacy_required": "You must agree to the privacy policy",
+    "agree_marketing": "I agree to receive marketing communications",
+    "marketing_required": "You must agree to receive marketing communications",
+    "verify_continue": "Verify Phone and Continue",
+    "custom_input": "write your self",
+    "id_required": "ID is a required field.",
+    "id_min": "ID must be at least 4 characters long.",
+    "id_availability": "Checking ID availability...",
+    "id_in_use": "This ID is already in use.",
+    "phone_number_invalid": "This phone number is already in use.",
+    "password_required": "Password is a required field.",
+    "password_rules": "Password must be between 8 to 15 characters and include letters, numbers, and special characters.",
+    "confirm_password_required": "Confirm password is a required field.",
+    "passwords_match": "Passwords do not match.",
+    "name_required": "Name is a required field.",
+    "name_korean_only": "Name can only contain Korean characters.",
+    "email_required": "Email is a required field.",
+    "email_domain_required": "Email domain is a required field.",
+    "id_available": "Your ID is available.",
+    "phone_number_error": "Server error"
   },
-  "Footer" : {
-    "ceo" : "ceo : jiunerim",
-    "account" : "12345, Happiness-dong, Confession-gu, Sarangsi, Republic of Korea Co., Ltd"
-
+  "Footer": {
+    "ceo": "ceo : jiunerim",
+    "account": "12345, Happiness-dong, Confession-gu, Sarangsi, Republic of Korea Co., Ltd"
   }
-  
 }

@@ -93,7 +93,7 @@ const thumbnails = [
   },
 ];
 
-const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const handleMoreViewClick = (value: string) => {
@@ -147,7 +147,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     <Wrapper>
       <Box component="section">
         <TitleBox>
-          <PageTitleBasic>{t("text.member_recipe")}</PageTitleBasic>
+          <PageTitleBasic>{t("text.public_recipe")}</PageTitleBasic>
         </TitleBox>
         <SearchBoxContainer>
           <SearchBox>
@@ -250,14 +250,13 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     borderRadius: "50%",
                     backgroundColor:
                       selectedOrder === order ? "primary.main" : "text.primary",
-                    marginRight: "8px", // Spacing between dot and text,
+                    marginRight: "8px",
                   }}
                 />
                 {order}
               </Button>
             ))}
           </Stack>
-          <Button variant="contained">{t("text.글쓰기")}</Button>
         </TitleBox>
 
         <Grid container spacing={2}>
@@ -287,4 +286,4 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   );
 };
 
-export default MemberRecipe;
+export default PublicRecipe;
