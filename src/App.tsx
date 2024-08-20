@@ -1,27 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Box, Button, Container, CssBaseline, Paper, StyledEngineProvider,  Typography } from '@mui/material';
-import { muiDarkTheme, muiLightTheme, styledDarkTheme, styledLightTheme } from './theme';
-import Header from './components/Header';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Paper,
+  StyledEngineProvider,
+  Typography,
+} from "@mui/material";
+import {
+  muiDarkTheme,
+  muiLightTheme,
+  styledDarkTheme,
+  styledLightTheme,
+} from "./theme";
+import Header from "./components/Header";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 // material-ui
-import {ThemeProvider as MuiThemeProvider} from "@mui/material";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 // styled-components
-import {ThemeProvider as StyledThemeProvider} from "styled-components"
-import TestPage from './TestPage';
-import Main from './routes/main/Main';
-import Footer from './components/Footer';
-import { I18nextProvider } from 'react-i18next';
-import i18n from './locales/i18n';
-import RecipeSideMenu from './memu/sideMenu/RecipeSideMenu';
-import AllRecipe from './routes/recipe/AllRecipe';
-import PublicRecipe from './routes/recipe/PublicRecipe';
-import MemberRecipe from './routes/recipe/MemberRecipe';
-import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
-import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
-import Login from './routes/members/login/Login';
-import Join from './routes/members/login/join/Join';
-import Notice from './routes/board/Notice';
+import { ThemeProvider as StyledThemeProvider } from "styled-components";
+import TestPage from "./TestPage";
+import Main from "./routes/main/Main";
+import Footer from "./components/Footer";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./locales/i18n";
+import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
+import AllRecipeList from "./routes/recipe/AllRecipeList";
+import PublicRecipeList from "./routes/recipe/PublicRecipeList";
+import PublicRecipe from "./routes/recipe/MemberRecipe";
+import MemberRecipeList from "./routes/recipe/MemberRecipeList";
+import MemberRecipe from "./routes/recipe/MemberRecipe";
+import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
+import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
+import Login from "./routes/members/login/Login";
+import Join from "./routes/members/login/join/Join";
+import Notice from "./routes/board/Notice";
+
+import Profile from "./routes/myPage/Profile";
+import Activity from "./routes/myPage/Activity";
+import UserInfo from "./routes/myPage/UserInfo";
+import LikeLists from "./routes/myPage/LikeLists";
+import MyWrites from "./routes/myPage/MyWrites";
+import MyReplys from "./routes/myPage/MyReplys";
+import SignupPageOne from "./routes/members/signUp/SignupPageOne";
+import SignupPageTwo from "./routes/members/signUp/SignupPageTwo";
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -32,23 +56,30 @@ function App() {
   return (
     <I18nextProvider i18n={i18n}>
       <MuiThemeProvider theme={isDarkMode ? muiDarkTheme : muiLightTheme}>
-        <StyledThemeProvider theme={isDarkMode ? styledDarkTheme : styledLightTheme}>
+        <StyledThemeProvider
+          theme={isDarkMode ? styledDarkTheme : styledLightTheme}
+        >
           <StyledEngineProvider injectFirst>
             <CssBaseline />
-            <BrowserRouter> {/* BrowserRouter를 가장 바깥으로 이동 */}
+            <BrowserRouter>
+              {" "}
+              {/* BrowserRouter를 가장 바깥으로 이동 */}
               <Box
                 sx={{
-                  width: '100%', // Header의 width를 100%로 설정
+                  width: "100%", // Header의 width를 100%로 설정
                 }}
               >
-                <Header isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />
+                <Header
+                  isDarkMode={isDarkMode}
+                  onToggleTheme={handleToggleTheme}
+                />
               </Box>
               <Box
                 sx={{
-                  backgroundColor: 'background.default',
-                  minHeight: '65vh',
-                  width: '100%', 
-                  margin: '120px auto',
+                  backgroundColor: "background.default",
+                  minHeight: "65vh",
+                  width: "100%",
+                  margin: "120px auto",
                 }}
               >
                 <Routes>
@@ -58,7 +89,13 @@ function App() {
                   <Route
                     path="/login"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "20px auto",
+                        }}
+                      >
                         <Login isDarkMode={isDarkMode} />
                       </Box>
                     }
@@ -67,37 +104,90 @@ function App() {
                   <Route
                     path="/join"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "20px auto",
+                        }}
+                      >
                         <Join isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
 
+                  {/* 회원가입 */}
+                  <Route
+                    path="/signup/signupPageOne"
+                    element={<SignupPageOne />}
+                  />
+                  <Route
+                    path="/signup/signupPageTwo"
+                    element={<SignupPageTwo />}
+                  />
+
                   {/* 레시피 */}
                   <Route
-                    path="/all_recipe"
+                    path="/recipe/all_recipe_list"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <RecipeSideMenu isDarkMode={isDarkMode} />
-                        <AllRecipe/>
+                        <AllRecipeList isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
-                    path="/public_recipe"
+                    path="/recipe/public_recipe_list"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <RecipeSideMenu isDarkMode={isDarkMode} />
-                        <PublicRecipe />
+                        <PublicRecipeList isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
-                    path="/member_recipe"
+                    path="/recipe/member_recipe_list"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto'}}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <RecipeSideMenu isDarkMode={isDarkMode} />
-                        <MemberRecipe />
+                        <MemberRecipeList isDarkMode={isDarkMode} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/recipe/member_recipe"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <RecipeSideMenu isDarkMode={isDarkMode} />
+                        <MemberRecipe isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
@@ -106,16 +196,30 @@ function App() {
                   <Route
                     path="/notice"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <BoardSideMenu isDarkMode={isDarkMode} />
-                        <Notice/>
+                        <Notice />
                       </Box>
                     }
                   />
                   <Route
                     path="/faq"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <BoardSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
@@ -123,7 +227,14 @@ function App() {
                   <Route
                     path="/qna"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <BoardSideMenu isDarkMode={isDarkMode} />
                       </Box>
                     }
@@ -131,38 +242,120 @@ function App() {
 
                   {/* 마이페이지 */}
                   <Route
-                    path="/mypage"
+                    path="/mypage/profile"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Profile isDarkMode={false} />
                       </Box>
                     }
                   />
                   <Route
-                    path="/activity"
+                    path="/mypage/UserInfo"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <UserInfo isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
+                  <Route
+                    path="/mypage/activity"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Activity isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/LikeLists"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <LikeLists isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyWrites"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <MyWrites isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyReplys"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "140px auto",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <MyReplys isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  {/* 회원가입 */}
+                  <Route path="/signup" element={<SignupPageOne />} />
+
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
               </Box>
               <Box
                 sx={{
-                  width: '100%', // Footer의 width를 100%로 설정
+                  width: "100%", // Footer의 width를 100%로 설정
                 }}
               >
                 <Footer isDarkMode={isDarkMode} />
               </Box>
-            </BrowserRouter> {/* BrowserRouter 닫기 */}
+            </BrowserRouter>{" "}
+            {/* BrowserRouter 닫기 */}
           </StyledEngineProvider>
         </StyledThemeProvider>
       </MuiThemeProvider>
     </I18nextProvider>
-
-
   );
 }
 

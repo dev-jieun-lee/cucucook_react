@@ -1,70 +1,121 @@
 {
-  "language" : {
-    "ko" : "한국어",
-    "en" : "영어"
+  "language": {
+    "ko": "한국어",
+    "en": "영어"
   },
-  "menu" : {
-    "recipe" : {
-      "original" : "레시피",
-      "all" : "전체 레시피",
-      "public" : "기존 레시피",
-      "member" : "회원 레시피",
-      "popularity" : "인기 레시피"
+  "menu": {
+    "recipe": {
+      "original": "레시피",
+      "all": "전체 레시피",
+      "public": "기존 레시피",
+      "member": "회원 레시피",
+      "popularity": "인기 레시피"
     },
-    "board" : {
-      "original" : "게시판",
-      "notice" : "공지사항",
-      "FAQ" : "자주묻는질문",
-      "QNA" : "질의응답"
+    "board": {
+      "original": "게시판",
+      "notice": "공지사항",
+      "FAQ": "자주묻는질문",
+      "QNA": "질의응답"
     },
-    "mypage" : {
-      "original" : "마이페이지",
-      "info" : "내 정보",
-      "activity" : "내 활동"
+    "mypage": {
+      "original": "마이페이지",
+      "profile": "내 정보",
+      "activity": "내 활동",
+      "edit_info": "정보 수정",
+      "username": "아이디",
+      "name": "이름",
+      "email": "이메일",
+      "phone_number": "전화번호",
+      "current_password": "현재 비밀번호",
+      "new_password": "새 비밀번호",
+      "confirm_new_password": "새 비밀번호 확인",
+      "save_changes": "변경 사항 저장",
+      "cancel": "취소",
+      "change_password": "비밀번호 변경",
+      "kakao_login": "카카오 로그인",
+      "connect_kakao": "카카오 연동",
+      "kakao_disconnect": "카카오 연결 끊기",
+      "naver_login": "네이버 로그인",
+      "connect_naver": "네이버 연동",
+      "naver_disconnect": "네이버 연결 끊기",
+      "delete_account": "회원 탈퇴",
+      "confirm_cancel": "정말 수정을 취소하시겠습니까?",
+      "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
+      "password_mismatch": "새 비밀번호와 확인 비밀번호가 일치하지 않습니다."
     }
   },
-  "text" : {
-    "search" : "검색",
-    "mode" : "모드",
-    "change_mode" : "모드 변경",
-    "go_upload" : "올리러 가기",
-    "save" : "저장",
-    "update" : "수정", 
-    "cancel" : "취소",
-    "delete" : "삭제"
+  "text": {
+    "search": "검색",
+    "mode": "모드",
+    "change_mode": "모드 변경",
+    "go_upload": "올리러 가기",
+    "save": "저장",
+    "update": "수정",
+    "cancel": "취소",
+    "delete": "삭제",
+    "all_recipe": "전체 레시피",
+    "public_recipe": "기존 레시피",
+    "member_recipe": "회원 레시피",
+    "더보기": "더보기",
+    "최신순": "최신순",
+    "조회수순": "조회수순",
+    "댓글순": "댓글순",
+    "평점순": "평점순",
+    "글쓰기": "글쓰기",
+    "레시피작성": "레시피 작성"
   },
-  "sentence" : {
-    "explain1" : "기존 레시피 :",
-    "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
-    "explain3" : "인기 레시피 : 인기 레시피입니다.",
-    "slogan" : "하며",
-    "slogan2" : "웃음을 더하다!",
-    "slogan3" : "소리나는 나만의 레시피",
-    "cucucook" : "쿠쿠쿡",
-    "searching" : "검색어를 입력해주세요."
+  "sentence": {
+    "explain1": "기존 레시피 :",
+    "explain2": "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
+    "explain3": "인기 레시피 : 인기 레시피입니다.",
+    "slogan": "하며",
+    "slogan2": "웃음을 더하다!",
+    "slogan3": "소리나는 나만의 레시피",
+    "cucucook": "쿠쿠쿡",
+    "searching": "검색어를 입력해주세요."
   },
-  "members" : {
-    "original" : "회원",
-    "login" : "로그인",
-    "logout" : "로그아웃",
-    "join" : "회원가입",
-    "id" : "아이디",
-    "save_id" : "아이디 저장",
-    "finding_id" : "아이디 찾기",
-    "password" : "비밀번호",
-    "password_chk" : "비밀번호 확인",
-    "finding_pw" : "비밀번호 찾기",
-    "name" : "이름",
-    "phone" : "전화번호",
-    "email" : "이메일",
-    "Notifiction" : "알림",
-    "duplication_chk" : "중복확인"
-
+  "members": {
+    "original": "회원",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "join": "회원가입",
+    "signup": "회원가입",
+    "id": "아이디",
+    "save_id": "아이디 저장",
+    "finding_id": "아이디 찾기",
+    "password": "비밀번호",
+    "password_chk": "비밀번호 확인",
+    "finding_pw": "비밀번호 찾기",
+    "terms_title": "회원가입을 위한 약관 동의",
+    "phone_verification": "휴대폰 인증",
+    "phone_number": "전화번호",
+    "phone_number_required": "전화번호는 필수입니다",
+    "agree_terms": "약관에 동의합니다",
+    "terms_required": "약관에 동의해야 합니다",
+    "agree_privacy": "개인정보 처리방침에 동의합니다",
+    "privacy_required": "개인정보 처리방침에 동의해야 합니다",
+    "agree_marketing": "마케팅 정보 수신에 동의합니다",
+    "marketing_required": "마케팅 정보 수신에 동의해야 합니다",
+    "verify_continue": "전화번호 인증하고 계속하기",
+    "custom_input": "직접입력",
+    "id_required": "아이디는 필수 입력 항목입니다.",
+    "id_min": "아이디는 최소 4자 이상이어야 합니다.",
+    "id_availability": "아이디 중복 확인 중입니다.",
+    "id_in_use": "이미 사용 중인 아이디입니다.",
+    "phone_number_invalid": "이미 사용 중인 번호입니다",
+    "password_required": "비밀번호는 필수 입력 항목입니다.",
+    "password_rules": "비밀번호는 8자 이상, 15자 이하이며, 영문, 숫자, 특수문자를 포함해야 합니다.",
+    "confirm_password_required": "비밀번호 확인은 필수 입력 항목입니다.",
+    "passwords_match": "비밀번호가 일치하지 않습니다.",
+    "name_required": "이름은 필수 입력 항목입니다.",
+    "name_korean_only": "이름은 한글만 입력 가능합니다.",
+    "email_required": "이메일은 필수 입력 항목입니다.",
+    "email_domain_required": "이메일 도메인은 필수 항목입니다.",
+    "id_available": "사용 가능한 ID입니다",
+    "phone_number_error": "서버오류 입니다. 관리자에게 문의하세요"
   },
-  "Footer" : {
-    "ceo" : "대표 : 지으네림",
-    "account" : "사랑시 고백구 행복동 12345 (주)쿠쿠쿡"
-
+  "Footer": {
+    "ceo": "대표 : 지으네림",
+    "account": "사랑시 고백구 행복동 12345 (주)쿠쿠쿡"
   }
-  
 }
