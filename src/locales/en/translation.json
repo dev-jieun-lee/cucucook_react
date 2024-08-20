@@ -92,6 +92,7 @@
     "id_min": "ID must be at least 4 characters long.",
     "id_availability": "Checking ID availability...",
     "id_in_use": "This ID is already in use.",
+    "phone_number_invalid":"This phone number is already in use.",
     "password_required": "Password is a required field.",
     "password_rules": "Password must be between 8 to 15 characters and include letters, numbers, and special characters.",
     "confirm_password_required": "Confirm password is a required field.",
@@ -100,7 +101,8 @@
     "name_korean_only": "Name can only contain Korean characters.",
     "email_required": "Email is a required field.",
     "email_domain_required": "Email domain is a required field.",
-    "members.id_available" : "Your ID is available."
+    "id_available" : "Your ID is available.",
+    "phone_number_error" : "Server error"
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",

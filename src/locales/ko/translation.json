@@ -92,6 +92,7 @@
     "id_min": "아이디는 최소 4자 이상이어야 합니다.",
     "id_availability": "아이디 중복 확인 중입니다.",
     "id_in_use": "이미 사용 중인 아이디입니다.",
+    "phone_number_invalid":"이미 사용 중인 번호입니다",
     "password_required": "비밀번호는 필수 입력 항목입니다.",
     "password_rules": "비밀번호는 8자 이상, 15자 이하이며, 영문, 숫자, 특수문자를 포함해야 합니다.",
     "confirm_password_required": "비밀번호 확인은 필수 입력 항목입니다.",
@@ -100,7 +101,8 @@
     "name_korean_only": "이름은 한글만 입력 가능합니다.",
     "email_required": "이메일은 필수 입력 항목입니다.",
     "email_domain_required": "이메일 도메인은 필수 항목입니다.",
-    "id_available" : "사용 가능한 ID입니다"
+    "id_available" : "사용 가능한 ID입니다",
+    "phone_number_error" : "서버오류 입니다. 관리자에게 문의하세요"
   },
   "Footer" : {
     "ceo" : "대표 : 지으네림",
