@@ -1,6 +1,6 @@
 import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
-import {Col,Logo,MotionInput,MotionSearch,Nav,MotionIconButton,DrawerTop,} from "../memu/MenuStyle"; // 스타일 컴포넌트
+import {Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton, DrawerTop} from "../memu/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
 import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아이콘
 import SearchIcon from "@mui/icons-material/Search"; // 검색 아이콘
@@ -56,7 +56,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
     try {
       await axios.post('/api/members/logout'); // 로그아웃 API 호출
       setLoggedIn(false); // 상태 업데이트
-      navigate("/login"); // 페이지 이동
+      navigate("/"); // 메인 페이지로 이동
     } catch (error) {
       console.error('로그아웃 오류: ', error); // 오류 처리
     }
