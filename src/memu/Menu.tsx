@@ -29,19 +29,25 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 0 ? "active" : ""}`}
               >
-                {t('menu.recipe.original')}
+                {t("menu.recipe.original")}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/all_recipe">{t('menu.recipe.all')}</LinkItem>
+                  <LinkItem to="/recipe/all_recipe_list">
+                    {t("menu.recipe.all")}
+                  </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/public_recipe">{t('menu.recipe.public')}</LinkItem>
+                  <LinkItem to="/recipe/public_recipe_list">
+                    {t("menu.recipe.public")}
+                  </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/member_recipe">{t('menu.recipe.member')}</LinkItem>
+                  <LinkItem to="/recipe/member_recipe_list">
+                    {t("menu.recipe.member")}
+                  </LinkItem>
                 </li>
               </ul>
             </SubMenu>
@@ -55,19 +61,19 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 1 ? "active" : ""}`}
               >
-                {t('menu.board.original')}
+                {t("menu.board.original")}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/notice">{t('menu.board.notice')}</LinkItem>
+                  <LinkItem to="/notice">{t("menu.board.notice")}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/faq">{t('menu.board.FAQ')}</LinkItem>
+                  <LinkItem to="/faq">{t("menu.board.FAQ")}</LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/qna">{t('menu.board.QNA')}</LinkItem>
+                  <LinkItem to="/qna">{t("menu.board.QNA")}</LinkItem>
                 </li>
               </ul>
             </SubMenu>
@@ -81,16 +87,20 @@ function Menu() {
               <span
                 className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
               >
-                {t('menu.mypage.original')}
+                {t("menu.mypage.original")}
               </span>
             </div>
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/mypage">{t('menu.mypage.info')}</LinkItem>
+                  <LinkItem to="/myPage/Profile">
+                    {t("menu.mypage.profile")}
+                  </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/activity">{t('menu.mypage.activity')}</LinkItem>
+                  <LinkItem to="/myPage/Activity">
+                    {t("menu.mypage.activity")}
+                  </LinkItem>
                 </li>
               </ul>
             </SubMenu>

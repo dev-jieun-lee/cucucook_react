@@ -15,11 +15,11 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
   // URL 경로에 따라 활성 버튼 설정
   useEffect(() => {
     switch (location.pathname) {
-      case '/mypage':
+      case '/myPage/Profile':
         setSelectedIndex(0);
-        setActiveButton("info");
+        setActiveButton("profile");
         break;
-      case '/activity':
+      case '/myPage/Activity':
         setSelectedIndex(1);
         setActiveButton("activity");
         break;
@@ -36,7 +36,7 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
     setActiveButton(buttonName);
     navigate(path);
   };
-  
+
   return (
     <SideMenu className="list">
       <ListItem>
@@ -45,18 +45,18 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
       <Divider />
       <ListItem disablePadding className="list-item">
         <ListItemButton
-          className={`list-button ${activeButton === "info" ? "active" : ""}`}
+          className={`list-button ${activeButton === "profile" ? "active" : ""}`}
           selected={selectedIndex === 0}
-          onClick={() => handleListItemClick(0, '/mypage', "info")}
+          onClick={() => handleListItemClick(0, '/mypage/profile', "profile")}
         >
-          {t('menu.mypage.info')}
+          {t('menu.mypage.profile')}
         </ListItemButton>
       </ListItem>
       <ListItem disablePadding className="list-item">
         <ListItemButton
           className={`list-button ${activeButton === "activity" ? "active" : ""}`}
           selected={selectedIndex === 1}
-          onClick={() => handleListItemClick(0, '/activity', "activity")}
+          onClick={() => handleListItemClick(0, '/mypage/activity', "activity")}
         >
           {t('menu.mypage.activity')}
         </ListItemButton>
