@@ -7,6 +7,7 @@ import media from "../../styles/MediaQuery";
 export const SideMenu = styled(List)`
   /* margin-top: 30px; */
   width: 220px;
+  height: 100%;
   background-color: ${(props) => props.theme.footerColor};
   border: 1px solid;
   border-color: ${(props) => props.theme.navBorderColor};

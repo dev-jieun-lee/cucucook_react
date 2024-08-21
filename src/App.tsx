@@ -9,7 +9,6 @@ import {ThemeProvider as MuiThemeProvider} from "@mui/material";
 // styled-components
 import {ThemeProvider as StyledThemeProvider} from "styled-components"
 import TestPage from './TestPage';
-import Main from './routes/main/Main';
 import Footer from './components/Footer';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './locales/i18n';
@@ -22,6 +21,8 @@ import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
 import Join from './routes/members/login/join/Join';
 import Notice from './routes/board/Notice';
+import Faq from './routes/board/Faq';
+import Main from './routes/main/Main';
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -117,6 +118,7 @@ function App() {
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <BoardSideMenu isDarkMode={isDarkMode} />
+                        <Faq/>
                       </Box>
                     }
                   />
