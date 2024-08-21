@@ -20,16 +20,20 @@ export const styledLightTheme: DefaultTheme = {
   footerColor : "#f3f0e2",
   navBorderColor : "#ccc",
 
-  subTextColor : '#253342'
+  subTextColor : '#253342',
+
+  accordionColor : '#f3f0e27c'
 };
 export const styledDarkTheme: DefaultTheme = {
   bgColor : '#3D3737',
   textColor : '#FDA47E',
   mainColor : '#F2EFDB',
-  footerColor : "#363131;",
+  footerColor : "#363131",
   navBorderColor : "#878585c1",
 
-  subTextColor : '#d28c6f'
+  subTextColor : '#d28c6f',
+
+  accordionColor : '#3631316a'
 };
 
 //*****************************mui */
