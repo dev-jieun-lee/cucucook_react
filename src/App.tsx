@@ -28,7 +28,8 @@ import MyWrites from './routes/myPage/MyWrites';
 import MyReplys from './routes/myPage/MyReplys';
 import SignupPageOne from './routes/members/signUp/SignupPageOne';
 import SignupPageTwo from './routes/members/signUp/SignupPageTwo';
-import FindId from './routes/members/login/findId';
+import FindId from './routes/members/login/FindId';
+import FindPw from './routes/members/login/FindPw';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -77,7 +78,10 @@ function App() {
                   <Route path="/signup/signupPageTwo" element={<SignupPageTwo/>} />
 
                   {/*아이디찾기 */}
-                  <Route path="/login/findId" element={<FindId isDarkMode={false}/>} />
+                  <Route path="/login/FindId" element={<FindId isDarkMode={false}/>} />
+
+                  {/*비밀번호 찾기 */}
+                  <Route path="/login/FindPw" element={<FindPw isDarkMode={false}/>} />
 
                   {/* 레시피 */}
                   <Route
