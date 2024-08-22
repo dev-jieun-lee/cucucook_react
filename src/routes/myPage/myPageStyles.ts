@@ -1,29 +1,4 @@
 import { SxProps, Theme } from '@mui/material/styles';
-import { CSSProperties } from 'react';
-
-export const modalStyles: {
-  overlay: CSSProperties;
-  content: CSSProperties;
-} = {
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 흐리게 처리
-    zIndex: 1000, // 모달의 z-index를 높게 설정
-  },
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    width: '90%', // 반응형: 작은 화면에서는 전체 너비의 90%
-    maxWidth: '500px',
-    padding: '20px',
-    borderRadius: '8px',
-    background: '#fff',
-    zIndex: 1100, // 모달 내부 컨텐츠의 z-index 설정
-  },
-};
 
 export const userInfoStyles: {
   container: SxProps;
@@ -55,6 +30,7 @@ export const userInfoStyles: {
     },
   },
 };
+
 export const activityStyles: Record<string, SxProps<Theme>> = {
   container: {
     display: 'flex',
@@ -111,7 +87,6 @@ export const activityStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
-
 export const myPageGridStyles = {
   gridContainer: {
     display: 'grid',
@@ -150,7 +125,7 @@ export const profileStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
-//맨위로 가기 스크롤 버튼
+// 맨위로 가기 스크롤 버튼
 export const scrollButtonStyles: SxProps<Theme> = {
   position: 'fixed',
   bottom: 16,
@@ -162,4 +137,3 @@ export const scrollButtonStyles: SxProps<Theme> = {
     height: '40px',
   },
 };
-

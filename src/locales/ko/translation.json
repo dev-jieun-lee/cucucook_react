@@ -108,6 +108,11 @@
     "ceo" : "대표 : 지으네림",
     "account" : "사랑시 고백구 행복동 12345 (주)쿠쿠쿡"
 
+  },
+  "alert": {
+    "login_required": "이 페이지를 이용하려면 로그인해야 합니다.",
+    "confirm_requirement_save":"변경사항을 저장하시겠습니까?",
+    "requirement_saved":"변경사항이 저장되었습니다",
+    "canceled":"취소하였습니다"
   }
-
 }

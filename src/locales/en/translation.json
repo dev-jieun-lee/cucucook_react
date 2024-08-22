@@ -108,6 +108,12 @@
     "ceo" : "ceo : jiunerim",
     "account" : "12345, Happiness-dong, Confession-gu, Sarangsi, Republic of Korea Co., Ltd"
 
+  },
+  "alert": {
+    "login_required": "You must be logged in to access this page.",
+    "confirm_requirement_save": "Do you want to save the changes?",
+    "requirement_saved": "Changes have been saved.",
+    "canceled": "Operation canceled."
   }
 
 }
