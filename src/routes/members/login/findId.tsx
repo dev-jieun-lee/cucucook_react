@@ -74,8 +74,8 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     if (!formik.values.verificationCode) {
       setLoginError(t('members.verification_code_required')); // 인증번호가 빈 경우
     } else {
-      // 인증번호 확인 로직을 구현해야 합니다.
-      // 이 부분은 인증 서버와 연동하여 인증을 처리하는 코드가 필요합니다.
+      // 인증번호 확인 로직을 구현.
+      // 이 부분은 인증 서버와 연동하여 인증을 처리하는 코드가 필요.
     }
   };
 
