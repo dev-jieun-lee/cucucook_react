@@ -1,4 +1,4 @@
-import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
+import { AlertColor, Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
 import {Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton, DrawerTop} from "../memu/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
@@ -15,19 +15,30 @@ import MenuIcon from "@mui/icons-material/Menu"; // 드로어 메뉴 아이콘
 import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
 import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
+import { useMutation } from "react-query";
+import { logout } from "../routes/members/api";
+import Profile from "../Profile";
+import { useAuth } from "../auth/AuthContext";
 
 interface IForm {
   keyword: string; // 검색어 폼 데이터
 }
 
 function Header({ isDarkMode, onToggleTheme }: any) {
+  const { setUser, setLoggedIn } = useAuth();
+  const { user, isLoggedIn } = useAuth();
+  const [loggedIn, setLoggedInUser] = useState(true); // 로그인 상태
   const { t } = useTranslation(); // 번역 함수
   const [searchOpen, setSearchOpen] = useState(false); // 검색창 상태
   const [isScrolled, setIsScrolled] = useState(false); // 스크롤 상태
   const [open, setOpen] = useState(false); // 드로어 상태
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
-  const [loggedIn, setLoggedIn] = useState(true); // 로그인 상태
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
+  const [logoutError, setLogoutError] = useState<string | null>(null); //로그아웃 오류 메시지 상태
+
+console.log(user);
 
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -51,15 +62,25 @@ function Header({ isDarkMode, onToggleTheme }: any) {
     navigate("/login"); // 페이지 이동
   };
 
-  // 로그아웃 처리
-  const handleLogout = async () => {
-    try {
-      await axios.post('/api/members/logout'); // 로그아웃 API 호출
-      setLoggedIn(false); // 상태 업데이트
-      navigate("/"); // 메인 페이지로 이동
-    } catch (error) {
+  //로그아웃 api 호출
+  const { mutate: logoutMutation, isLoading, error } = useMutation(logout, {
+    onSuccess: () => {
+      // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
+      setLoggedInUser(false); // 로그인 상태를 업데이트
+      navigate('/'); // 메인 페이지로 이동
+      setUser(null);
+    },
+    onError: (error) => {
       console.error('로그아웃 오류: ', error); // 오류 처리
+      setLogoutError('로그아웃에 실패했습니다.');
+      setSnackbarSeverity('error'); // 에러 시 빨간색
+      setSnackbarOpen(true); // 스낵바 열기
     }
+  });
+
+  // 로그아웃 처리
+  const handleLogout = () => {
+    logoutMutation(); // 로그아웃 요청 실행
   };
 
   // 검색창 열기/닫기
@@ -135,6 +156,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             {loggedIn ? (
               <>
                 {/* 로그인 상태일 때 로그아웃 버튼 */}
+                {/* <Profile name = {}/>/// */}
                 <Tooltip title={t("members.logout")}>
                   <IconButton
                     className="logout"

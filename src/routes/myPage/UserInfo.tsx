@@ -1,9 +1,8 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box } from '@mui/material';
+import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box, Modal } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import Modal from 'react-modal';
 import { modalStyles, userInfoStyles } from './myPageStyles';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,78 +38,79 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, close
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={closeModal}
-      contentLabel="Change Password"
-      style={modalStyles}
-    >
-      <h2>{t('menu.mypage.change_password')}</h2>
-      <form onSubmit={formik.handleSubmit}>
-        <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-          <InputLabel htmlFor="newPassword">{t('menu.mypage.new_password')}</InputLabel>
-          <OutlinedInput
-            id="newPassword"
-            label={t('menu.mypage.new_password')}
-            type={showPassword ? 'text' : 'password'}
-            value={formik.values.newPassword}
-            onChange={formik.handleChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
+    <></>
+    // <Modal
+    //   isOpen={isOpen}
+    //   onRequestClose={closeModal}
+    //   contentLabel="Change Password"
+    //   style={modalStyles}
+    // >
+    //   <h2>{t('menu.mypage.change_password')}</h2>
+    //   <form onSubmit={formik.handleSubmit}>
+    //     <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
+    //       <InputLabel htmlFor="newPassword">{t('menu.mypage.new_password')}</InputLabel>
+    //       <OutlinedInput
+    //         id="newPassword"
+    //         label={t('menu.mypage.new_password')}
+    //         type={showPassword ? 'text' : 'password'}
+    //         value={formik.values.newPassword}
+    //         onChange={formik.handleChange}
+    //         endAdornment={
+    //           <InputAdornment position="end">
+    //             <IconButton
+    //               aria-label="toggle password visibility"
+    //               onClick={handleClickShowPassword}
+    //               onMouseDown={handleMouseDownPassword}
+    //               edge="end"
+    //             >
+    //               {showPassword ? <VisibilityOff /> : <Visibility />}
+    //             </IconButton>
+    //           </InputAdornment>
+    //         }
+    //       />
+    //     </FormControl>
 
-        <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-          <InputLabel htmlFor="confirmNewPassword">{t('menu.mypage.confirm_new_password')}</InputLabel>
-          <OutlinedInput
-            id="confirmNewPassword"
-            label={t('menu.mypage.confirm_new_password')}
-            type={showPassword ? 'text' : 'password'}
-            value={formik.values.confirmNewPassword}
-            onChange={formik.handleChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
+    //     <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
+    //       <InputLabel htmlFor="confirmNewPassword">{t('menu.mypage.confirm_new_password')}</InputLabel>
+    //       <OutlinedInput
+    //         id="confirmNewPassword"
+    //         label={t('menu.mypage.confirm_new_password')}
+    //         type={showPassword ? 'text' : 'password'}
+    //         value={formik.values.confirmNewPassword}
+    //         onChange={formik.handleChange}
+    //         endAdornment={
+    //           <InputAdornment position="end">
+    //             <IconButton
+    //               aria-label="toggle password visibility"
+    //               onClick={handleClickShowPassword}
+    //               onMouseDown={handleMouseDownPassword}
+    //               edge="end"
+    //             >
+    //               {showPassword ? <VisibilityOff /> : <Visibility />}
+    //             </IconButton>
+    //           </InputAdornment>
+    //         }
+    //       />
+    //     </FormControl>
 
-        <Button
-          color="primary"
-          variant="contained"
-          type="submit"
-          fullWidth
-          sx={userInfoStyles.button}
-        >
-          {t('menu.mypage.save_changes')}
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={closeModal}
-          fullWidth
-        >
-          {t('menu.mypage.cancel')}
-        </Button>
-      </form>
-    </Modal>
+    //     <Button
+    //       color="primary"
+    //       variant="contained"
+    //       type="submit"
+    //       fullWidth
+    //       sx={userInfoStyles.button}
+    //     >
+    //       {t('menu.mypage.save_changes')}
+    //     </Button>
+    //     <Button
+    //       variant="outlined"
+    //       onClick={closeModal}
+    //       fullWidth
+    //     >
+    //       {t('menu.mypage.cancel')}
+    //     </Button>
+    //   </form>
+    // </Modal>
   );
 };
 

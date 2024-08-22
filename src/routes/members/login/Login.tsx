@@ -11,19 +11,30 @@ import {
   InputLabel,
   OutlinedInput,
   Snackbar,
-  Alert
+  Alert,
+  AlertColor
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useMutation } from "react-query";
+import { login } from "../api";
+import SnackbarCustom from "../../../components/SnackbarCustom";
+import { useAuth } from "../../../auth/AuthContext";
+
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
+  const { setUser, setLoggedIn } = useAuth(); //로그인 상태관리리
   const { t } = useTranslation();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [saveId, setSaveId] = React.useState(false);
-  const [loginError, setLoginError] = React.useState<string | null>(null); // 로그인 오류 메시지 상태
+  const [showPassword, setShowPassword] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
+
+  const [saveId, setSaveId] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
 
   const navigate = useNavigate();
   const location = useLocation(); // 이전 페이지 정보
@@ -32,45 +43,58 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
+  
+
+  const mutation = useMutation(login, {
+    onSuccess: (data) => {
+      if (data === 'Login successful') {
+        setUser({ id: data.userId, name: data.name });
+        // 로그인 성공 시 이전 페이지로 이동
+        const from = location.state?.from || '/';
+        navigate(from);
+      } else {
+        // 로그인 실패 처리
+        setLoginError(data || '로그인 실패');
+        setSnackbarOpen(true); // 스낵바 열기
+        setSnackbarSeverity('error'); // 실패 시 빨간색
+        setSnackbarOpen(true); // 스낵바 열기
+      }
+    },
+    onError: (error) => {
+      console.error('로그인 오류: ', error);
+      setLoginError('정확한 값을 입력해주세요.');
+      setSnackbarSeverity('error'); // 에러 시 빨간색
+      setSnackbarOpen(true); // 스낵바 열기
+    }
+  });
 
   const formik = useFormik({
     initialValues: {
-      id: "",
-      password: "",
+      userId: '',
+      password: '',
     },
-    onSubmit: async (form, { resetForm }) => {
-      try {
-        const response = await axios.post('http://localhost:8080/api/members/login', {
-          userId: form.id,
-          password: form.password,
-        });
-
-        if (response.data === 'Login successful') {
-          // 로그인 성공 시 이전 페이지로 이동
-          const from = location.state?.from || '/'; // 원래 있던 페이지로 이동
-          navigate(from);
-        } else {
-          // 로그인 실패 처리
-          setLoginError(response.data || 'Login failed');
+    onSubmit: (values, { resetForm }) => {
+      mutation.mutate(values, {
+        onSettled: () => {
+          // 비밀번호 초기화
           resetForm({
             values: {
-              id: form.id,
-              password: '', // 비밀번호 초기화
+              userId: values.userId,
+              password: '',
             },
           });
         }
-      } catch (error) {
-        console.error('로그인 오류: ', error);
-        setLoginError('An unexpected error occurred');
-        resetForm({
-          values: {
-            id: form.id,
-            password: '', // 비밀번호 초기화
-          },
-        });
-      }
+      });
     },
+    
   });
+
+
+  //스낵바 닫기
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
 
   const handleSaveIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSaveId(event.target.checked);
@@ -90,11 +114,11 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
         <form className="form" onSubmit={formik.handleSubmit}>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
-            <InputLabel htmlFor="id">{t('members.id')}</InputLabel>
+            <InputLabel htmlFor="userId">{t('members.id')}</InputLabel>
             <OutlinedInput
-              id="id"
+              id="userId"
               label={t('members.id')}
-              value={formik.values.id}
+              value={formik.values.userId}
               onChange={formik.handleChange}
             />
           </FormControl>
@@ -152,7 +176,14 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         </ButtonArea>
 
         {/* 로그인 오류 메시지 표시 */}
-        <Snackbar
+        {/* 스낵바 컴포넌트 */}
+        <SnackbarCustom
+          open={snackbarOpen}
+          message={loginError || ''}
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+        />
+        {/* <Snackbar
           open={!!loginError}
           autoHideDuration={6000}
           onClose={() => setLoginError(null)}
@@ -160,7 +191,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           <Alert onClose={() => setLoginError(null)} severity="error">
             {loginError}
           </Alert>
-        </Snackbar>
+        </Snackbar> */}
       </LoginWrapper>
     </Wrapper>
   );

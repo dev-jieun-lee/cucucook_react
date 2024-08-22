@@ -3,8 +3,7 @@ import { Avatar, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 
 
-///임시
-function Profile(){
+function Profile(name : string){
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -17,7 +16,7 @@ function Profile(){
     <>
       <div style={{display : 'flex'}} onClick={handleClick}>
         <Avatar className='avatar' src="/broken-image.jpg"  />
-        <span style={{marginTop : '10px', marginLeft : '5px'}}>나입니다</span>
+        <span style={{marginTop : '10px', marginLeft : '5px'}}>{name}</span>
       </div>
       <Menu
         anchorEl={anchorEl}
