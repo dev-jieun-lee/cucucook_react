@@ -17,7 +17,7 @@ import axios from 'axios';
 import { Wrapper } from '../../../styles/CommonStyles';
 import { LoginWrapper } from './LoginStyle';
 
-function FindId({ isDarkMode }: { isDarkMode: boolean }) {
+function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const [verificationTimeout, setVerificationTimeout] = React.useState<number | null>(null);
   const [loginError, setLoginError] = React.useState<string | null>(null); // 오류 메시지 상태
@@ -29,20 +29,23 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     initialValues: {
       name: '',
       phoneNumber: '',
+      id: '',
       verificationCode: '',
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
       if (!values.name) errors.name = t('members.name_required'); // 이름이 빈 경우
       if (!values.phoneNumber) errors.phoneNumber = t('members.phone_number_required'); // 휴대폰 번호가 빈 경우
+      if (!values.id) errors.id = t('members.id_required'); // 아이디가 빈 경우
       if (showVerificationBox && !values.verificationCode) errors.verificationCode = t('members.verification_code_required'); // 인증번호가 빈 경우
       return errors;
     },
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://localhost:8080/api/members/find-id', {
+        const response = await axios.post('http://localhost:8080/api/members/find-pw', {
           name: values.name,
           phoneNumber: values.phoneNumber,
+          id: values.id,
           verificationCode: values.verificationCode,
         });
 
@@ -54,19 +57,19 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
           setLoginError(t('members.no_member_info')); // 등록된 회원정보가 없는 경우
         }
       } catch (error) {
-        console.error('아이디 찾기 오류: ', error);
+        console.error('비밀번호 찾기 오류: ', error);
         setLoginError(t('members.unexpected_error')); // 예상치 못한 오류 발생
       }
     },
   });
 
   const handleVerifyClick = () => {
-    if (formik.values.name && formik.values.phoneNumber) {
+    if (formik.values.name && formik.values.phoneNumber && formik.values.id) {
       setShowVerificationBox(true);
       setVerificationTimeout(Date.now() + 60000); // Set timeout to 1 minute
       setTimer(60); // Initialize timer
     } else {
-      setLoginError(t('members.name_or_phone_required')); // 이름 또는 전화번호 입력이 필요한 경우
+      setLoginError(t('members.name_or_phone_or_id_required')); // 이름, 전화번호, 아이디 입력이 필요한 경우
     }
   };
 
@@ -107,6 +110,11 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     formik.setFieldValue('phoneNumber', value);
   };
 
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.replace(/[^a-zA-Z0-9!@#$%^&*()_+{}\[\]:;"\'<>,.?/\\-]/g, ''); // Allow specific characters
+    formik.setFieldValue('id', value);
+  };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.replace(/[^가-힣]/g, ''); // Only allow Korean characters
     formik.setFieldValue('name', value);
@@ -116,7 +124,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     <Wrapper>
       <LoginWrapper>
         <div className="title">
-          <Typography variant="h6">{t("members.find_id")}</Typography>
+          <Typography variant="h6">{t("members.find_pw")}</Typography>
         </div>
 
         <form className="form" onSubmit={formik.handleSubmit}>
@@ -126,9 +134,20 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               id="name"
               label={t('members.name')}
               value={formik.values.name}
-              onChange={handleNameChange}
+              onChange={handleNameChange} // Use handleNameChange to filter input
             />
             {formik.errors.name && <FormHelperText error>{formik.errors.name}</FormHelperText>}
+          </FormControl>
+
+          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined" error={!!formik.errors.id}>
+            <InputLabel htmlFor="id">{t('members.id')}</InputLabel>
+            <OutlinedInput
+              id="id"
+              label={t('members.id')}
+              value={formik.values.id}
+              onChange={handleIdChange} // Use handleIdChange to filter input
+            />
+            {formik.errors.id && <FormHelperText error>{formik.errors.id}</FormHelperText>}
           </FormControl>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -138,7 +157,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                 id="phoneNumber"
                 label={t('members.phone_number')}
                 value={formik.values.phoneNumber}
-                onChange={handlePhoneNumberChange}
+                onChange={handlePhoneNumberChange} // Use handlePhoneNumberChange to filter input
               />
               {formik.errors.phoneNumber && <FormHelperText error>{formik.errors.phoneNumber}</FormHelperText>}
             </FormControl>
@@ -193,11 +212,11 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
             fullWidth
             sx={{ mt: 2 }}
           >
-            {t("members.find_id")}
+            {t("members.find_pw")}
           </Button>
         </form>
 
-        {/* 아이디 찾기 결과 표시 */}
+        {/* 비밀번호 찾기 결과 표시 */}
         {foundId && (
           <Typography variant="body1" color="text.primary" sx={{ mt: 2 }}>
             {t("members.found_id_message", { id: foundId })}
@@ -219,4 +238,4 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   );
 }
 
-export default FindId;
+export default FindPw;
