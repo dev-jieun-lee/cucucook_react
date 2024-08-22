@@ -102,7 +102,11 @@
     "email_required": "Email is a required field.",
     "email_domain_required": "Email domain is a required field.",
     "id_available" : "Your ID is available.",
-    "phone_number_error" : "Server error"
+    "phone_number_error" : "Server error",
+    "verification_code" : "Verification Code",
+    "find_id" : "Find My ID",
+    "verify" : "Verify"
+
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
@@ -113,7 +117,9 @@
     "login_required": "You must be logged in to access this page.",
     "confirm_requirement_save": "Do you want to save the changes?",
     "requirement_saved": "Changes have been saved.",
-    "canceled": "Operation canceled."
+    "canceled": "Operation canceled.",
+    "confirmed" : "Ok"
+
   }
 
 }

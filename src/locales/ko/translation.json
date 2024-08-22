@@ -102,7 +102,18 @@
     "email_required": "이메일은 필수 입력 항목입니다.",
     "email_domain_required": "이메일 도메인은 필수 항목입니다.",
     "id_available" : "사용 가능한 ID입니다",
-    "phone_number_error" : "서버오류 입니다. 관리자에게 문의하세요"
+    "phone_number_error" : "서버오류 입니다. 관리자에게 문의하세요",
+    "verification_code" : "인증번호",
+    "find_id" : "아이디 찾기",
+    "verify" : "인증하기",
+    "name": "이름",
+    "confirmed": "확인",
+    "verification_code_required": "문자로 온 인증번호를 입력 후 확인 버튼을 눌러주세요.",
+    "no_member_info": "등록된 회원정보가 없습니다.",
+    "unexpected_error": "예상치 못한 오류가 발생했습니다.",
+    "name_or_phone_required": "이름과 휴대폰 번호를 입력해주세요.",
+    "verification_code_expiry": "인증번호 유효시간: {{seconds}}초",
+    "found_id_message": "찾으신 아이디는 {{id}}입니다."
   },
   "Footer" : {
     "ceo" : "대표 : 지으네림",
@@ -113,6 +124,7 @@
     "login_required": "이 페이지를 이용하려면 로그인해야 합니다.",
     "confirm_requirement_save":"변경사항을 저장하시겠습니까?",
     "requirement_saved":"변경사항이 저장되었습니다",
-    "canceled":"취소하였습니다"
+    "canceled":"취소하였습니다",
+    "confirmed" : "확인"
   }
 }
