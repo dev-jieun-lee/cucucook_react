@@ -1,84 +1,78 @@
-import { Drawer, IconButton, Tooltip } from "@mui/material";
-import Menu from "../memu/Menu";
-import {
-  Col,
-  Logo,
-  MotionInput,
-  MotionSearch,
-  Nav,
-  MotionIconButton,
-  DrawerTop,
-} from "../memu/MenuStyle";
-import Profile from "./Profile";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import SearchIcon from "@mui/icons-material/Search";
-import LoginIcon from "@mui/icons-material/Login";
-import { motion, useAnimation, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import DrawerMenu from "../memu/DrawerMenu";
+import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
+import Menu from "../memu/Menu"; // 메뉴 컴포넌트
+import {Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton, DrawerTop} from "../memu/MenuStyle"; // 스타일 컴포넌트
+import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
+import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아이콘
+import SearchIcon from "@mui/icons-material/Search"; // 검색 아이콘
+import LoginIcon from "@mui/icons-material/Login"; // 로그인 아이콘
+import LogoutIcon from "@mui/icons-material/Logout"; // 로그아웃 아이콘
+import { motion, useAnimation } from "framer-motion"; // 애니메이션 라이브러리
+import { useEffect, useState } from "react"; // React 훅
+import { useNavigate } from "react-router-dom"; // 페이지 이동 훅
+import { useForm } from "react-hook-form"; // 폼 관리 훅
+import { useTranslation } from "react-i18next"; // 다국어 지원 훅
+import MenuIcon from "@mui/icons-material/Menu"; // 드로어 메뉴 아이콘
+import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
+import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
+import axios from "axios"; // HTTP 요청 라이브러리
 
-///임시 검색 인터페이스
 interface IForm {
-  keyword: string;
+  keyword: string; // 검색어 폼 데이터
 }
 
 function Header({ isDarkMode, onToggleTheme }: any) {
-  const { t } = useTranslation();
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const inputAnimation = useAnimation();
-  const navigate = useNavigate();
+  const { t } = useTranslation(); // 번역 함수
+  const [searchOpen, setSearchOpen] = useState(false); // 검색창 상태
+  const [isScrolled, setIsScrolled] = useState(false); // 스크롤 상태
+  const [open, setOpen] = useState(false); // 드로어 상태
+  const inputAnimation = useAnimation(); // 애니메이션 제어
+  const navigate = useNavigate(); // 페이지 이동 함수
+  const [loggedIn, setLoggedIn] = useState(true); // 로그인 상태
 
-  // 드로어 메뉴 열기/닫기
+  // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
+    setOpen(newOpen); // 상태 업데이트
   };
 
-  //스크롤이벤트
+  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
-    if (window.scrollY > 0) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
-    }
+    setIsScrolled(window.scrollY > 0); // 스크롤 상태 업데이트
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll); // 이벤트 리스너 추가
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll); // 이벤트 리스너 제거
     };
   }, []);
 
-  //로그인 페이지로 이동
+  // 로그인 페이지 이동
   const handleLoginClick = () => {
-    navigate("/login");
+    navigate("/login"); // 페이지 이동
   };
 
-  //검색창 열기/ 닫기
-  const toggleSearch = () => {
-    if (searchOpen) {
-      inputAnimation.start({
-        scaleX: 0,
-      });
-    } else {
-      inputAnimation.start({
-        scaleX: 1,
-      });
+  // 로그아웃 처리
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/members/logout'); // 로그아웃 API 호출
+      setLoggedIn(false); // 상태 업데이트
+      navigate("/"); // 메인 페이지로 이동
+    } catch (error) {
+      console.error('로그아웃 오류: ', error); // 오류 처리
     }
-    setSearchOpen((prev) => !prev);
   };
 
-  const { register, handleSubmit } = useForm<IForm>();
+  // 검색창 열기/닫기
+  const toggleSearch = () => {
+    inputAnimation.start({
+      scaleX: searchOpen ? 0 : 1, // 애니메이션 설정
+    });
+    setSearchOpen(prev => !prev); // 상태 토글
+  };
+
+  const { register, handleSubmit } = useForm<IForm>(); // 폼 훅
   const onValid = (data: IForm) => {
-    navigate(`/search?keyword=${data.keyword}`);
+    navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
 
   return (
@@ -88,9 +82,9 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           <Logo>
             <a href="/main">
               {isDarkMode ? (
-                <img className="logo" src="/logo/dark_logo2.png" alt="logo" />
+                <img className="logo" src="/logo/dark_logo2.png" alt="logo" /> // 어두운 모드 로고
               ) : (
-                <img className="logo" src="/logo/light_logo2.png" alt="logo" />
+                <img className="logo" src="/logo/light_logo2.png" alt="logo" /> // 밝은 모드 로고
               )}
             </a>
           </Logo>
@@ -104,7 +98,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             <MotionSearch onSubmit={handleSubmit(onValid)}>
               <MotionIconButton
                 onClick={toggleSearch}
-                animate={{ x: searchOpen ? -215 : 0 }}
+                animate={{ x: searchOpen ? -215 : 0 }} // 애니메이션
                 transition={{ type: "linear" }}
               >
                 <IconButton className="search-icon">
@@ -112,11 +106,11 @@ function Header({ isDarkMode, onToggleTheme }: any) {
                 </IconButton>
               </MotionIconButton>
               <MotionInput
-                {...register("keyword", { required: true, minLength: 2 })}
-                initial={{ scaleX: 0 }}
-                animate={inputAnimation}
+                {...register("keyword", { required: true, minLength: 2 })} // 폼 유효성 검사
+                initial={{ scaleX: 0 }} // 애니메이션 초기값
+                animate={inputAnimation} // 애니메이션 제어
                 transition={{ type: "linear" }}
-                placeholder={t("sentence.searching")}
+                placeholder={t("sentence.searching")} // 플레이스홀더
               />
             </MotionSearch>
           </Tooltip>
@@ -124,56 +118,88 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             <IconButton
               className="mode-icon"
               color="primary"
-              onClick={onToggleTheme}
+              onClick={onToggleTheme} // 테마 전환
             >
               {isDarkMode ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
           </Tooltip>
-          {/* 드로어 열기 버튼 추가 */}
+          {/* 드로어 열기 버튼 */}
           <IconButton
             className="drawer-icon"
             color="primary"
-            onClick={toggleDrawer(true)}
+            onClick={toggleDrawer(true)} // 드로어 열기
           >
             <MenuIcon />
           </IconButton>
           <div className="profile-area">
-            <Tooltip title={t("members.login")}>
-              <IconButton
-                className="login"
-                color="primary"
-                onClick={handleLoginClick}
-              >
-                <LoginIcon />
-              </IconButton>
-            </Tooltip>
-            {/* <Profile /> */}
+            {loggedIn ? (
+              <>
+                {/* 로그인 상태일 때 로그아웃 버튼 */}
+                <Tooltip title={t("members.logout")}>
+                  <IconButton
+                    className="logout"
+                    color="primary"
+                    onClick={handleLogout} // 로그아웃
+                  >
+                    <LogoutIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              // 로그인 상태가 아닐 때 로그인 버튼
+              <Tooltip title={t("members.login")}>
+                <IconButton
+                  className="login"
+                  color="primary"
+                  onClick={handleLoginClick} // 로그인 페이지 이동
+                >
+                  <LoginIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
         </div>
       </Col>
 
-      {/* 드로어 컴포넌트 추가 */}
+      {/* 드로어 컴포넌트 */}
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <div style={{ width: "100%", padding: "0" }} role="presentation">
           {/* 드로어 상단 */}
           <DrawerTop>
-            <div
-              className="drawer-login-btn"
-              onClick={() => {
-                toggleDrawer(false)();
-                handleLoginClick();
-              }}
-            >
-              <IconButton className="icon-btn" color="primary">
-                <LoginIcon />
-              </IconButton>
-              <span>{t("members.login")}</span>
-            </div>
+            {loggedIn ? (
+              // 로그인 상태일 때 로그아웃 버튼
+              <div
+                className="drawer-login-btn"
+                onClick={() => {
+                  toggleDrawer(false)(); // 드로어 닫기
+                  handleLogout(); // 로그아웃
+                }}
+              >
+                <IconButton className="icon-btn" color="primary">
+                  <LogoutIcon />
+                </IconButton>
+                <span>{t("members.logout")}</span>
+              </div>
+            ) : (
+              // 로그인 상태가 아닐 때 로그인 버튼
+              <div
+                className="drawer-login-btn"
+                onClick={() => {
+                  toggleDrawer(false)(); // 드로어 닫기
+                  handleLoginClick(); // 로그인 페이지 이동
+                }}
+              >
+                <IconButton className="icon-btn" color="primary">
+                  <LoginIcon />
+                </IconButton>
+                <span>{t("members.login")}</span>
+              </div>
+            )}
             <IconButton className="icon-btn" onClick={toggleDrawer(false)}>
-              <CloseIcon />
+              <CloseIcon /> {/* 드로어 닫기 버튼 */}
             </IconButton>
           </DrawerTop>
-          <DrawerMenu toggleDrawer={toggleDrawer} />
+          <DrawerMenu toggleDrawer={toggleDrawer} /> {/* 드로어 메뉴 */}
         </div>
       </Drawer>
     </Nav>

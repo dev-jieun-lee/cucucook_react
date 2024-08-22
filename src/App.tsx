@@ -19,6 +19,15 @@ import MemberRecipe from './routes/recipe/MemberRecipe';
 import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
 import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
+import Profile from './routes/myPage/Profile';
+import Activity from './routes/myPage/Activity';
+import UserInfo from './routes/myPage/UserInfo';
+import LikeLists from './routes/myPage/LikeLists';
+import MyWrites from './routes/myPage/MyWrites';
+import MyReplys from './routes/myPage/MyReplys';
+import SignupPageOne from './routes/members/signUp/SignupPageOne';
+import SignupPageTwo from './routes/members/signUp/SignupPageTwo';
+
 import Join from './routes/members/login/join/Join';
 import Notice from './routes/board/Notice';
 import Faq from './routes/board/Faq';
@@ -48,7 +57,7 @@ function App() {
                 sx={{
                   backgroundColor: 'background.default',
                   minHeight: '65vh',
-                  width: '100%', 
+                  width: '100%',
                   margin: '120px auto',
                 }}
               >
@@ -64,15 +73,11 @@ function App() {
                       </Box>
                     }
                   />
-                  {/* 회원가입 */}
-                  <Route
-                    path="/join"
-                    element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
-                        <Join isDarkMode={isDarkMode} />
-                      </Box>
-                    }
-                  />
+
+                   {/* 회원가입 */}
+                   <Route path="/signup/signupPageOne" element={<SignupPageOne />} />
+                   <Route path="/signup/signupPageTwo" element={<SignupPageTwo/>} />
+
 
                   {/* 레시피 */}
                   <Route
@@ -133,21 +138,62 @@ function App() {
 
                   {/* 마이페이지 */}
                   <Route
-                    path="/mypage"
+                    path="/mypage/profile"
                     element={
                       <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Profile isDarkMode={false}/>
+                      </Box>
+                    }
+                  />
+                   <Route
+                    path="/mypage/UserInfo"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <MypageSideMenu isDarkMode={isDarkMode} />
+                        <UserInfo isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
                   <Route
-                    path="/activity"
+                    path="/mypage/activity"
                     element={
-                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto'  }}>
                         <MypageSideMenu isDarkMode={isDarkMode} />
+                        <Activity isDarkMode={false} />
                       </Box>
                     }
                   />
+                  <Route
+                    path="/mypage/LikeLists"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
+                        <LikeLists isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyWrites"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
+                        <MyWrites isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                  <Route
+                    path="/mypage/MyReplys"
+                    element={
+                      <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                      <MypageSideMenu isDarkMode={isDarkMode} />
+                        <MyReplys isDarkMode={false} />
+                      </Box>
+                    }
+                  />
+                 {/* 회원가입 */}
+                  <Route path="/signup" element={<SignupPageOne />} />
+
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
               </Box>
