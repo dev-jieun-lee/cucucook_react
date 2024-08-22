@@ -90,6 +90,10 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     navigate('findId');
   };
 
+  const handleFindingPw = () => {
+    navigate('findPw');
+  };
+
   return (
     <Wrapper>
       <LoginWrapper>
@@ -156,7 +160,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         <ButtonArea>
           <button type="button"onClick={handleFindingId}>{t("members.finding_id")}</button>
           <span />
-          <button type="button">{t("members.finding_pw")}</button>
+          <button type="button" onClick={handleFindingPw}>{t("members.finding_pw")}</button>
           <span />
           <button type="button" onClick={handleSignup}>{t("members.join")}</button>
         </ButtonArea>
