@@ -12,7 +12,7 @@ const SignupPageTwo = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const phoneNumber = location.state?.phoneNumber;
+  const phoneNumber = location.state?.phone;
 
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState('');
