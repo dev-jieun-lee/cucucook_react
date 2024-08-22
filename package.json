@@ -15,7 +15,7 @@
     "@types/node": "^16.18.104",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "cucucook_react": "file:",
     "formik": "^2.4.6",
     "framer-motion": "^11.3.19",
@@ -24,12 +24,14 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.1",
     "react-i18next": "^15.0.1",
+    "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.25.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "styled-components": "^6.1.12",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -37,6 +39,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -54,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-modal": "^3.16.3"
   }
 }
