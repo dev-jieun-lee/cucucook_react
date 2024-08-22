@@ -14,6 +14,7 @@ import { useState } from "react";
 import { getBoardList } from "./api";
 import { useQuery } from "react-query";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import Loading from "../../components/Loading";
 
 function Faq(){
   const { t } = useTranslation();
@@ -42,17 +43,16 @@ function Faq(){
     fetchBoardList
   );
 
-  console.log(boardList);
   
 
   //로딩
   if (boardListLoading) {
-    return <div>{t("loading")}</div>;
+    return <Loading/>;
   }
 
   return (
     <Wrapper>
-      <TitleCenter>{t("menu.board.notice")}</TitleCenter>
+      <TitleCenter>{t("menu.board.FAQ")}</TitleCenter>
       <SearchArea>
         <Select
           className="select-category"
