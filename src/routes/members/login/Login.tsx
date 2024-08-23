@@ -51,19 +51,24 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           }
         );
 
-        if (response.data === "Login successful") {
+        if (response.data.token) {
+          // JWT 토큰 저장
+          localStorage.setItem("token", response.data.token);
           // 로그인 성공 시 이전 페이지로 이동
           const from = location.state?.from || "/"; // 원래 있던 페이지로 이동
           navigate(from);
+          alert("로그인 성공: " + JSON.stringify(response.data)); //제이슨파싱방식
+          console.log("로그인 성공", response.data); //콘솔데이터
         } else {
           // 로그인 실패 처리
-          setLoginError(response.data || "Login failed");
+          setLoginError(response.data.message || "Login failed");
           resetForm({
             values: {
               id: form.id,
               password: "", // 비밀번호 초기화
             },
           });
+          alert("로그인실패" + response.data);
         }
       } catch (error) {
         console.error("로그인 오류: ", error);
@@ -84,6 +89,14 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
   const handleSignup = () => {
     navigate("/signup");
+  };
+
+  const handleFindingId = () => {
+    navigate("findId");
+  };
+
+  const handleFindingPw = () => {
+    navigate("findPw");
   };
 
   return (
@@ -147,9 +160,13 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         </form>
 
         <ButtonArea>
-          <button type="button">{t("members.finding_id")}</button>
+          <button type="button" onClick={handleFindingId}>
+            {t("members.finding_id")}
+          </button>
           <span />
-          <button type="button">{t("members.finding_pw")}</button>
+          <button type="button" onClick={handleFindingPw}>
+            {t("members.finding_pw")}
+          </button>
           <span />
           <button type="button" onClick={handleSignup}>
             {t("members.join")}

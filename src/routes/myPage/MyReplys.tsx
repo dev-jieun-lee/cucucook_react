@@ -3,6 +3,7 @@ import { Typography, Box, Button, List, ListItem, ListItemText, Fab } from '@mui
 import { KeyboardArrowUp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { activityStyles, scrollButtonStyles } from './myPageStyles';
+import { Wrapper } from '../../styles/CommonStyles';
 
 // 더미 데이터 생성 함수
 const fetchMyReplies = async (page: number, pageSize: number) => {
@@ -58,6 +59,7 @@ const MyReplys: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   };
 
   return (
+    <Wrapper>
     <Box sx={activityStyles.container}>
       <Box sx={activityStyles.content}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -98,6 +100,7 @@ const MyReplys: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         </Fab>
       )}
     </Box>
+    </Wrapper>
   );
 };
 
