@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from '@mui/icons-material/Person';
+import { register, idCheck } from '../api'; // api.ts 파일에서 import
 
 const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -26,8 +27,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   // 아이디 중복검사
   const idDuplicationChk = async (id: string) => {
     try {
-      const response = await axios.get(`/api/members/check-id/${id}`);
-      return response.data;
+      const isAvailable = await idCheck(id);
+      return isAvailable;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('ID availability check failed:', error.message, error.response?.data);
@@ -48,6 +49,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       .filter(char => jamo.test(char))
       .join('');
   };
+
   const validate = async (values: any) => {
     const errors: any = {};
     const { id, password, confirmPassword, name, emailLocalPart, emailDomain, customDomain } = values;
@@ -56,8 +58,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.id = t('members.id_required');
     } else if (id.length < 4) {
       errors.id = t('members.id_min');
-    } else if (!/^[a-zA-Z]+$/.test(id)) {
-      errors.id = t('members.id_alphabetic_only'); // 영문자만 허용
+    } else if (!/^[a-zA-Z0-9]+$/.test(id)) { // 영문자와 숫자 허용
+      errors.id = t('members.id_alphanumeric_only'); // 영문자와 숫자만 허용
     } else {
       const isAvailable = await idDuplicationChk(id);
       setIsIdAvailable(isAvailable);
@@ -109,7 +111,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     onSubmit: async (values) => {
       const fullEmail = values.emailLocalPart + '@' + (values.emailDomain === 'custom' ? customDomain : values.emailDomain);
       try {
-        await axios.post('/api/members/register', {
+        await register({
           userId: values.id,
           password: values.password,
           name: values.name,
@@ -133,10 +135,11 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   // 아이디 입력값 정제 함수
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // 영문자만 허용
-    const value = event.target.value.replace(/[^a-zA-Z]/g, '');
+    // 영문자와 숫자만 허용
+    const value = event.target.value.replace(/[^a-zA-Z0-9]/g, '');
     formik.setFieldValue('id', value);
   };
+
 
   // 이름 입력값 정제 함수
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +147,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const filteredValue = convertToHangul(value);
     formik.setFieldValue('name', filteredValue);
   };
-
 
   return (
     <Wrapper>
