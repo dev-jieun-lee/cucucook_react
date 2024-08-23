@@ -127,7 +127,6 @@
     "verification_code": "인증번호",
     "find_id": "아이디 찾기",
     "verify": "인증하기",
-    "name": "이름",
     "confirmed": "확인",
     "verification_code_required": "문자로 온 인증번호를 입력 후 확인 버튼을 눌러주세요.",
     "no_member_info": "등록된 회원정보가 없습니다.",
@@ -136,7 +135,13 @@
     "verification_code_expiry": "인증번호 유효시간: {{seconds}}초",
     "found_id_message": "찾으신 아이디는 {{id}}입니다.",
     "find_pw": "비밀번호 찾기",
-    "name_or_phone_or_id_required": "이름, 전화번호, 아이디를 모두 입력해 주세요."
+    "name_or_phone_or_id_required": "이름, 전화번호, 아이디를 모두 입력해 주세요.",
+    "name": "이름",
+    "phone": "전화번호",
+    "email": "이메일",
+    "Notifiction": "알림",
+    "duplication_chk": "중복확인",
+    "temp_password_issued": "등록한 메일로 임시비밀번호를 발급하였습니다.로그인 후 반드시 비밀번호를 변경해 주세요."
   },
   "Footer": {
     "ceo": "대표 : 지으네림",

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import axios from 'axios';
 import { TextField, Button, FormControl, Select, MenuItem, FormHelperText, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -8,16 +7,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from '@mui/icons-material/Person';
+import { register, idCheck } from '../api'; // api.ts 파일에서 import
 
 const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const phoneNumber = location.state?.phone;
-
-  console.log(phoneNumber);
-  
-
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState('');
 
@@ -28,11 +24,11 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     { value: 'custom', label: t('members.custom_input') }
   ];
 
-  //아이디 중복검사
+  // 아이디 중복검사
   const idDuplicationChk = async (id: string) => {
     try {
-      const response = await axios.get(`/api/members/check-id/${id}`);
-      return response.data;
+      const isAvailable = await idCheck(id);
+      return isAvailable;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('ID availability check failed:', error.message, error.response?.data);
@@ -43,6 +39,17 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   };
 
+  // 한글 자모로 변환하는 함수
+  const convertToHangul = (input: string) => {
+    const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
+    const isHangul = input.split('').every(char => jamo.test(char));
+    if (!isHangul) return '';
+
+    return input.split('')
+      .filter(char => jamo.test(char))
+      .join('');
+  };
+
   const validate = async (values: any) => {
     const errors: any = {};
     const { id, password, confirmPassword, name, emailLocalPart, emailDomain, customDomain } = values;
@@ -51,6 +58,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.id = t('members.id_required');
     } else if (id.length < 4) {
       errors.id = t('members.id_min');
+    } else if (!/^[a-zA-Z0-9]+$/.test(id)) { // 영문자와 숫자 허용
+      errors.id = t('members.id_alphanumeric_only'); // 영문자와 숫자만 허용
     } else {
       const isAvailable = await idDuplicationChk(id);
       setIsIdAvailable(isAvailable);
@@ -71,8 +80,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     if (!name) {
       errors.name = t('members.name_required');
-    } else if (!/^[가-힣]+$/.test(name)) {
-      errors.name = t('members.name_korean_only');
+    } else if (!/^[가-힣\s]+$/.test(name)) { // 모든 한글 문자와 공백 허용
+      errors.name = t('members.name_korean_only'); // 한글만 허용
     }
 
     if (!emailLocalPart) {
@@ -102,7 +111,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     onSubmit: async (values) => {
       const fullEmail = values.emailLocalPart + '@' + (values.emailDomain === 'custom' ? customDomain : values.emailDomain);
       try {
-        await axios.post('/api/members/register', {
+        await register({
           userId: values.id,
           password: values.password,
           name: values.name,
@@ -124,6 +133,21 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   });
 
+  // 아이디 입력값 정제 함수
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // 영문자와 숫자만 허용
+    const value = event.target.value.replace(/[^a-zA-Z0-9]/g, '');
+    formik.setFieldValue('id', value);
+  };
+
+
+  // 이름 입력값 정제 함수
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const filteredValue = convertToHangul(value);
+    formik.setFieldValue('name', filteredValue);
+  };
+
   return (
     <Wrapper>
       <LoginWrapper>
@@ -138,7 +162,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               name="id"
               label={t('members.id')}
               value={formik.values.id}
-              onChange={formik.handleChange}
+              onChange={handleIdChange} // 아이디 정제 핸들러 사용
               onBlur={formik.handleBlur}
               error={formik.touched.id && Boolean(formik.errors.id)}
               helperText={formik.touched.id && formik.errors.id}
@@ -188,7 +212,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               name="name"
               label={t('menu.mypage.name')}
               value={formik.values.name}
-              onChange={formik.handleChange}
+              onChange={handleNameChange} // 이름 정제 핸들러 사용
               onBlur={formik.handleBlur}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
@@ -207,38 +231,38 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             />
           </FormControl>
 
-          <FormControl className='input-form' >
+          <FormControl className='input-form'>
             <div className='input-email'>
-                <TextField
-                  className='email'
-                  id="emailLocalPart"
-                  name="emailLocalPart"
-                  label={t('text.email')}
-                  value={formik.values.emailLocalPart}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.emailLocalPart && Boolean(formik.errors.emailLocalPart)}
-                  helperText={formik.touched.emailLocalPart && formik.errors.emailLocalPart}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">@</InputAdornment>,
-                  }}
-                />
-                <Select
-                  className='email-select'
-                  id="emailDomain"
-                  name="emailDomain"
-                  value={formik.values.emailDomain}
-                  onChange={(e) => {
-                    formik.handleChange(e);
-                    if (e.target.value !== 'custom') {
-                      setCustomDomain('');
-                    }
-                  }}
-                >
-                  {emailDomains.map(domain => (
-                    <MenuItem key={domain.value} value={domain.value}>{domain.label}</MenuItem>
-                  ))}
-                </Select>
+              <TextField
+                className='email'
+                id="emailLocalPart"
+                name="emailLocalPart"
+                label={t('text.email')}
+                value={formik.values.emailLocalPart}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.emailLocalPart && Boolean(formik.errors.emailLocalPart)}
+                helperText={formik.touched.emailLocalPart && formik.errors.emailLocalPart}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">@</InputAdornment>,
+                }}
+              />
+              <Select
+                className='email-select'
+                id="emailDomain"
+                name="emailDomain"
+                value={formik.values.emailDomain}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  if (e.target.value !== 'custom') {
+                    setCustomDomain('');
+                  }
+                }}
+              >
+                {emailDomains.map(domain => (
+                  <MenuItem key={domain.value} value={domain.value}>{domain.label}</MenuItem>
+                ))}
+              </Select>
             </div>
             {formik.values.emailDomain === 'custom' && (
               <TextField
