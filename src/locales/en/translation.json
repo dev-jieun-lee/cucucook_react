@@ -94,7 +94,7 @@
     "finding_id": "Find My ID",
     "password": "Password",
     "password_chk": "Password Check",
-    "finding_pw": "Finding Fassword",
+    "finding_pw": "Finding Password",
     "terms_title": "Terms and Conditions for Signup",
     "phone_verification": "Phone Verification",
     "phone_number": "Phone Number",
@@ -125,14 +125,20 @@
     "verification_code": "Verification Code",
     "find_id": "Find My ID",
     "verify": "Verify",
-    "name": "Name",
     "confirmed": "Confirmed",
     "verification_code_required": "Please enter the verification code.",
     "no_member_info": "No registered member information.",
     "unexpected_error": "An unexpected error occurred.",
     "name_or_phone_or_id_required": "Please enter name, phone number, and ID.",
     "verification_code_expiry": "Verification code expiry: {{seconds}} seconds",
-    "found_id_message": "The ID you found is {{id}}."
+    "found_id_message": "The ID you found is {{id}}.",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "Notifiction": "Notifiction",
+    "duplication_chk": "Duplication Check",
+
+    "temp_password_issued": "A temporary password has been issued to the registered email. Please change your password after logging in."
   },
   "Footer": {
     "ceo": "ceo : jiunerim",
