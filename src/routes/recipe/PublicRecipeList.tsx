@@ -105,12 +105,14 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("전체(27)");
 
   const orderList = [
-    t("text.최신순"),
-    t("text.조회수순"),
-    t("text:댓글순"),
-    t("text.평점순"),
+    t("text.recent_order"),
+    t("text.count_order"),
+    t("text.comment_order"),
+    t("text.rate_order"),
   ];
-  const [selectedOrder, setSelectedOrder] = useState<string>(t("text.최신순"));
+  const [selectedOrder, setSelectedOrder] = useState<string>(
+    t("text.recent_order")
+  );
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
