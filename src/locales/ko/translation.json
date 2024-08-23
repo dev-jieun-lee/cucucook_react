@@ -130,7 +130,8 @@
     "phone" : "전화번호",
     "email" : "이메일",
     "Notifiction" : "알림",
-    "duplication_chk" : "중복확인"
+    "duplication_chk" : "중복확인",
+    "temp_password_issued" : "등록한 메일로 임시비밀번호를 발급하였습니다.로그인 후 반드시 비밀번호를 변경해 주세요."
 
   },
   "Footer" : {
