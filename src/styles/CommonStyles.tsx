@@ -28,3 +28,4 @@ export const TitleBasic = styled.div`
   font-weight: 600;
   color: ${(props) => props.theme.mainColor};;
 `;
+

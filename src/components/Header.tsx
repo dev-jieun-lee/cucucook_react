@@ -1,4 +1,4 @@
-import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
+import { AlertColor, Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
 import {Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton, DrawerTop} from "../memu/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
@@ -15,19 +15,23 @@ import MenuIcon from "@mui/icons-material/Menu"; // 드로어 메뉴 아이콘
 import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
 import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
+import { useMutation } from "react-query";
+import { logout } from "../routes/members/api";
+import Profile from "../Profile";
+import { useAuth } from "../auth/AuthContext";
 
 interface IForm {
   keyword: string; // 검색어 폼 데이터
 }
 
 function Header({ isDarkMode, onToggleTheme }: any) {
+  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
   const { t } = useTranslation(); // 번역 함수
   const [searchOpen, setSearchOpen] = useState(false); // 검색창 상태
   const [isScrolled, setIsScrolled] = useState(false); // 스크롤 상태
   const [open, setOpen] = useState(false); // 드로어 상태
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
-  const [loggedIn, setLoggedIn] = useState(true); // 로그인 상태
 
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -51,16 +55,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
     navigate("/login"); // 페이지 이동
   };
 
-  // 로그아웃 처리
-  const handleLogout = async () => {
-    try {
-      await axios.post('/api/members/logout'); // 로그아웃 API 호출
-      setLoggedIn(false); // 상태 업데이트
-      navigate("/"); // 메인 페이지로 이동
-    } catch (error) {
-      console.error('로그아웃 오류: ', error); // 오류 처리
-    }
-  };
 
   // 검색창 열기/닫기
   const toggleSearch = () => {
@@ -74,6 +68,9 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
+
+  console.log(user);
+
 
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
@@ -132,19 +129,10 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             <MenuIcon />
           </IconButton>
           <div className="profile-area">
-            {loggedIn ? (
-              <>
-                {/* 로그인 상태일 때 로그아웃 버튼 */}
-                <Tooltip title={t("members.logout")}>
-                  <IconButton
-                    className="logout"
-                    color="primary"
-                    onClick={handleLogout} // 로그아웃
-                  >
-                    <LogoutIcon />
-                  </IconButton>
-                </Tooltip>
-              </>
+            {user ? (
+              <div className="profile">
+                <Profile/>
+              </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
               <Tooltip title={t("members.login")}>
@@ -166,19 +154,10 @@ function Header({ isDarkMode, onToggleTheme }: any) {
         <div style={{ width: "100%", padding: "0" }} role="presentation">
           {/* 드로어 상단 */}
           <DrawerTop>
-            {loggedIn ? (
+            {user ? (
               // 로그인 상태일 때 로그아웃 버튼
-              <div
-                className="drawer-login-btn"
-                onClick={() => {
-                  toggleDrawer(false)(); // 드로어 닫기
-                  handleLogout(); // 로그아웃
-                }}
-              >
-                <IconButton className="icon-btn" color="primary">
-                  <LogoutIcon />
-                </IconButton>
-                <span>{t("members.logout")}</span>
+              <div className="icon-btn profile">
+                <Profile/>
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
