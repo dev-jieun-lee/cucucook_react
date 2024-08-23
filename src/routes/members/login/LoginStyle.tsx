@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import media from "../../../styles/MediaQuery";
+import { OutlinedInput } from "@mui/material";
 
 export const LoginWrapper = styled.div`
   text-align: center;
@@ -74,4 +75,26 @@ export const ButtonArea = styled.div`
     border-left: 1px solid;
     color: ${(props) => props.theme.mainColor};
   }
+`;
+
+//아이디찾기박스
+export const InputStyled = styled(OutlinedInput)`
+  border-color: ${(props) => props.theme.borderColor}; // 테두리 색상 설정
+`;
+
+export const ResultBox = styled.div`
+  padding: 16px;
+  border: 1px solid ${(props) => props.theme.borderColor}; // 입력창과 동일한 테두리 색상
+  border-radius: 8px;
+  box-shadow: ${(props) => props.theme.boxShadow};
+  background-color: ${(props) => props.theme.bgColor};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
 `;

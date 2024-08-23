@@ -3,6 +3,7 @@ import { Typography, Box, Button, Avatar, Fab } from '@mui/material';
 import { KeyboardArrowUp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 추가
 import { activityStyles, myPageGridStyles, scrollButtonStyles } from './myPageStyles';
+import { Wrapper } from '../../styles/CommonStyles';
 
 // 더미 데이터 생성 함수
 const fetchLikeLists = async (page: number, pageSize: number) => {
@@ -60,6 +61,7 @@ const LikeLists: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   };
 
   return (
+    <Wrapper>
     <Box sx={activityStyles.container}>
       <Box sx={activityStyles.content}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -96,6 +98,7 @@ const LikeLists: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         </Fab>
       )}
     </Box>
+    </Wrapper>
   );
 };
 

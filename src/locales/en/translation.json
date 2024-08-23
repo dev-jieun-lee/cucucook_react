@@ -83,10 +83,10 @@
     "signup": "Sign Up",
     "id": "ID",
     "save_id": "Save ID",
-    "finding_id": "Finding Iㅇ",
+    "finding_id": "Find My ID",
     "password": "Password",
     "password_chk": "Password Check",
-    "finding_pw": "Finding Fassword",
+    "finding_pw": "Finding Password",
     "terms_title": "Terms and Conditions for Signup",
     "phone_verification": "Phone Verification",
     "phone_number": "Phone Number",
@@ -113,10 +113,28 @@
     "email_required": "Email is a required field.",
     "email_domain_required": "Email domain is a required field.",
     "id_available": "Your ID is available.",
-    "phone_number_error": "Server error"
+    "phone_number_error": "Server error",
+    "verification_code": "Verification Code",
+    "find_id": "Find My ID",
+    "verify": "Verify",
+    "name": "Name",
+    "confirmed": "Confirmed",
+    "verification_code_required": "Please enter the verification code.",
+    "no_member_info": "No registered member information.",
+    "unexpected_error": "An unexpected error occurred.",
+    "name_or_phone_or_id_required": "Please enter name, phone number, and ID.",
+    "verification_code_expiry": "Verification code expiry: {{seconds}} seconds",
+    "found_id_message": "The ID you found is {{id}}."
   },
   "Footer": {
     "ceo": "ceo : jiunerim",
     "account": "12345, Happiness-dong, Confession-gu, Sarangsi, Republic of Korea Co., Ltd"
+  },
+  "alert": {
+    "login_required": "You must be logged in to access this page.",
+    "confirm_requirement_save": "Do you want to save the changes?",
+    "requirement_saved": "Changes have been saved.",
+    "canceled": "Operation canceled.",
+    "confirmed": "Ok"
   }
 }
