@@ -19,7 +19,6 @@ import MemberRecipe from './routes/recipe/MemberRecipe';
 import BoardSideMenu from './memu/sideMenu/BoardSideMenu';
 import MypageSideMenu from './memu/sideMenu/MypageSideMenu';
 import Login from './routes/members/login/Login';
-import Join from './routes/members/login/join/Join';
 import Notice from './routes/board/Notice';
 import Faq from './routes/board/Faq';
 import Main from './routes/main/Main';
