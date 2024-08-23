@@ -13,69 +13,56 @@ import {
   InputAdornment
 } from '@mui/material';
 import { useFormik } from 'formik';
-import axios from 'axios';
 import { Wrapper } from '../../../styles/CommonStyles';
 import { LoginWrapper } from './LoginStyle';
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
-  const [verificationTimeout, setVerificationTimeout] = React.useState<number | null>(null);
+  const [verificationTimeout, setVerificationTimeout] = React.useState<number | null>(null); // 인증 타임아웃 상태
   const [loginError, setLoginError] = React.useState<string | null>(null); // 오류 메시지 상태
   const [foundId, setFoundId] = React.useState<string | null>(null); // 찾은 아이디 상태
-  const [showVerificationBox, setShowVerificationBox] = React.useState(false);
-  const [timer, setTimer] = React.useState<number>(0);
+  const [showVerificationBox, setShowVerificationBox] = React.useState(false); // 인증 입력 박스 표시 여부
+  const [timer, setTimer] = React.useState<number>(0); // 타이머 상태
+  const [noMemberInfo, setNoMemberInfo] = React.useState(false); // 회원정보가 없는 상태
+  const [verificationComplete, setVerificationComplete] = React.useState(false); // 인증 완료 상태
+  const [showResult, setShowResult] = React.useState(false); // 결과 표시 여부
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      phoneNumber: '',
-      verificationCode: '',
+      name: '', // 사용자 이름
+      phoneNumber: '', // 전화번호
+      verificationCode: '', // 인증번호
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
       if (!values.name) errors.name = t('members.name_required'); // 이름이 빈 경우
-      if (!values.phoneNumber) errors.phoneNumber = t('members.phone_number_required'); // 휴대폰 번호가 빈 경우
+      if (!values.phoneNumber) errors.phoneNumber = t('members.phone_number_required'); // 전화번호가 빈 경우
       if (showVerificationBox && !values.verificationCode) errors.verificationCode = t('members.verification_code_required'); // 인증번호가 빈 경우
       return errors;
     },
     onSubmit: async (values) => {
-      try {
-        const response = await axios.post('http://localhost:8080/api/members/find-id', {
-          name: values.name,
-          phoneNumber: values.phoneNumber,
-          verificationCode: values.verificationCode,
-        });
-
-        if (response.data.foundId) {
-          setFoundId(response.data.foundId);
-          setLoginError(null);
-        } else {
-          setFoundId(null);
-          setLoginError(t('members.no_member_info')); // 등록된 회원정보가 없는 경우
-        }
-      } catch (error) {
-        console.error('아이디 찾기 오류: ', error);
-        setLoginError(t('members.unexpected_error')); // 예상치 못한 오류 발생
-      }
+      // 인증번호 입력 후 처리 로직은 생략
     },
   });
 
   const handleVerifyClick = () => {
     if (formik.values.name && formik.values.phoneNumber) {
-      setShowVerificationBox(true);
-      setVerificationTimeout(Date.now() + 60000); // Set timeout to 1 minute
-      setTimer(60); // Initialize timer
+      setShowVerificationBox(true); // 인증 입력 박스 표시
+      setVerificationTimeout(Date.now() + 60000); // 1분 타임아웃 설정
+      setTimer(60); // 타이머 초기화
+      setNoMemberInfo(false); // 회원정보 상태 초기화
+      setVerificationComplete(false); // 인증 완료 상태 초기화
+      setShowResult(false); // 결과 표시 초기화
     } else {
-      setLoginError(t('members.name_or_phone_required')); // 이름 또는 전화번호 입력이 필요한 경우
+      setLoginError(t('members.name_or_phone_required')); // 이름 또는 전화번호 입력 필요
     }
   };
 
   const handleConfirmClick = () => {
     if (!formik.values.verificationCode) {
-      setLoginError(t('members.verification_code_required')); // 인증번호가 빈 경우
+      setLoginError(t('members.verification_code_required')); // 인증번호 입력 필요
     } else {
-      // 인증번호 확인 로직을 구현.
-      // 이 부분은 인증 서버와 연동하여 인증을 처리하는 코드가 필요.
+      setVerificationComplete(true); // 인증 완료 상태로 변경
     }
   };
 
@@ -83,19 +70,19 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     if (verificationTimeout) {
       const interval = setInterval(() => {
         if (Date.now() > verificationTimeout) {
-          clearInterval(interval);
-          setVerificationTimeout(null); // Stop the timer
-          setTimer(0); // Reset timer
+          clearInterval(interval); // 타이머 정지
+          setVerificationTimeout(null); // 타임아웃 상태 초기화
+          setTimer(0); // 타이머 초기화
         } else {
-          setTimer(Math.max(0, Math.floor((verificationTimeout - Date.now()) / 1000))); // Update timer
+          setTimer(Math.max(0, Math.floor((verificationTimeout - Date.now()) / 1000))); // 타이머 업데이트
         }
       }, 1000);
 
-      return () => clearInterval(interval);
+      return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
     }
   }, [verificationTimeout]);
 
-  // Convert seconds to MM:SS format
+  // 초를 MM:SS 형식으로 변환
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -103,13 +90,48 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   const handlePhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^0-9]/g, ''); // Only allow numeric values
+    const value = event.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
     formik.setFieldValue('phoneNumber', value);
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^가-힣]/g, ''); // Only allow Korean characters
+    const value = event.target.value.replace(/[^가-힣]/g, ''); // 한글만 허용
     formik.setFieldValue('name', value);
+  };
+
+  const handleFindIdClick = async () => {
+    if (verificationComplete) {
+      // 실제 회원정보 조회 로직으로 변경
+      try {
+        // 회원 정보 조회 API 호출 (여기서는 mockup을 사용)
+        const response = await fetch('/api/find-id', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formik.values.name,
+            phoneNumber: formik.values.phoneNumber,
+            verificationCode: formik.values.verificationCode,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.foundId) {
+          setFoundId(result.foundId); // 찾은 아이디 설정
+          setNoMemberInfo(false); // 회원정보가 있는 경우
+        } else {
+          setFoundId(null); // 찾은 아이디 없음
+          setNoMemberInfo(true); // 회원정보가 없는 경우
+        }
+        setShowResult(true); // 결과 표시
+      } catch (error) {
+        setLoginError(t('members.find_id_error')); // 아이디 찾기 오류
+      }
+    } else {
+      setLoginError(t('members.verify_first')); // 인증을 먼저 완료해야 함
+    }
   };
 
   return (
@@ -162,7 +184,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                     label={t('members.verification_code')}
                     value={formik.values.verificationCode}
                     onChange={formik.handleChange}
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} // Numeric input only
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} // 숫자 입력만 허용
                     endAdornment={
                       <InputAdornment position="end">
                         <Typography variant="caption" color="text.secondary">
@@ -189,19 +211,58 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
             className="submit-button"
             color="primary"
             variant="contained"
-            type="submit"
+            type="button"
             fullWidth
             sx={{ mt: 2 }}
+            onClick={handleFindIdClick}
           >
             {t("members.find_id")}
           </Button>
         </form>
 
         {/* 아이디 찾기 결과 표시 */}
-        {foundId && (
-          <Typography variant="body1" color="text.primary" sx={{ mt: 2 }}>
-            {t("members.found_id_message", { id: foundId })}
-          </Typography>
+        {showResult && (
+          <Box sx={{ mt: 2 }}>
+            {foundId && !noMemberInfo && (
+              <Typography variant="body1" color="text.primary">
+                {t("members.found_id_message", { id: foundId })}
+              </Typography>
+            )}
+            {noMemberInfo && (
+              <Typography variant="body1" color="text.primary">
+                {t("members.no_member_info")}
+              </Typography>
+            )}
+            <Box sx={{ display: 'flex', gap: '8px', mt: 2 }}>
+              {foundId && !noMemberInfo && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href="/login"
+                  >
+                    {t('members.login')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href="/find-pw"
+                  >
+                    {t('members.find_pw')}
+                  </Button>
+                </>
+              )}
+              {noMemberInfo && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  href="/signup"
+                >
+                  {t('members.join')}
+                </Button>
+              )}
+            </Box>
+          </Box>
         )}
 
         {/* 오류 메시지 표시 */}
