@@ -25,20 +25,13 @@ interface IForm {
 }
 
 function Header({ isDarkMode, onToggleTheme }: any) {
-  const { setUser, setLoggedIn } = useAuth();
-  const { user, isLoggedIn } = useAuth();
-  const [loggedIn, setLoggedInUser] = useState(true); // 로그인 상태
+  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
   const { t } = useTranslation(); // 번역 함수
   const [searchOpen, setSearchOpen] = useState(false); // 검색창 상태
   const [isScrolled, setIsScrolled] = useState(false); // 스크롤 상태
   const [open, setOpen] = useState(false); // 드로어 상태
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
-  const [logoutError, setLogoutError] = useState<string | null>(null); //로그아웃 오류 메시지 상태
-
-console.log(user);
 
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -62,26 +55,6 @@ console.log(user);
     navigate("/login"); // 페이지 이동
   };
 
-  //로그아웃 api 호출
-  const { mutate: logoutMutation, isLoading, error } = useMutation(logout, {
-    onSuccess: () => {
-      // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
-      setLoggedInUser(false); // 로그인 상태를 업데이트
-      navigate('/'); // 메인 페이지로 이동
-      setUser(null);
-    },
-    onError: (error) => {
-      console.error('로그아웃 오류: ', error); // 오류 처리
-      setLogoutError('로그아웃에 실패했습니다.');
-      setSnackbarSeverity('error'); // 에러 시 빨간색
-      setSnackbarOpen(true); // 스낵바 열기
-    }
-  });
-
-  // 로그아웃 처리
-  const handleLogout = () => {
-    logoutMutation(); // 로그아웃 요청 실행
-  };
 
   // 검색창 열기/닫기
   const toggleSearch = () => {
@@ -95,6 +68,9 @@ console.log(user);
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
+
+  console.log(user);
+  
 
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
@@ -153,20 +129,10 @@ console.log(user);
             <MenuIcon />
           </IconButton>
           <div className="profile-area">
-            {loggedIn ? (
-              <>
-                {/* 로그인 상태일 때 로그아웃 버튼 */}
-                {/* <Profile name = {}/>/// */}
-                <Tooltip title={t("members.logout")}>
-                  <IconButton
-                    className="logout"
-                    color="primary"
-                    onClick={handleLogout} // 로그아웃
-                  >
-                    <LogoutIcon />
-                  </IconButton>
-                </Tooltip>
-              </>
+            {user ? (
+              <div className="profile">
+                <Profile/>
+              </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
               <Tooltip title={t("members.login")}>
@@ -188,19 +154,10 @@ console.log(user);
         <div style={{ width: "100%", padding: "0" }} role="presentation">
           {/* 드로어 상단 */}
           <DrawerTop>
-            {loggedIn ? (
+            {user ? (
               // 로그인 상태일 때 로그아웃 버튼
-              <div
-                className="drawer-login-btn"
-                onClick={() => {
-                  toggleDrawer(false)(); // 드로어 닫기
-                  handleLogout(); // 로그아웃
-                }}
-              >
-                <IconButton className="icon-btn" color="primary">
-                  <LogoutIcon />
-                </IconButton>
-                <span>{t("members.logout")}</span>
+              <div className="icon-btn profile">
+                <Profile/>
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼

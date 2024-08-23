@@ -47,7 +47,8 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
   const mutation = useMutation(login, {
     onSuccess: (data) => {
-      if (data === 'Login successful') {
+      if (data) {
+        //auth 데이터 전달
         setUser({ id: data.userId, name: data.name });
         // 로그인 성공 시 이전 페이지로 이동
         const from = location.state?.from || '/';
@@ -55,7 +56,6 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
       } else {
         // 로그인 실패 처리
         setLoginError(data || '로그인 실패');
-        setSnackbarOpen(true); // 스낵바 열기
         setSnackbarSeverity('error'); // 실패 시 빨간색
         setSnackbarOpen(true); // 스낵바 열기
       }
@@ -101,7 +101,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   const handleSignup = () => {
-    navigate('/signup');
+    navigate('/signup/intro');
   };
 
   return (
@@ -183,15 +183,6 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
         />
-        {/* <Snackbar
-          open={!!loginError}
-          autoHideDuration={6000}
-          onClose={() => setLoginError(null)}
-        >
-          <Alert onClose={() => setLoginError(null)} severity="error">
-            {loginError}
-          </Alert>
-        </Snackbar> */}
       </LoginWrapper>
     </Wrapper>
   );
