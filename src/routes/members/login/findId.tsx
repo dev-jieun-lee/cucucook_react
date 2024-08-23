@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import { Wrapper } from '../../../styles/CommonStyles';
-import { LoginWrapper, ResultBox } from './LoginStyle'; // ResultBox import
+import { LoginWrapper, ResultBox } from './LoginStyle';
 import { useMutation } from 'react-query';
 
 // API 호출 함수
@@ -32,6 +32,17 @@ const fetchId = async (data: { name: string, phone: string, verificationCode: st
   }
 
   return response.json();
+};
+
+// 한글 자모로 변환하는 함수
+const convertToHangul = (input: string) => {
+  const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
+  const isHangul = input.split('').every(char => jamo.test(char));
+  if (!isHangul) return '';
+
+  return input.split('')
+    .filter(char => jamo.test(char))
+    .join('');
 };
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {
@@ -128,8 +139,14 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^가-힣]/g, '');
-    formik.setFieldValue('name', value);
+    const value = event.target.value;
+    const filteredValue = convertToHangul(value);
+    formik.setFieldValue('name', filteredValue);
+  };
+
+  const handleVerificationCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
+    formik.setFieldValue('verificationCode', value);
   };
 
   const handleFindIdClick = async () => {
@@ -156,9 +173,11 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
             <InputLabel htmlFor="name">{t('members.name')}</InputLabel>
             <OutlinedInput
               id="name"
+              name="name"
               label={t('members.name')}
               value={formik.values.name}
               onChange={handleNameChange}
+              inputProps={{ maxLength: 50 }}
             />
             {formik.errors.name && <FormHelperText error>{formik.errors.name}</FormHelperText>}
           </FormControl>
@@ -171,6 +190,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                 label={t('members.phone_number')}
                 value={formik.values.phone}
                 onChange={handlePhoneNumberChange}
+                inputProps={{ maxLength: 15 }} // 입력 길이 제한
               />
               {formik.errors.phone && <FormHelperText error>{formik.errors.phone}</FormHelperText>}
             </FormControl>
@@ -193,7 +213,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                     id="verificationCode"
                     label={t('members.verification_code')}
                     value={formik.values.verificationCode}
-                    onChange={formik.handleChange}
+                    onChange={handleVerificationCodeChange}
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                     endAdornment={
                       <InputAdornment position="end">

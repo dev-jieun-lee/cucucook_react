@@ -1,72 +1,29 @@
-import { useTranslation } from "react-i18next";
-import { ButtonArea, LoginWrapper } from "./LoginStyle";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Snackbar,
-  Alert,
-  AlertColor
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import { Wrapper } from "../../../styles/CommonStyles";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useMutation } from "react-query";
-import { login } from "../api";
-import SnackbarCustom from "../../../components/SnackbarCustom";
-import { useAuth } from "../../../auth/AuthContext";
-
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFormik } from 'formik';
+import { Button, Checkbox, FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel, OutlinedInput, Snackbar, Alert, AlertColor } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Wrapper } from '../../../styles/CommonStyles';
+import { LoginWrapper, ButtonArea } from './LoginStyle';
+import { login } from '../api';
+import SnackbarCustom from '../../../components/SnackbarCustom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LockOpenIcon from '@mui/icons-material/LockOpen'; // 아이콘 임포트
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { setUser, setLoggedIn } = useAuth(); //로그인 상태관리리
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
-
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error');
   const [saveId, setSaveId] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
-
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation(); // 이전 페이지 정보
+  const location = useLocation();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-
-
-  const mutation = useMutation(login, {
-    onSuccess: (data) => {
-      if (data) {
-        //auth 데이터 전달
-        setUser({ id: data.userId, name: data.name });
-        // 로그인 성공 시 이전 페이지로 이동
-        const from = location.state?.from || '/';
-        navigate(from);
-      } else {
-        // 로그인 실패 처리
-        setLoginError(data || '로그인 실패');
-        setSnackbarSeverity('error'); // 실패 시 빨간색
-        setSnackbarOpen(true); // 스낵바 열기
-      }
-    },
-    onError: (error) => {
-      console.error('로그인 오류: ', error);
-      setLoginError('정확한 값을 입력해주세요.');
-      setSnackbarSeverity('error'); // 에러 시 빨간색
-      setSnackbarOpen(true); // 스낵바 열기
-    }
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -75,49 +32,32 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     },
     onSubmit: async (form, { resetForm }) => {
       try {
-        const response = await axios.post('http://localhost:8080/api/members/login', {
-          userId: form.userId,
-          password: form.password,
-        });
+        const data = await login(form);
+        alert(JSON.stringify(data, null, 2));
 
-        if (response.data.token) {
-          // JWT 토큰 저장
-          localStorage.setItem('token', response.data.token);
-          // 로그인 성공 시 이전 페이지로 이동
-          const from = location.state?.from || '/'; // 원래 있던 페이지로 이동
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+
+          const from = location.state?.from || '/';
           navigate(from);
-          alert("로그인 성공: " + JSON.stringify(response.data));//제이슨파싱방식
-          console.log("로그인 성공", response.data);//콘솔데이터
+
         } else {
-          // 로그인 실패 처리
-          setLoginError(response.data.message || 'Login failed');
-          resetForm({
-            values: {
-              userId: form.userId,
-              password: '', // 비밀번호 초기화
-            },
-          });
-          alert("로그인실패"+response.data);
+          setLoginError('로그인 실패');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         }
       } catch (error) {
         console.error('로그인 오류: ', error);
-        setLoginError('An unexpected error occurred');
-        resetForm({
-          values: {
-            userId: form.userId,
-            password: '', // 비밀번호 초기화
-          },
-        });
+        setLoginError('정확한 값을 입력해주세요.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     },
   });
 
-
-  //스낵바 닫기
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
 
   const handleSaveIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSaveId(event.target.checked);
@@ -128,11 +68,20 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   const handleFindingId = () => {
-    navigate('findId');
+    navigate('/findId');
   };
 
   const handleFindingPw = () => {
-    navigate('findPw');
+    navigate('/findPw');
+  };
+
+  // 아이디 입력값 검증 함수
+  const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    // 영어와 숫자만 허용
+    if (/^[a-zA-Z0-9]*$/.test(value)) {
+      formik.setFieldValue('userId', value);
+    }
   };
 
   return (
@@ -150,7 +99,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               id="userId"
               label={t('members.id')}
               value={formik.values.userId}
-              onChange={formik.handleChange}
+              onChange={handleUserIdChange}
             />
           </FormControl>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
@@ -199,15 +148,13 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         </form>
 
         <ButtonArea>
-          <button type="button"onClick={handleFindingId}>{t("members.finding_id")}</button>
+          <button type="button" onClick={handleFindingId}>{t("members.finding_id")}</button>
           <span />
           <button type="button" onClick={handleFindingPw}>{t("members.finding_pw")}</button>
           <span />
           <button type="button" onClick={handleSignup}>{t("members.join")}</button>
         </ButtonArea>
 
-        {/* 로그인 오류 메시지 표시 */}
-        {/* 스낵바 컴포넌트 */}
         <SnackbarCustom
           open={snackbarOpen}
           message={loginError || ''}
