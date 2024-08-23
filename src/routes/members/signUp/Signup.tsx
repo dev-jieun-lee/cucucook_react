@@ -5,14 +5,18 @@ import axios from 'axios';
 import { TextField, Button, FormControl, Select, MenuItem, FormHelperText, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LoginWrapper } from "../login/LoginStyle";
+import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
+import PersonIcon from '@mui/icons-material/Person';
 
-const SignupPageTwo = () => {
+const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const phoneNumber = location.state?.phoneNumber;
+
+  console.log(phoneNumber);
+  
 
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState('');
@@ -24,7 +28,8 @@ const SignupPageTwo = () => {
     { value: 'custom', label: t('members.custom_input') }
   ];
 
-  const checkIdAvailability = async (id: string) => {
+  //아이디 중복검사
+  const idDuplicationChk = async (id: string) => {
     try {
       const response = await axios.get(`/api/members/check-id/${id}`);
       return response.data;
@@ -47,7 +52,7 @@ const SignupPageTwo = () => {
     } else if (id.length < 4) {
       errors.id = t('members.id_min');
     } else {
-      const isAvailable = await checkIdAvailability(id);
+      const isAvailable = await idDuplicationChk(id);
       setIsIdAvailable(isAvailable);
       if (!isAvailable) {
         errors.id = t('members.id_in_use');
@@ -122,11 +127,12 @@ const SignupPageTwo = () => {
   return (
     <Wrapper>
       <LoginWrapper>
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <h2>{t('members.signup')}</h2>
+        <div className="title">
+          <PersonIcon className="title-icon" />
+          <span>{t("members.join")}</span>
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <FormControl fullWidth margin="normal">
+          <FormControl className='input-form'>
             <TextField
               id="id"
               name="id"
@@ -146,7 +152,7 @@ const SignupPageTwo = () => {
             )}
           </FormControl>
 
-          <FormControl fullWidth margin="normal">
+          <FormControl className='input-form'>
             <TextField
               id="password"
               name="password"
@@ -161,7 +167,7 @@ const SignupPageTwo = () => {
             />
           </FormControl>
 
-          <FormControl fullWidth margin="normal">
+          <FormControl className='input-form'>
             <TextField
               id="confirmPassword"
               name="confirmPassword"
@@ -176,7 +182,7 @@ const SignupPageTwo = () => {
             />
           </FormControl>
 
-          <FormControl fullWidth margin="normal">
+          <FormControl className='input-form'>
             <TextField
               id="name"
               name="name"
@@ -190,7 +196,7 @@ const SignupPageTwo = () => {
             />
           </FormControl>
 
-          <FormControl fullWidth margin="normal">
+          <FormControl className='input-form'>
             <TextField
               id="phone"
               name="phone"
@@ -201,42 +207,45 @@ const SignupPageTwo = () => {
             />
           </FormControl>
 
-          <FormControl fullWidth margin="normal">
-            <TextField
-              id="emailLocalPart"
-              name="emailLocalPart"
-              label={t('Email ID')}
-              value={formik.values.emailLocalPart}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.emailLocalPart && Boolean(formik.errors.emailLocalPart)}
-              helperText={formik.touched.emailLocalPart && formik.errors.emailLocalPart}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">@</InputAdornment>,
-              }}
-            />
-            <Select
-              id="emailDomain"
-              name="emailDomain"
-              value={formik.values.emailDomain}
-              onChange={(e) => {
-                formik.handleChange(e);
-                if (e.target.value !== 'custom') {
-                  setCustomDomain('');
-                }
-              }}
-              displayEmpty
-              fullWidth
-            >
-              {emailDomains.map(domain => (
-                <MenuItem key={domain.value} value={domain.value}>{domain.label}</MenuItem>
-              ))}
-            </Select>
+          <FormControl className='input-form' >
+            <div className='input-email'>
+                <TextField
+                  className='email'
+                  id="emailLocalPart"
+                  name="emailLocalPart"
+                  label={t('text.email')}
+                  value={formik.values.emailLocalPart}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.emailLocalPart && Boolean(formik.errors.emailLocalPart)}
+                  helperText={formik.touched.emailLocalPart && formik.errors.emailLocalPart}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">@</InputAdornment>,
+                  }}
+                />
+                <Select
+                  className='email-select'
+                  id="emailDomain"
+                  name="emailDomain"
+                  value={formik.values.emailDomain}
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    if (e.target.value !== 'custom') {
+                      setCustomDomain('');
+                    }
+                  }}
+                >
+                  {emailDomains.map(domain => (
+                    <MenuItem key={domain.value} value={domain.value}>{domain.label}</MenuItem>
+                  ))}
+                </Select>
+            </div>
             {formik.values.emailDomain === 'custom' && (
               <TextField
+                className='custom-domian'
                 id="customDomain"
                 name="customDomain"
-                label={t('Custom Domain')}
+                label={t('sentence.input_domain')}
                 value={customDomain}
                 onChange={(e) => setCustomDomain(e.target.value)}
                 error={formik.touched.customDomain && Boolean(formik.errors.customDomain)}
@@ -246,13 +255,13 @@ const SignupPageTwo = () => {
             )}
           </FormControl>
 
-          <Button color="primary" variant="contained" fullWidth type="submit">
+          <LoginSubmitButton color="primary" variant="contained" fullWidth type="submit">
             {t('members.signup')}
-          </Button>
+          </LoginSubmitButton>
         </form>
       </LoginWrapper>
     </Wrapper>
   );
 };
 
-export default SignupPageTwo;
+export default Signup;

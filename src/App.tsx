@@ -25,13 +25,15 @@ import UserInfo from './routes/myPage/UserInfo';
 import LikeLists from './routes/myPage/LikeLists';
 import MyWrites from './routes/myPage/MyWrites';
 import MyReplys from './routes/myPage/MyReplys';
-import SignupPageOne from './routes/members/signUp/SignupPageOne';
-import SignupPageTwo from './routes/members/signUp/SignupPageTwo';
 
 import Notice from './routes/board/Notice';
 import Faq from './routes/board/Faq';
 import Main from './routes/main/Main';
 import { AuthProvider } from './auth/AuthContext';
+import SignupIntro from './routes/members/signUp/SignupIntro';
+import Signup from './routes/members/signUp/Signup';
+
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -76,8 +78,22 @@ function App() {
                     />
 
                     {/* 회원가입 */}
-                    <Route path="/signup/signupPageOne" element={<SignupPageOne />} />
-                    <Route path="/signup/signupPageTwo" element={<SignupPageTwo/>} />
+                    <Route
+                      path="/signup/intro"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                          <SignupIntro isDarkMode={isDarkMode} />
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/signup/form"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '20px auto' }}>
+                          <Signup isDarkMode={isDarkMode} />
+                        </Box>
+                      }
+                    />
 
 
                     {/* 레시피 */}
@@ -193,7 +209,7 @@ function App() {
                       }
                     />
                   {/* 회원가입 */}
-                    <Route path="/signup" element={<SignupPageOne />} />
+                    {/* <Route path="/signup" element={<SignupPageOne />} /> */}
 
                     <Route path="/test" element={<TestPage />} />
                   </Routes>
