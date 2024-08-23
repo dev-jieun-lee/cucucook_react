@@ -67,6 +67,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
     mutationFn: fetchPassword,
     onSuccess: (data) => {
       console.log('Mutation Success Data:', data); // 성공 시 데이터 확인용 콘솔 로그
+      console.log('Mutation Success Data:', data); // 성공 시 데이터 확인용 콘솔 로그
       if (data.success && data.foundId) {
         setFoundId(data.foundId);
         setLoginError(null);
@@ -98,6 +99,38 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
     } else {
       // 인증번호 확인 로직을 구현
     }
+  };
+
+  // 한글 자모로 변환하는 함수
+  const convertToHangul = (input: string) => {
+    const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
+    const isHangul = input.split('').every(char => jamo.test(char));
+    if (!isHangul) return '';
+
+    return input.split('')
+      .filter(char => jamo.test(char))
+      .join('');
+  };
+
+  // 이름 입력값 정제 함수
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const filteredValue = convertToHangul(value);
+    formik.setFieldValue('name', filteredValue);
+  };
+
+  // 아이디 입력값 정제 함수
+  const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, ''); // 영어와 숫자만 허용
+    formik.setFieldValue('userId', filteredValue);
+  };
+
+  // 전화번호 입력값 정제 함수
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const filteredValue = value.replace(/[^0-9]/g, ''); // 숫자만 허용
+    formik.setFieldValue('phone', filteredValue);
   };
 
   React.useEffect(() => {
@@ -137,7 +170,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               name="name"
               label={t('members.name')}
               value={formik.values.name}
-              onChange={formik.handleChange}
+              onChange={handleNameChange}
               inputProps={{ maxLength: 50 }}
             />
             {formik.errors.name && <FormHelperText error>{formik.errors.name}</FormHelperText>}
@@ -150,7 +183,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               name="userId"
               label={t('members.id')}
               value={formik.values.userId}
-              onChange={formik.handleChange}
+              onChange={handleUserIdChange}
               inputProps={{ maxLength: 50 }}
             />
             {formik.errors.userId && <FormHelperText error>{formik.errors.userId}</FormHelperText>}
@@ -164,7 +197,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                 name="phone"
                 label={t('members.phone_number')}
                 value={formik.values.phone}
-                onChange={formik.handleChange}
+                onChange={handlePhoneChange}
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', maxLength: 15 }}
               />
               {formik.errors.phone && <FormHelperText error>{formik.errors.phone}</FormHelperText>}
