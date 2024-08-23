@@ -22,7 +22,6 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 // styled-components
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import TestPage from "./TestPage";
-import Main from "./routes/main/Main";
 import Footer from "./components/Footer";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./locales/i18n";
@@ -37,15 +36,8 @@ import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 import Login from "./routes/members/login/Login";
 import Join from "./routes/members/login/join/Join";
 import Notice from "./routes/board/Notice";
-
-import Profile from "./routes/myPage/Profile";
-import Activity from "./routes/myPage/Activity";
-import UserInfo from "./routes/myPage/UserInfo";
-import LikeLists from "./routes/myPage/LikeLists";
-import MyWrites from "./routes/myPage/MyWrites";
-import MyReplys from "./routes/myPage/MyReplys";
-import SignupPageOne from "./routes/members/signUp/SignupPageOne";
-import SignupPageTwo from "./routes/members/signUp/SignupPageTwo";
+import Faq from "./routes/board/Faq";
+import Main from "./routes/main/Main";
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -221,6 +213,7 @@ function App() {
                         }}
                       >
                         <BoardSideMenu isDarkMode={isDarkMode} />
+                        <Faq />
                       </Box>
                     }
                   />

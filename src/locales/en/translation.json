@@ -65,8 +65,9 @@
     "recipe_write": "레시피 작성"
   },
   "sentence": {
-    "explain1": "레시피 :",
-    "explain2": "D.I.Y 레시피 : 회원들이 직접 등록한 레시피입니다.",
+    "no_data": "The data does not exist.",
+    "explain1": "기존 레시피 :",
+    "explain2": "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
     "explain3": "인기 레시피 : 인기 레시피입니다.",
     "slogan": "while doing",
     "slogan2": "add to one's laughter!",
