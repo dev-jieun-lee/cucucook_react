@@ -103,8 +103,9 @@ function App() {
                     }
                   />
                   {/* 회원가입 */}
+                  {/* 회원가입 */}
                   <Route
-                    path="/join"
+                    path="/signup/intro"
                     element={
                       <Box
                         sx={{
@@ -113,19 +114,23 @@ function App() {
                           margin: "20px auto",
                         }}
                       >
-                        <Join isDarkMode={isDarkMode} />
+                        <SignupIntro isDarkMode={isDarkMode} />
                       </Box>
                     }
                   />
-
-                  {/* 회원가입 */}
                   <Route
-                    path="/signup/signupPageOne"
-                    element={<SignupPageOne />}
-                  />
-                  <Route
-                    path="/signup/signupPageTwo"
-                    element={<SignupPageTwo />}
+                    path="/signup/form"
+                    element={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "92%",
+                          margin: "20px auto",
+                        }}
+                      >
+                        <Signup isDarkMode={isDarkMode} />
+                      </Box>
+                    }
                   />
 
                   {/* 레시피 */}
@@ -332,7 +337,7 @@ function App() {
                     }
                   />
                   {/* 회원가입 */}
-                  <Route path="/signup" element={<SignupPageOne />} />
+                  {/* <Route path="/signup" element={<SignupPageOne />} /> */}
 
                   <Route path="/test" element={<TestPage />} />
                 </Routes>
