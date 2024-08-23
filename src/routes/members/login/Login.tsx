@@ -68,11 +68,11 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   const handleFindingId = () => {
-    navigate('/findId');
+    navigate('/login/findId');
   };
 
   const handleFindingPw = () => {
-    navigate('/findPw');
+    navigate('/login/findPw');
   };
 
   // 아이디 입력값 검증 함수

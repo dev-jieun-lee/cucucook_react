@@ -38,7 +38,7 @@ export async function phoneCheck(form: any) {
 //아이디 중복체크
 export async function idCheck(id: string) {
   const response = await axios.get(`${BASE_URL}/check-id/${id}`);
-  console.log("아이디중복체크 응답데이터",response.data);
+  console.log("아이디중복체크 응답데이터( true -사용가능, false - 사용불가",response.data);
   return response.data;
 }
 
