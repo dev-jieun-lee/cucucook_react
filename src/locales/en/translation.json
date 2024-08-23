@@ -52,9 +52,17 @@
     "save" : "Save",
     "update" : "Update",
     "cancel" : "Cancel",
-    "delete" : "Delete"
+    "delete" : "Delete",
+    "all" : "All",
+    "title" : "Title",
+    "category" : "Category",
+    "view_count" : "View Count",
+    "writer" : "Writer",
+    "create_date" : "Create Date",
+    "update_date" : "Update Date"
   },
   "sentence" : {
+    "no_data" : "The data does not exist.",
     "explain1" : "기존 레시피 :",
     "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
     "explain3" : "인기 레시피 : 인기 레시피입니다.",

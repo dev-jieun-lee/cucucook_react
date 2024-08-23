@@ -52,9 +52,17 @@
     "save" : "저장",
     "update" : "수정",
     "cancel" : "취소",
-    "delete" : "삭제"
+    "delete" : "삭제",
+    "all" : "전체",
+    "title" : "제목",
+    "category" : "카테고리",
+    "view_count" : "조회수",
+    "writer" : "작성자",
+    "create_date" : "작성일",
+    "update_date" : "수정일"
   },
   "sentence" : {
+    "no_data" : "데이터가 존재하지 않습니다.",
     "explain1" : "기존 레시피 :",
     "explain2" : "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
     "explain3" : "인기 레시피 : 인기 레시피입니다.",
