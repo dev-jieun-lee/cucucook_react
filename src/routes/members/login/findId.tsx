@@ -256,7 +256,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   <Button
                     variant="contained"
                     color="primary"
-                    href="/login/FindPw"
+                    href={`/login/FindPw?id=${encodeURIComponent(foundId)}`}
                   >
                     {t('members.find_pw')}
                   </Button>
