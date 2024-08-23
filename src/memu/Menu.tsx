@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Col, LinkItem, MainMenu, SubMenu } from "./MenuStyle";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../auth/AuthContext";
 
 function Menu() {
   const { t } = useTranslation();
   const [activeMenu, setActiveMenu] = useState(null);
+  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
 
   const handleMouseEnter = (index: any) => {
     setActiveMenu(index);
@@ -72,11 +74,12 @@ function Menu() {
               </ul>
             </SubMenu>
           </li>
-          <li
+          {user?(
+            <li
             className="main-menu-item"
             onMouseEnter={() => handleMouseEnter(2)}
             onMouseLeave={handleMouseLeave}
-          >
+            >
             <div>
               <span
                 className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
@@ -95,6 +98,10 @@ function Menu() {
               </ul>
             </SubMenu>
           </li>
+          ):(
+            <></>
+          )}
+
           <li
             className="main-menu-item"
             onMouseEnter={() => handleMouseEnter(3)}

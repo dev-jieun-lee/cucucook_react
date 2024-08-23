@@ -1,10 +1,15 @@
 import styled from "styled-components";
 import media from "../../../styles/MediaQuery";
 import { OutlinedInput } from "@mui/material";
+import { Button } from "@mui/material";
+
+
+///**로그인, 회원가입 스타일
 
 export const LoginWrapper = styled.div`
   text-align: center;
   margin: 50px auto;
+  margin-bottom: 100px;
   width: 35%;
   .title{
     margin-bottom: 30px;
@@ -35,6 +40,23 @@ export const LoginWrapper = styled.div`
       display: block;
       margin-top: 15px;
     }
+  }
+
+  .input-email{
+    width: 100%;
+    margin: 15px 0;
+    display:flex;
+    justify-content : space-between;
+    .email{
+      width : 100%;
+    }
+    .email-select{
+      width : 50%;
+      height : 55px;
+    }
+  }
+  .custom-domian{
+    margin : 8px 0 20px;
   }
 
   .submit-button{
@@ -97,4 +119,10 @@ export const ResultBox = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 20px auto;
+ `;
+
+
+export const LoginSubmitButton = styled(Button)`
+  margin: 20px 0;
+  height: 40px;
 `;

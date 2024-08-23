@@ -59,7 +59,8 @@
     "view_count" : "View Count",
     "writer" : "Writer",
     "create_date" : "Create Date",
-    "update_date" : "Update Date"
+    "update_date": "Update Date",
+    "email" : "email"
   },
   "sentence" : {
     "no_data" : "The data does not exist.",
@@ -70,7 +71,9 @@
     "slogan2" : "add to one's laughter!",
     "slogan3" : "My own recipe that makes a sound",
     "cucucook" : "Cucucook",
-    "searching" : "Please enter a search term."
+    "searching" : "Please enter a search term.",
+    "choose" : "Please choose",
+    "input_domain" : "Please enter a domain."
   },
   "members" : {
     "original": "member",
@@ -114,14 +117,18 @@
     "verification_code": "Verification Code",
     "find_id": "Find My ID",
     "verify": "Verify",
-    "name": "Name",
     "confirmed": "Confirmed",
     "verification_code_required": "Please enter the verification code.",
     "no_member_info": "No registered member information.",
     "unexpected_error": "An unexpected error occurred.",
     "name_or_phone_or_id_required": "Please enter name, phone number, and ID.",
     "verification_code_expiry": "Verification code expiry: {{seconds}} seconds",
-    "found_id_message": "The ID you found is {{id}}."
+    "found_id_message": "The ID you found is {{id}}.",
+    "name" : "Name",
+    "phone" : "Phone",
+    "email" : "Email",
+    "Notifiction" : "Notifiction",
+    "duplication_chk" : "Duplication Check"
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
