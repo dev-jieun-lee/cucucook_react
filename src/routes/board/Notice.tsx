@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  CircularProgress,
   MenuItem,
   Paper,
   Select,
@@ -22,6 +23,7 @@ import { getBoardList } from "./api";
 import { useQuery } from "react-query";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import Loading from "../../components/Loading";
 
 function Notice() {
   const { t } = useTranslation();
@@ -55,7 +57,7 @@ function Notice() {
 
   //로딩
   if (boardListLoading) {
-    return <div>{t("loading")}</div>;
+    return <Loading/>;
   }
 
   return (
@@ -90,7 +92,7 @@ function Notice() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {boardList.data && boardList.data.length > 0 ? (
+              {boardList?.data && boardList.data.length > 0 ? (
                 boardList.data.map((boardItem: any, index: number) => (
                   <TableRow className="row" key={index}>
                     <TableCell component="th" scope="row">
