@@ -256,7 +256,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   <Button
                     variant="contained"
                     color="primary"
-                    href="/find-pw"
+                    href="/login/FindPw"
                   >
                     {t('members.find_pw')}
                   </Button>
