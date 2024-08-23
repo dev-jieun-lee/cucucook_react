@@ -31,7 +31,8 @@ function SignupPageOne() {
       try {
         // 핸드폰 번호 유효성 검사 API 호출
         const response = await axios.post('/api/members/check-phone', { phone: values.phone });
-        console.log(response.data);
+        console.log(values);
+        console.log(response);
         if (response.data === false) {
           // 유효한 경우 페이지 전환
           navigate('/signup/signupPageTwo', { state: { phone: values.phone } });
