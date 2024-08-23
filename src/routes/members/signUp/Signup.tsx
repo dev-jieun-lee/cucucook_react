@@ -14,10 +14,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const phoneNumber = location.state?.phone;
-
-  console.log(phoneNumber);
-
-
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState('');
 
