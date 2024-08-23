@@ -59,7 +59,8 @@
     "view_count" : "View Count",
     "writer" : "Writer",
     "create_date" : "Create Date",
-    "update_date" : "Update Date"
+    "update_date": "Update Date",
+    "email" : "email"
   },
   "sentence" : {
     "no_data" : "The data does not exist.",
@@ -70,7 +71,9 @@
     "slogan2" : "add to one's laughter!",
     "slogan3" : "My own recipe that makes a sound",
     "cucucook" : "Cucucook",
-    "searching" : "Please enter a search term."
+    "searching" : "Please enter a search term.",
+    "choose" : "Please choose",
+    "input_domain" : "Please enter a domain."
   },
   "members" : {
     "original" : "member",
