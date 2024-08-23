@@ -16,12 +16,16 @@ import {
 } from "../../styles/RecipeStyle";
 import { useNavigate } from "react-router-dom";
 import { KeyboardArrowUp } from "@mui/icons-material";
+import { useQuery } from "react-query";
+import { getPublicRecipe } from "../../api";
 
 const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //데이터 받아오기
-  // const { data: publicRecipe, isLoading: publicRecipeLoading } =
-  //   useQuery("movies", () => getPublicRecipe());
-  //   console.log(publicRecipe);
+  const { data: publicRecipe, isLoading: publicRecipeLoading } = useQuery(
+    "movies",
+    () => getPublicRecipe()
+  );
+  console.log(publicRecipe);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const handleMoreViewClick = (value: string) => {
@@ -58,10 +62,10 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             variant="text"
             onClick={() => handleMoreViewClick("/recipe/public_recipe_list")}
           >
-            <AddIcon /> {t("더보기")}
+            <AddIcon /> {t("text.more_view")}
           </Button>
         </TitleBox>
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <ThumbnailButton onClick={() => alert("클릭이벤트")}>
               <ThumbnailBoxContainer>
@@ -130,10 +134,10 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             variant="text"
             onClick={() => handleMoreViewClick("/recipe/member_recipe")}
           >
-            <AddIcon /> {t("더보기")}
+            <AddIcon /> {t("text.more_view")}
           </Button>
         </TitleBox>
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <ThumbnailButton onClick={() => alert("클릭이벤트")}>
               <ThumbnailBoxContainer>
