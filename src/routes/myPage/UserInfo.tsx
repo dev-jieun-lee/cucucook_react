@@ -1,11 +1,11 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box, Accordion, AccordionSummary, AccordionDetails, Typography,Modal } from '@mui/material';
+import { userInfoStyles } from './myPageStyles';
+import { useNavigate } from 'react-router-dom';
+import { Wrapper } from '../../styles/CommonStyles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { userInfoStyles } from './myPageStyles';
-import { Wrapper } from '../../styles/CommonStyles';
 
 // 비밀번호 변경 아코디언 컴포넌트
 const ChangePasswordAccordion: React.FC = () => {
