@@ -128,7 +128,9 @@
     "phone" : "Phone",
     "email" : "Email",
     "Notifiction" : "Notifiction",
-    "duplication_chk" : "Duplication Check"
+    "duplication_chk" : "Duplication Check",
+
+    "temp_password_issued" : "A temporary password has been issued to the registered email. Please change your password after logging in."
   },
   "Footer" : {
     "ceo" : "ceo : jiunerim",
