@@ -14,8 +14,8 @@
     "board": {
       "original": "게시판",
       "notice": "공지사항",
-      "FAQ": "자주묻는질문",
-      "QNA": "질의응답"
+      "FAQ": "자주 묻는 질문",
+      "QNA": "질의 응답"
     },
     "mypage": {
       "original": "마이페이지",
@@ -53,12 +53,14 @@
     "update": "수정",
     "cancel": "취소",
     "delete": "삭제",
+    "all": "전체",
     "title": "제목",
     "category": "카테고리",
     "view_count": "조회수",
     "writer": "작성자",
     "create_date": "작성일",
     "update_date": "수정일",
+    "email": "이메일",
     "all_recipe": "전체 레시피",
     "public_recipe": "레시피",
     "member_recipe": "D.I.Y 레시피",
@@ -71,6 +73,7 @@
     "recipe_write": "레시피 작성"
   },
   "sentence": {
+    "no_data": "데이터가 존재하지 않습니다.",
     "explain1": "기존 레시피 :",
     "explain2": "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
     "explain3": "인기 레시피 : 인기 레시피입니다.",
@@ -78,7 +81,9 @@
     "slogan2": "웃음을 더하다!",
     "slogan3": "소리나는 나만의 레시피",
     "cucucook": "쿠쿠쿡",
-    "searching": "검색어를 입력해주세요."
+    "searching": "검색어를 입력해주세요.",
+    "choose": "선택하세요.",
+    "input_domain": "도메인을 입력해주세요."
   },
   "members": {
     "original": "회원",

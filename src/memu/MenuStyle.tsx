@@ -25,10 +25,15 @@ export const Nav = styled.nav`
   .mode-icon{
     margin: 0 20px;
   }
-  .login{
+  .login,.profile{
     ${media.medium`
       display: none;
     `};
+  }
+  .profile{
+    &:hover{
+      cursor: pointer;
+    }
   }
   .drawer-icon{
     transform: scale(1.3);
@@ -256,5 +261,10 @@ export const DrawerTop = styled.div`
   }
   .icon-btn{
     transform: scale(0.8);
+  }
+  .profile{
+    &:hover{
+      cursor: pointer;
+    }
   }
 `;
