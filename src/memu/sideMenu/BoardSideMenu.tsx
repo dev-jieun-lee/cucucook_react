@@ -14,22 +14,18 @@ function BoardSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
 
   // URL 경로에 따라 활성 버튼 설정
   useEffect(() => {
-    switch (location.pathname) {
-      case '/notice':
-        setSelectedIndex(0);
-        setActiveButton("notice");
-        break;
-      case '/faq':
-        setSelectedIndex(1);
-        setActiveButton("faq");
-        break;
-      case '/qna':
-        setSelectedIndex(2);
-        setActiveButton("qna");
-        break;
-      default:
-        setSelectedIndex(null);
-        setActiveButton("");
+    if (location.pathname.startsWith('/notice')) {
+      setSelectedIndex(0);
+      setActiveButton("notice");
+    } else if (location.pathname.startsWith('/faq')) {
+      setSelectedIndex(1);
+      setActiveButton("faq");
+    } else if (location.pathname.startsWith('/qna')) {
+      setSelectedIndex(2);
+      setActiveButton("qna");
+    } else {
+      setSelectedIndex(null);
+      setActiveButton("");
     }
   }, [location.pathname]);
 
@@ -75,27 +71,6 @@ function BoardSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
         </ListItemButton>
       </ListItem>
     </SideMenu>
-      // <SideMenu className='list' >
-      //   <ListItem className='list-item'>
-      //     <ListItemText>{t('menu.board.original')}</ListItemText>
-      //   </ListItem>
-      //   <Divider />
-      //   <ListItem disablePadding className='list-item'>
-      //     <ListItemButton>
-      //       <LinkItem to="/notice">{t('menu.board.notice')}</LinkItem>
-      //     </ListItemButton>
-      //   </ListItem>
-      //   <ListItem disablePadding className='list-item'>
-      //     <ListItemButton>
-      //       <LinkItem to="/faq">{t('menu.board.FAQ')}</LinkItem>
-      //     </ListItemButton>
-      //   </ListItem>
-      //   <ListItem disablePadding className='list-item'>
-      //     <ListItemButton>
-      //       <LinkItem to="/qna">{t('menu.board.QNA')}</LinkItem>
-      //     </ListItemButton>
-      //   </ListItem>
-      // </SideMenu>
   );
 };
 
