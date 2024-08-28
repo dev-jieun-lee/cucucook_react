@@ -26,12 +26,15 @@ import LikeLists from './routes/myPage/LikeLists';
 import MyWrites from './routes/myPage/MyWrites';
 import MyReplys from './routes/myPage/MyReplys';
 
-import Notice from './routes/board/Notice';
-import Faq from './routes/board/Faq';
+import Notice from './routes/board/notice/Notice';
+import Faq from './routes/board/Faq/Faq';
 import Main from './routes/main/Main';
 import { AuthProvider } from './auth/AuthContext';
 import SignupIntro from './routes/members/signUp/SignupIntro';
 import Signup from './routes/members/signUp/Signup';
+import NoticeDetail from './routes/board/notice/NoticeDetail';
+import NoticeForm from './routes/board/notice/NoticeForm';
+import FaqForm from './routes/board/Faq/FaqForm';
 
 
 function App() {
@@ -132,6 +135,51 @@ function App() {
                         <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
                           <BoardSideMenu isDarkMode={isDarkMode} />
                           <Notice/>
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/notice/:boardId"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                          <BoardSideMenu isDarkMode={isDarkMode} />
+                          <NoticeDetail/>
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/notice/form"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                          <BoardSideMenu isDarkMode={isDarkMode} />
+                          <NoticeForm/>
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/notice/form/:boardId"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                          <BoardSideMenu isDarkMode={isDarkMode} />
+                          <NoticeForm/>
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/faq/form"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                          <BoardSideMenu isDarkMode={isDarkMode} />
+                          <FaqForm/>
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/faq/form/:boardId"
+                      element={
+                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                          <BoardSideMenu isDarkMode={isDarkMode} />
+                          <FaqForm/>
                         </Box>
                       }
                     />
