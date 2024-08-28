@@ -1,7 +1,67 @@
+import axios from "axios";
+
 const BASE_URL = 'http://localhost:8080/board';
 
 
-export function getBoardList(params: { search?: string; boardCategoryId?: string; start?: string; display?: string }) {
-  const queryString = new URLSearchParams(params).toString();
-  return fetch(`${BASE_URL}/getBoardList?${queryString}`).then((response) => response.json());
+//게시판 리스트 조회
+export async function getBoardList(params : any) {
+  const response = await axios.get(`${BASE_URL}/getBoardList`, {
+    params: params
+  });
+  return response.data;
+}
+
+//게시판 상세 조회
+export async function getBoard(id : any) {
+  const response = await axios.get(`${BASE_URL}/getBoard`,{
+    params :  {
+      boardId : id
+    }
+  });
+  return response.data;
+}
+
+
+//게시판 등록
+export async function insertBoard(form : any) {
+  const response = await axios.post(`${BASE_URL}/insertBoard`, form);
+  return response.data;
+}
+
+//게시판 수정
+export async function updateBoard(id : any, form : any) {
+  const response = await axios.put(`${BASE_URL}/updateBoard`, form,{
+    params :  {
+      boardId : id
+    }
+  });
+  return response.data;
+}
+
+//게시판 삭제
+export async function deleteBoard(id : string) {
+  const response = await axios.delete(`${BASE_URL}/deleteBoard`,
+    {params :  {
+      boardId : id
+    }}
+  );
+  return response.data;
+}
+
+//게시판 카테고리 리스트 조회
+export async function getBoardCategoryList(params : any) {
+  const response = await axios.get(`${BASE_URL}/getBoardCategoryList`, {
+    params: params
+  });
+  return response.data;
+}
+
+//게시판 카테고리 상세 조회
+export async function getBoardCategory(id : string) {
+  const response = await axios.get(`${BASE_URL}/getBoardCategory`,{
+    params :  {
+      boardCategoryId : id
+    }
+  });
+  return response.data;
 }
