@@ -1,5 +1,5 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   FormControl,
@@ -10,25 +10,29 @@ import {
   Box,
   Typography,
   FormHelperText,
-  InputAdornment
-} from '@mui/material';
-import { useFormik } from 'formik';
-import { Wrapper } from '../../../styles/CommonStyles';
-import { LoginWrapper, ResultBox } from './LoginStyle';
-import { useMutation } from 'react-query';
+  InputAdornment,
+} from "@mui/material";
+import { useFormik } from "formik";
+import { Wrapper } from "../../../styles/CommonStyles";
+import { LoginWrapper, ResultBox } from "./LoginStyle";
+import { useMutation } from "react-query";
 
 // API 호출 함수
-const fetchId = async (data: { name: string, phone: string, verificationCode: string }) => {
-  const response = await fetch('/api/members/find-id', {
-    method: 'POST',
+const fetchId = async (data: {
+  name: string;
+  phone: string;
+  verificationCode: string;
+}) => {
+  const response = await fetch("/api/members/find-id", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error('아이디 찾기 오류');
+    throw new Error("아이디 찾기 오류");
   }
 
   return response.json();
@@ -37,17 +41,20 @@ const fetchId = async (data: { name: string, phone: string, verificationCode: st
 // 한글 자모로 변환하는 함수
 const convertToHangul = (input: string) => {
   const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
-  const isHangul = input.split('').every(char => jamo.test(char));
-  if (!isHangul) return '';
+  const isHangul = input.split("").every((char) => jamo.test(char));
+  if (!isHangul) return "";
 
-  return input.split('')
-    .filter(char => jamo.test(char))
-    .join('');
+  return input
+    .split("")
+    .filter((char) => jamo.test(char))
+    .join("");
 };
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
-  const [verificationTimeout, setVerificationTimeout] = React.useState<number | null>(null);
+  const [verificationTimeout, setVerificationTimeout] = React.useState<
+    number | null
+  >(null);
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [foundId, setFoundId] = React.useState<string | null>(null);
   const [showVerificationBox, setShowVerificationBox] = React.useState(false);
@@ -56,7 +63,11 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const [verificationComplete, setVerificationComplete] = React.useState(false);
   const [showResult, setShowResult] = React.useState(false);
 
-  const { mutate: findId, isLoading: isFindingId, error: findIdError } = useMutation(fetchId, {
+  const {
+    mutate: findId,
+    isLoading: isFindingId,
+    error: findIdError,
+  } = useMutation(fetchId, {
     onSuccess: (data) => {
       if (data.foundId) {
         setFoundId(data.foundId);
@@ -68,21 +79,22 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
       setShowResult(true);
     },
     onError: () => {
-      setLoginError(t('members.find_id_error'));
+      setLoginError(t("members.find_id_error"));
     },
   });
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      phone: '',
-      verificationCode: '',
+      name: "",
+      phone: "",
+      verificationCode: "",
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
-      if (!values.name) errors.name = t('members.name_required');
-      if (!values.phone) errors.phone = t('members.phone_number_required');
-      if (showVerificationBox && !values.verificationCode) errors.verificationCode = t('members.verification_code_required');
+      if (!values.name) errors.name = t("members.name_required");
+      if (!values.phone) errors.phone = t("members.phone_number_required");
+      if (showVerificationBox && !values.verificationCode)
+        errors.verificationCode = t("members.verification_code_required");
       return errors;
     },
     onSubmit: async (values) => {
@@ -99,13 +111,13 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
       setVerificationComplete(false);
       setShowResult(false);
     } else {
-      setLoginError(t('members.name_or_phone_required'));
+      setLoginError(t("members.name_or_phone_required"));
     }
   };
 
   const handleConfirmClick = () => {
     if (!formik.values.verificationCode) {
-      setLoginError(t('members.verification_code_required'));
+      setLoginError(t("members.verification_code_required"));
     } else {
       setVerificationComplete(true);
     }
@@ -119,7 +131,9 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
           setVerificationTimeout(null);
           setTimer(0);
         } else {
-          setTimer(Math.max(0, Math.floor((verificationTimeout - Date.now()) / 1000)));
+          setTimer(
+            Math.max(0, Math.floor((verificationTimeout - Date.now()) / 1000))
+          );
         }
       }, 1000);
 
@@ -130,23 +144,29 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
   };
 
-  const handlePhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^0-9]/g, '');
-    formik.setFieldValue('phone', value);
+  const handlePhoneNumberChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value.replace(/[^0-9]/g, "");
+    formik.setFieldValue("phone", value);
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     const filteredValue = convertToHangul(value);
-    formik.setFieldValue('name', filteredValue);
+    formik.setFieldValue("name", filteredValue);
   };
 
-  const handleVerificationCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
-    formik.setFieldValue('verificationCode', value);
+  const handleVerificationCodeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
+    formik.setFieldValue("verificationCode", value);
   };
 
   const handleFindIdClick = async () => {
@@ -157,7 +177,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
         verificationCode: formik.values.verificationCode,
       });
     } else {
-      setLoginError(t('members.verify_first'));
+      setLoginError(t("members.verify_first"));
     }
   };
 
@@ -169,30 +189,46 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
         </div>
 
         <form className="form" onSubmit={formik.handleSubmit}>
-          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined" error={!!formik.errors.name}>
-            <InputLabel htmlFor="name">{t('members.name')}</InputLabel>
+          <FormControl
+            className="input-form"
+            sx={{ m: 1 }}
+            variant="outlined"
+            error={!!formik.errors.name}
+          >
+            <InputLabel htmlFor="name">{t("members.name")}</InputLabel>
             <OutlinedInput
               id="name"
               name="name"
-              label={t('members.name')}
+              label={t("members.name")}
               value={formik.values.name}
               onChange={handleNameChange}
               inputProps={{ maxLength: 50 }}
             />
-            {formik.errors.name && <FormHelperText error>{formik.errors.name}</FormHelperText>}
+            {formik.errors.name && (
+              <FormHelperText error>{formik.errors.name}</FormHelperText>
+            )}
           </FormControl>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FormControl className="input-form" sx={{ m: 1, flexGrow: 1 }} variant="outlined" error={!!formik.errors.phone}>
-              <InputLabel htmlFor="phone">{t('members.phone_number')}</InputLabel>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <FormControl
+              className="input-form"
+              sx={{ m: 1, flexGrow: 1 }}
+              variant="outlined"
+              error={!!formik.errors.phone}
+            >
+              <InputLabel htmlFor="phone">
+                {t("members.phone_number")}
+              </InputLabel>
               <OutlinedInput
                 id="phone"
-                label={t('members.phone_number')}
+                label={t("members.phone_number")}
                 value={formik.values.phone}
                 onChange={handlePhoneNumberChange}
                 inputProps={{ maxLength: 15 }} // 입력 길이 제한
               />
-              {formik.errors.phone && <FormHelperText error>{formik.errors.phone}</FormHelperText>}
+              {formik.errors.phone && (
+                <FormHelperText error>{formik.errors.phone}</FormHelperText>
+              )}
             </FormControl>
             <Button
               variant="contained"
@@ -200,21 +236,35 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               sx={{ flexShrink: 0 }}
               onClick={handleVerifyClick}
             >
-              {t('members.verify')}
+              {t("members.verify")}
             </Button>
           </Box>
 
           {showVerificationBox && (
             <>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', mt: 2 }}>
-                <FormControl className="input-form" sx={{ m: 1, flexGrow: 1 }} variant="outlined" error={!!formik.errors.verificationCode}>
-                  <InputLabel htmlFor="verificationCode">{t('members.verification_code')}</InputLabel>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  mt: 2,
+                }}
+              >
+                <FormControl
+                  className="input-form"
+                  sx={{ m: 1, flexGrow: 1 }}
+                  variant="outlined"
+                  error={!!formik.errors.verificationCode}
+                >
+                  <InputLabel htmlFor="verificationCode">
+                    {t("members.verification_code")}
+                  </InputLabel>
                   <OutlinedInput
                     id="verificationCode"
-                    label={t('members.verification_code')}
+                    label={t("members.verification_code")}
                     value={formik.values.verificationCode}
                     onChange={handleVerificationCodeChange}
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                     endAdornment={
                       <InputAdornment position="end">
                         <Typography variant="caption" color="text.secondary">
@@ -223,7 +273,11 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                       </InputAdornment>
                     }
                   />
-                  {formik.errors.verificationCode && <FormHelperText error>{formik.errors.verificationCode}</FormHelperText>}
+                  {formik.errors.verificationCode && (
+                    <FormHelperText error>
+                      {formik.errors.verificationCode}
+                    </FormHelperText>
+                  )}
                 </FormControl>
                 <Button
                   variant="contained"
@@ -231,7 +285,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   sx={{ flexShrink: 0 }}
                   onClick={handleConfirmClick}
                 >
-                  {t('alert.confirmed')}
+                  {t("alert.confirmed")}
                 </Button>
               </Box>
             </>
@@ -263,32 +317,24 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                 {t("members.no_member_info")}
               </Typography>
             )}
-            <Box sx={{ display: 'flex', gap: '8px', mt: 2 }}>
+            <Box sx={{ display: "flex", gap: "8px", mt: 2 }}>
               {foundId && !noMemberInfo && (
                 <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href="/login"
-                  >
-                    {t('members.login')}
+                  <Button variant="contained" color="primary" href="/login">
+                    {t("members.login")}
                   </Button>
                   <Button
                     variant="contained"
                     color="primary"
                     href={`/login/FindPw?id=${encodeURIComponent(foundId)}`}
                   >
-                    {t('members.find_pw')}
+                    {t("members.find_pw")}
                   </Button>
                 </>
               )}
               {noMemberInfo && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  href="/signup"
-                >
-                  {t('members.join')}
+                <Button variant="contained" color="primary" href="/signup">
+                  {t("members.join")}
                 </Button>
               )}
             </Box>

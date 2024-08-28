@@ -7,11 +7,11 @@ export const BoardWrapper = styled.div`
 
 export const SearchArea = styled.div`
   margin: 50px;
-  .select-category{
+  .select-category {
     width: 130px;
     margin-right: 50px;
   }
-  .search-input{
+  .search-input {
     width: 350px;
   }
 `;
@@ -19,16 +19,16 @@ export const SearchArea = styled.div`
 export const ContentsArea = styled.div`
   margin: 20px auto;
   width: 80%;
-  .accordion{
-    background : none;
+  .accordion {
+    background: none;
     box-shadow: none;
     border-radius: 0;
     margin: 0;
-    &:first-child{
+    &:first-child {
       border-top: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
     }
-    &:last-child{
+    &:last-child {
       border-bottom: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
     }
@@ -49,32 +49,31 @@ export const ContentsArea = styled.div`
     }
   }
 
-  .detail{
+  .detail {
     /* background-color: ${(props) => props.theme.accordionColor}; */
     text-align: start;
     padding: 20px 30px;
   }
 
-  .table-container{
+  .table-container {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     border-radius: 0;
     box-shadow: none;
     background: none;
-    .head{
+    .head {
       text-align: center;
     }
-    .row{
+    .row {
       text-align: center;
-      &:hover{
+      &:hover {
         cursor: pointer;
         background-color: #cccccc10;
       }
     }
-    .cell{
-
+    .cell {
     }
-    .file-icon{
+    .file-icon {
       transform: scale(0.7);
       color: ${(props) => props.theme.mainColor};
     }
@@ -84,30 +83,29 @@ export const ContentsArea = styled.div`
 export const AccordionTitle = styled.div`
   flex-direction: row;
 
-  .title-area{
+  .title-area {
     order: 1;
     margin-bottom: 5px;
-    .category{
+    .category {
       font-size: 17px;
       font-weight: 600;
       color: ${(props) => props.theme.mainColor};
       margin-right: 15px;
     }
-    .title{
+    .title {
       font-size: 16px;
     }
   }
-  .info{
+  .info {
     order: 2;
     font-size: 13px;
     color: ${(props) => props.theme.navBorderColor};
-    .border{
+    .border {
       border-right: 1px solid;
-      margin: 0 10px
+      margin: 0 10px;
     }
-    .view-icon{
+    .view-icon {
       transform: scale(0.7);
     }
   }
 `;
-

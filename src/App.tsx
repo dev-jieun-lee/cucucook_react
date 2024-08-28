@@ -28,7 +28,7 @@ import i18n from "./locales/i18n";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import AllRecipeList from "./routes/recipe/AllRecipeList";
 import PublicRecipeList from "./routes/recipe/PublicRecipeList";
-import PublicRecipe from "./routes/recipe/MemberRecipe";
+import PublicRecipe from "./routes/recipe/PublicRecipe";
 import MemberRecipeList from "./routes/recipe/MemberRecipeList";
 import MemberRecipe from "./routes/recipe/MemberRecipe";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
@@ -216,6 +216,23 @@ function App() {
                         </Box>
                       }
                     />
+
+                    <Route
+                      path="/recipe/public_recipe"
+                      element={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <RecipeSideMenu isDarkMode={isDarkMode} />
+                          <PublicRecipe isDarkMode={isDarkMode} />
+                        </Box>
+                      }
+                    ></Route>
 
                     {/* 보드 */}
                     <Route
