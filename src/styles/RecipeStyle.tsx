@@ -1,7 +1,12 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import styled from "styled-components";
-import media from "./MediaQuery";
-
 export const RecipeWrapper = styled.div``;
 export const TitleBox = styled(Box)`
   display: grid;
@@ -50,8 +55,6 @@ export const ThumbnailTypography = styled(Typography)`
 `;
 
 export const SearchBoxContainer = styled(Box)`
-  border-top: 1px solid ${(props) => props.theme.searchBorderColor};
-  border-bottom: 1px solid ${(props) => props.theme.searchBorderColor};
   margin: 20px 0;
   text-align: -webkit-center;
 `;
@@ -80,4 +83,112 @@ export const SearchTextField = styled(TextField)`
       border-radius: 0;
     }
   }
+`;
+
+export const recipeCommonStyles = () => ({
+  resetMuiGrid: {
+    margin: 0,
+    padding: 0,
+    width: "100%",
+  },
+});
+
+export const MemberRecipeView = styled.div`
+  .recipe-info-container {
+    .recipe-info-img-container {
+      width: 200px;
+      height: auto;
+    }
+    .recipe-info-grid-title {
+      background-color: ${(props) => props.theme.mainColor};
+      padding: 10px;
+      color: ${(props) => props.theme.textColorWhite};
+    }
+    .recipe-info-grid-text {
+      padding: 10px;
+      text-align: left;
+    }
+  }
+
+  .recipe-description-grid-container {
+    .recipe-description-grid-img-container {
+    }
+    .recipe-description-grid-text-container {
+      text-align: left;
+    }
+  }
+`;
+
+export const PublicRecipeView = styled.div`
+  .recipe-info-container {
+    .recipe-info-img-container {
+      width: 200px;
+      height: auto;
+    }
+    .recipe-info-grid-title {
+      background-color: ${(props) => props.theme.mainColor};
+      padding: 10px;
+      color: ${(props) => props.theme.textColorWhite};
+    }
+    .recipe-info-grid-text {
+      padding: 10px;
+      text-align: left;
+    }
+  }
+
+  .recipe-description-grid-container {
+    .recipe-description-grid-img-container {
+    }
+    .recipe-description-grid-text-container {
+      text-align: left;
+    }
+  }
+`;
+
+export const RecipeCommentWrite = styled.div`
+  text-align: left;
+  .comment-wirte-container {
+    border: 1px solid ${(props) => props.theme.searchBorderColor};
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .right-button {
+    text-align: right;
+  }
+`;
+
+export const RecipeCommentList = styled.div`
+  text-align: left;
+  .comment-wirte-container {
+    border: 1px solid ${(props) => props.theme.searchBorderColor};
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .right-button {
+    text-align: right;
+  }
+  .comment-list-container {
+    .comment-container {
+      .MuiGrid-root {
+        align-items: center;
+      }
+    }
+    .comment-content {
+      .comment-info {
+        .comment-info-name {
+          margin-right: 10px;
+          font-weight: 600;
+        }
+        .comment-info-dt {
+          color: ${(props) => props.theme.subTextColorGray};
+        }
+      }
+    }
+  }
+`;
+
+export const CommentIconButton = styled(IconButton)`
+  padding: 0;
+  margin-left: 5px;
+  color: ${(props) => props.theme.mainColor};
 `;

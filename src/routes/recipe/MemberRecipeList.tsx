@@ -96,8 +96,8 @@ const thumbnails = [
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const handleMoreViewClick = (value: string) => {
-    navigate(value);
+  const handleRecipeViewClick = () => {
+    navigate("/recipe/member_recipe", { state: { recipeId: "0" } });
   };
   const theme = useTheme();
 
@@ -151,6 +151,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <TitleBox>
           <PageTitleBasic>{t("text.member_recipe")}</PageTitleBasic>
         </TitleBox>
+        <Divider />
         <SearchBoxContainer>
           <SearchBox>
             <Box
@@ -215,6 +216,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           </SearchBox>
         </SearchBoxContainer>
 
+        <Divider />
+
         <TitleBox margin={"20px 0"}>
           <Stack
             direction="row"
@@ -261,11 +264,12 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           </Stack>
           <Button variant="contained">{t("text.recipe_write")}</Button>
         </TitleBox>
-
+      </Box>
+      <Box component="section">
         <Grid container spacing={2}>
           {thumbnails.map((thumbnails) => (
             <Grid item xs={12} sm={6} md={3} key={thumbnails.id}>
-              <ThumbnailButton onClick={() => alert("클릭이벤트")}>
+              <ThumbnailButton onClick={handleRecipeViewClick} disableRipple>
                 <ThumbnailBoxContainer>
                   <ThumbnailBox
                     src={thumbnails.src}

@@ -18,17 +18,16 @@ import axios from "axios";
 import PersonIcon from "@mui/icons-material/Person";
 import { useMutation } from "react-query";
 import { phoneCheck } from "../api";
-import { error } from "console";
 import SnackbarCustom from "../../../components/SnackbarCustom";
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); // 스낵바
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("error"); // 스낵바 색깔, 기본은 'error'
   const [signupError, setSignupError] = useState<string | null>(null); // 오류 메시지 상태
 
-  //폰 번호 중복체크
+  // 폰 번호 중복체크
   const mutation = useMutation(phoneCheck, {
     onSuccess: (data) => {
       if (!data) {
@@ -46,6 +45,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
       setSnackbarOpen(true); // 스낵바 열기
     },
   });
+
   const formik = useFormik({
     initialValues: {
       phone: "",
@@ -54,7 +54,9 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
       agreeMarketing: false,
     },
     validationSchema: Yup.object({
-      phone: Yup.string().required(t("members.phone_number_required")),
+      phone: Yup.string()
+        .matches(/^\d+$/, t("members.phone_number_invalid"))
+        .required(t("members.phone_number_required")),
       agreeTerms: Yup.boolean().oneOf([true], t("members.terms_required")),
       agreePrivacy: Yup.boolean().oneOf([true], t("members.privacy_required")),
       agreeMarketing: Yup.boolean().oneOf(
@@ -62,15 +64,44 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
         t("members.marketing_required")
       ),
     }),
-    onSubmit: (values) => {
-      // phone 값을 객체로 전달
-      mutation.mutate({ phone: values.phone });
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
+
+      try {
+        // 핸드폰 번호 유효성 검사 API 호출
+        const response = await axios.post("/api/members/check-phone", {
+          phone: values.phone,
+        });
+        console.log(values);
+        console.log(response);
+        if (response.data === false) {
+          // 유효한 경우 페이지 전환
+          navigate("/signup/form", { state: { phone: values.phone } });
+        } else {
+          // 유효하지 않은 경우 에러 처리
+          formik.setFieldError("phone", t("members.phone_number_invalid"));
+        }
+      } catch (error) {
+        // API 호출 오류 처리
+        console.error("API 호출 오류:", error);
+        // 서버 오류 메시지 표시
+        formik.setFieldError("phone", t("members.phone_number_error"));
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
-  //스낵바 닫기
+  // 스낵바 닫기
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+  };
+
+  // 핸드폰 번호 입력값 정제 함수
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // 입력값에서 숫자만 남기기
+    const value = event.target.value.replace(/\D/g, "");
+    formik.setFieldValue("phone", value);
   };
 
   return (
@@ -87,10 +118,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
             name="phone"
             label={t("members.phone_number")}
             value={formik.values.phone}
-            onChange={formik.handleChange}
+            onChange={handlePhoneChange} // 핸들러로 변경
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
             margin="normal"
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }} // 숫자 입력 제한
           />
 
           <FormGroup>
