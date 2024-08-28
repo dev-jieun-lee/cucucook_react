@@ -14,8 +14,31 @@
     "board" : {
       "original" : "게시판",
       "notice" : "공지사항",
+      "notice_detail" : "공지사항 상세",
+      "notice_create" : "공지사항 등록",
+      "notice_modify" : "공지사항 수정",
       "FAQ" : "자주 묻는 질문",
-      "QNA" : "질의 응답"
+      "FAQ_create" : "자주 묻는 질문 등록",
+      "FAQ_modify" : "자주 묻는 질문 수정",
+      "QNA" : "질의 응답",
+      "category" : "카테고리",
+      "category_select" : "카테고리 선택",
+      "notice_category" : "공지사항 카테고리",
+      "faq_category" : "자주묻는질문 카테고리",
+      "qna_category" : "질의응답 카테고리",
+      "error" : {
+        "category" : "카테고리를 선택해주세요.",
+        "title" : "제목을 입력해주세요.",
+        "contents" : "내용을 입력해주세요."
+      },
+      "alert" : {
+        "delete_confirm" : "게시글을 삭제하시겠습니까?",
+        "delete" : "삭제되었습니다.",
+        "delete_error" : "삭제중 오류가 발생했습니다.",
+        "save" : "저장되었습니다.",
+        "modify" : "수정되었습니다.",
+        "cancel" : "게시글 작성을 정말 취소하시겠습니까?"
+      }
     },
     "mypage" : {
       "original": "마이페이지",
@@ -60,7 +83,14 @@
     "writer" : "작성자",
     "create_date" : "작성일",
     "update_date" : "수정일",
-    "email" : "이메일"
+    "register_date" : "등록일",
+    "email" : "이메일",
+    "hit" : "조회",
+    "select" : "선택",
+    "add" : "추가",
+    "check" : "확인",
+    "yes" : "예",
+    "no" : "아니오"
   },
   "sentence" : {
     "no_data" : "데이터가 존재하지 않습니다.",
