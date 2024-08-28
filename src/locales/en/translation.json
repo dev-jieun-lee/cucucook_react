@@ -14,8 +14,28 @@
     "board" : {
       "original" : "Board",
       "notice" : "Notice",
+      "notice_detail" : "Notice details",
+      "notice_create" : "Create Notice",
+      "notice_modify" : "Modify Notice",
       "FAQ" : "FAQ",
-      "QNA" : "Q&A"
+      "QNA" : "Q&A",
+      "category" : "Category",
+      "category_select" : "Select Category",
+      "notice_category" : "Notice Category",
+      "faq_category" : "FAQ Category",
+      "qna_category" : "Q&A Category",
+      "error" : {
+        "category" : "Please select a category.",
+        "title" : "Please enter a title.",
+        "contents" : "Please enter content."
+      },
+      "alert" : {
+        "delete_confirm" : "Do you want to delete the post?",
+        "delete" : "Deleted.",
+        "save" : "Saved.",
+        "modify" : "Modified.",
+        "cancel" : "Are you sure you want to cancel your post?"
+      }
     },
     "mypage" : {
       "original": "My Page",
@@ -60,7 +80,15 @@
     "writer" : "Writer",
     "create_date" : "Create Date",
     "update_date": "Update Date",
-    "email" : "email"
+    "register_date" : "Date of registration",
+    "email" : "email",
+    "hit" : "hit",
+    "select" : "Select",
+    "add" : "Add",
+    "check" : "Check",
+    "yes" : "Yes",
+    "no" : "No"
+
   },
   "sentence" : {
     "no_data" : "The data does not exist.",
