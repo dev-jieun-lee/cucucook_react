@@ -16,23 +16,27 @@ import { DefaultTheme } from "styled-components";
 export const styledLightTheme: DefaultTheme = {
   bgColor: "#F4F3EF",
   textColor: "#364C63",
+  textColorWhite: "#fff",
   mainColor: "#F3B340",
   footerColor: "#f3f0e2",
   navBorderColor: "#ccc",
   searchBorderColor: "#ccc",
 
   subTextColor: "#253342",
+  subTextColorGray: "#ccc",
 
   accordionColor: "#f3f0e27c",
 };
 export const styledDarkTheme: DefaultTheme = {
   bgColor: "#3D3737",
   textColor: "#FDA47E",
+  textColorWhite: "#fff",
   mainColor: "#F2EFDB",
   footerColor: "#363131",
   navBorderColor: "#878585c1",
 
   subTextColor: "#d28c6f",
+  subTextColorGray: "#878585c1",
 
   accordionColor: "#3631316a",
 };

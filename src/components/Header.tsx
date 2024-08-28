@@ -1,6 +1,14 @@
 import { AlertColor, Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
-import {Col, Logo, MotionInput, MotionSearch, Nav, MotionIconButton, DrawerTop} from "../memu/MenuStyle"; // 스타일 컴포넌트
+import {
+  Col,
+  Logo,
+  MotionInput,
+  MotionSearch,
+  Nav,
+  MotionIconButton,
+  DrawerTop,
+} from "../memu/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
 import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아이콘
 import SearchIcon from "@mui/icons-material/Search"; // 검색 아이콘
@@ -55,13 +63,12 @@ function Header({ isDarkMode, onToggleTheme }: any) {
     navigate("/login"); // 페이지 이동
   };
 
-
   // 검색창 열기/닫기
   const toggleSearch = () => {
     inputAnimation.start({
       scaleX: searchOpen ? 0 : 1, // 애니메이션 설정
     });
-    setSearchOpen(prev => !prev); // 상태 토글
+    setSearchOpen((prev) => !prev); // 상태 토글
   };
 
   const { register, handleSubmit } = useForm<IForm>(); // 폼 훅
@@ -70,7 +77,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   };
 
   console.log(user);
-
 
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
@@ -131,7 +137,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           <div className="profile-area">
             {user ? (
               <div className="profile">
-                <Profile isDarkMode={false}/>
+                <Profile isDarkMode={false} />
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
@@ -157,7 +163,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             {user ? (
               // 로그인 상태일 때 로그아웃 버튼
               <div className="icon-btn profile">
-                <Profile isDarkMode={false}/>
+                <Profile isDarkMode={false} />
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼

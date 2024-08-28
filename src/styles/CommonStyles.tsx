@@ -36,6 +36,12 @@ export const PageTitleBasic = styled.div`
   text-align: left;
 `;
 
+export const PageSubTitleBasic = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  text-align: left;
+`;
+
 //맨위로 가기 스크롤 버튼
 export const ScrollBtnFab = styled(Fab)`
   position: fixed;
