@@ -11,6 +11,14 @@ export const Wrapper = styled.div`
   ${media.medium`
     width: 100%;
   `};
+
+  .add-btn{
+    margin-top: -4px;
+    margin-left: 15px;
+    transform: scale(0.9);
+    z-index : 1;
+    box-shadow: none;
+  }
 `;
 
 export const TitleCenter = styled.div`
