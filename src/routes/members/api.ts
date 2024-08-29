@@ -11,6 +11,20 @@ const api = axios.create({
   },
 });
 
+// 에러 처리 헬퍼 함수
+function handleApiError(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    // Axios 에러
+    throw new Error(error.response?.data?.message || "API 요청 실패");
+  } else if (error instanceof Error) {
+    // 일반 에러
+    throw new Error(error.message);
+  } else {
+    // 기타 에러
+    throw new Error("알 수 없는 에러 발생");
+  }
+}
+
 //로그인
 export async function login(form: any) {
   try {
@@ -52,36 +66,7 @@ export async function register(form: any) {
   return response.data;
 }
 
-// 인증 코드 전송 API
-export const useSendVerificationCode = () => {
-  return useMutation(async (data: { phone: string; carrier: string }) => {
-    const response = await axios.post(`${BASE_URL}/sendVerificationCode`, {
-      phone: data.phone,
-      carrier: data.carrier, // 통신사 정보 추가
-    });
-    if (!response.data) {
-      throw new Error("Failed to send verification code");
-    }
-    return response.data;
-  });
-};
-
-// 인증 코드 검증 API
-export const useVerifyCode = () => {
-  return useMutation(
-    async ({ phoneNumber, code }: { phoneNumber: string; code: string }) => {
-      const response = await axios.post(`${BASE_URL}/verify`, {
-        phone: phoneNumber,
-        code: code,
-      });
-      if (!response.data) {
-        throw new Error("Failed to verify code");
-      }
-      return response.data;
-    }
-  );
-};
-
+//아이디찾기
 export const findId = async (data: {
   name: string;
   phone: string;
@@ -111,16 +96,34 @@ export const verifyQrCode = async (qrCode: string) => {
   }
 };
 
-// 에러 처리 헬퍼 함수
-function handleApiError(error: unknown) {
-  if (axios.isAxiosError(error)) {
-    // Axios 에러
-    throw new Error(error.response?.data?.message || "API 요청 실패");
-  } else if (error instanceof Error) {
-    // 일반 에러
-    throw new Error(error.message);
-  } else {
-    // 기타 에러
-    throw new Error("알 수 없는 에러 발생");
-  }
+// 이메일 인증 코드 발송
+export const useSendEmailVerificationCode = () =>
+  useMutation((email: string) =>
+    api
+      .post("/sendVerificationCode", { email })
+      .then((response) => {
+        console.log("이메일 인증 코드 발송 성공:", response.data);
+        return response.data;
+      })
+      .catch(handleApiError)
+  );
+
+// 이메일 인증 코드 검증
+export const useVerifyEmailCode = () =>
+  useMutation(({ email, code }: { email: string; code: string }) =>
+    api
+      .post("/verify", { email, code })
+      .then((response) => {
+        console.log("이메일 인증 코드 검증 성공:", response.data);
+        return response.data;
+      })
+      .catch(handleApiError)
+  );
+
+// 이메일 중복 체크 API
+export function useCheckEmailExists() {
+  return useMutation(async (email: string) => {
+    const response = await axios.get(`/api/members/check-email/${email}`);
+    return response.data; // 서버가 true 또는 false를 반환한다고 가정
+  });
 }
