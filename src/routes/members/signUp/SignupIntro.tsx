@@ -2,24 +2,31 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
+import {
+  LoginSubmitButton,
+  LoginWrapper,
+  StyledSubtitle,
+  LeftAlignedFormControlLabel,
+  CheckBoxContainer,
+} from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
   Checkbox,
-  FormControlLabel,
   TextField,
   FormHelperText,
   FormGroup,
   Alert,
   Button,
   Grid,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   useSendEmailVerificationCode,
   useVerifyEmailCode,
   useCheckEmailExists,
-} from "../api"; // useCheckEmailExists 훅 추가
+} from "../api";
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -32,6 +39,8 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     null
   ); // 인증 결과 메시지
   const [emailSendResult, setEmailSendResult] = useState<null | string>(null); // 이메일 전송 결과 메시지
+  const [allChecked, setAllChecked] = useState(false); // 모두 동의 체크박스 상태
+
   const checkEmailExists = useCheckEmailExists(); // 이메일 중복 체크 훅 추가
 
   let interval: NodeJS.Timeout; // interval 변수를 useEffect 바깥에서 선언
@@ -107,6 +116,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
       agreeTerms: false,
       agreePrivacy: false,
       agreeMarketing: false,
+      allChecked: false,
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -125,6 +135,32 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     },
   });
 
+  // 개별 약관 체크박스 핸들러
+  const handleIndividualCheck = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    formik.setFieldValue(event.target.name, event.target.checked);
+
+    if (
+      formik.values.agreeTerms &&
+      formik.values.agreePrivacy &&
+      formik.values.agreeMarketing
+    ) {
+      setAllChecked(true);
+    } else {
+      setAllChecked(false);
+    }
+  };
+
+  // 모두 동의 체크박스 핸들러
+  const handleAllChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    setAllChecked(checked);
+    formik.setFieldValue("agreeTerms", checked);
+    formik.setFieldValue("agreePrivacy", checked);
+    formik.setFieldValue("agreeMarketing", checked);
+  };
+
   return (
     <Wrapper>
       <LoginWrapper>
@@ -132,7 +168,128 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
           <span>{t("members.join")}</span>
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <Grid container spacing={2} alignItems="center">
+          {/* 동의 섹션 */}
+          <h2>{t("AgreeContents.terms_title")}</h2>
+          <FormGroup>
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_terms_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.terms_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreeTerms"
+                      checked={formik.values.agreeTerms}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_terms")}
+                />
+              </CheckBoxContainer>
+              {formik.touched.agreeTerms && formik.errors.agreeTerms && (
+                <FormHelperText error>
+                  {formik.errors.agreeTerms}
+                </FormHelperText>
+              )}
+            </Box>
+
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_privacy_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.privacy_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreePrivacy"
+                      checked={formik.values.agreePrivacy}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_privacy")}
+                />
+              </CheckBoxContainer>
+              {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
+                <FormHelperText error>
+                  {formik.errors.agreePrivacy}
+                </FormHelperText>
+              )}
+            </Box>
+
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_marketing_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.marketing_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreeMarketing"
+                      checked={formik.values.agreeMarketing}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_marketing")}
+                />
+              </CheckBoxContainer>
+            </Box>
+
+            <CheckBoxContainer>
+              <LeftAlignedFormControlLabel
+                control={
+                  <Checkbox
+                    name="allChecked"
+                    checked={allChecked}
+                    onChange={handleAllChecked}
+                  />
+                }
+                label={t("AgreeContents.agree_all")}
+              />
+            </CheckBoxContainer>
+          </FormGroup>
+
+          {/* 이메일 인증 섹션 */}
+          <Grid container spacing={2} alignItems="center" marginTop={4}>
             <Grid item xs={8}>
               <TextField
                 fullWidth
@@ -187,18 +344,19 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={4} sx={{ textAlign: "center" }}>
+                <div>{`00:${String(timer).padStart(2, "0")}`}</div>
+              </Grid>
+              <Grid item xs={12}>
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={handleVerifyCode}
                   disabled={isCodeVerified}
+                  fullWidth
                 >
                   {t("members.verify_code")}
                 </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <div>{`00:${String(timer).padStart(2, "0")}`}</div>
               </Grid>
             </Grid>
           )}
@@ -210,49 +368,6 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
               </Alert>
             </Grid>
           )}
-
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreeTerms"
-                  checked={formik.values.agreeTerms}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_terms")}
-            />
-            {formik.touched.agreeTerms && formik.errors.agreeTerms && (
-              <FormHelperText error>{formik.errors.agreeTerms}</FormHelperText>
-            )}
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreePrivacy"
-                  checked={formik.values.agreePrivacy}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_privacy")}
-            />
-            {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
-              <FormHelperText error>
-                {formik.errors.agreePrivacy}
-              </FormHelperText>
-            )}
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreeMarketing"
-                  checked={formik.values.agreeMarketing}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_marketing")}
-            />
-          </FormGroup>
 
           <LoginSubmitButton
             color="primary"
