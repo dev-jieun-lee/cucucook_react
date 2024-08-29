@@ -3,7 +3,6 @@ import { useFormik } from "formik";
 import axios from "axios";
 import {
   TextField,
-  Button,
   FormControl,
   Select,
   MenuItem,
@@ -16,7 +15,6 @@ import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
 import { register, idCheck } from "../api";
-import phone from "phone";
 
 const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -25,6 +23,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const email = location.state?.email;
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [idError, setIdError] = useState<string | null>(null); // ID 입력에 대한 오류 메시지를 저장하는 상태 추가
 
   const emailDomains = [
     { value: "gmail.com", label: "gmail.com" },
@@ -33,24 +33,18 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     { value: "custom", label: t("members.custom_input") },
   ];
 
+  // ID 중복 확인 함수
   const idDuplicationChk = async (id: string) => {
     try {
       const isAvailable = await idCheck(id);
       return isAvailable;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(
-          "ID availability check failed:",
-          error.message,
-          error.response?.data
-        );
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.error("ID 중복 확인 실패:", error);
       return false;
     }
   };
 
+  // 입력된 이름을 한글로 변환하는 함수
   const convertToHangul = (input: string) => {
     const jamo = /[\u3131-\u3163\uac00-\ud7a3]/;
     const isHangul = input.split("").every((char) => jamo.test(char));
@@ -62,6 +56,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       .join("");
   };
 
+  // 폼 유효성 검사 함수
   const validate = async (values: any) => {
     const errors: any = {};
     const {
@@ -75,6 +70,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       phone,
     } = values;
 
+    // ID 유효성 검사
     if (!id) {
       errors.id = t("members.id_required");
     } else if (id.length < 4) {
@@ -89,6 +85,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       }
     }
 
+    // 비밀번호 유효성 검사
     if (!password) {
       errors.password = t("members.password_required");
     } else if (
@@ -97,16 +94,19 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.password = t("members.password_rules");
     }
 
+    // 비밀번호 확인 유효성 검사
     if (confirmPassword !== password) {
       errors.confirmPassword = t("members.passwords_match");
     }
 
+    // 이름 유효성 검사
     if (!name) {
       errors.name = t("members.name_required");
     } else if (!/^[가-힣\s]+$/.test(name)) {
       errors.name = t("members.name_korean_only");
     }
 
+    // 이메일 유효성 검사
     if (!emailLocalPart) {
       errors.emailLocalPart = t("members.email_required");
     }
@@ -117,6 +117,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.customDomain = t("members.custom_domain_required");
     }
 
+    // 전화번호 유효성 검사
     if (!phone) {
       errors.phone = t("members.phone_required");
     }
@@ -155,10 +156,19 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
         navigate("/login");
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          alert(
-            t("members.registration_failed") +
-              (error.response?.data || "Unknown error")
-          );
+          if (
+            error.response?.data.includes(
+              "duplicate key value violates unique constraint"
+            )
+          ) {
+            setPhoneError(t("members.phone_number_invalid"));
+            formik.setSubmitting(false); // 제출 버튼을 다시 활성화
+          } else {
+            alert(
+              t("members.registration_failed") +
+                (error.response?.data || "Unknown error")
+            );
+          }
         } else {
           console.error("Unexpected error:", error);
           alert(t("members.unexpected_error"));
@@ -167,11 +177,22 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
   });
 
+  // ID 입력 변경 핸들러
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/[^a-zA-Z0-9]/g, "");
-    formik.setFieldValue("id", value);
+    const value = event.target.value;
+    const alphanumericRegex = /^[a-zA-Z0-9]*$/;
+
+    if (!alphanumericRegex.test(value)) {
+      setIdError(t("members.id_alphanumeric_only")); // 비알파벳 문자가 있을 경우 오류 메시지 설정
+    } else {
+      setIdError(null); // 입력이 유효할 경우 오류 메시지 제거
+    }
+
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    formik.setFieldValue("id", sanitizedValue);
   };
 
+  // 이름 입력 변경 핸들러
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     const filteredValue = convertToHangul(value);
@@ -195,15 +216,14 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               onChange={handleIdChange}
               onBlur={formik.handleBlur}
               error={formik.touched.id && Boolean(formik.errors.id)}
-              helperText={formik.touched.id && formik.errors.id}
+              helperText={
+                formik.touched.id &&
+                (formik.errors.id ||
+                  (isIdAvailable === false && t("members.id_in_use")) ||
+                  (isIdAvailable === true && t("members.id_available")))
+              }
               margin="normal"
             />
-            {formik.touched.id && isIdAvailable === false && (
-              <FormHelperText error>{t("members.id_in_use")}</FormHelperText>
-            )}
-            {formik.touched.id && isIdAvailable === true && (
-              <FormHelperText>{t("members.id_available")}</FormHelperText>
-            )}
           </FormControl>
 
           <FormControl className="input-form">
@@ -264,9 +284,12 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               onChange={(e) => {
                 const onlyNums = e.target.value.replace(/[^0-9]/g, "");
                 formik.setFieldValue("phone", onlyNums);
+                setPhoneError(null); // 입력이 변경될 때 전화번호 오류 메시지 초기화
               }}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               margin="normal"
+              error={Boolean(phoneError)}
+              helperText={phoneError}
             />
           </FormControl>
 
@@ -314,6 +337,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             variant="contained"
             fullWidth
             type="submit"
+            disabled={formik.isSubmitting || Boolean(phoneError)}
           >
             {t("members.signup")}
           </LoginSubmitButton>
