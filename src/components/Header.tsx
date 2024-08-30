@@ -17,8 +17,9 @@ import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
 import { logout } from "../routes/members/api";
-import Profile from "../Profile";
+import Profile from "../LoginUser";
 import { useAuth } from "../auth/AuthContext";
+import LoginUser from "../LoginUser";
 
 interface IForm {
   keyword: string; // 검색어 폼 데이터
@@ -131,7 +132,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           <div className="profile-area">
             {user ? (
               <div className="profile">
-                <Profile/>
+                <LoginUser/>
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
@@ -157,7 +158,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             {user ? (
               // 로그인 상태일 때 로그아웃 버튼
               <div className="icon-btn profile">
-                <Profile/>
+                <LoginUser/>
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼

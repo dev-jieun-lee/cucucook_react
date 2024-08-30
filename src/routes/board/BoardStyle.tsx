@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const SearchArea = styled.div`
   margin: 50px;
-  .select-category{
+  .select-category, .select-category-item{
     width: 130px;
     margin-right: 50px;
   }

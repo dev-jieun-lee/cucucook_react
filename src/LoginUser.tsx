@@ -8,7 +8,7 @@ import { logout } from './routes/members/api';
 import { useNavigate } from 'react-router-dom';
 
 
-function Profile(){
+function LoginUser(){
   const { t } = useTranslation(); // 번역 함수
   const { setUser, setLoggedIn, user, isLoggedIn } = useAuth();
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
@@ -100,4 +100,4 @@ function Profile(){
   );
 };
 
-export default Profile;
+export default LoginUser;

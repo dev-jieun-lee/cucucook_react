@@ -3,6 +3,8 @@ import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
 import {
   Fab,
+  IconButton,
+  InputAdornment,
   MenuItem,
   Pagination,
   Paper,
@@ -17,34 +19,66 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { getBoardCategory, getBoardList } from "../api";
+import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
+import { useEffect, useState } from "react";
+import SearchIcon from '@mui/icons-material/Search';
 
 function Notice() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("all"); // 검색 유형
+  const [category, setCategory] = useState("");
+  const [boardCategoryId, setBoardCategoryId] = useState(""); // 카테고리 ID 상태
+  const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거 상태
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // 보드 리스트 조회 파라미터
-  const getBoardListApi = () => {
+  // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({ search, searchType, category });
+  }, [search, searchType, category, setSearchParams]);
+
+
+  //notice의 카테고리 데이터 받아오기
+  const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
-      boardCategoryId: "",
       start: "",
       display: "",
+    };
+    const response = await getBoardCategoryList(params);
+    return response.data.filter(
+      (category: any) => category.division === "NOTICE"
+    );
+  };
+  const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
+    "boardCategoryList",
+    getBoardCategoryListApi
+  );
+
+  // 데이터를 불러오는 API 호출 함수
+  const getBoardListApi = () => {
+    const params = {
+      search: searchType === "category" ? "" : search,
+      searchType: searchType,
+      boardCategoryId: category,
+      start: 1,
+      display: 10,
     };
     return getBoardList(params);
   };
 
   const getBoardListWithCategory = async () => {
     try {
-      // 보드 리스트 조회
+
       const boardList = await getBoardListApi();
 
-      // NOTICE인 경우만 필터링
+      //NOTICE일 경우만 필터링
       const filteredBoardList = boardList.data.filter(
         (board: any) => board.boardDivision === "NOTICE"
       );
@@ -66,11 +100,43 @@ function Notice() {
     }
   };
 
-  // 데이터를 받아오기
-  const { data: boardListWithCategory, isLoading: boardListLoading } = useQuery(
-    "boardListWithCategory",
-    getBoardListWithCategory
-  );
+  // 데이터 가져오기
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+    refetch,
+  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
+  });
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
+  //검색 select 변경 이벤트
+  const handleSearchTypeChange = (e: any) => {
+    setSearchType(e.target.value);
+    // 카테고리를 선택할 경우 search 값 초기화
+    if (e.target.value !== "category") {
+      setSearch("");
+    }
+  };
+
+  //카테고리 핸들러, 카테고리 검색
+  const handleCategoryChange = (e: any) => {
+    setCategory(e.target.value);
+    setTriggerSearch(true); 
+    refetch(); 
+  };
 
   //상세 페이지로 이동
   const onClickDetail = (boardId: string) => {
@@ -107,15 +173,58 @@ function Notice() {
           className="select-category"
           variant="standard"
           labelId="select-category"
-          value={"all"}
+          value={searchType}
+          onChange={handleSearchTypeChange}
         >
-          <MenuItem value="all">{t("text.all")}</MenuItem>
+          <MenuItem value="all">
+            {t("text.title")} + {t("text.content")}
+          </MenuItem>
+          <MenuItem value="title">{t("text.title")}</MenuItem>
+          <MenuItem value="contents">{t("text.content")}</MenuItem>
+          <MenuItem value="category">{t("text.category")}</MenuItem>
         </Select>
-        <TextField
-          className="search-input"
-          variant="standard"
-          placeholder={t("sentence.searching")}
-        />
+        {searchType === "category" ? (
+          <Select
+            className="select-category-item"
+            variant="standard"
+            labelId="select-category"
+            value={category}
+            onChange={handleCategoryChange}
+          >
+            <MenuItem value={""} >{t("sentence.choose")}</MenuItem>
+            {boardCategoryList?.map((category: any) => (
+              <MenuItem
+                key={category.boardCategoryId}
+                value={category.boardCategoryId}
+              >
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        ):(<></>) }
+          <TextField
+            className="search-input"
+            variant="standard"
+            placeholder={t("sentence.searching")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown} // 엔터 키로 검색
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    // color="primary"
+                    aria-label="toggle password visibility"
+                    onClick={handleSearchClick}
+                    edge="end"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
       </SearchArea>
       <ContentsArea>
         <TableContainer className="table-container" component={Paper}>
@@ -153,10 +262,7 @@ function Notice() {
                         [ {boardItem.category.name} ]
                       </CustomCategory>
                     </TableCell>
-                    <TableCell>
-                      {boardItem.title}
-                      {/* <AttachFileIcon className="file-icon" /> */}
-                    </TableCell>
+                    <TableCell>{boardItem.title}</TableCell>
                     <TableCell>{boardItem.userName}</TableCell>
                     <TableCell>
                       {moment(boardItem.udtDt).format("YYYY-MM-DD")}
