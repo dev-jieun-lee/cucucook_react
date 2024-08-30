@@ -48,6 +48,8 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const mutation = useMutation(login, {
     onSuccess: (data) => {
       if (data) {
+        console.log(data);
+        
         //auth 데이터 전달
         setUser({ id: data.userId, name: data.name });
         // 로그인 성공 시 이전 페이지로 이동
@@ -75,7 +77,9 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     },
     onSubmit: (values, { resetForm }) => {
       mutation.mutate(values, {
+        
         onSettled: () => {
+          console.log(values);
           // 비밀번호 초기화
           resetForm({
             values: {
