@@ -69,7 +69,7 @@ export async function register(form: any) {
 //아이디찾기
 export const findId = async (data: {
   name: string;
-  phone: string;
+  email: string;
   verificationCode: string;
 }) => {
   const response = await fetch("/api/members/find-id", {
@@ -85,15 +85,6 @@ export const findId = async (data: {
   }
 
   return response.json();
-};
-
-export const verifyQrCode = async (qrCode: string) => {
-  try {
-    const response = await axios.post("/api/verify-qr", { code: qrCode });
-    return response.data;
-  } catch (error) {
-    throw new Error("QR 코드 인증 실패");
-  }
 };
 
 // 이메일 인증 코드 발송

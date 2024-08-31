@@ -166,7 +166,19 @@
     "phone_required": "Please enter your phone number.",
     "registration_success": "Registration complete! Please log in.",
     "registration_failed": "Registration failed: ",
-    "email_in_use": "This email is already in use."
+    "email_in_use": "This email is already in use.",
+    "join_email": "Join with your Email",
+    "terms_required": "You must agree to the terms and conditions",
+    "privacy_required": "You must agree to the privacy policy",
+    "marketing_required": "You must agree to the marketing preferences",
+    "verification_failed_to_send": "Failed to send verification code",
+    "verification_code_invalid": "Invalid verification code",
+    "agree_terms": "I agree to the terms and conditions",
+    "agree_privacy": "I agree to the privacy policy",
+    "agree_marketing": "I agree to receive marketing emails",
+    "verify_email_to_continue": "Verify your email to continue",
+    "find_id_error": "아이디 찾기 중 오류 발생",
+    "no_info_found": "No ID matching the entered name and email was found."
   },
   "Footer": {
     "ceo": "ceo : jiunerim",

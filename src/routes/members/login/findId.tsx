@@ -1,238 +1,266 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
-import { Wrapper } from "../../../styles/CommonStyles";
 import {
   Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  FormHelperText,
-  FormGroup,
-  AlertColor,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
   Snackbar,
   Alert,
+  Box,
+  Typography,
+  Grid,
+  Link,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import PersonIcon from "@mui/icons-material/Person";
+import { useFormik } from "formik";
 import { useMutation } from "react-query";
+import {
+  useSendEmailVerificationCode,
+  useVerifyEmailCode,
+  findId,
+} from "../api";
+import { Wrapper } from "../../../styles/CommonStyles";
+import { LoginWrapper } from "./LoginStyle";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
-function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
+function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("error");
-  const [signupError, setSignupError] = useState<string | null>(null);
-  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
+  const [verificationTimeout, setVerificationTimeout] = useState<number | null>(
+    null
+  );
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [verificationComplete, setVerificationComplete] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"error" | "success">(
+    "error"
+  );
+  const [foundId, setFoundId] = useState<string | null>(null);
+  const [isVerificationSuccess, setIsVerificationSuccess] = useState(false); // 인증 성공 상태
+
+  const sendVerificationCodeMutation = useSendEmailVerificationCode();
+  const verifyCodeMutation = useVerifyEmailCode();
 
   const formik = useFormik({
     initialValues: {
+      name: "",
       email: "",
       verificationCode: "",
-      agreeTerms: false,
-      agreePrivacy: false,
-      agreeMarketing: false,
     },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email(t("members.email_invalid"))
-        .required(t("members.email_required")),
-      verificationCode: Yup.string().required(
-        t("members.verification_code_required")
-      ),
-      agreeTerms: Yup.boolean().oneOf([true], t("members.terms_required")),
-      agreePrivacy: Yup.boolean().oneOf([true], t("members.privacy_required")),
-      agreeMarketing: Yup.boolean().oneOf(
-        [true],
-        t("members.marketing_required")
-      ),
-    }),
-    onSubmit: async (values) => {
+    validate: (values) => {
+      const errors: { [key: string]: string } = {};
+      if (!values.name) errors.name = t("members.name_required");
+      if (!values.email) errors.email = t("members.email_required");
+      if (!values.verificationCode)
+        errors.verificationCode = t("members.verification_code_required");
+      return errors;
+    },
+    onSubmit: () => {
       if (verificationComplete) {
-        navigate("/signup/form", { state: { email: values.email } });
+        findId({
+          name: formik.values.name,
+          email: formik.values.email,
+          verificationCode: formik.values.verificationCode,
+        })
+          .then((response) => {
+            setShowResult(true);
+            setFoundId(response.foundId);
+            setLoginError(null);
+          })
+          .catch((error) => {
+            setShowResult(true);
+            setLoginError(t("members.find_id_error"));
+          });
       }
     },
   });
 
-  const sendVerificationCode = async (email: string) => {
-    try {
-      const response = await axios.post("/api/sendVerificationCode", { email });
-      if (response.data.success) {
-        setSnackbarOpen(true);
-        setSnackbarSeverity("success");
-        setSignupError(t("members.verification_code_sent"));
-        setVerificationCodeSent(true);
-      } else {
-        throw new Error(t("members.verification_failed_to_send"));
-      }
-    } catch (error) {
-      setSnackbarOpen(true);
-      setSnackbarSeverity("error");
-      setSignupError(t("members.verification_failed_to_send"));
+  const handleVerifyClick = async () => {
+    if (!formik.values.email) {
+      setLoginError(t("members.email_required"));
+      return;
     }
+    sendVerificationCodeMutation.mutate(formik.values.email, {
+      onSuccess: () => {
+        setVerificationTimeout(Date.now() + 60000);
+        setVerificationComplete(true);
+        setLoginError(null);
+      },
+      onError: (error) => {
+        setLoginError("Failed to send verification code");
+        setSnackbarOpen(true);
+        setSnackbarSeverity("error");
+      },
+    });
   };
 
-  const verifyCode = async () => {
-    try {
-      const response = await axios.post("/api/verifyCode", {
+  const handleConfirmClick = async () => {
+    if (!formik.values.verificationCode) {
+      setLoginError(t("members.verification_code_required"));
+      return;
+    }
+    verifyCodeMutation.mutate(
+      {
         email: formik.values.email,
         code: formik.values.verificationCode,
-      });
-      if (response.data.verified) {
-        setSnackbarOpen(true);
-        setSnackbarSeverity("success");
-        setSignupError(t("members.verification_success"));
-        setVerificationComplete(true);
-      } else {
-        throw new Error(t("members.verification_code_invalid"));
+      },
+      {
+        onSuccess: () => {
+          setVerificationComplete(true);
+          setIsVerificationSuccess(true); // 인증 성공으로 상태 업데이트
+          setLoginError(null);
+        },
+        onError: () => {
+          setLoginError("Failed to verify code");
+          setShowResult(true);
+        },
       }
-    } catch (error) {
-      setSnackbarOpen(true);
-      setSnackbarSeverity("error");
-      setSignupError(t("members.verification_code_invalid"));
-    }
+    );
   };
 
   return (
     <Wrapper>
       <LoginWrapper>
         <div className="title">
-          <PersonIcon className="title-icon" />
-          <span>{t("members.join_email")}</span>
+          <LockOpenIcon className="title-icon" />
+          <Typography variant="h6">{t("members.find_id")}</Typography>
         </div>
-        <form onSubmit={formik.handleSubmit}>
-          <TextField
-            fullWidth
-            id="email"
-            name="email"
-            label={t("members.email")}
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-            margin="normal"
-          />
-          {verificationCodeSent && (
-            <TextField
-              fullWidth
-              id="verificationCode"
-              name="verificationCode"
-              label={t("members.verification_code")}
-              value={formik.values.verificationCode}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.verificationCode &&
-                Boolean(formik.errors.verificationCode)
-              }
-              helperText={
-                formik.touched.verificationCode &&
-                formik.errors.verificationCode
-              }
-              margin="normal"
-            />
-          )}
-
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreeTerms"
-                  checked={formik.values.agreeTerms}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_terms")}
-            />
-            {formik.touched.agreeTerms && formik.errors.agreeTerms && (
-              <FormHelperText error>{formik.errors.agreeTerms}</FormHelperText>
+        <Box>
+          <form onSubmit={formik.handleSubmit}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel htmlFor="name">{t("members.name")}</InputLabel>
+              <OutlinedInput
+                id="name"
+                value={formik.values.name}
+                onChange={formik.handleChange("name")}
+                label={t("members.name")}
+              />
+            </FormControl>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={9}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
+                  <OutlinedInput
+                    id="email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange("email")}
+                    label={t("members.email")}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid
+                item
+                xs={3}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleVerifyClick}
+                  fullWidth
+                  sx={{ height: "100%" }}
+                >
+                  {t("members.verify")}
+                </Button>
+              </Grid>
+            </Grid>
+            {verificationComplete && (
+              <>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={9}>
+                    <FormControl fullWidth margin="normal">
+                      <InputLabel htmlFor="verificationCode">
+                        {t("members.verification_code")}
+                      </InputLabel>
+                      <OutlinedInput
+                        id="verificationCode"
+                        value={formik.values.verificationCode}
+                        onChange={(e) =>
+                          formik.setFieldValue(
+                            "verificationCode",
+                            e.target.value.replace(/[^0-9]/g, "")
+                          )
+                        }
+                        label={t("members.verification_code")}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={3}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={handleConfirmClick}
+                      fullWidth
+                      sx={{ height: "100%" }}
+                    >
+                      {t("alert.confirmed")}
+                    </Button>
+                  </Grid>
+                </Grid>
+                {isVerificationSuccess && ( // 인증이 성공했을 때만 문구 표시
+                  <Typography variant="body2" color="green" sx={{ mt: 1 }}>
+                    {t("members.verification_success")}
+                  </Typography>
+                )}
+              </>
             )}
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreePrivacy"
-                  checked={formik.values.agreePrivacy}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_privacy")}
-            />
-            {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
-              <FormHelperText error>
-                {formik.errors.agreePrivacy}
-              </FormHelperText>
-            )}
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="agreeMarketing"
-                  checked={formik.values.agreeMarketing}
-                  onChange={formik.handleChange}
-                />
-              }
-              label={t("members.agree_marketing")}
-            />
-            {formik.touched.agreeMarketing && formik.errors.agreeMarketing && (
-              <FormHelperText error>
-                {formik.errors.agreeMarketing}
-              </FormHelperText>
-            )}
-          </FormGroup>
-
-          <Button
-            color="primary"
-            variant="contained"
-            fullWidth
-            onClick={() => sendVerificationCode(formik.values.email)}
-            disabled={!formik.values.email || verificationCodeSent}
-          >
-            {t("members.send_verification_code")}
-          </Button>
-
-          {verificationCodeSent && !verificationComplete && (
             <Button
-              color="primary"
-              variant="contained"
-              fullWidth
-              onClick={verifyCode}
-              disabled={!formik.values.verificationCode}
-            >
-              {t("members.verify_code")}
-            </Button>
-          )}
-
-          {verificationComplete && (
-            <LoginSubmitButton
-              color="primary"
-              variant="contained"
-              fullWidth
               type="submit"
+              color="primary"
+              variant="contained"
+              sx={{ mt: 2 }}
+              disabled={!isVerificationSuccess} // 인증이 성공해야 활성화
             >
-              {t("members.verify_email_to_continue")}
-            </LoginSubmitButton>
+              {t("members.find_id")}
+            </Button>
+          </form>
+          {showResult && (
+            <Box
+              sx={{
+                mt: 2,
+                p: 2,
+                border: "1px solid gray",
+                borderRadius: "4px",
+              }}
+            >
+              {foundId ? (
+                <>
+                  <Typography>{`${t(
+                    "members.id_found"
+                  )}: ${foundId}`}</Typography>
+                  <Link href="/login" sx={{ mr: 2 }}>
+                    {t("members.login")}
+                  </Link>
+                  <Link href="/login/FindPw">{t("members.find_pw")}</Link>
+                </>
+              ) : (
+                <Typography>{t("members.no_info_found")}</Typography>
+              )}
+            </Box>
           )}
-        </form>
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={() => setSnackbarOpen(false)}
-        >
-          <Alert
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
             onClose={() => setSnackbarOpen(false)}
-            severity={snackbarSeverity}
           >
-            {signupError || ""}
-          </Alert>
-        </Snackbar>
+            <Alert severity={snackbarSeverity}>{loginError}</Alert>
+          </Snackbar>
+        </Box>
       </LoginWrapper>
     </Wrapper>
   );
 }
 
-export default SignupIntro;
+export default FindId;
