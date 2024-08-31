@@ -118,3 +118,23 @@ export function useCheckEmailExists() {
     return response.data; // 서버가 true 또는 false를 반환한다고 가정
   });
 }
+
+//비밀번호찾기
+// 비밀번호 찾기
+export const fetchPassword = async (data: {
+  name: string;
+  email: string;
+  userId: string;
+  verificationCode: string;
+}) => {
+  const response = await api.post("/find-pw", data);
+
+  if (response.status !== 200) {
+    throw new Error("비밀번호 찾기 오류");
+  }
+
+  return response.data;
+};
+
+// 비밀번호 찾기 훅
+export const useFetchPassword = () => useMutation(fetchPassword);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -9,91 +9,83 @@ import {
   Alert,
   Box,
   Typography,
+  Grid,
   FormHelperText,
   InputAdornment,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useMutation } from "react-query";
+import {
+  useSendEmailVerificationCode,
+  useVerifyEmailCode,
+  useFetchPassword,
+} from "../api"; // API 훅 가져오기
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper } from "./LoginStyle";
 import { useSearchParams, Link } from "react-router-dom";
-import axios from "axios";
-
-// API 호출 함수
-const fetchPassword = async (values: any) => {
-  const response = await axios.post(
-    "http://localhost:8080/api/members/find-pw",
-    {
-      name: values.name,
-      phone: values.phone,
-      userId: values.userId,
-      verificationCode: values.verificationCode,
-    }
-  );
-  console.log("Server Response:", response.data); // 서버 응답 확인용 콘솔 로그
-  return response.data;
-};
 
 function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialId = searchParams.get("id") || "";
 
-  const [verificationTimeout, setVerificationTimeout] = React.useState<
-    number | null
-  >(null);
-  const [loginError, setLoginError] = React.useState<string | null>(null);
-  const [showVerificationBox, setShowVerificationBox] = React.useState(false);
-  const [timer, setTimer] = React.useState<number>(0);
-  const [foundId, setFoundId] = React.useState<string | null>(null);
-  const [resultVisible, setResultVisible] = React.useState<boolean>(false); // 결과 박스 표시 상태 변수 추가
+  const [verificationTimeout, setVerificationTimeout] = useState<number | null>(
+    null
+  );
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [showVerificationBox, setShowVerificationBox] = useState(false);
+  const [verificationComplete, setVerificationComplete] = useState(false);
+  const [timer, setTimer] = useState<number>(0);
+  const [resultVisible, setResultVisible] = useState<boolean>(false);
+  const [isVerificationSuccess, setIsVerificationSuccess] = useState(false); // 인증 성공 상태
+
+  const sendVerificationCodeMutation = useSendEmailVerificationCode();
+  const verifyCodeMutation = useVerifyEmailCode();
+  const fetchPasswordMutation = useFetchPassword(); // 비밀번호 찾기 API 훅 사용
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      phone: "",
+      email: "",
       userId: initialId,
       verificationCode: "",
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
       if (!values.name) errors.name = t("members.name_required");
-      if (!values.phone) errors.phone = t("members.phone_number_required");
+      if (!values.email) errors.email = t("members.email_required");
       if (!values.userId) errors.userId = t("members.id_required");
       if (showVerificationBox && !values.verificationCode)
         errors.verificationCode = t("members.verification_code_required");
       return errors;
     },
     onSubmit: (values) => {
-      mutation.mutate(values);
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: fetchPassword,
-    onSuccess: (data) => {
-      console.log("Mutation Success Data:", data); // 성공 시 데이터 확인용 콘솔 로그
-      console.log("Mutation Success Data:", data); // 성공 시 데이터 확인용 콘솔 로그
-      if (data.success && data.foundId) {
-        setFoundId(data.foundId);
-        setLoginError(null);
-      } else {
-        setFoundId(null);
-        setLoginError(t("members.no_member_info"));
-      }
-      setResultVisible(true); // 비밀번호 찾기 완료 후 결과 박스 표시
-    },
-    onError: () => {
-      setLoginError(t("members.unexpected_error"));
-      setResultVisible(true); // 오류 발생 시 결과 박스 표시
+      fetchPasswordMutation.mutate(values, {
+        onSuccess: (data) => {
+          console.log("비밀번호 찾기 성공:", data);
+          setResultVisible(true);
+          setLoginError(null);
+        },
+        onError: (error) => {
+          setResultVisible(true);
+          setLoginError(t("members.no_member_info"));
+        },
+      });
     },
   });
 
   const handleVerifyClick = () => {
-    if (formik.values.name && formik.values.phone && formik.values.userId) {
-      setShowVerificationBox(true);
-      setVerificationTimeout(Date.now() + 60000);
-      setTimer(60);
+    if (formik.values.name && formik.values.email && formik.values.userId) {
+      sendVerificationCodeMutation.mutate(formik.values.email, {
+        onSuccess: () => {
+          setShowVerificationBox(true);
+          setVerificationTimeout(Date.now() + 60000);
+          setTimer(60);
+          setLoginError(null);
+        },
+        onError: () => {
+          setLoginError(t("members.verification_error"));
+        },
+      });
     } else {
       setLoginError(t("members.name_or_phone_or_id_required"));
     }
@@ -103,44 +95,26 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
     if (!formik.values.verificationCode) {
       setLoginError(t("members.verification_code_required"));
     } else {
-      // 인증번호 확인 로직을 구현
+      verifyCodeMutation.mutate(
+        {
+          email: formik.values.email,
+          code: formik.values.verificationCode,
+        },
+        {
+          onSuccess: () => {
+            setVerificationComplete(true);
+            setIsVerificationSuccess(true);
+            setLoginError(null);
+          },
+          onError: () => {
+            setLoginError(t("members.verification_failed"));
+          },
+        }
+      );
     }
   };
 
-  // 한글 자모로 변환하는 함수
-  const convertToHangul = (input: string) => {
-    const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
-    const isHangul = input.split("").every((char) => jamo.test(char));
-    if (!isHangul) return "";
-
-    return input
-      .split("")
-      .filter((char) => jamo.test(char))
-      .join("");
-  };
-
-  // 이름 입력값 정제 함수
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const filteredValue = convertToHangul(value);
-    formik.setFieldValue("name", filteredValue);
-  };
-
-  // 아이디 입력값 정제 함수
-  const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, ""); // 영어와 숫자만 허용
-    formik.setFieldValue("userId", filteredValue);
-  };
-
-  // 전화번호 입력값 정제 함수
-  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const filteredValue = value.replace(/[^0-9]/g, ""); // 숫자만 허용
-    formik.setFieldValue("phone", filteredValue);
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (verificationTimeout) {
       const interval = setInterval(() => {
         if (Date.now() > verificationTimeout) {
@@ -186,7 +160,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               name="name"
               label={t("members.name")}
               value={formik.values.name}
-              onChange={handleNameChange}
+              onChange={formik.handleChange}
               inputProps={{ maxLength: 50 }}
             />
             {formik.errors.name && (
@@ -206,7 +180,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               name="userId"
               label={t("members.id")}
               value={formik.values.userId}
-              onChange={handleUserIdChange}
+              onChange={formik.handleChange}
               inputProps={{ maxLength: 50 }}
             />
             {formik.errors.userId && (
@@ -219,25 +193,18 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               className="input-form"
               sx={{ m: 1, flexGrow: 1 }}
               variant="outlined"
-              error={!!formik.errors.phone}
+              error={!!formik.errors.email}
             >
-              <InputLabel htmlFor="phone">
-                {t("members.phone_number")}
-              </InputLabel>
+              <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
               <OutlinedInput
-                id="phone"
-                name="phone"
-                label={t("members.phone_number")}
-                value={formik.values.phone}
-                onChange={handlePhoneChange}
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 15,
-                }}
+                id="email"
+                name="email"
+                label={t("members.email")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
               />
-              {formik.errors.phone && (
-                <FormHelperText error>{formik.errors.phone}</FormHelperText>
+              {formik.errors.email && (
+                <FormHelperText error>{formik.errors.email}</FormHelperText>
               )}
             </FormControl>
             <Button
@@ -299,6 +266,11 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                   {t("members.confirmed")}
                 </Button>
               </Box>
+              {isVerificationSuccess && (
+                <Typography variant="body2" color="green" sx={{ mt: 1 }}>
+                  {t("members.verification_success")}
+                </Typography>
+              )}
             </>
           )}
 
@@ -307,20 +279,20 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
             color="primary"
             type="submit"
             sx={{ mt: 2 }}
-            disabled={mutation.isLoading}
+            disabled={!isVerificationSuccess || fetchPasswordMutation.isLoading}
           >
             {t("members.find_pw")}
           </Button>
         </form>
 
-        {/* Result Box */}
-        {resultVisible && ( // 결과 박스를 조건부로 렌더링
+        {resultVisible && (
           <Box sx={{ mt: 2 }}>
-            {mutation.isLoading ? (
+            {fetchPasswordMutation.isLoading ? (
               <Typography>{t("members.loading")}</Typography>
             ) : (
               <>
-                {mutation.isSuccess && foundId ? (
+                {fetchPasswordMutation.isSuccess &&
+                fetchPasswordMutation.data?.foundId ? (
                   <Box>
                     <Typography>{t("members.temp_password_issued")}</Typography>
                     <Typography>
@@ -331,7 +303,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                   </Box>
                 ) : (
                   <Box>
-                    {mutation.isError || loginError ? (
+                    {fetchPasswordMutation.isError || loginError ? (
                       <Typography color="error">
                         {loginError || t("members.unexpected_error")}
                       </Typography>
