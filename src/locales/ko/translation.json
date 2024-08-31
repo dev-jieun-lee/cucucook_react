@@ -171,7 +171,20 @@
     "phone_required": "핸드폰 번호를 입력하세요.",
     "registration_success": "회원가입이 완료되었습니다. 로그인해주세요.",
     "registration_failed": "회원가입에 실패했습니다: ",
-    "email_in_use": "이미 사용 중인 이메일입니다."
+    "email_in_use": "이미 사용 중인 이메일입니다.",
+    "join_email": "이메일로 가입",
+    "terms_required": "이용 약관에 동의해야 합니다",
+    "privacy_required": "개인정보 보호정책에 동의해야 합니다",
+    "marketing_required": "마케팅 수신에 동의해야 합니다",
+    "verification_failed_to_send": "인증 코드 전송에 실패했습니다",
+    "verification_code_invalid": "잘못된 인증 코드입니다",
+    "agree_terms": "이용 약관에 동의합니다",
+    "agree_privacy": "개인정보 보호정책에 동의합니다",
+    "agree_marketing": "마케팅 이메일 수신에 동의합니다",
+    "verify_email_to_continue": "계속하려면 이메일을 인증하세요",
+    "find_id_error": "아이디 찾기 중 오류 발생",
+    "id_found": "확인된 아이디",
+    "no_info_found": "입력하신 이름,이메일과 일치하는 아이디가 없습니다."
   },
 
   "Footer": {
