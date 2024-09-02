@@ -35,6 +35,7 @@ const handleCookies = (userId: string, saveId: boolean) => {
   }
 };
 
+// 로그인 실패 시도와 잠금 상태를 관리하는 컴포넌트
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); // 번역 훅
   const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태
@@ -89,7 +90,8 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         } else if (newAttempts === 4) {
           alertMessage = t("alert.attempt_4");
         } else if (newAttempts >= 5) {
-          setLockoutTimer(10 * 60); // 10분 잠금
+          const additionalLockoutTime = 5 * 60; // 5분 추가 잠금
+          setLockoutTimer((prev) => (prev || 10 * 60) + additionalLockoutTime); // 10분 기본 잠금 + 추가 5분
           alertMessage = t("alert.locked");
         }
 
@@ -121,8 +123,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
   // 체크박스 상태에 따라 쿠키 저장 및 삭제
   useEffect(() => {
-    // 상태가 변할 때만 쿠키를 업데이트하도록 설정
-    handleCookies(formik.values.userId, saveId);
+    handleCookies(formik.values.userId, saveId); // 체크박스 상태에 따라 쿠키 설정 및 삭제
   }, [saveId]); // saveId가 변경될 때만 실행
 
   // 잠금 타이머 처리
