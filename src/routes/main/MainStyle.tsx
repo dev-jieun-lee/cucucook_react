@@ -122,6 +122,10 @@ export const BannerButton = styled(Button)`
 `;
 
 
+export const NoticeTable = styled.div`
+  
+`;
+
 export const Slogan1 = styled.div`
   margin: 10px 8% ;
   color: ${(props) => props.theme.mainColor};

@@ -7,8 +7,8 @@
     "recipe" : {
       "original" : "레시피",
       "all" : "전체 레시피",
-      "public" : "기존 레시피",
-      "member" : "회원 레시피",
+      "public" : "레시피",
+      "member" : "D.I.Y.레시피",
       "popularity" : "인기 레시피"
     },
     "board" : {
