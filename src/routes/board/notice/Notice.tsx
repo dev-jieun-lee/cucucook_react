@@ -25,24 +25,26 @@ import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { useEffect, useState } from "react";
-import SearchIcon from '@mui/icons-material/Search';
+import { SetStateAction, useEffect, useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Notice() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
-  const [category, setCategory] = useState("");
-  const [boardCategoryId, setBoardCategoryId] = useState(""); // 카테고리 ID 상태
-  const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거 상태
+  const [category, setCategory] = useState("all");
+  const [triggerSearch, setTriggerSearch] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const display = 10; // 한 페이지에 표시할 게시물 수
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
     setSearchParams({ search, searchType, category });
   }, [search, searchType, category, setSearchParams]);
-
 
   //notice의 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
@@ -62,30 +64,27 @@ function Notice() {
   );
 
   // 데이터를 불러오는 API 호출 함수
-  const getBoardListApi = () => {
+  const getBoardListApi = async () => {
     const params = {
+      division: "NOTICE",
       search: searchType === "category" ? "" : search,
       searchType: searchType,
       boardCategoryId: category,
-      start: 1,
-      display: 10,
+      currentPage: currentPage, // 페이지 번호
+      display: display, //페이지당 표시할 갯수
     };
-    return getBoardList(params);
+    const response = await getBoardList(params);
+    setTotalCount(response.data.length);
+    return response;
   };
 
   const getBoardListWithCategory = async () => {
     try {
-
       const boardList = await getBoardListApi();
-
-      //NOTICE일 경우만 필터링
-      const filteredBoardList = boardList.data.filter(
-        (board: any) => board.boardDivision === "NOTICE"
-      );
 
       // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
-        filteredBoardList.map(async (board: any) => {
+        boardList.data.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
           return {
             ...board,
@@ -111,6 +110,7 @@ function Notice() {
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
+    setCurrentPage(1);
     setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
     refetch(); // refetch를 호출해 쿼리를 수동으로 실행
   };
@@ -122,20 +122,37 @@ function Notice() {
     }
   };
 
-  //검색 select 변경 이벤트
+  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+  useEffect(() => {
+    if (category) {
+      setTriggerSearch(true);
+      refetch();
+    }
+  }, [category, refetch]);
+
+  // 검색 유형 select 변경 이벤트
   const handleSearchTypeChange = (e: any) => {
     setSearchType(e.target.value);
     // 카테고리를 선택할 경우 search 값 초기화
-    if (e.target.value !== "category") {
-      setSearch("");
+    if (e.target.value === "category") {
+      setSearch(""); // 카테고리 검색에서는 검색어 초기화
+    } else {
+      setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
     }
   };
 
-  //카테고리 핸들러, 카테고리 검색
+  //카테고리 핸들러
   const handleCategoryChange = (e: any) => {
     setCategory(e.target.value);
-    setTriggerSearch(true); 
-    refetch(); 
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (event: any, page: any) => {
+    console.log(page);
+
+    setCurrentPage(page);
+    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+    refetch();
   };
 
   //상세 페이지로 이동
@@ -191,7 +208,7 @@ function Notice() {
             value={category}
             onChange={handleCategoryChange}
           >
-            <MenuItem value={""} >{t("sentence.choose")}</MenuItem>
+            <MenuItem value={"all"}>{t("text.all")}</MenuItem>
             {boardCategoryList?.map((category: any) => (
               <MenuItem
                 key={category.boardCategoryId}
@@ -201,7 +218,7 @@ function Notice() {
               </MenuItem>
             ))}
           </Select>
-        ):(<></>) }
+        ) : (
           <TextField
             className="search-input"
             variant="standard"
@@ -224,7 +241,7 @@ function Notice() {
               ),
             }}
           />
-
+        )}
       </SearchArea>
       <ContentsArea>
         <TableContainer className="table-container" component={Paper}>
@@ -245,31 +262,33 @@ function Notice() {
             </TableHead>
             <TableBody>
               {boardListWithCategory && boardListWithCategory.length > 0 ? (
-                boardListWithCategory.map((boardItem: any, index: number) => (
-                  <TableRow
-                    className="row"
-                    key={index}
-                    onClick={() => onClickDetail(boardItem.boardId)}
-                  >
-                    <TableCell component="th" scope="row">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell>
-                      <CustomCategory
-                        style={{ color: `${boardItem.category.color}` }}
-                        className="category"
-                      >
-                        [ {boardItem.category.name} ]
-                      </CustomCategory>
-                    </TableCell>
-                    <TableCell>{boardItem.title}</TableCell>
-                    <TableCell>{boardItem.userName}</TableCell>
-                    <TableCell>
-                      {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                    </TableCell>
-                    <TableCell>{boardItem.viewCount}</TableCell>
-                  </TableRow>
-                ))
+                boardListWithCategory
+                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+                  .map((boardItem: any, index: number) => (
+                    <TableRow
+                      className="row"
+                      key={index}
+                      onClick={() => onClickDetail(boardItem.boardId)}
+                    >
+                      <TableCell component="th" scope="row">
+                        {(currentPage - 1) * display + index + 1}
+                      </TableCell>
+                      <TableCell>
+                        <CustomCategory
+                          style={{ color: `${boardItem.category.color}` }}
+                          className="category"
+                        >
+                          [ {boardItem.category.name} ]
+                        </CustomCategory>
+                      </TableCell>
+                      <TableCell>{boardItem.title}</TableCell>
+                      <TableCell>{boardItem.userName}</TableCell>
+                      <TableCell>
+                        {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                      </TableCell>
+                      <TableCell>{boardItem.viewCount}</TableCell>
+                    </TableRow>
+                  ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
@@ -281,7 +300,13 @@ function Notice() {
           </Table>
         </TableContainer>
         <Stack className="pagination" spacing={2}>
-          <Pagination className="pagination-btn" count={10} color="primary" />
+          <Pagination
+            className="pagination-btn"
+            count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
         </Stack>
       </ContentsArea>
     </Wrapper>

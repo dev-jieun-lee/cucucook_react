@@ -7,8 +7,8 @@
     "recipe" : {
       "original" : "Recipe",
       "all" : "All",
-      "public" : "Public Recipe",
-      "member" : "Member Recipe",
+      "public" : "Recipe",
+      "member" : "D.I.Y. Recipe",
       "popularity" : "popularity"
     },
     "board" : {

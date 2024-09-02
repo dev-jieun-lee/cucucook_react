@@ -65,6 +65,7 @@ function App() {
                     minHeight: '65vh',
                     width: '100%',
                     margin: '120px auto',
+                    height : '100vh'
                   }}
                 >
                   <Routes>
