@@ -20,81 +20,31 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { setCookie, getCookie, eraseCookie } from "../../../utils/cookies"; // 쿠키 유틸리티 함수
+import Cookies from "js-cookie";
 
 const MySwal = withReactContent(Swal);
 
+// 쿠키 저장 및 삭제 처리 함수
+const handleCookies = (userId: string, saveId: boolean) => {
+  if (saveId) {
+    Cookies.set("userId", userId, { expires: 7 }); // 아이디 저장
+    Cookies.set("saveId", "true", { expires: 7 }); // 체크박스 상태 저장
+  } else {
+    Cookies.remove("userId"); // 아이디 삭제
+    Cookies.remove("saveId"); // 체크박스 상태 삭제
+  }
+};
+
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { t } = useTranslation();
-  const [showPassword, setShowPassword] = useState(false);
-  const [saveId, setSaveId] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [loginAttempts, setLoginAttempts] = useState(0);
-  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null);
-  const [lockoutMessage, setLockoutMessage] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const savedId = getCookie("saveId") === "true"; // 쿠키에서 저장된 값 읽기
-    setSaveId(savedId);
-  }, []);
-
-  useEffect(() => {
-    if (saveId) {
-      setCookie("saveId", "true", 7); // 7일 동안 저장
-    } else {
-      eraseCookie("saveId"); // 체크 해제 시 쿠키 삭제
-    }
-  }, [saveId]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-
-    if (lockoutTimer && lockoutTimer > 0) {
-      timer = setInterval(() => {
-        setLockoutTimer((prev) => {
-          if (prev === null || prev <= 0) {
-            clearInterval(timer);
-            setLockoutMessage(null); // 타이머가 끝났을 때 메시지 초기화
-            console.log("타이머 종료");
-            return null;
-          }
-          console.log("타이머 감소: ", prev);
-          return prev - 1;
-        });
-      }, 1000); // 1초마다 감소
-    }
-
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    };
-  }, [lockoutTimer]);
-
-  useEffect(() => {
-    if (lockoutTimer !== null && lockoutTimer > 0) {
-      // 남은 시간 계산
-      const minutes = Math.floor(lockoutTimer / 60);
-      const seconds = lockoutTimer % 60;
-
-      // 메시지 구성
-      const timeMessage =
-        t("alert.locked", { minutes, seconds }) + " " + t("alert.try_again");
-      setLockoutMessage(timeMessage); // 메시지 상태 업데이트
-      console.log("타이머 메시지 업데이트: ", timeMessage);
-    } else {
-      setLockoutMessage(null);
-    }
-  }, [lockoutTimer, t]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // 영어와 숫자만 허용
-    const value = event.target.value;
-    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    formik.setFieldValue("userId", filteredValue);
-  };
+  const { t } = useTranslation(); // 번역 훅
+  const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태
+  const [saveId, setSaveId] = useState(false); // 아이디 저장 체크박스 상태
+  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지
+  const [loginAttempts, setLoginAttempts] = useState(0); // 로그인 시도 횟수
+  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null); // 잠금 타이머
+  const [lockoutMessage, setLockoutMessage] = useState<string | null>(null); // 잠금 메시지
+  const navigate = useNavigate(); // 페이지 이동 훅
+  const location = useLocation(); // 현재 위치 훅
 
   const formik = useFormik({
     initialValues: {
@@ -104,10 +54,10 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     onSubmit: async (values, { resetForm }) => {
       if (lockoutTimer && lockoutTimer > 0) {
         // 잠금 상태일 경우
-        setLoginError(lockoutMessage || ""); // null일 경우 빈 문자열로 설정
+        setLoginError(lockoutMessage || ""); // 잠금 메시지 설정
         MySwal.fire({
           title: t("members.login_failed"),
-          text: lockoutMessage || "", // null일 경우 빈 문자열로 설정
+          text: lockoutMessage || "", // 잠금 메시지
           icon: "warning",
           confirmButtonText: t("alert.ok"),
         });
@@ -116,19 +66,20 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
       }
 
       try {
-        const data = await login(values);
+        const data = await login(values); // 로그인 API 호출
         if (data.token) {
-          localStorage.setItem("token", data.token);
-          const from = location.state?.from || "/";
+          // 로그인 성공 시
+          handleCookies(values.userId, saveId); // 쿠키 설정
+          const from = location.state?.from || "/"; // 이전 페이지로 이동
           navigate(from);
-          setLoginAttempts(0); // 성공 시 실패 횟수 초기화
-          setLockoutMessage(null); // 로그인 성공 시 메시지 초기화
+          setLoginAttempts(0); // 로그인 성공 시 실패 횟수 초기화
+          setLockoutMessage(null); // 메시지 초기화
           console.log("로그인 성공");
         } else {
-          throw new Error("로그인 실패");
+          throw new Error("로그인 실패"); // 로그인 실패
         }
       } catch (error) {
-        const newAttempts = loginAttempts + 1;
+        const newAttempts = loginAttempts + 1; // 로그인 시도 횟수 증가
         setLoginAttempts(newAttempts);
 
         let alertMessage = t("alert.attempt");
@@ -138,7 +89,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         } else if (newAttempts === 4) {
           alertMessage = t("alert.attempt_4");
         } else if (newAttempts >= 5) {
-          setLockoutTimer(10 * 60); // 10분을 초 단위로 설정
+          setLockoutTimer(10 * 60); // 10분 잠금
           alertMessage = t("alert.locked");
         }
 
@@ -152,11 +103,77 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           confirmButtonText: t("alert.ok"),
         });
 
-        setLoginError(alertMessage);
+        setLoginError(alertMessage); // 로그인 오류 메시지 설정
         console.log("로그인 실패 - 시도 횟수: ", newAttempts);
       }
     },
   });
+
+  // 로그인 시 저장된 아이디 및 체크박스 상태 불러오기
+  useEffect(() => {
+    const savedId = Cookies.get("userId") || ""; // 저장된 아이디 읽기
+    const shouldSaveId = Cookies.get("saveId") === "true"; // 체크박스 상태 읽기
+    setSaveId(shouldSaveId);
+    if (savedId && shouldSaveId) {
+      formik.setFieldValue("userId", savedId); // 저장된 아이디를 폼에 설정
+    }
+  }, [formik]);
+
+  // 체크박스 상태에 따라 쿠키 저장 및 삭제
+  useEffect(() => {
+    // 상태가 변할 때만 쿠키를 업데이트하도록 설정
+    handleCookies(formik.values.userId, saveId);
+  }, [saveId]); // saveId가 변경될 때만 실행
+
+  // 잠금 타이머 처리
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+
+    if (lockoutTimer && lockoutTimer > 0) {
+      timer = setInterval(() => {
+        setLockoutTimer((prev) => {
+          if (prev === null || prev <= 0) {
+            clearInterval(timer);
+            setLockoutMessage(null); // 타이머 종료 시 메시지 초기화
+            console.log("타이머 종료");
+            return null;
+          }
+          console.log("타이머 감소: ", prev);
+          return prev - 1;
+        });
+      }, 1000); // 1초마다 감소
+    }
+
+    return () => {
+      if (timer) {
+        clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
+      }
+    };
+  }, [lockoutTimer]);
+
+  // 잠금 타이머에 따른 메시지 업데이트
+  useEffect(() => {
+    if (lockoutTimer !== null && lockoutTimer > 0) {
+      // 남은 시간 계산
+      const minutes = Math.floor(lockoutTimer / 60);
+      const seconds = lockoutTimer % 60;
+
+      // 메시지 구성
+      const timeMessage =
+        t("alert.locked", { minutes, seconds }) + " " + t("alert.try_again");
+      setLockoutMessage(timeMessage); // 메시지 상태 업데이트
+      console.log("타이머 메시지 업데이트: ", timeMessage);
+    } else {
+      setLockoutMessage(null); // 타이머가 없으면 메시지 초기화
+    }
+  }, [lockoutTimer, t]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // 영어와 숫자만 허용
+    const value = event.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    formik.setFieldValue("userId", filteredValue); // 필터링된 값 설정
+  };
 
   return (
     <Wrapper>
@@ -204,7 +221,12 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               control={
                 <Checkbox
                   checked={saveId}
-                  onChange={(event) => setSaveId(event.target.checked)}
+                  onChange={(event) => {
+                    // 체크박스 상태가 변경되면, 상태를 업데이트하고 쿠키도 변경함
+                    const newSaveId = event.target.checked;
+                    setSaveId(newSaveId);
+                    handleCookies(formik.values.userId, newSaveId);
+                  }}
                 />
               }
               label={t("members.save_id")}
@@ -231,15 +253,15 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         </form>
 
         <ButtonArea>
-          <StyledAnchor onClick={() => navigate("/login/findId")}>
+          <StyledAnchor to="/login/findId">
             {t("members.finding_id") + "     "}
           </StyledAnchor>
           |
-          <StyledAnchor onClick={() => navigate("/login/findPw")}>
+          <StyledAnchor to="/login/findPw">
             {"     " + t("members.finding_pw") + "     "}
           </StyledAnchor>
           |
-          <StyledAnchor onClick={() => navigate("/signup/intro")}>
+          <StyledAnchor to="/signup/intro">
             {"     " + t("members.join")}
           </StyledAnchor>
         </ButtonArea>

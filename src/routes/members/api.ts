@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
 import { useMutation } from "react-query";
 
 const BASE_URL = "http://localhost:8080/api/members";
@@ -30,6 +31,16 @@ export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
+
+    // 로그인 성공 시 JWT 토큰을 쿠키에 저장
+    if (response.data.token) {
+      Cookies.set("auth_token", response.data.token, {
+        expires: 7,
+        secure: true,
+        sameSite: "Strict",
+      });
+    }
+
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -45,21 +56,29 @@ export async function increaseFailedAttempts(userId: string) {
   }
 }
 
-//로그아웃
+// 로그아웃 요청
 export async function logout() {
-  const response = await axios.post(`${BASE_URL}/logout`);
-  console.log("로그아웃 응답데이터", response.data);
-  return response.data;
+  try {
+    const response = await api.post("/logout");
+    console.log("로그아웃 응답데이터", response.data);
+
+    // 로그아웃 시 쿠키에서 JWT 토큰 삭제
+    Cookies.remove("auth_token");
+
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
 }
 
-//핸드폰번호 중복체크
+// 핸드폰번호 중복체크
 export async function phoneCheck(form: any) {
   const response = await axios.post(`${BASE_URL}/check-phone`, form);
   console.log("핸드폰번호 중복체크 응답데이터", response.data);
   return response.data;
 }
 
-//아이디 중복체크
+// 아이디 중복체크
 export async function idCheck(id: string) {
   const response = await axios.get(`${BASE_URL}/check-id/${id}`);
   console.log(
@@ -69,14 +88,14 @@ export async function idCheck(id: string) {
   return response.data;
 }
 
-//회원가입
+// 회원가입
 export async function register(form: any) {
   const response = await axios.post(`${BASE_URL}/register`, form);
   console.log("회원가입 응답데이터", response.data);
   return response.data;
 }
 
-//아이디찾기
+// 아이디찾기
 export const findId = async (data: {
   name: string;
   email: string;
@@ -129,8 +148,7 @@ export function useCheckEmailExists() {
   });
 }
 
-//비밀번호찾기
-// 비밀번호 찾기
+// 비밀번호찾기
 export const fetchPassword = async (data: {
   name: string;
   email: string;
@@ -148,3 +166,13 @@ export const fetchPassword = async (data: {
 
 // 비밀번호 찾기 훅
 export const useFetchPassword = () => useMutation(fetchPassword);
+
+// JWT 토큰 검증 요청
+export async function validateToken(token: string) {
+  try {
+    const response = await api.post("/validateToken", { token });
+    return response.data; // { valid: boolean } 형태의 데이터 반환
+  } catch (error) {
+    handleApiError(error);
+  }
+}
