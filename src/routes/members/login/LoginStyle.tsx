@@ -146,3 +146,14 @@ export const CheckBoxContainer = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
 `;
+
+//a링크 스타일
+export const StyledAnchor = styled.a`
+  color: black; // 기본 색상
+  text-decoration: none; // 밑줄 제거
+  &:hover {
+    color: ${(props) => props.theme.mainColor}; // 호버 시 색상 변경
+    text-decoration: underline; // 호버 시 밑줄 추가
+    cursor: pointer; // 마우스 오버 시 커서 변경
+  }
+`;

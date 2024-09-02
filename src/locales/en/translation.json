@@ -191,7 +191,12 @@
     "confirm_requirement_save": "Do you want to save the changes?",
     "requirement_saved": "Changes have been saved.",
     "canceled": "Operation canceled.",
-    "confirmed": "Ok"
+    "confirmed": "Ok",
+    "attempt": "You have failed to log in. If you continue to fail, your account may be locked.",
+    "attempt_3": "Warning: You have failed to log in three times in a row. If you continue to fail, your account may be locked.",
+    "attempt_4": "Warning: You have failed to log in four times in a row. One more failure will lock your account.",
+    "locked": "Your account is locked. Please wait {{minutes}} minutes and {{seconds}} seconds before trying again.",
+    "try_again": "Try again later."
   },
   "AgreeContents": {
     "terms_required": "You must agree to the terms",
