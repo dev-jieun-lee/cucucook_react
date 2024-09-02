@@ -3,6 +3,7 @@ import media from "../../../styles/MediaQuery";
 import { FormControlLabel, OutlinedInput } from "@mui/material";
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 ///**로그인, 회원가입 스타일
 
@@ -147,8 +148,8 @@ export const CheckBoxContainer = styled.div`
   justify-content: flex-start;
 `;
 
-//a링크 스타일
-export const StyledAnchor = styled.a`
+// Styled Link 컴포넌트
+export const StyledAnchor = styled(Link)`
   color: black; // 기본 색상
   text-decoration: none; // 밑줄 제거
   &:hover {
