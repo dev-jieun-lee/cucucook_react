@@ -9,7 +9,6 @@ import {
   Alert,
   Box,
   Typography,
-  Grid,
   FormHelperText,
   InputAdornment,
 } from "@mui/material";
@@ -33,7 +32,6 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
   );
   const [loginError, setLoginError] = useState<string | null>(null);
   const [showVerificationBox, setShowVerificationBox] = useState(false);
-  const [verificationComplete, setVerificationComplete] = useState(false);
   const [timer, setTimer] = useState<number>(0);
   const [resultVisible, setResultVisible] = useState<boolean>(false);
   const [isVerificationSuccess, setIsVerificationSuccess] = useState(false); // 인증 성공 상태
@@ -102,7 +100,6 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
         },
         {
           onSuccess: () => {
-            setVerificationComplete(true);
             setIsVerificationSuccess(true);
             setLoginError(null);
           },
