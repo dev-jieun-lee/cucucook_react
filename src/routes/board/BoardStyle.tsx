@@ -2,8 +2,12 @@ import styled from "styled-components";
 
 export const SearchArea = styled.div`
   margin: 50px;
-  .select-category, .select-category-item{
+  .select-category{
     width: 130px;
+    margin-right: 50px;
+  }
+  .select-category-item{
+    width: 180px;
     margin-right: 50px;
   }
   .search-input{
@@ -112,7 +116,7 @@ export const AccordionTitle = styled.div`
     font-size: 13px;
     color: ${(props) => props.theme.navBorderColor};
     .border{
-      border-right: 1px solid;
+      /* border-right: 1px solid; */
       margin: 0 10px
     }
     .view-icon{

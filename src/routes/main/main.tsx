@@ -7,15 +7,61 @@ import {
   BannerRight,
   MainCard,
   MainWrapper,
+  NoticeTable,
   Slogan1,
   Slogan2,
   SloganButton,
 } from "./MainStyle";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { useTranslation } from "react-i18next";
+import { getBoardCategory, getBoardList } from "../board/api";
+import { useQuery } from "react-query";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
+
+  // 데이터를 불러오는 API 호출 함수
+  const getBoardListApi = () => {
+    const params = {
+      search: "",
+      searchType: "",
+      boardCategoryId: "",
+      start: 1,
+      display: 10,
+    };
+    return getBoardList(params);
+  };
+
+  //공지사항 데이터 가져오기
+  const getBoardListWithCategory = async () => {
+    try {
+      const boardList = await getBoardListApi();
+      //NOTICE일 경우만 필터링
+      const filteredBoardList = boardList.data.filter(
+        (board: any) => board.boardDivision === "NOTICE"
+      );
+      // 각 보드의 카테고리 조회
+      const boardListWithCategory = await Promise.all(
+        filteredBoardList.map(async (board: any) => {
+          const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
+          return {
+            ...board,
+            category: categoryData.data, // 카테고리 정보를 추가
+          };
+        })
+      );
+      return boardListWithCategory;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  // 데이터 가져오기
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+  } = useQuery("boardListWithCategory", getBoardListWithCategory);
 
   return (
     <MainWrapper>
@@ -65,13 +111,18 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </div>
             </MainCard>
           </div>
-          <Slogan1>
+          <NoticeTable>
+            <div className="title">
+              {t("menu.board.notice")}
+            </div>
+          </NoticeTable>
+          {/* <Slogan1>
             <h3>Cook Up the Fun, Stir Up the Flavor!</h3>
             <small>기존 레시피 : </small> <br />
             <small>회원 레시피 : 회원들이 직접 등록한 레시피입니다.</small>
             <br />
             <small>인기 레시피 : 인기 레시피입니다.</small>
-          </Slogan1>
+          </Slogan1> */}
           <div className="slogan-main">
             <SloganMain />
           </div>
