@@ -27,6 +27,10 @@ import {
   useVerifyEmailCode,
   useCheckEmailExists,
 } from "../api";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -63,7 +67,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
 
   const handleSendCode = async () => {
     if (!formik.values.email) {
-      alert(t("members.email_required"));
+      MySwal.fire({
+        title: t("members.email_required"),
+        icon: "error",
+        confirmButtonText: t("alert.ok"),
+      });
       return;
     }
 
@@ -79,9 +87,19 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
         setIsCodeSent(true);
         setTimer(60); // 타이머 시작
         setEmailSendResult(t("members.verification_code_sent"));
+        MySwal.fire({
+          title: t("members.verification_code_sent"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
       },
       onError: () => {
         setEmailSendResult(t("members.verification_code_error"));
+        MySwal.fire({
+          title: t("members.verification_code_error"),
+          icon: "error",
+          confirmButtonText: t("alert.ok"),
+        });
       },
     });
   };
@@ -89,6 +107,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const handleVerifyCode = () => {
     if (!verificationCode) {
       setVerificationResult(t("members.verification_code_required"));
+      MySwal.fire({
+        title: t("members.verification_code_required"),
+        icon: "error",
+        confirmButtonText: t("alert.ok"),
+      });
       return;
     }
 
@@ -99,12 +122,27 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
           if (data.success) {
             setIsCodeVerified(true);
             setVerificationResult(t("members.verification_success")); // 성공 메시지 설정
+            MySwal.fire({
+              title: t("members.verification_success"),
+              icon: "success",
+              confirmButtonText: t("alert.ok"),
+            });
           } else {
             setVerificationResult(t("members.verification_failed")); // 실패 메시지 설정
+            MySwal.fire({
+              title: t("members.verification_failed"),
+              icon: "error",
+              confirmButtonText: t("alert.ok"),
+            });
           }
         },
         onError: (error) => {
           setVerificationResult(t("members.verification_error")); // 실패 메시지 설정
+          MySwal.fire({
+            title: t("members.verification_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
         },
       }
     );
@@ -130,7 +168,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
       if (isCodeSent && isCodeVerified) {
         navigate("/signup/form", { state: { email: formik.values.email } }); // 인증 성공 후 페이지 이동
       } else {
-        alert(t("members.complete_verification"));
+        MySwal.fire({
+          title: t("members.complete_verification"),
+          icon: "warning",
+          confirmButtonText: t("alert.ok"),
+        });
       }
     },
   });

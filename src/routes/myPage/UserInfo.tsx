@@ -1,11 +1,28 @@
-import React from 'react';
-import { useFormik } from 'formik';
-import { Button, FormControl, InputLabel, OutlinedInput, IconButton, InputAdornment, Box, Accordion, AccordionSummary, AccordionDetails, Typography,Modal } from '@mui/material';
-import { userInfoStyles } from './myPageStyles';
-import { useNavigate } from 'react-router-dom';
-import { Wrapper } from '../../styles/CommonStyles';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  IconButton,
+  InputAdornment,
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
+import { userInfoStyles } from "./myPageStyles";
+import { useNavigate } from "react-router-dom";
+import { Wrapper } from "../../styles/CommonStyles";
+import { Visibility, VisibilityOff, ExpandMore } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+// SweetAlert 초기화
+const MySwal = withReactContent(Swal);
 
 // 비밀번호 변경 아코디언 컴포넌트
 const ChangePasswordAccordion: React.FC = () => {
@@ -14,42 +31,58 @@ const ChangePasswordAccordion: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      newPassword: '',
-      confirmNewPassword: '',
+      newPassword: "",
+      confirmNewPassword: "",
     },
     onSubmit: (values) => {
       if (values.newPassword === values.confirmNewPassword) {
-        console.log('Password changed');
-        alert(t('menu.mypage.password_changed'));
+        console.log("Password changed");
+        MySwal.fire({
+          title: t("menu.mypage.password_changed"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
         formik.resetForm(); // Reset form after successful submission
       } else {
-        alert(t('menu.mypage.password_mismatch'));
+        MySwal.fire({
+          title: t("menu.mypage.password_mismatch"),
+          icon: "error",
+          confirmButtonText: t("alert.ok"),
+        });
       }
     },
   });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
 
   return (
     <Accordion>
       <AccordionSummary
-        expandIcon={<Visibility />}
+        expandIcon={<ExpandMore />}
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography>{t('menu.mypage.change_password')}</Typography>
+        <Typography>{t("menu.mypage.change_password")}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <form onSubmit={formik.handleSubmit}>
-          <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-            <InputLabel htmlFor="newPassword">{t('menu.mypage.new_password')}</InputLabel>
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="newPassword">
+              {t("menu.mypage.new_password")}
+            </InputLabel>
             <OutlinedInput
               id="newPassword"
-              label={t('menu.mypage.new_password')}
-              type={showPassword ? 'text' : 'password'}
+              label={t("menu.mypage.new_password")}
+              type={showPassword ? "text" : "password"}
               value={formik.values.newPassword}
               onChange={formik.handleChange}
               endAdornment={
@@ -67,12 +100,18 @@ const ChangePasswordAccordion: React.FC = () => {
             />
           </FormControl>
 
-          <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-            <InputLabel htmlFor="confirmNewPassword">{t('menu.mypage.confirm_new_password')}</InputLabel>
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="confirmNewPassword">
+              {t("menu.mypage.confirm_new_password")}
+            </InputLabel>
             <OutlinedInput
               id="confirmNewPassword"
-              label={t('menu.mypage.confirm_new_password')}
-              type={showPassword ? 'text' : 'password'}
+              label={t("menu.mypage.confirm_new_password")}
+              type={showPassword ? "text" : "password"}
               value={formik.values.confirmNewPassword}
               onChange={formik.handleChange}
               endAdornment={
@@ -97,7 +136,7 @@ const ChangePasswordAccordion: React.FC = () => {
             fullWidth
             sx={userInfoStyles.button}
           >
-            {t('menu.mypage.save_changes')}
+            {t("menu.mypage.save_changes")}
           </Button>
         </form>
       </AccordionDetails>
@@ -109,72 +148,123 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleCancelClick = () => {
-    const confirmCancel = window.confirm('정말 수정을 취소하시겠습니까?');
-    if (confirmCancel) {
-      navigate('/mypage/Profile');
+  const handleCancelClick = async () => {
+    const confirmCancel = await MySwal.fire({
+      title: t("menu.mypage.cancel_edit"),
+      text: t("menu.mypage.cancel_edit_confirm"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmCancel.isConfirmed) {
+      navigate("/mypage/Profile");
     }
   };
 
-  const handleSaveChangesClick = () => {
-    const confirmSave = window.confirm('변경사항을 저장하시겠습니까?');
-    if (confirmSave) {
-      alert(t('alert.requirement_saved'));
-      navigate('/mypage/Profile');
-    } else {
-      alert(t('alert.save_changes'));
-      navigate('/mypage/Profile');
+  const handleSaveChangesClick = async () => {
+    const confirmSave = await MySwal.fire({
+      title: t("menu.mypage.save_changes"),
+      text: t("menu.mypage.save_changes_confirm"),
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmSave.isConfirmed) {
+      MySwal.fire({
+        title: t("alert.requirement_saved"),
+        icon: "success",
+        confirmButtonText: t("alert.ok"),
+      });
+      navigate("/mypage/Profile");
+    }
+  };
+
+  const handleDeleteAccountClick = async () => {
+    const confirmDelete = await MySwal.fire({
+      title: t("menu.mypage.delete_account"),
+      text: t("menu.mypage.delete_account_confirm"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmDelete.isConfirmed) {
+      navigate("/");
     }
   };
 
   return (
     <Wrapper>
-    <Box sx={userInfoStyles.container}>
-      <div className="title">
-        <span>{t('menu.mypage.edit_info')}</span>
-      </div>
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="username">{t('menu.mypage.username')}</InputLabel>
-        <OutlinedInput id="username" label={t('menu.mypage.username')} />
-      </FormControl>
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="email">{t('menu.mypage.email')}</InputLabel>
-        <OutlinedInput id="email" label={t('menu.mypage.email')} />
-      </FormControl>
+      <Box sx={userInfoStyles.container}>
+        <div className="title">
+          <span>{t("menu.mypage.edit_info")}</span>
+        </div>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="username">
+            {t("menu.mypage.username")}
+          </InputLabel>
+          <OutlinedInput id="username" label={t("menu.mypage.username")} />
+        </FormControl>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="email">{t("menu.mypage.email")}</InputLabel>
+          <OutlinedInput id="email" label={t("menu.mypage.email")} />
+        </FormControl>
 
-      <ChangePasswordAccordion />
+        <ChangePasswordAccordion />
 
-      <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-        {t('menu.mypage.connect_naver')}
-      </Button>
-      <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-        {t('menu.mypage.connect_kakao')}
-      </Button>
+        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          {t("menu.mypage.connect_naver")}
+        </Button>
+        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          {t("menu.mypage.connect_kakao")}
+        </Button>
 
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="phoneNumber">{t('menu.mypage.phone_number')}</InputLabel>
-        <OutlinedInput id="phoneNumber" label={t('menu.mypage.phone_number')} />
-      </FormControl>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="phoneNumber">
+            {t("menu.mypage.phone_number")}
+          </InputLabel>
+          <OutlinedInput
+            id="phoneNumber"
+            label={t("menu.mypage.phone_number")}
+          />
+        </FormControl>
 
-      <Button
-        color="primary"
-        variant="contained"
-        fullWidth
-        sx={userInfoStyles.button}
-        onClick={handleSaveChangesClick}
-      >
-        {t('menu.mypage.save_changes')}
-      </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          fullWidth
+          sx={userInfoStyles.button}
+          onClick={handleSaveChangesClick}
+        >
+          {t("menu.mypage.save_changes")}
+        </Button>
 
-      <Button
-        variant="outlined"
-        color="error"
-        fullWidth
-        onClick={() => window.confirm('정말 회원 탈퇴를 하시겠습니까?') && navigate('/')}
-      >
-        {t('menu.mypage.delete_account')}
-      </Button>
-    </Box>
+        <Button
+          variant="outlined"
+          color="error"
+          fullWidth
+          onClick={handleDeleteAccountClick}
+        >
+          {t("menu.mypage.delete_account")}
+        </Button>
+      </Box>
     </Wrapper>
   );
 };

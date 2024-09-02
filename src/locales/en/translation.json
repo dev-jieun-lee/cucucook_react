@@ -177,8 +177,10 @@
     "agree_privacy": "I agree to the privacy policy",
     "agree_marketing": "I agree to receive marketing emails",
     "verify_email_to_continue": "Verify your email to continue",
-    "find_id_error": "아이디 찾기 중 오류 발생",
-    "no_info_found": "No ID matching the entered name and email was found."
+    "find_id_error": "There an error occured while find ID",
+    "no_info_found": "No ID matching the entered name and email was found.",
+    "login_success_info": "Login success information",
+    "ok": "OK"
   },
   "Footer": {
     "ceo": "ceo : jiunerim",
