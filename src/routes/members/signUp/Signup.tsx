@@ -15,6 +15,10 @@ import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
 import { register, idCheck } from "../api";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -152,7 +156,11 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
           smsNoti: true,
           emailNoti: true,
         });
-        alert(t("members.registration_success"));
+        MySwal.fire({
+          title: t("members.registration_success"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
         navigate("/login");
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -164,14 +172,20 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             setPhoneError(t("members.phone_number_invalid"));
             formik.setSubmitting(false); // 제출 버튼을 다시 활성화
           } else {
-            alert(
-              t("members.registration_failed") +
-                (error.response?.data || "Unknown error")
-            );
+            MySwal.fire({
+              title: t("members.registration_failed"),
+              text: error.response?.data || "Unknown error",
+              icon: "error",
+              confirmButtonText: t("alert.ok"),
+            });
           }
         } else {
           console.error("Unexpected error:", error);
-          alert(t("members.unexpected_error"));
+          MySwal.fire({
+            title: t("members.unexpected_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
         }
       }
     },
