@@ -25,16 +25,26 @@ function handleApiError(error: unknown) {
   }
 }
 
-//로그인
-export async function login(form: any) {
+// 로그인 요청
+export async function login(form: { userId: string; password: string }) {
   try {
-    const response = await axios.post(`${BASE_URL}/login`, form);
+    const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
     return response.data;
   } catch (error) {
     handleApiError(error);
   }
 }
+
+// 로그인 실패 횟수 증가 요청
+export async function increaseFailedAttempts(userId: string) {
+  try {
+    await api.post("/increaseFailedAttempts", { userId });
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
 //로그아웃
 export async function logout() {
   const response = await axios.post(`${BASE_URL}/logout`);
