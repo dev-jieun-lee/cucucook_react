@@ -46,10 +46,9 @@ import Main from "./routes/main/Main";
 import { AuthProvider } from "./auth/AuthContext";
 import SignupIntro from "./routes/members/signUp/SignupIntro";
 import Signup from "./routes/members/signUp/Signup";
-import QrCodeVerification from "./routes/members/login/QrCodeVerification";import NoticeDetail from './routes/board/notice/NoticeDetail';
-import NoticeForm from './routes/board/notice/NoticeForm';
-import FaqForm from './routes/board/Faq/FaqForm';
-
+import NoticeForm from "./routes/board/notice/NoticeForm";
+import FaqForm from "./routes/board/Faq/FaqForm";
+import NoticeDetail from "./routes/board/notice/NoticeDetail";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -120,12 +119,6 @@ function App() {
                     <Route
                       path="/login/FindPw"
                       element={<FindPw isDarkMode={false} />}
-                    />
-
-                    {/* QRCode인증 */}
-                    <Route
-                      path="/qr-verification"
-                      element={<QrCodeVerification />}
                     />
 
                     {/* 회원가입 */}
@@ -224,90 +217,150 @@ function App() {
                     <Route
                       path="/notice/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeDetail/>
+                          <NoticeDetail />
                         </Box>
                       }
                     />
                     <Route
                       path="/notice/form"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeForm/>
+                          <NoticeForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/notice/form/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeForm/>
+                          <NoticeForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/faq/form"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <FaqForm/>
+                          <FaqForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/faq/form/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <Notice/>
+                          <Notice />
                         </Box>
                       }
                     />
                     <Route
                       path="/notice/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeDetail/>
+                          <NoticeDetail />
                         </Box>
                       }
                     />
                     <Route
                       path="/notice/form"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeForm/>
+                          <NoticeForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/notice/form/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <NoticeForm/>
+                          <NoticeForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/faq/form"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <FaqForm/>
+                          <FaqForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/faq/form/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <FaqForm/>
+                          <FaqForm />
                         </Box>
                       }
                     />
