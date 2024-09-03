@@ -6,6 +6,10 @@ export const SearchArea = styled.div`
     width: 130px;
     margin-right: 50px;
   }
+  .select-category-item{
+    width: 180px;
+    margin-right: 50px;
+  }
   .search-input{
     width: 350px;
   }
@@ -112,7 +116,7 @@ export const AccordionTitle = styled.div`
     font-size: 13px;
     color: ${(props) => props.theme.navBorderColor};
     .border{
-      border-right: 1px solid;
+      /* border-right: 1px solid; */
       margin: 0 10px
     }
     .view-icon{

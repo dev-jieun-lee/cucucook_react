@@ -25,8 +25,8 @@ import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
 import { logout } from "../routes/members/api";
-import LoginUser from "../LoginUser";
 import { useAuth } from "../auth/AuthContext";
+import LoginUser from "../LoginUser";
 
 interface IForm {
   keyword: string; // 검색어 폼 데이터
