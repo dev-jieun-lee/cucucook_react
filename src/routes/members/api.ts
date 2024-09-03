@@ -47,15 +47,6 @@ export async function login(form: { userId: string; password: string }) {
   }
 }
 
-// 로그인 실패 횟수 증가 요청
-export async function increaseFailedAttempts(userId: string) {
-  try {
-    await api.post("/increaseFailedAttempts", { userId });
-  } catch (error) {
-    handleApiError(error);
-  }
-}
-
 // 로그아웃 요청
 export async function logout() {
   try {
