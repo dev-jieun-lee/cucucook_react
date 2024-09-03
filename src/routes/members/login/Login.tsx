@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
-import { login, increaseFailedAttempts } from "../api";
+import { login } from "../api";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
@@ -55,10 +55,9 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     onSubmit: async (values, { resetForm }) => {
       if (lockoutTimer && lockoutTimer > 0) {
         // 잠금 상태일 경우
-        setLoginError(lockoutMessage || ""); // 잠금 메시지 설정
         MySwal.fire({
           title: t("members.login_failed"),
-          text: lockoutMessage || "", // 잠금 메시지
+          text: lockoutMessage || t("alert.locked"),
           icon: "warning",
           confirmButtonText: t("alert.ok"),
         });
@@ -70,33 +69,28 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         const data = await login(values); // 로그인 API 호출
         if (data.token) {
           // 로그인 성공 시
-          handleCookies(values.userId, saveId); // 쿠키 설정
+          handleCookies(values.userId, data.saveId); // 쿠키 설정
           const from = location.state?.from || "/"; // 이전 페이지로 이동
           navigate(from);
           setLoginAttempts(0); // 로그인 성공 시 실패 횟수 초기화
           setLockoutMessage(null); // 메시지 초기화
           console.log("로그인 성공");
         } else {
-          throw new Error("로그인 실패"); // 로그인 실패
+          throw new Error("로그인 실패");
         }
       } catch (error) {
         const newAttempts = loginAttempts + 1; // 로그인 시도 횟수 증가
         setLoginAttempts(newAttempts);
 
         let alertMessage = t("alert.attempt");
-
         if (newAttempts === 3) {
           alertMessage = t("alert.attempt_3");
         } else if (newAttempts === 4) {
           alertMessage = t("alert.attempt_4");
         } else if (newAttempts >= 5) {
-          const additionalLockoutTime = 5 * 60; // 5분 추가 잠금
-          setLockoutTimer((prev) => (prev || 10 * 60) + additionalLockoutTime); // 10분 기본 잠금 + 추가 5분
+          setLockoutTimer((prev) => prev || 10 * 60); // 10분 기본 잠금
           alertMessage = t("alert.locked");
         }
-
-        increaseFailedAttempts(values.userId); // 실패 횟수 증가 API 호출
-        console.error("로그인 오류: ", error);
 
         MySwal.fire({
           title: t("members.login_failed"),
@@ -106,6 +100,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         });
 
         setLoginError(alertMessage); // 로그인 오류 메시지 설정
+        console.error("로그인 오류: ", error);
         console.log("로그인 실패 - 시도 횟수: ", newAttempts);
       }
     },
