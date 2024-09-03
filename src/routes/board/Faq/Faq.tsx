@@ -19,12 +19,12 @@ import {
   Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState } from "react";
-import { deleteBoard, getBoard, getBoardCategory, getBoardList } from "../api";
+import { useEffect, useState } from "react";
+import { deleteBoard, getBoard, getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useMutation, useQuery } from "react-query";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Loading from "../../../components/Loading";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
 import moment from "moment";
@@ -32,6 +32,14 @@ import AddIcon from "@mui/icons-material/Add";
 
 
 function Faq() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("all"); // 검색 유형
+  const [category, setCategory] = useState("");
+  const [boardCategoryId, setBoardCategoryId] = useState(""); // 카테고리 ID 
+  const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거 
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 
+  const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | false>(false);
@@ -43,40 +51,107 @@ function Faq() {
 
   };
 
-  
+  const display = 10; // 한 페이지에 표시할 게시물 수
 
-  // FAQ 데이터 가져오기 함수
-  const getBoardListWithCategory = async () => {
+  // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({ search, searchType, category });
+  }, [search, searchType, category, setSearchParams]);
+
+
+  //FAQ 카테고리 데이터 받아오기
+  const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
-      boardCategoryId: "",
       start: "",
       display: "",
     };
-
-    const boardList = await getBoardList(params);
-    
-    const filteredBoardList = boardList.data.filter(
-      (board: any) => board.boardDivision === "FAQ"
+    const response = await getBoardCategoryList(params);
+    return response.data.filter(
+      (category: any) => category.division === "FAQ"
     );
+  };
+  const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
+    "boardCategoryList",
+    getBoardCategoryListApi
+  );
 
-    const boardListWithCategory = await Promise.all(
-      filteredBoardList.map(async (board: any) => {
-        const categoryData = await getBoardCategory(board.boardCategoryId);
-        return {
-          ...board,
-          category: categoryData.data,
-        };
-      })
-    );
-    return boardListWithCategory;
+  // 데이터를 불러오는 API 호출 함수
+  const getBoardListApi = async () => {
+    const params = {
+      division : "FAQ",
+      search: searchType === "category" ? "" : search,
+      searchType: searchType,
+      boardCategoryId: category,
+      currentPage: currentPage, // 페이지 번호
+      display: display, //페이지당 표시할 갯수
+    };
+    const response = await getBoardList(params);
+    setTotalCount(response.data.length); 
+    return response; 
   };
 
-  // FAQ 리스트 데이터 받아오기
-  const { data: boardListWithCategory, isLoading: boardListLoading } = useQuery(
-    "boardListWithCategory",
-    getBoardListWithCategory
-  );
+  const getBoardListWithCategory = async () => {
+    try {
+
+      const boardList = await getBoardListApi();
+      // 각 보드의 카테고리 조회
+      const boardListWithCategory = await Promise.all(
+        boardList.data.map(async (board: any) => {
+          const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
+          return {
+            ...board,
+            category: categoryData.data, // 카테고리 정보를 추가
+          };
+        })
+      );
+      return boardListWithCategory;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  
+
+  // 데이터 가져오기
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+    refetch,
+  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
+  });
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    setCurrentPage(1);
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
+  //검색 select 변경 이벤트
+  const handleSearchTypeChange = (e: any) => {
+    setSearchType(e.target.value);
+    // 카테고리를 선택할 경우 search 값 초기화
+    if (e.target.value !== "category") {
+      setSearch("");
+    }
+  };
+
+  //카테고리 핸들러, 카테고리 검색
+  const handleCategoryChange = (e: any) => {
+    setCategory(e.target.value);
+    setTriggerSearch(true); 
+    refetch(); 
+  };
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(

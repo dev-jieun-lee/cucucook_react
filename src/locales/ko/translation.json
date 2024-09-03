@@ -7,8 +7,8 @@
     "recipe": {
       "original": "레시피",
       "all": "전체 레시피",
-      "public": "기존 레시피",
-      "member": "회원 레시피",
+      "public": "레시피",
+      "member": "D.I.Y.레시피",
       "popularity": "인기 레시피"
     },
     "board": {
@@ -90,7 +90,9 @@
     "add": "추가",
     "check": "확인",
     "yes": "예",
-    "no": "아니오"
+    "no": "아니오",
+    "content": "내용",
+    "go_back": "뒤로가기"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
