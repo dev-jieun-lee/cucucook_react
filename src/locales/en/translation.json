@@ -7,8 +7,8 @@
     "recipe": {
       "original": "Recipe",
       "all": "All",
-      "public": "Public Recipe",
-      "member": "Member Recipe",
+      "public": "Recipe",
+      "member": "D.I.Y. Recipe",
       "popularity": "popularity"
     },
     "board": {
@@ -87,7 +87,9 @@
     "add": "Add",
     "check": "Check",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "content": "Content",
+    "go_back": "Go Back"
   },
   "sentence": {
     "no_data": "The data does not exist.",

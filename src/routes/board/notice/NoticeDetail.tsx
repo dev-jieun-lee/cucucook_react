@@ -11,9 +11,10 @@ import {
 } from "../BoardStyle";
 import Loading from "../../../components/Loading";
 import moment from "moment";
-import { Button } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
@@ -106,7 +107,19 @@ function NoticeDetail() {
 
   return (
     <Wrapper>
-      <TitleCenter>{t("menu.board.notice")}</TitleCenter>
+      <TitleCenter>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{marginTop : '-5px'}}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("menu.board.notice")}
+        </TitleCenter>
       <TitleArea>
         <div className="board-title">
           <CustomCategory
