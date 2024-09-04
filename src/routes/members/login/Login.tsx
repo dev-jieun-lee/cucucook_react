@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ButtonArea, LoginWrapper } from "./LoginStyle";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { useFormik } from "formik";
 import {
   Button,
   Checkbox,
@@ -10,102 +10,165 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Snackbar,
-  Alert,
-  AlertColor
+  Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React, { useState } from "react";
-import { useFormik } from "formik";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useMutation } from "react-query";
+import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
 import { login } from "../api";
-import SnackbarCustom from "../../../components/SnackbarCustom";
-import { useAuth } from "../../../auth/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Cookies from "js-cookie";
 
+const MySwal = withReactContent(Swal);
 
+// 쿠키 저장 및 삭제 처리 함수
+const handleCookies = (userId: string, saveId: boolean) => {
+  if (saveId) {
+    Cookies.set("userId", userId, { expires: 7 }); // 아이디 저장
+    Cookies.set("saveId", "true", { expires: 7 }); // 체크박스 상태 저장
+  } else {
+    Cookies.remove("userId"); // 아이디 삭제
+    Cookies.remove("saveId"); // 체크박스 상태 삭제
+  }
+};
+
+// 로그인 실패 시도와 잠금 상태를 관리하는 컴포넌트
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { setUser, setLoggedIn } = useAuth(); //로그인 상태관리리
-  const { t } = useTranslation();
-  const [showPassword, setShowPassword] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
-
-  const [saveId, setSaveId] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
-
-  const navigate = useNavigate();
-  const location = useLocation(); // 이전 페이지 정보
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
-  
-
-  const mutation = useMutation(login, {
-    onSuccess: (data) => {
-      if (data) {
-        console.log(data);
-        
-        //auth 데이터 전달
-        setUser({ id: data.userId, name: data.name });
-        // 로그인 성공 시 이전 페이지로 이동
-        const from = location.state?.from || '/';
-        navigate(from);
-      } else {
-        // 로그인 실패 처리
-        setLoginError(data || '로그인 실패');
-        setSnackbarSeverity('error'); // 실패 시 빨간색
-        setSnackbarOpen(true); // 스낵바 열기
-      }
-    },
-    onError: (error) => {
-      console.error('로그인 오류: ', error);
-      setLoginError('정확한 값을 입력해주세요.');
-      setSnackbarSeverity('error'); // 에러 시 빨간색
-      setSnackbarOpen(true); // 스낵바 열기
-    }
-  });
+  const { t } = useTranslation(); // 번역 훅
+  const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태
+  const [saveId, setSaveId] = useState(false); // 아이디 저장 체크박스 상태
+  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지
+  const [loginAttempts, setLoginAttempts] = useState(0); // 로그인 시도 횟수
+  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null); // 잠금 타이머
+  const [lockoutMessage, setLockoutMessage] = useState<string | null>(null); // 잠금 메시지
+  const navigate = useNavigate(); // 페이지 이동 훅
+  const location = useLocation(); // 현재 위치 훅
 
   const formik = useFormik({
     initialValues: {
-      userId: '',
-      password: '',
+      userId: "",
+      password: "",
     },
-    onSubmit: (values, { resetForm }) => {
-      mutation.mutate(values, {
-        
-        onSettled: () => {
-          console.log(values);
-          // 비밀번호 초기화
-          resetForm({
-            values: {
-              userId: values.userId,
-              password: '',
-            },
-          });
+    onSubmit: async (values, { resetForm }) => {
+      if (lockoutTimer && lockoutTimer > 0) {
+        // 잠금 상태일 경우
+        MySwal.fire({
+          title: t("members.login_failed"),
+          text: lockoutMessage || t("alert.locked"),
+          icon: "warning",
+          confirmButtonText: t("alert.ok"),
+        });
+        console.log("로그인 실패 - 잠금 상태");
+        return;
+      }
+
+      try {
+        const data = await login(values); // 로그인 API 호출
+        if (data.token) {
+          // 로그인 성공 시
+          handleCookies(values.userId, data.saveId); // 쿠키 설정
+          const from = location.state?.from || "/"; // 이전 페이지로 이동
+          navigate(from);
+          setLoginAttempts(0); // 로그인 성공 시 실패 횟수 초기화
+          setLockoutMessage(null); // 메시지 초기화
+          console.log("로그인 성공");
+        } else {
+          throw new Error("로그인 실패");
         }
-      });
+      } catch (error) {
+        const newAttempts = loginAttempts + 1; // 로그인 시도 횟수 증가
+        setLoginAttempts(newAttempts);
+
+        let alertMessage = t("alert.attempt");
+        if (newAttempts === 3) {
+          alertMessage = t("alert.attempt_3");
+        } else if (newAttempts === 4) {
+          alertMessage = t("alert.attempt_4");
+        } else if (newAttempts >= 5) {
+          setLockoutTimer((prev) => prev || 10 * 60); // 10분 기본 잠금
+          alertMessage = t("alert.locked");
+        }
+
+        MySwal.fire({
+          title: t("members.login_failed"),
+          text: alertMessage,
+          icon: "warning",
+          confirmButtonText: t("alert.ok"),
+        });
+
+        setLoginError(alertMessage); // 로그인 오류 메시지 설정
+        console.error("로그인 오류: ", error);
+        console.log("로그인 실패 - 시도 횟수: ", newAttempts);
+      }
     },
-    
   });
 
+  // 로그인 시 저장된 아이디 및 체크박스 상태 불러오기
+  useEffect(() => {
+    const savedId = Cookies.get("userId") || ""; // 저장된 아이디 읽기
+    const shouldSaveId = Cookies.get("saveId") === "true"; // 체크박스 상태 읽기
+    setSaveId(shouldSaveId);
+    if (savedId && shouldSaveId) {
+      formik.setFieldValue("userId", savedId); // 저장된 아이디를 폼에 설정
+    }
+  }, [formik]);
 
-  //스낵바 닫기
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+  // 체크박스 상태에 따라 쿠키 저장 및 삭제
+  useEffect(() => {
+    handleCookies(formik.values.userId, saveId); // 체크박스 상태에 따라 쿠키 설정 및 삭제
+  }, [saveId]); // saveId가 변경될 때만 실행
 
+  // 잠금 타이머 처리
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
 
-  const handleSaveIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSaveId(event.target.checked);
-  };
+    if (lockoutTimer && lockoutTimer > 0) {
+      timer = setInterval(() => {
+        setLockoutTimer((prev) => {
+          if (prev === null || prev <= 0) {
+            clearInterval(timer);
+            setLockoutMessage(null); // 타이머 종료 시 메시지 초기화
+            console.log("타이머 종료");
+            return null;
+          }
+          console.log("타이머 감소: ", prev);
+          return prev - 1;
+        });
+      }, 1000); // 1초마다 감소
+    }
 
-  const handleSignup = () => {
-    navigate('/signup/intro');
+    return () => {
+      if (timer) {
+        clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
+      }
+    };
+  }, [lockoutTimer]);
+
+  // 잠금 타이머에 따른 메시지 업데이트
+  useEffect(() => {
+    if (lockoutTimer !== null && lockoutTimer > 0) {
+      // 남은 시간 계산
+      const minutes = Math.floor(lockoutTimer / 60);
+      const seconds = lockoutTimer % 60;
+
+      // 메시지 구성
+      const timeMessage =
+        t("alert.locked", { minutes, seconds }) + " " + t("alert.try_again");
+      setLockoutMessage(timeMessage); // 메시지 상태 업데이트
+      console.log("타이머 메시지 업데이트: ", timeMessage);
+    } else {
+      setLockoutMessage(null); // 타이머가 없으면 메시지 초기화
+    }
+  }, [lockoutTimer, t]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // 영어와 숫자만 허용
+    const value = event.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, "");
+    formik.setFieldValue("userId", filteredValue); // 필터링된 값 설정
   };
 
   return (
@@ -118,34 +181,34 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
         <form className="form" onSubmit={formik.handleSubmit}>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
-            <InputLabel htmlFor="userId">{t('members.id')}</InputLabel>
+            <InputLabel htmlFor="userId">{t("members.id")}</InputLabel>
             <OutlinedInput
               id="userId"
-              label={t('members.id')}
+              label={t("members.id")}
               value={formik.values.userId}
-              onChange={formik.handleChange}
+              onChange={handleInputChange} // 필터링된 입력값을 설정
             />
           </FormControl>
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
-            <InputLabel htmlFor="password">{t('members.password')}</InputLabel>
+            <InputLabel htmlFor="password">{t("members.password")}</InputLabel>
             <OutlinedInput
               id="password"
               value={formik.values.password}
               onChange={formik.handleChange}
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
+                    onClick={() => setShowPassword((show) => !show)}
+                    onMouseDown={(event) => event.preventDefault()}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               }
-              label={t('members.password')}
+              label={t("members.password")}
             />
           </FormControl>
           <div className="save-id">
@@ -154,39 +217,50 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               control={
                 <Checkbox
                   checked={saveId}
-                  onChange={handleSaveIdChange}
+                  onChange={(event) => {
+                    // 체크박스 상태가 변경되면, 상태를 업데이트하고 쿠키도 변경함
+                    const newSaveId = event.target.checked;
+                    setSaveId(newSaveId);
+                    handleCookies(formik.values.userId, newSaveId);
+                  }}
                 />
               }
-              label={t('members.save_id')}
+              label={t("members.save_id")}
             />
           </div>
+
+          {/* 잠금 안내 문구 추가 */}
+          {lockoutMessage && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {lockoutMessage}
+            </Typography>
+          )}
+
           <Button
             className="submit-button"
             color="primary"
             variant="contained"
             type="submit"
             fullWidth
+            disabled={!!lockoutTimer && lockoutTimer > 0} // 잠금 상태에서 버튼 비활성화
           >
             {t("members.login")}
           </Button>
         </form>
 
         <ButtonArea>
-          <button type="button">{t("members.finding_id")}</button>
-          <span />
-          <button type="button">{t("members.finding_pw")}</button>
-          <span />
-          <button type="button" onClick={handleSignup}>{t("members.join")}</button>
+          <StyledAnchor to="/login/findId">
+            {t("members.finding_id") + "     "}
+          </StyledAnchor>
+          |
+          <StyledAnchor to="/login/findPw">
+            {"     " + t("members.finding_pw") + "     "}
+          </StyledAnchor>
+          |
+          <StyledAnchor to="/signup/intro">
+            {"     " + t("members.join")}
+          </StyledAnchor>
         </ButtonArea>
-
-        {/* 로그인 오류 메시지 표시 */}
-        {/* 스낵바 컴포넌트 */}
-        <SnackbarCustom
-          open={snackbarOpen}
-          message={loginError || ''}
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-        />
       </LoginWrapper>
     </Wrapper>
   );
