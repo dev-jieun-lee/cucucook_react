@@ -113,13 +113,13 @@ function App() {
                     {/*아이디찾기 */}
                     <Route
                       path="/login/FindId"
-                      element={<FindId isDarkMode={false} />}
+                      element={<FindId isDarkMode={isDarkMode} />}
                     />
 
                     {/*비밀번호 찾기 */}
                     <Route
                       path="/login/FindPw"
-                      element={<FindPw isDarkMode={false} />}
+                      element={<FindPw isDarkMode={isDarkMode} />}
                     />
 
                     {/* 회원가입 */}

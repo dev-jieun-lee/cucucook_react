@@ -160,6 +160,7 @@
     "verification_failed": "Email verification failed.",
     "verification_error": "An error occurred during verification.",
     "send_verification_code": "Send Code",
+    "send_code": "ㄴ",
     "verify_code": "Verify Code",
     "complete_verification": "Please complete the email verification before submitting.",
     "register": "Register",
