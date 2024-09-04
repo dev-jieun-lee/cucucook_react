@@ -19,6 +19,10 @@
       "notice_modify" : "Modify Notice",
       "FAQ" : "FAQ",
       "QNA" : "Q&A",
+      "Q_create": "Register questions",
+      "Q_modify": "Question Modified",
+      "A_create": "Register answers",
+      "A_modify": "Modify answer",
       "category" : "Category",
       "category_select" : "Select Category",
       "notice_category" : "Notice Category",
@@ -89,7 +93,9 @@
     "yes" : "Yes",
     "no" : "No",
     "content" : "Content",
-    "go_back" : "Go Back"
+    "go_back" : "Go Back",
+    "writing" : "Writing",
+    "answer" : "Answer"
   },
   "sentence" : {
     "no_data" : "The data does not exist.",

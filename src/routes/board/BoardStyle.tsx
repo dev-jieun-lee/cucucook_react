@@ -1,7 +1,10 @@
+import { Button } from "@mui/material";
 import styled from "styled-components";
 
 export const SearchArea = styled.div`
-  margin: 50px;
+  /* margin: 30px ; */
+  margin-top: 40px;
+  margin-bottom: 25px;
   .select-category{
     width: 130px;
     margin-right: 50px;
@@ -18,7 +21,7 @@ export const SearchArea = styled.div`
 export const ContentsArea = styled.div`
   margin: 20px auto;
   margin-bottom: 100px;;
-  width: 80%;
+  width: 100%;
   .accordion{
     background : none;
     box-shadow: none;
@@ -137,8 +140,9 @@ export const CustomCategory = styled.span`
 export const TitleArea = styled.div`
   display: flex;
   margin: 50px auto 0;
-  width: 80%;
-  height: 60px;
+  width: 100%;
+  min-height: 60px;
+  max-height: 60px;
   border-top: 1px solid;
   border-bottom: 1px solid;
   border-color:  ${(props) => props.theme.navBorderColor};
@@ -161,11 +165,13 @@ export const TitleArea = styled.div`
   }
 `;
 export const DetailContents = styled.div`
-  width: 80%;
+  width: 100%;
+  flex-grow: 1; 
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 20px 15px;
-  min-height: 500px;
+  min-height: 200px;
+  height: 100%;
   border-bottom: 1px solid;
   border-color:  ${(props) => props.theme.navBorderColor};
   .board-contents{
@@ -176,7 +182,7 @@ export const DetailContents = styled.div`
 
 export const BoardButtonArea = styled.div`
   margin: 0 auto 80px;
-  width: 80%;
+  width: 100%;
   .update-btn, .save-btn{
     float: right;
   }
@@ -186,7 +192,7 @@ export const BoardButtonArea = styled.div`
 `;
 
 export const TitleInputArea = styled.div`
-  width: 81%;
+  width: 100%;
   margin: 50px auto 20px;
   display: flex;
   justify-content: space-between;
@@ -205,7 +211,28 @@ export const TitleInputArea = styled.div`
 `;
 export const ContentsInputArea = styled.div`
   margin-bottom: 20px;
-  width: 81%;
-  margin: 0 auto 20px;
+  width: 100%;
+  /* margin: 0 auto 20px; */
+  .q-contents{
+    width: 100%;
+    border: 1px solid;
+    border-radius: 5px;
+    text-align: left;
+    padding: 0px 15px;
+    margin-bottom: 20px;
+    border-color: ${(props) => props.theme.navBorderColor};
+    color: #8e8a8a;
+  }
+  .sub-title{
+    text-align: left;
+    right: 0;
+    padding-bottom: 10px;
+  }
 `;
+
+export const AnswerButton = styled(Button)`
+  margin-left: 20px;
+  margin-top: -3px;
+`;
+
 
