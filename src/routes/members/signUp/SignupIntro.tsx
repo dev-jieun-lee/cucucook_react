@@ -1,126 +1,289 @@
-import React, { useState } from 'react';
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { Button, Checkbox, FormControlLabel, TextField, FormHelperText, FormGroup, AlertColor } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import PersonIcon from '@mui/icons-material/Person';
-import { useMutation } from 'react-query';
-import { phoneCheck } from '../api';
-import { error } from 'console';
-import SnackbarCustom from '../../../components/SnackbarCustom';
+import {
+  Button,
+  Checkbox,
+  TextField,
+  FormGroup,
+  Alert,
+  Grid,
+  Box,
+  Typography,
+  FormHelperText,
+} from "@mui/material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { Wrapper } from "../../../styles/CommonStyles";
+import {
+  LoginWrapper,
+  LoginSubmitButton,
+  StyledSubtitle,
+  LeftAlignedFormControlLabel,
+  CheckBoxContainer,
+} from "../login/LoginStyle";
+import { useEmailVerification } from "../../../hooks/useEmailVerification";
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('error'); // 스낵바 색깔, 기본은 'error'
-  const [signupError, setSignupError] = useState<string | null>(null); // 오류 메시지 상태
+  const {
+    verificationCode,
+    setVerificationCode,
+    isCodeSent,
+    isCodeVerified,
+    handleSendCode,
+    handleVerifyCode,
+    verificationResult,
+  } = useEmailVerification();
 
-
-  //폰 번호 중복체크
-  const mutation = useMutation(phoneCheck,{
-    onSuccess: (data)=>{
-      if(!data){
-        navigate('/signup/form', { state: { phone: data.phone } });
-      }else{
-        setSignupError(t('members.phone_number_invalid'));
-        setSnackbarSeverity('error'); // 실패 시 빨간색
-        setSnackbarOpen(true); // 스낵바 열기
-      }
-    },
-    onError:(error) => {
-      console.error(error);
-      setSignupError(t('members.phone_number_error'));
-      setSnackbarSeverity('error'); // 실패 시 빨간색
-      setSnackbarOpen(true); // 스낵바 열기
-    }
-  });
   const formik = useFormik({
     initialValues: {
-      phone: '',
+      email: "",
       agreeTerms: false,
       agreePrivacy: false,
-      agreeMarketing: false
+      agreeMarketing: false,
+      allChecked: false,
     },
     validationSchema: Yup.object({
-      phone: Yup.string().required(t('members.phone_number_required')),
-      agreeTerms: Yup.boolean().oneOf([true], t('members.terms_required')),
-      agreePrivacy: Yup.boolean().oneOf([true], t('members.privacy_required')),
-      agreeMarketing: Yup.boolean().oneOf([true], t('members.marketing_required'))
+      email: Yup.string()
+        .email(t("members.email_invalid"))
+        .required(t("members.email_required")),
+      agreeTerms: Yup.boolean().oneOf([true], t("members.terms_required")),
+      agreePrivacy: Yup.boolean().oneOf([true], t("members.privacy_required")),
+      agreeMarketing: Yup.boolean(),
     }),
-    onSubmit: (values) => {
-      // phone 값을 객체로 전달
-      mutation.mutate({ phone: values.phone });
-    }
+    onSubmit: () => {
+      if (isCodeVerified) {
+        navigate("/signup/form", { state: { email: formik.values.email } }); // 인증 성공 후 페이지 이동
+      }
+    },
   });
 
-    //스낵바 닫기
-    const handleSnackbarClose = () => {
-      setSnackbarOpen(false);
-    };
-  
+  // 개별 약관 체크박스 핸들러
+  const handleIndividualCheck = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    formik.setFieldValue(event.target.name, event.target.checked);
+
+    if (
+      formik.values.agreeTerms &&
+      formik.values.agreePrivacy &&
+      formik.values.agreeMarketing
+    ) {
+      formik.setFieldValue("allChecked", true);
+    } else {
+      formik.setFieldValue("allChecked", false);
+    }
+  };
+
+  // 모두 동의 체크박스 핸들러
+  const handleAllChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    formik.setFieldValue("allChecked", checked);
+    formik.setFieldValue("agreeTerms", checked);
+    formik.setFieldValue("agreePrivacy", checked);
+    formik.setFieldValue("agreeMarketing", checked);
+  };
 
   return (
     <Wrapper>
       <LoginWrapper>
         <div className="title">
-          <PersonIcon className="title-icon" />
-          <span>{t("members.join")}</span>
+          <Typography variant="h6">{t("members.join")}</Typography>
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <TextField
-            fullWidth
-            id="phone"
-            name="phone"
-            label={t('members.phone_number')}
-            value={formik.values.phone}
-            onChange={formik.handleChange}
-            error={formik.touched.phone && Boolean(formik.errors.phone)}
-            helperText={formik.touched.phone && formik.errors.phone}
-            margin="normal"
-          />
-
+          {/* 동의 섹션 */}
+          <h2>{t("AgreeContents.terms_title")}</h2>
           <FormGroup>
-            <FormControlLabel
-              control={<Checkbox name="agreeTerms" checked={formik.values.agreeTerms} onChange={formik.handleChange} />}
-              label={t('members.agree_terms')}
-            />
-            {formik.touched.agreeTerms && formik.errors.agreeTerms && (
-              <FormHelperText error>{formik.errors.agreeTerms}</FormHelperText>
-            )}
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_terms_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.terms_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreeTerms"
+                      checked={formik.values.agreeTerms}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_terms")}
+                />
+              </CheckBoxContainer>
+              {formik.touched.agreeTerms && formik.errors.agreeTerms && (
+                <FormHelperText error>
+                  {formik.errors.agreeTerms}
+                </FormHelperText>
+              )}
+            </Box>
 
-            <FormControlLabel
-              control={<Checkbox name="agreePrivacy" checked={formik.values.agreePrivacy} onChange={formik.handleChange} />}
-              label={t('members.agree_privacy')}
-            />
-            {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
-              <FormHelperText error>{formik.errors.agreePrivacy}</FormHelperText>
-            )}
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_privacy_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.privacy_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreePrivacy"
+                      checked={formik.values.agreePrivacy}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_privacy")}
+                />
+              </CheckBoxContainer>
+              {formik.touched.agreePrivacy && formik.errors.agreePrivacy && (
+                <FormHelperText error>
+                  {formik.errors.agreePrivacy}
+                </FormHelperText>
+              )}
+            </Box>
 
-            <FormControlLabel
-              control={<Checkbox name="agreeMarketing" checked={formik.values.agreeMarketing} onChange={formik.handleChange} />}
-              label={t('members.agree_marketing')}
-            />
-            {formik.touched.agreeMarketing && formik.errors.agreeMarketing && (
-              <FormHelperText error>{formik.errors.agreeMarketing}</FormHelperText>
-            )}
+            <Box marginBottom={2}>
+              <StyledSubtitle>
+                {t("AgreeContents.agree_marketing_title")}
+              </StyledSubtitle>
+              <Box
+                sx={{
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                  padding: "8px",
+                  position: "relative",
+                }}
+              >
+                <Typography variant="body2">
+                  {t("AgreeContents.marketing_content")}
+                </Typography>
+              </Box>
+              <CheckBoxContainer>
+                <LeftAlignedFormControlLabel
+                  control={
+                    <Checkbox
+                      name="agreeMarketing"
+                      checked={formik.values.agreeMarketing}
+                      onChange={handleIndividualCheck}
+                    />
+                  }
+                  label={t("AgreeContents.agree_marketing")}
+                />
+              </CheckBoxContainer>
+            </Box>
+
+            <CheckBoxContainer>
+              <LeftAlignedFormControlLabel
+                control={
+                  <Checkbox
+                    name="allChecked"
+                    checked={formik.values.allChecked}
+                    onChange={handleAllChecked}
+                  />
+                }
+                label={t("AgreeContents.agree_all")}
+              />
+            </CheckBoxContainer>
           </FormGroup>
 
-          <LoginSubmitButton color="primary" variant="contained" fullWidth type="submit">
-            {t('members.verify_continue')}
+          {/* 이메일 인증 섹션 */}
+          <Grid container spacing={2} alignItems="center" marginTop={4}>
+            <Grid item xs={8}>
+              <TextField
+                fullWidth
+                id="email"
+                name="email"
+                label={t("members.email")}
+                value={formik.values.email}
+                onChange={(e) => {
+                  formik.setFieldValue("email", e.target.value);
+                }}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleSendCode(formik.values.email)}
+                disabled={isCodeSent}
+              >
+                {t("members.send_code")}
+              </Button>
+            </Grid>
+            {isCodeSent && (
+              <Grid container spacing={2} marginTop={1}>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    id="verificationCode"
+                    name="verificationCode"
+                    label={t("members.verification_code")}
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      handleVerifyCode(formik.values.email, verificationCode)
+                    }
+                    disabled={isCodeVerified}
+                  >
+                    {t("members.verify_code")}
+                  </Button>
+                </Grid>
+                {verificationResult && (
+                  <Grid item xs={12}>
+                    <Alert severity={isCodeVerified ? "success" : "error"}>
+                      {verificationResult}
+                    </Alert>
+                  </Grid>
+                )}
+              </Grid>
+            )}
+          </Grid>
+
+          <LoginSubmitButton
+            color="primary"
+            variant="contained"
+            fullWidth
+            type="submit"
+            disabled={!isCodeVerified || !formik.isValid}
+          >
+            {t("members.register")}
           </LoginSubmitButton>
         </form>
-
-        <SnackbarCustom
-          open={snackbarOpen}
-          message={signupError || ''}
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-        />
       </LoginWrapper>
     </Wrapper>
   );
