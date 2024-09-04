@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -13,110 +13,65 @@ import {
   Link,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useMutation } from "react-query";
-import {
-  useSendEmailVerificationCode,
-  useVerifyEmailCode,
-  findId,
-} from "../api";
+import { findId } from "../api";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper } from "./LoginStyle";
+import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
-  const [verificationTimeout, setVerificationTimeout] = useState<number | null>(
-    null
-  );
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [verificationComplete, setVerificationComplete] = useState(false);
+  const {
+    verificationCode,
+    setVerificationCode,
+    isCodeSent,
+    isCodeVerified,
+    handleSendCode,
+    handleVerifyCode,
+    verificationResult,
+    emailSendResult,
+    resetVerification,
+  } = useEmailVerification();
+
   const [showResult, setShowResult] = useState(false);
+  const [foundId, setFoundId] = useState<string | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<"error" | "success">(
     "error"
   );
-  const [foundId, setFoundId] = useState<string | null>(null);
-  const [isVerificationSuccess, setIsVerificationSuccess] = useState(false); // 인증 성공 상태
-
-  const sendVerificationCodeMutation = useSendEmailVerificationCode();
-  const verifyCodeMutation = useVerifyEmailCode();
 
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
-      verificationCode: "",
     },
     validate: (values) => {
       const errors: { [key: string]: string } = {};
       if (!values.name) errors.name = t("members.name_required");
       if (!values.email) errors.email = t("members.email_required");
-      if (!values.verificationCode)
-        errors.verificationCode = t("members.verification_code_required");
       return errors;
     },
-    onSubmit: () => {
-      if (verificationComplete) {
-        findId({
-          name: formik.values.name,
-          email: formik.values.email,
-          verificationCode: formik.values.verificationCode,
-        })
-          .then((response) => {
-            setShowResult(true);
-            setFoundId(response.foundId);
-            setLoginError(null);
-          })
-          .catch((error) => {
-            setShowResult(true);
-            setLoginError(t("members.find_id_error"));
-          });
+    onSubmit: (values) => {
+      if (!isCodeVerified) {
+        alert(t("members.verify_email_first"));
+        return;
       }
+      findId({
+        name: values.name,
+        email: values.email,
+        verificationCode: verificationCode,
+      })
+        .then((response) => {
+          setShowResult(true);
+          setFoundId(response.foundId);
+        })
+        .catch((error) => {
+          setShowResult(true);
+          setSnackbarOpen(true);
+          setSnackbarSeverity("error");
+        });
     },
   });
-
-  const handleVerifyClick = async () => {
-    if (!formik.values.email) {
-      setLoginError(t("members.email_required"));
-      return;
-    }
-    sendVerificationCodeMutation.mutate(formik.values.email, {
-      onSuccess: () => {
-        setVerificationTimeout(Date.now() + 60000);
-        setVerificationComplete(true);
-        setLoginError(null);
-      },
-      onError: (error) => {
-        setLoginError("Failed to send verification code");
-        setSnackbarOpen(true);
-        setSnackbarSeverity("error");
-      },
-    });
-  };
-
-  const handleConfirmClick = async () => {
-    if (!formik.values.verificationCode) {
-      setLoginError(t("members.verification_code_required"));
-      return;
-    }
-    verifyCodeMutation.mutate(
-      {
-        email: formik.values.email,
-        code: formik.values.verificationCode,
-      },
-      {
-        onSuccess: () => {
-          setVerificationComplete(true);
-          setIsVerificationSuccess(true); // 인증 성공으로 상태 업데이트
-          setLoginError(null);
-        },
-        onError: () => {
-          setLoginError("Failed to verify code");
-          setShowResult(true);
-        },
-      }
-    );
-  };
 
   return (
     <Wrapper>
@@ -148,80 +103,61 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   />
                 </FormControl>
               </Grid>
-              <Grid
-                item
-                xs={3}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <Grid item xs={3}>
                 <Button
                   color="primary"
                   variant="contained"
-                  onClick={handleVerifyClick}
+                  onClick={() => handleSendCode(formik.values.email)}
                   fullWidth
-                  sx={{ height: "100%" }}
+                  disabled={
+                    !formik.values.name || !formik.values.email || isCodeSent
+                  } // 이름과 이메일이 모두 입력되지 않으면 버튼 비활성화
                 >
-                  {t("members.verify")}
+                  {t("members.send_code")}
                 </Button>
               </Grid>
             </Grid>
-            {verificationComplete && (
-              <>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={9}>
-                    <FormControl fullWidth margin="normal">
-                      <InputLabel htmlFor="verificationCode">
-                        {t("members.verification_code")}
-                      </InputLabel>
-                      <OutlinedInput
-                        id="verificationCode"
-                        value={formik.values.verificationCode}
-                        onChange={(e) =>
-                          formik.setFieldValue(
-                            "verificationCode",
-                            e.target.value.replace(/[^0-9]/g, "")
-                          )
-                        }
-                        label={t("members.verification_code")}
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={3}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      onClick={handleConfirmClick}
-                      fullWidth
-                      sx={{ height: "100%" }}
-                    >
-                      {t("alert.confirmed")}
-                    </Button>
-                  </Grid>
+            {isCodeSent && (
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={9}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel htmlFor="verificationCode">
+                      {t("members.verification_code")}
+                    </InputLabel>
+                    <OutlinedInput
+                      id="verificationCode"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      label={t("members.confirmed")}
+                    />
+                  </FormControl>
                 </Grid>
-                {isVerificationSuccess && ( // 인증이 성공했을 때만 문구 표시
-                  <Typography variant="body2" color="green" sx={{ mt: 1 }}>
-                    {t("members.verification_success")}
-                  </Typography>
-                )}
-              </>
+                <Grid item xs={3}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() =>
+                      handleVerifyCode(formik.values.email, verificationCode)
+                    }
+                    fullWidth
+                    disabled={isCodeVerified}
+                  >
+                    {t("members.confirmed")}
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
+            {verificationResult && (
+              <Typography color="error" sx={{ mt: 2 }}>
+                {verificationResult}
+              </Typography>
             )}
             <Button
               type="submit"
               color="primary"
               variant="contained"
               sx={{ mt: 2 }}
-              disabled={!isVerificationSuccess} // 인증이 성공해야 활성화
+              disabled={!isCodeVerified}
             >
               {t("members.find_id")}
             </Button>
@@ -240,10 +176,15 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   <Typography>{`${t(
                     "members.id_found"
                   )}: ${foundId}`}</Typography>
-                  <Link href="/login" sx={{ mr: 2 }}>
-                    {t("members.login")}
-                  </Link>
-                  <Link href="/login/FindPw">{t("members.find_pw")}</Link>
+                  <ButtonArea>
+                    <StyledAnchor to="/login">
+                      {t("members.login") + "     "}
+                    </StyledAnchor>
+                    |
+                    <StyledAnchor to="/login/FindPw">
+                      {"     " + t("members.find_pw")}
+                    </StyledAnchor>
+                  </ButtonArea>
                 </>
               ) : (
                 <Typography>{t("members.no_info_found")}</Typography>
@@ -255,7 +196,9 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
             autoHideDuration={6000}
             onClose={() => setSnackbarOpen(false)}
           >
-            <Alert severity={snackbarSeverity}>{loginError}</Alert>
+            <Alert severity={snackbarSeverity}>
+              {t("members.find_id_error")}
+            </Alert>
           </Snackbar>
         </Box>
       </LoginWrapper>

@@ -167,3 +167,27 @@ export async function validateToken(token: string) {
     handleApiError(error);
   }
 }
+
+// 이메일, 이름, ID로 사용자 존재 여부 확인 API
+export async function checkUserInfoExists(
+  name: string,
+  email: string,
+  id: string
+) {
+  const response = await axios.post(`${BASE_URL}/check-user-info`, {
+    name,
+    email,
+    id,
+  });
+  console.log(
+    "이름, 이메일, 아이디로 존재 여부 확인 응답데이터",
+    response.data
+  );
+  return response.data; // 서버가 { exists: true/false } 형태로 반환한다고 가정
+}
+// 사용자 정보 확인 훅
+export const useCheckUserInfoExists = () =>
+  useMutation(
+    ({ name, email, id }: { name: string; email: string; id: string }) =>
+      checkUserInfoExists(name, email, id)
+  );
