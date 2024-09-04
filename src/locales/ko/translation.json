@@ -21,6 +21,10 @@
       "FAQ_create" : "자주 묻는 질문 등록",
       "FAQ_modify" : "자주 묻는 질문 수정",
       "QNA" : "질의 응답",
+      "Q_create" : "질문 등록",
+      "Q_modify" : "질문 수정",
+      "A_create" : "답변 등록",
+      "A_modify" : "답변 수정",
       "category" : "카테고리",
       "category_select" : "카테고리 선택",
       "notice_category" : "공지사항 카테고리",
@@ -92,7 +96,9 @@
     "yes" : "예",
     "no" : "아니오",
     "content" : "내용",
-    "go_back" : "뒤로가기"
+    "go_back" : "뒤로가기",
+    "writing" : "글쓰기",
+    "answer" : "답변"
   },
   "sentence" : {
     "no_data" : "데이터가 존재하지 않습니다.",

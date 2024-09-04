@@ -1,34 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
 import { ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
-import {
-  Fab,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Pagination,
-  Paper,
-  Select,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import { SetStateAction, useEffect, useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
 
-function Notice() {
+function Qna() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -55,7 +38,7 @@ function Notice() {
     };
     const response = await getBoardCategoryList(params);
     return response.data.filter(
-      (category: any) => category.division === "NOTICE"
+      (category: any) => category.division === "QNA"
     );
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
@@ -66,7 +49,7 @@ function Notice() {
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
     const params = {
-      division: "NOTICE",
+      division: "QNA",
       search: searchType === "category" ? "" : search,
       searchType: searchType,
       boardCategoryId: category,
@@ -99,26 +82,17 @@ function Notice() {
     }
   };
 
-  // 데이터 가져오기
-  const {
-    data: boardListWithCategory,
-    isLoading: boardListLoading,
-    refetch,
-  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
-    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
-    keepPreviousData: false, // 이전 데이터를 유지하지 않음
-    refetchOnWindowFocus: false, // 포커스 시 refetch 방지
-    staleTime: 0, // 데이터가 언제나 stale로 간주되도록 설정
-  });
+    // 데이터 가져오기
+    const {
+      data: boardListWithCategory,
+      isLoading: boardListLoading,
+      refetch,
+    } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+      enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
+    });
   
+console.log(boardListWithCategory);
 
-  // 트리거 변경 시 데이터 초기화 및 로딩 처리
-  useEffect(() => {
-    if (triggerSearch) {
-      setTriggerSearch(false); // 트리거를 false로 초기화
-      refetch(); // 데이터 가져오기
-    }
-  }, [triggerSearch, refetch]);
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
@@ -134,57 +108,59 @@ function Notice() {
     }
   };
 
-  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
-  useEffect(() => {
-    if (category) {
-      setTriggerSearch(true);
+    // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+    useEffect(() => {
+      if (category) {
+        setTriggerSearch(true);
+        refetch();
+      }
+    }, [category, refetch]);
+  
+    // 검색 유형 select 변경 이벤트
+    const handleSearchTypeChange = (e: any) => {
+      setSearchType(e.target.value);
+      // 카테고리를 선택할 경우 search 값 초기화
+      if (e.target.value === "category") {
+        setSearch(""); // 카테고리 검색에서는 검색어 초기화
+      } else {
+        setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
+      }
+    };
+  
+    //카테고리 핸들러
+    const handleCategoryChange = (e: any) => {
+      setCategory(e.target.value);
+    };
+  
+    // 페이지 변경 핸들러
+    const handlePageChange = (event: any, page: any) => {
+      console.log(page);
+  
+      setCurrentPage(page);
+      setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
       refetch();
+    };
+  
+    //상세 페이지로 이동
+    const onClickDetail = (boardId: string) => {
+      navigate(`/qna/${boardId}`);
+    };
+    //추가 페이지로 이동
+    const onClickAdd = () => {
+      navigate(`/qna/form`);
+    };
+  
+    //로딩
+    if (boardListLoading) {
+      return <Loading />;
     }
-  }, [category, refetch]);
+  
 
-  // 검색 유형 select 변경 이벤트
-  const handleSearchTypeChange = (e: any) => {
-    setSearchType(e.target.value);
-    // 카테고리를 선택할 경우 search 값 초기화
-    if (e.target.value === "category") {
-      setSearch(""); // 카테고리 검색에서는 검색어 초기화
-    } else {
-      setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
-    }
-  };
 
-  //카테고리 핸들러
-  const handleCategoryChange = (e: any) => {
-    setCategory(e.target.value);
-  };
-
-  // 페이지 변경 핸들러
-  const handlePageChange = (event: any, page: any) => {
-    console.log(page);
-
-    setCurrentPage(page);
-    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
-    refetch();
-  };
-
-  //상세 페이지로 이동
-  const onClickDetail = (boardId: string) => {
-    navigate(`/notice/${boardId}`);
-  };
-  //추가 페이지로 이동
-  const onClickAdd = () => {
-    navigate(`/notice/form`);
-  };
-
-  //로딩
-  if (boardListLoading ) {
-    return <Loading />;
-  }
-
-  return (
+  return(
     <Wrapper>
       <TitleCenter>
-        {t("menu.board.notice")}
+        {t("menu.board.QNA")}
         <Tooltip title={t("text.writing")}>
           <Fab
             className="add-btn"
@@ -274,34 +250,80 @@ function Notice() {
             </TableHead>
             <TableBody>
               {boardListWithCategory && boardListWithCategory.length > 0 ? (
+                // 데이터를 부모 글과 답글로 그룹화
                 boardListWithCategory
-                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                  .map((boardItem: any, index: number) => (
-                    <TableRow
-                      className="row"
-                      key={index}
-                      onClick={() => onClickDetail(boardItem.boardId)}
-                    >
-                      <TableCell component="th" scope="row">
-                        {(currentPage - 1) * display + index + 1}
-                      </TableCell>
-                      <TableCell>
-                        <CustomCategory
-                          style={{ color: `${boardItem.category.color}` }}
-                          className="category"
-                        >
-                          [ {boardItem.category.name} ]
-                        </CustomCategory>
-                      </TableCell>
-                      <TableCell>{boardItem.title}</TableCell>
-                      <TableCell>{boardItem.userName}</TableCell>
-                      <TableCell>
-                        {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                      </TableCell>
-                      <TableCell>{boardItem.viewCount}</TableCell>
-                    </TableRow>
-                  ))
-              ) : (
+                  .reduce((acc: any[], boardItem: any) => {
+                    if (boardItem.status === "0") {
+                      // 부모 글
+                      acc.push({ ...boardItem, isParent: true });
+                    } else if (boardItem.status === "1" && boardItem.pBoardId === boardItem.boardId) {
+                      // 답글
+                      const parentIndex = acc.findIndex(
+                        (item) => item.boardId === boardItem.pBoardId && item.isParent
+                      );
+                      if (parentIndex !== -1) {
+                        // 부모 글 바로 밑에 답글을 삽입
+                        acc.splice(parentIndex + 1, 0, { ...boardItem, isParent: false });
+                      }
+                    }
+                    return acc;
+                    }, [])
+                    ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+                    .map((boardItem: any, index: number) => (
+                      <React.Fragment key={index}>
+                        {/* 부모 글 렌더링 */}
+                        {boardItem.isParent && (
+                          <TableRow
+                            className="row"
+                            onClick={() => onClickDetail(boardItem.boardId)}
+                          >
+                            <TableCell component="th" scope="row">
+                              {(currentPage - 1) * display + index + 1}
+                            </TableCell>
+                            <TableCell>
+                              <CustomCategory
+                                style={{ color: `${boardItem.category.color}` }}
+                                className="category"
+                              >
+                                [ {boardItem.category.name} ]
+                              </CustomCategory>
+                            </TableCell>
+                            <TableCell>{boardItem.title}</TableCell>
+                            <TableCell>{boardItem.userName}</TableCell>
+                            <TableCell>
+                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                            </TableCell>
+                            <TableCell>{boardItem.viewCount}</TableCell>
+                          </TableRow>
+                        )}
+                        {/* 답글 렌더링 */}
+                        {!boardItem.isParent && (
+                          <TableRow
+                            className="row reply-row"
+                            onClick={() => onClickDetail(boardItem.boardId)}
+                          >
+                            <TableCell component="th" scope="row" style={{ paddingLeft: "40px" }}>
+                              ↳ {(currentPage - 1) * display + index + 1}
+                            </TableCell>
+                            <TableCell>
+                              <CustomCategory
+                                style={{ color: `${boardItem.category.color}` }}
+                                className="category"
+                              >
+                                [ {boardItem.category.name} ]
+                              </CustomCategory>
+                            </TableCell>
+                            <TableCell>{boardItem.title}</TableCell>
+                            <TableCell>{boardItem.userName}</TableCell>
+                            <TableCell>
+                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                            </TableCell>
+                            <TableCell>{boardItem.viewCount}</TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
+                    ))
+                ) : (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     {t("sentence.no_data")}
@@ -309,6 +331,7 @@ function Notice() {
                 </TableRow>
               )}
             </TableBody>
+
           </Table>
         </TableContainer>
         <Stack className="pagination" spacing={2}>
@@ -322,7 +345,7 @@ function Notice() {
         </Stack>
       </ContentsArea>
     </Wrapper>
-  );
+  )
 }
 
-export default Notice;
+export default Qna;
