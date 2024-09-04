@@ -13,6 +13,7 @@ import {
   Button,
   Fab,
   IconButton,
+  InputAdornment,
   MenuItem,
   Select,
   TextField,
@@ -29,7 +30,7 @@ import dompurify from "dompurify";
 import Swal from "sweetalert2";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
-
+import SearchIcon from "@mui/icons-material/Search";
 
 function Faq() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,6 +45,7 @@ function Faq() {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | false>(false);
   const sanitizer = dompurify.sanitize;
+  
 
   // // 아코디언 패널 상태 관리
   const handleChange = (panel: string) => async (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -137,20 +139,37 @@ function Faq() {
     }
   };
 
-  //검색 select 변경 이벤트
+  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+  useEffect(() => {
+    if (category) {
+      setTriggerSearch(true);
+      refetch();
+    }
+  }, [category, refetch]);
+
+  // 검색 유형 select 변경 이벤트
   const handleSearchTypeChange = (e: any) => {
     setSearchType(e.target.value);
     // 카테고리를 선택할 경우 search 값 초기화
-    if (e.target.value !== "category") {
-      setSearch("");
+    if (e.target.value === "category") {
+      setSearch(""); // 카테고리 검색에서는 검색어 초기화
+    } else {
+      setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
     }
   };
 
-  //카테고리 핸들러, 카테고리 검색
+  //카테고리 핸들러
   const handleCategoryChange = (e: any) => {
     setCategory(e.target.value);
-    setTriggerSearch(true); 
-    refetch(); 
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (event: any, page: any) => {
+    console.log(page);
+
+    setCurrentPage(page);
+    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+    refetch();
   };
 
   //삭제
@@ -214,7 +233,7 @@ function Faq() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.FAQ")}
-        <Tooltip title={t("text.add")}>
+        <Tooltip title={t("text.writing")}>
           <Fab
             className="add-btn"
             size="small"
@@ -231,15 +250,58 @@ function Faq() {
           className="select-category"
           variant="standard"
           labelId="select-category"
-          value={"all"}
+          value={searchType}
+          onChange={handleSearchTypeChange}
         >
-          <MenuItem value="all">{t("text.all")}</MenuItem>
+          <MenuItem value="all">
+            {t("text.title")} + {t("text.content")}
+          </MenuItem>
+          <MenuItem value="title">{t("text.title")}</MenuItem>
+          <MenuItem value="contents">{t("text.content")}</MenuItem>
+          <MenuItem value="category">{t("text.category")}</MenuItem>
         </Select>
-        <TextField
-          className="search-input"
-          variant="standard"
-          placeholder={t("sentence.searching")}
-        />
+        {searchType === "category" ? (
+          <Select
+            className="select-category-item"
+            variant="standard"
+            labelId="select-category"
+            value={category}
+            onChange={handleCategoryChange}
+          >
+            <MenuItem value={"all"}>{t("text.all")}</MenuItem>
+            {boardCategoryList?.map((category: any) => (
+              <MenuItem
+                key={category.boardCategoryId}
+                value={category.boardCategoryId}
+              >
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        ) : (
+          <TextField
+            className="search-input"
+            variant="standard"
+            placeholder={t("sentence.searching")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown} // 엔터 키로 검색
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    // color="primary"
+                    aria-label="toggle password visibility"
+                    onClick={handleSearchClick}
+                    edge="end"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
       </SearchArea>
       <ContentsArea>
         {boardListWithCategory && boardListWithCategory.length > 0 ? (
