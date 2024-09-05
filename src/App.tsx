@@ -52,7 +52,7 @@ import Qna from './routes/board/qna/Qna';
 import QnaForm from './routes/board/qna/QnaForm';
 import QnaDetail from './routes/board/qna/QnaDetail';
 import AnswerForm from './routes/board/qna/AnswerForm';
-import FindId from "./routes/members/login/findId";
+import FindId from "./routes/members/login/FindId";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
