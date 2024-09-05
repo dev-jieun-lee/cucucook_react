@@ -71,7 +71,6 @@ function App() {
             <StyledEngineProvider injectFirst>
               <CssBaseline />
               <BrowserRouter>
-                {" "}
                 {/* BrowserRouter를 가장 바깥으로 이동 */}
                 <Box
                   sx={{
@@ -86,10 +85,9 @@ function App() {
                 <Box
                   sx={{
                     backgroundColor: 'background.default',
-                    minHeight: '65vh',
+                    minHeight: '100vh',
                     width: '100%',
                     margin: '120px auto',
-                    height : '100vh'
                   }}
                 >
                   <Routes>
