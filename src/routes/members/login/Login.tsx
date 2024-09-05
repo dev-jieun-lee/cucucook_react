@@ -21,11 +21,13 @@ import LockOpenIcon from "@mui/icons-material/LockOpen"; // 로그인 아이콘
 import Swal from "sweetalert2"; // 알림 라이브러리
 import withReactContent from "sweetalert2-react-content"; // React 컴포넌트로 Swal 사용
 import Cookies from "js-cookie"; // 쿠키 관리 라이브러리
+import { AuthProvider, useAuth } from "../../../auth/AuthContext";
 
 const MySwal = withReactContent(Swal); // React 컨텐츠로 Swal 초기화
 
 function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); // 번역 훅
+  const { setUser, setLoggedIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false); // 비밀번호 가시성 상태
   const [saveId, setSaveId] = useState(() => Cookies.get("saveId") === "true"); // 아이디 저장 체크박스 초기 상태 설정
   const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
@@ -50,11 +52,20 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
         });
         return;
       }
-
       try {
         const data = await login(values);
         if (data.token) {
-          handleCookies(values.userId, saveId);
+          handleSaveId(values.userId, saveId);
+
+          // 토큰 있을 경우 로그인 상태 업데이트
+          setUser({
+            userId: data.userId,
+            name: data.name,
+            role: data.role,
+            memberId: data.memberId,
+          });
+          setLoggedIn(true);
+
           const from = location.state?.from || "/";
           navigate(from);
           setLoginAttempts(0);
@@ -85,9 +96,9 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
     },
   });
 
-  // 아이디 저장 상태가 변경될 때만 쿠키를 업데이트
+  // 아이디 저장 상태가 변경될 때 로컬에 저장
   useEffect(() => {
-    handleCookies(formik.values.userId, saveId);
+    handleSaveId(formik.values.userId, saveId);
   }, [saveId, formik.values.userId]);
 
   return (
@@ -179,12 +190,12 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
 export default Login;
 
-function handleCookies(userId: string, saveId: boolean) {
+function handleSaveId(userId: string, saveId: boolean) {
   if (saveId) {
-    Cookies.set("userId", userId, { expires: 7 });
-    Cookies.set("saveId", "true", { expires: 7 });
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("saveId", "true");
   } else {
-    Cookies.remove("userId");
-    Cookies.remove("saveId");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("saveId");
   }
 }

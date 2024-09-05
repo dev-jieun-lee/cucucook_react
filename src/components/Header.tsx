@@ -25,8 +25,8 @@ import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
 import { logout } from "../routes/members/api";
-import { useAuth } from "../auth/AuthContext";
 import LoginUser from "../LoginUser";
+import { useAuth } from "../auth/AuthContext";
 
 interface IForm {
   keyword: string; // 검색어 폼 데이터
@@ -40,6 +40,10 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const [open, setOpen] = useState(false); // 드로어 상태
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
+
+  console.log(user);
+  
+
 
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -75,8 +79,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
-
-  console.log(user);
 
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
