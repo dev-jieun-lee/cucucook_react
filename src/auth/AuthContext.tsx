@@ -34,6 +34,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   } | null>(null);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
 
+  // 컴포넌트가 처음 렌더링될 때 로그인 상태를 확인
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setLoggedIn(true);
+    }
+  }, []);
+
+  // 사용자 정보가 변경될 때 localStorage에 저장
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+    }, [user]);
+  
   return (
     <AuthContext.Provider value={{ user, setUser, isLoggedIn, setLoggedIn }}>
       {children}
