@@ -55,11 +55,26 @@ import AnswerForm from './routes/board/qna/AnswerForm';
 import FindId from "./routes/members/login/FindId";
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // localStorage에서 초기 테마 설정 불러오기
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme === "dark";
+  });
 
+  // 테마 변경
   const handleToggleTheme = () => {
-    setIsDarkMode((prevMode) => !prevMode);
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    //로컬에 저장
+    localStorage.setItem("theme", newMode ? "dark" : "light"); 
   };
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === "dark");
+    }
+  }, []);
 
   return (
     <I18nextProvider i18n={i18n}>
