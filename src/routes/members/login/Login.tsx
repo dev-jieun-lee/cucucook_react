@@ -29,7 +29,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation(); // 번역 훅
   const { setUser, setLoggedIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false); // 비밀번호 가시성 상태
-  const [saveId, setSaveId] = useState(() => Cookies.get("saveId") === "true"); // 아이디 저장 체크박스 초기 상태 설정
+  const [saveId, setSaveId] = useState(() => localStorage.getItem("saveId") === "true"); // 아이디 저장 체크박스 초기 상태 설정
   const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
   const [loginAttempts, setLoginAttempts] = useState(0); // 로그인 시도 횟수
   const [lockoutTimer, setLockoutTimer] = useState<number | null>(null); // 잠금 타이머 상태
@@ -39,7 +39,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
   const formik = useFormik({
     initialValues: {
-      userId: Cookies.get("userId") || "", // 초기 ID 값을 쿠키에서 불러오기
+      userId: localStorage.getItem("userId") || "", // 초기 ID 값을 로컬에서 불러오기
       password: "",
     },
     onSubmit: async (values) => {
