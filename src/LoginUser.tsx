@@ -43,11 +43,6 @@ function LoginUser() {
       // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
       navigate("/"); // 메인 페이지로 이동
       setUser(null);
-      //로컬에서 정보 삭제
-      localStorage.removeItem("userId");
-      localStorage.removeItem("name");
-      localStorage.removeItem("role");
-      localStorage.removeItem("memberId");
     },
     onError: (error) => {
       console.error("로그아웃 오류: ", error); // 오류 처리

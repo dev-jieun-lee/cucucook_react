@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DrawerList } from "./MenuStyle";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function DrawerMenu({toggleDrawer}: any )  {
+  const { setUser, user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -61,12 +63,17 @@ function DrawerMenu({toggleDrawer}: any )  {
         {renderMenuItems(BoardMenuItems)}
       </DrawerList>
       <Divider />
-      <DrawerList>
+      {user? (
+        <DrawerList>
         <ListItem className="list-item">
           <span className="list-text">{t('menu.mypage.original')}</span>
         </ListItem>
         {renderMenuItems(MypageMenuItems)}
       </DrawerList>
+      ) : (
+        <></>
+      )}
+      
     </Box>
   );
 };
