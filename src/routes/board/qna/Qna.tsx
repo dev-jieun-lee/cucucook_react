@@ -10,8 +10,10 @@ import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
+import { useAuth } from "../../../auth/AuthContext";
 
 function Qna() {
+  const { user } = useAuth(); //로그인 상태관리
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -161,17 +163,22 @@ console.log(boardListWithCategory);
     <Wrapper>
       <TitleCenter>
         {t("menu.board.QNA")}
-        <Tooltip title={t("text.writing")}>
-          <Fab
-            className="add-btn"
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={onClickAdd}
-          >
-            <AddIcon />
-          </Fab>
-        </Tooltip>
+        {user? (
+          <Tooltip title={t("text.writing")}>
+            <Fab
+              className="add-btn"
+              size="small"
+              color="primary"
+              aria-label="add"
+              onClick={onClickAdd}
+            >
+              <AddIcon />
+            </Fab>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
+        
       </TitleCenter>
       <SearchArea>
         <Select

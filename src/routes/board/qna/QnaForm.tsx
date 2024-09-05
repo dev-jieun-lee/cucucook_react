@@ -14,7 +14,7 @@ import { BoardButtonArea, ContentsInputArea, TitleInputArea } from "../BoardStyl
 import QuillEditer from "../QuillEditer";
 
 function QnaForm() {
-  const { user, isLoggedIn } = useAuth(); //로그인 상태관리
+  const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
@@ -92,7 +92,8 @@ function QnaForm() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      memberId: "1",
+      memberId: user?.memberId,
+      userName : user?.name,
       title: boardId ? boardWithCategory?.data?.title || "" : "",
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -118,7 +119,8 @@ function QnaForm() {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
-        memberId: "1",
+        memberId: user?.memberId,
+        userName : user?.name,
         title: "",
         boardCategoryId: "",
         contents: "",

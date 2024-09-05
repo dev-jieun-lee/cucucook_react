@@ -14,7 +14,7 @@ import dompurify from "dompurify";
 
 function AnswerForm(){
   const sanitizer = dompurify.sanitize;
-  const { user, isLoggedIn } = useAuth(); //로그인 상태관리
+  const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const { boardId } = useParams(); //부모게시글 아이디 파라미터 받아오기
   const { answerId } = useParams(); //답글 아이디 파라미터 받아오기
@@ -49,6 +49,9 @@ function AnswerForm(){
     getBoardWithCategory
   );
 
+  console.log(boardWithCategory);
+  
+
   //answerId가 있을경우 수정, 없을경우 생성
   const mutation = useMutation(
     (values) => answerId ? updateBoard(answerId, values) : insertBoard(values),
@@ -73,7 +76,8 @@ function AnswerForm(){
 const formik = useFormik({
   enableReinitialize: true,
   initialValues: {
-    memberId: "1",
+    memberId: user?.memberId,
+    userName : user?.name,
     title: boardId ? boardWithCategory?.data?.title || "" : "",
     boardCategoryId: boardId
       ? boardWithCategory?.category?.boardCategoryId || ""
