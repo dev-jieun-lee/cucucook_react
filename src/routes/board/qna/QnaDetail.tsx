@@ -16,10 +16,11 @@ import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { useAuth } from "../../../auth/AuthContext";
 
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
-
+  const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
@@ -50,6 +51,7 @@ function QnaDetail() {
     "boardWithCategory",
     getBoardWithCategory
   );
+
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
@@ -121,13 +123,17 @@ function QnaDetail() {
           </IconButton>
         </Tooltip>
         {t("menu.board.QNA")}
-        <AnswerButton
-          onClick={onClickAnswer}
-          variant="outlined"
-          className="btn"
-        >
-          {t("menu.board.A_create")}
-        </AnswerButton>
+        {user?.role === "1" ? (
+          <AnswerButton
+            onClick={onClickAnswer}
+            variant="outlined"
+            className="btn"
+          >
+            {t("menu.board.A_create")}
+          </AnswerButton>
+        ) : (
+          <></>
+        )}
       </TitleCenter>
       <TitleArea>
         <div className="board-title">
@@ -157,25 +163,29 @@ function QnaDetail() {
           }}
         ></div>
       </DetailContents>
-      <BoardButtonArea>
-        <Button
-          className="delete-btn"
-          type="button"
-          variant="outlined"
-          color="warning"
-          onClick={() => onClickDelete()}
-        >
-          {t("text.delete")}
-        </Button>
-        <Button
-          className="update-btn"
-          type="button"
-          variant="contained"
-          onClick={() => onClickRegister()}
-        >
-          {t("text.update")}
-        </Button>
-      </BoardButtonArea>
+      {(boardWithCategory?.data.memberId === user?.memberId) ? (
+        <BoardButtonArea>
+          <Button
+            className="delete-btn"
+            type="button"
+            variant="outlined"
+            color="warning"
+            onClick={() => onClickDelete()}
+          >
+            {t("text.delete")}
+          </Button>
+          <Button
+            className="update-btn"
+            type="button"
+            variant="contained"
+            onClick={() => onClickRegister()}
+          >
+            {t("text.update")}
+          </Button>
+        </BoardButtonArea>
+      ) : (
+        <></>
+      )}
     </Wrapper>
   );
 }
