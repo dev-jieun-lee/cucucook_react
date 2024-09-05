@@ -21,7 +21,7 @@ function LoginUser() {
   const [logoutError, setLogoutError] = useState<string | null>(null); //로그아웃 오류 메시지 상태
   const navigate = useNavigate(); // 페이지 이동 함수
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,6 +29,9 @@ function LoginUser() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  console.log(user);
+  
 
   //로그아웃 api 호출
   const {
@@ -40,6 +43,11 @@ function LoginUser() {
       // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
       navigate("/"); // 메인 페이지로 이동
       setUser(null);
+      //로컬에서 정보 삭제
+      localStorage.removeItem("userId");
+      localStorage.removeItem("name");
+      localStorage.removeItem("role");
+      localStorage.removeItem("memberId");
     },
     onError: (error) => {
       console.error("로그아웃 오류: ", error); // 오류 처리

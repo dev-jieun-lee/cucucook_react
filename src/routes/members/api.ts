@@ -31,16 +31,14 @@ export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
-
     // 로그인 성공 시 JWT 토큰을 쿠키에 저장
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7,
+        expires: 7, // 토큰 유효기간 7일
         secure: true,
         sameSite: "Strict",
       });
     }
-
     return response.data;
   } catch (error) {
     handleApiError(error);
