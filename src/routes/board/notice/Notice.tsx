@@ -27,8 +27,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { SetStateAction, useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import { useAuth } from "../../../auth/AuthContext";
 
 function Notice() {
+  const { user } = useAuth(); //로그인 상태관리
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -185,17 +187,21 @@ function Notice() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.notice")}
-        <Tooltip title={t("text.writing")}>
-          <Fab
-            className="add-btn"
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={onClickAdd}
-          >
-            <AddIcon />
-          </Fab>
-        </Tooltip>
+        {user?.role === "1" ? (
+          <Tooltip title={t("text.writing")}>
+            <Fab
+              className="add-btn"
+              size="small"
+              color="primary"
+              aria-label="add"
+              onClick={onClickAdd}
+            >
+              <AddIcon />
+            </Fab>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
       </TitleCenter>
       <SearchArea>
         <Select
