@@ -5,7 +5,7 @@ import { LinkItem } from "../MenuStyle";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
+function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
   const [activeButton, setActiveButton] = useState(""); // 활성 버튼을 관리하는 상태
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { t } = useTranslation();
@@ -15,11 +15,11 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
   // URL 경로에 따라 활성 버튼 설정
   useEffect(() => {
     switch (location.pathname) {
-      case '/myPage/Profile':
+      case "/myPage/Profile":
         setSelectedIndex(0);
         setActiveButton("profile");
         break;
-      case '/myPage/Activity':
+      case "/myPage/Activity":
         setSelectedIndex(1);
         setActiveButton("activity");
         break;
@@ -29,9 +29,12 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
     }
   }, [location.pathname]);
 
-
-   // 페이지 이동 및 버튼 선택 상태 변경 함수
-  const handleListItemClick = (index: number, path: string, buttonName: string) => {
+  // 페이지 이동 및 버튼 선택 상태 변경 함수
+  const handleListItemClick = (
+    index: number,
+    path: string,
+    buttonName: string
+  ) => {
     setSelectedIndex(index);
     setActiveButton(buttonName);
     navigate(path);
@@ -40,29 +43,33 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }){
   return (
     <SideMenu className="list">
       <ListItem>
-        <span className="list-text">{t('menu.mypage.original')}</span>
+        <span className="list-text">{t("mypage.original")}</span>
       </ListItem>
       <Divider />
       <ListItem disablePadding className="list-item">
         <ListItemButton
-          className={`list-button ${activeButton === "profile" ? "active" : ""}`}
+          className={`list-button ${
+            activeButton === "profile" ? "active" : ""
+          }`}
           selected={selectedIndex === 0}
-          onClick={() => handleListItemClick(0, '/mypage/profile', "profile")}
+          onClick={() => handleListItemClick(0, "/mypage/profile", "profile")}
         >
-          {t('menu.mypage.profile')}
+          {t("mypage.profile")}
         </ListItemButton>
       </ListItem>
       <ListItem disablePadding className="list-item">
         <ListItemButton
-          className={`list-button ${activeButton === "activity" ? "active" : ""}`}
+          className={`list-button ${
+            activeButton === "activity" ? "active" : ""
+          }`}
           selected={selectedIndex === 1}
-          onClick={() => handleListItemClick(0, '/mypage/activity', "activity")}
+          onClick={() => handleListItemClick(0, "/mypage/activity", "activity")}
         >
-          {t('menu.mypage.activity')}
+          {t("mypage.activity")}
         </ListItemButton>
       </ListItem>
     </SideMenu>
   );
-};
+}
 
 export default MypageSideMenu;
