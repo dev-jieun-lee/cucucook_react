@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useMutation } from "react-query";
 
-const BASE_URL = "http://localhost:8080/api/members";
+const BASE_URL = "http://localhost:8080/api/mypage";
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -26,18 +26,24 @@ function handleApiError(error: unknown) {
   }
 }
 
-// 로그인 API 호출
-export const login = async (userId: string, password: string) => {
+// 로그인 요청
+export async function login(form: { userId: string; password: string }) {
   try {
-    console.log(`로그인 시도: userId=${userId}`);
-    const response = await api.post("/login", { userId, password });
-    Cookies.set("token", response.data.token);
-    console.log("로그인 성공, 토큰 저장 완료");
+    const response = await api.post("/login", form);
+    console.log("로그인 응답데이터", response.data);
+    // 로그인 성공 시 JWT 토큰을 쿠키에 저장
+    if (response.data.token) {
+      Cookies.set("auth_token", response.data.token, {
+        expires: 7, // 토큰 유효기간 7일
+        secure: true,
+        sameSite: "Strict",
+      });
+    }
     return response.data;
   } catch (error) {
     handleApiError(error);
   }
-};
+}
 
 // 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
