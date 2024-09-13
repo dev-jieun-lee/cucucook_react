@@ -51,8 +51,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     } else {
       localStorage.removeItem("user");
     }
-    }, [user]);
-  
+  }, [user]);
+
   return (
     <AuthContext.Provider value={{ user, setUser, isLoggedIn, setLoggedIn }}>
       {children}
