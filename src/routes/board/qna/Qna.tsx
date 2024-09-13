@@ -11,6 +11,7 @@ import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
@@ -63,11 +64,31 @@ function Qna() {
     return response;
   };
 
+  // 부모글 밑에 답글을 정렬하는 함수
+  const organizeBoardList = (boardList: any[]) => {
+    const parentPosts = boardList.filter((item) => item.status === "0");
+    const childPosts = boardList.filter((item) => item.status === "1");
+
+    // 부모글 밑에 답글을 배치하는 배열 생성
+    const organizedList = parentPosts.map((parentPost) => {
+      // 해당 부모글에 연결된 답글 찾기
+      const replies = childPosts.filter(
+        (reply) => reply.pboardId === parentPost.boardId
+      );
+
+      // 부모글 + 답글 배열로 리턴
+      return [parentPost, ...replies];
+    });
+
+    // 배열을 1차원으로 변환
+    return organizedList.flat();
+  };
+
+  // getBoardListWithCategory 수정
   const getBoardListWithCategory = async () => {
     try {
       const boardList = await getBoardListApi();
 
-      // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
         boardList.data.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
@@ -77,12 +98,37 @@ function Qna() {
           };
         })
       );
-      return boardListWithCategory;
+
+      // 부모글과 답글 정렬
+      const organizedList = organizeBoardList(boardListWithCategory);
+      return organizedList;
     } catch (error) {
       console.error(error);
       return [];
     }
   };
+
+
+  // const getBoardListWithCategory = async () => {
+  //   try {
+  //     const boardList = await getBoardListApi();
+
+  //     // 각 보드의 카테고리 조회
+  //     const boardListWithCategory = await Promise.all(
+  //       boardList.data.map(async (board: any) => {
+  //         const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
+  //         return {
+  //           ...board,
+  //           category: categoryData.data, // 카테고리 정보를 추가
+  //         };
+  //       })
+  //     );
+  //     return boardListWithCategory;
+  //   } catch (error) {
+  //     console.error(error);
+  //     return [];
+  //   }
+  // };
 
     // 데이터 가져오기
     const {
@@ -92,8 +138,6 @@ function Qna() {
     } = useQuery("boardListWithCategory", getBoardListWithCategory, {
       enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
     });
-  
-console.log(boardListWithCategory);
 
 
   // 검색 버튼 클릭 핸들러
@@ -144,8 +188,17 @@ console.log(boardListWithCategory);
     };
   
     //상세 페이지로 이동
-    const onClickDetail = (boardId: string) => {
-      navigate(`/qna/${boardId}`);
+    const onClickDetail = (boardId: string, status : string) => {
+      if(status === "1"){
+        navigate(`/qna/${boardId}`, {
+          state: {
+            isReply: true,  // 답글임을 나타내는 상태
+            parentBoardId: boardId  // 부모글의 ID 전달
+          }
+        });
+      }else{
+        navigate(`/qna/${boardId}`);
+      }
     };
     //추가 페이지로 이동
     const onClickAdd = () => {
@@ -257,80 +310,47 @@ console.log(boardListWithCategory);
             </TableHead>
             <TableBody>
               {boardListWithCategory && boardListWithCategory.length > 0 ? (
-                // 데이터를 부모 글과 답글로 그룹화
                 boardListWithCategory
-                  .reduce((acc: any[], boardItem: any) => {
-                    if (boardItem.status === "0") {
-                      // 부모 글
-                      acc.push({ ...boardItem, isParent: true });
-                    } else if (boardItem.status === "1" && boardItem.pBoardId === boardItem.boardId) {
-                      // 답글
-                      const parentIndex = acc.findIndex(
-                        (item) => item.boardId === boardItem.pBoardId && item.isParent
-                      );
-                      if (parentIndex !== -1) {
-                        // 부모 글 바로 밑에 답글을 삽입
-                        acc.splice(parentIndex + 1, 0, { ...boardItem, isParent: false });
-                      }
-                    }
-                    return acc;
-                    }, [])
-                    ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                    .map((boardItem: any, index: number) => (
-                      <React.Fragment key={index}>
-                        {/* 부모 글 렌더링 */}
-                        {boardItem.isParent && (
-                          <TableRow
-                            className="row"
-                            onClick={() => onClickDetail(boardItem.boardId)}
-                          >
-                            <TableCell component="th" scope="row">
-                              {(currentPage - 1) * display + index + 1}
-                            </TableCell>
-                            <TableCell>
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell>{boardItem.title}</TableCell>
-                            <TableCell>{boardItem.userName}</TableCell>
-                            <TableCell>
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                            <TableCell>{boardItem.viewCount}</TableCell>
-                          </TableRow>
-                        )}
-                        {/* 답글 렌더링 */}
-                        {!boardItem.isParent && (
-                          <TableRow
-                            className="row reply-row"
-                            onClick={() => onClickDetail(boardItem.boardId)}
-                          >
-                            <TableCell component="th" scope="row" style={{ paddingLeft: "40px" }}>
-                              ↳ {(currentPage - 1) * display + index + 1}
-                            </TableCell>
-                            <TableCell>
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell>{boardItem.title}</TableCell>
-                            <TableCell>{boardItem.userName}</TableCell>
-                            <TableCell>
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                            <TableCell>{boardItem.viewCount}</TableCell>
-                          </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))
-                ) : (
+                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+                  .map((boardItem: any, index: number) => (
+                    <TableRow
+                      className="row"
+                      key={index}
+                      onClick={() => onClickDetail(boardItem.boardId, boardItem.status)}
+                    >
+                      <TableCell component="th" scope="row">
+                        {(currentPage - 1) * display + index + 1}
+                      </TableCell>
+                      <TableCell>
+                        <CustomCategory
+                          style={{ color: `${boardItem.category.color}` }}
+                          className="category"
+                        >
+                          [ {boardItem.category.name} ]
+                        </CustomCategory>
+                      </TableCell>
+
+                      {/* 제목에 답글 여부 표시 */}
+                      {boardItem.status === "1" ? (
+                        <TableCell>
+                          <div className="answer-container">
+                            <SubdirectoryArrowRightIcon className="answer-icon" />
+                            <span className="answer-title">{t("menu.board.answer")}</span>
+                          </div>
+                        </TableCell>
+                      ) : (
+                        <TableCell>
+                          {boardItem.title}
+                        </TableCell>
+                      )}
+                      <TableCell>{boardItem.userName}</TableCell>
+                      <TableCell>
+                        {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                      </TableCell>
+                      <TableCell>{boardItem.viewCount}</TableCell>
+                    </TableRow>
+                  ))
+              ) : (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
                     {t("sentence.no_data")}
@@ -338,7 +358,6 @@ console.log(boardListWithCategory);
                 </TableRow>
               )}
             </TableBody>
-
           </Table>
         </TableContainer>
         <Stack className="pagination" spacing={2}>
@@ -356,3 +375,4 @@ console.log(boardListWithCategory);
 }
 
 export default Qna;
+

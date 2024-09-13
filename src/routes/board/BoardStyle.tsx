@@ -93,6 +93,20 @@ export const ContentsArea = styled.div`
       margin: 0 auto;
     }
   }
+
+  .answer-container {
+  display: flex;
+  align-items: center; 
+  }
+
+  .answer-icon {
+    transform: scale(0.6);
+    color: ${(props) => props.theme.mainColor};
+    margin-right: 4px; 
+    margin-top: -4px;
+  }
+  .answer-title{
+  }
 `;
 
 export const AccordionTitle = styled.div`
@@ -227,6 +241,37 @@ export const ContentsInputArea = styled.div`
     text-align: left;
     right: 0;
     padding-bottom: 10px;
+  }
+`;
+
+export const QuestionArea = styled.div`
+  width: 100%;
+  margin: 50px auto 20px;
+  .q-title-area{
+    display: flex;
+    justify-content: space-between;
+    .category{
+      width: 25%;
+      .form-select{
+        width: 100%;
+      }
+    }
+    .title{
+      width: 73%;
+      .form-input{
+        width: 100%;
+      }
+    }
+  }
+  .q-contents{
+    width: 100%;
+    border: 1px solid;
+    border-radius: 5px;
+    text-align: left;
+    padding: 0px 15px;
+    border-color: ${(props) => props.theme.navBorderColor};
+    color: #535252;
+    margin-top: 20px;
   }
 `;
 

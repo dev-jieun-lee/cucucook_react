@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { deleteBoard, getBoard, getBoardCategory } from "../api";
 import {
   AnswerButton,
@@ -24,6 +24,9 @@ function QnaDetail() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
+  const location = useLocation();
+  const isReply = location.state?.isReply || false;  // 답글 여부 확인
+
 
   //카테고리 포함 데이터 받아오기
   const getBoardWithCategory = async () => {
@@ -52,6 +55,18 @@ function QnaDetail() {
     getBoardWithCategory
   );
 
+  //부모글 데이터 받아오기
+  const getParentBoard = async (parentId: string) => {
+    const parentBoard = await getBoard(parentId); // 부모글 데이터 API 호출
+    return parentBoard;
+  };
+
+  const { data: parentBoardData, isLoading: parentBoardLoading } = useQuery(
+    ["parentBoard"],
+    () => getParentBoard(boardWithCategory.data.pboardId),
+    { enabled: isReply } // 답글 작성 또는 수정일 때만 실행
+  );
+  
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
@@ -101,9 +116,14 @@ function QnaDetail() {
 
   //답변등록 페이지로 이동
   const onClickAnswer = () => {
-    navigate(`/qna/form/${boardId}/answer`);
+    navigate(`/qna/form/${boardId}/answer`, {
+      state: {
+        isReply: true,  // 답글임을 나타내는 상태
+        parentBoardId: boardId  // 부모글의 ID 전달
+      }
+    });
   };
-
+  
   //로딩
   if (boardLoading) {
     return <Loading />;
@@ -123,7 +143,7 @@ function QnaDetail() {
           </IconButton>
         </Tooltip>
         {t("menu.board.QNA")}
-        {user?.role === "1" ? (
+        {user?.role === "1" && !isReply ? (
           <AnswerButton
             onClick={onClickAnswer}
             variant="outlined"
@@ -135,6 +155,37 @@ function QnaDetail() {
           <></>
         )}
       </TitleCenter>
+      {isReply ? (
+        <>
+          <TitleArea>
+          <div className="board-title">
+            <CustomCategory
+              style={{ color: `${boardWithCategory.category.color}` }}
+            >
+              [ {boardWithCategory?.category.name} ]
+            </CustomCategory>
+            <span className="title">{parentBoardData?.data.title}</span>
+          </div>
+          <div className="board-info">
+            <span className="date">
+              {moment(parentBoardData?.data.udtDt).format("YYYY-MM-DD")}
+            </span>
+            <span className="border"></span>
+            <span className="member">{parentBoardData?.data.userName}</span>
+          </div>
+          </TitleArea>
+          <DetailContents>
+            <div
+              className="board-contents"
+              dangerouslySetInnerHTML={{
+                __html: sanitizer(`${parentBoardData?.data.contents}`),
+              }}
+            ></div>
+          </DetailContents>
+        </>
+      ) : (
+        <></>
+      )}
       <TitleArea>
         <div className="board-title">
           <CustomCategory
