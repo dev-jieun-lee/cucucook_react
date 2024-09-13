@@ -7,9 +7,8 @@ const BASE_URL = "http://openapi.foodsafetykorea.go.kr/api";
 // 4	startIdx	STRING(필수)	요청시작위치	정수입력
 // 5	endIdx	STRING(필수)	요청종료위치	정수입력
 
-
 export function getPublicRecipe() {
-  return fetch(`${BASE_URL}/${API_KEY}/COOKRCP01/json/1/5`).then(
-    (response) => response.json()
+  return fetch(`${BASE_URL}/${API_KEY}/COOKRCP01/json/1/5`).then((response) =>
+    response.json()
   );
 }

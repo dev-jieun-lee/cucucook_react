@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next"; // 다국어 지원을 위한 훅 사용
-import { useFormik } from "formik"; // 폼 관리 라이브러리
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useFormik } from "formik";
 import {
   Button,
   Checkbox,
@@ -11,53 +11,64 @@ import {
   InputLabel,
   OutlinedInput,
   Typography,
-} from "@mui/material"; // Material UI 컴포넌트 사용
-import { Visibility, VisibilityOff } from "@mui/icons-material"; // 비밀번호 가시성 아이콘
-import { Wrapper } from "../../../styles/CommonStyles"; // 스타일 컴포넌트
-import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle"; // 스타일 컴포넌트
-import { login } from "../api"; // 로그인 API 함수
-import { useNavigate, useLocation } from "react-router-dom"; // 라우팅 관련 훅
-import LockOpenIcon from "@mui/icons-material/LockOpen"; // 로그인 아이콘
-import Swal from "sweetalert2"; // 알림 라이브러리
-import withReactContent from "sweetalert2-react-content"; // React 컴포넌트로 Swal 사용
-import Cookies from "js-cookie"; // 쿠키 관리 라이브러리
-import { AuthProvider, useAuth } from "../../../auth/AuthContext";
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Wrapper } from "../../../styles/CommonStyles";
+import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
+import { login } from "../api";
+import { useNavigate, useLocation } from "react-router-dom";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Cookies from "js-cookie";
+import { AxiosError } from "axios";
+import { useAuth } from "../../../auth/AuthContext";
 
-const MySwal = withReactContent(Swal); // React 컨텐츠로 Swal 초기화
+const MySwal = withReactContent(Swal);
 
-function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { t } = useTranslation(); // 번역 훅
+type LoginProps = {
+  isDarkMode: boolean;
+};
+
+function Login({ isDarkMode }: LoginProps) {
+  const { t } = useTranslation();
   const { setUser, setLoggedIn } = useAuth();
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 가시성 상태
-  const [saveId, setSaveId] = useState(() => localStorage.getItem("saveId") === "true"); // 아이디 저장 체크박스 초기 상태 설정
-  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지 상태
-  const [loginAttempts, setLoginAttempts] = useState(0); // 로그인 시도 횟수
-  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null); // 잠금 타이머 상태
-  const [lockoutMessage, setLockoutMessage] = useState<string | null>(null); // 잠금 메시지 상태
-  const navigate = useNavigate(); // 페이지 이동 함수
-  const location = useLocation(); // 현재 위치 정보
+  const [showPassword, setShowPassword] = useState(false);
+  const [saveId, setSaveId] = useState(
+    () => localStorage.getItem("saveId") === "true"
+  );
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null);
+  const remainingTimeRef = useRef<{ minutes: number; seconds: number }>({
+    minutes: 0,
+    seconds: 0,
+  });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const initialRender = useRef(true);
 
   const formik = useFormik({
     initialValues: {
-      userId: localStorage.getItem("userId") || "", // 초기 ID 값을 로컬에서 불러오기
+      userId: localStorage.getItem("userId") || "",
       password: "",
     },
     onSubmit: async (values) => {
       if (lockoutTimer && lockoutTimer > 0) {
         MySwal.fire({
           title: t("members.login_failed"),
-          text: lockoutMessage || t("alert.locked"),
+          text: t("locked"), // 'locked' 메시지만 출력
           icon: "warning",
           confirmButtonText: t("alert.ok"),
         });
+
         return;
       }
+
       try {
         const data = await login(values);
-        if (data.token) {
+        if (data && data.token) {
           handleSaveId(values.userId, saveId);
-
-          // 토큰 있을 경우 로그인 상태 업데이트
           setUser({
             userId: data.userId,
             name: data.name,
@@ -69,37 +80,80 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
           const from = location.state?.from || "/";
           navigate(from);
           setLoginAttempts(0);
-          setLockoutMessage(null);
         } else {
           throw new Error(t("members.login_failed"));
         }
       } catch (error) {
-        const newAttempts = loginAttempts + 1;
-        setLoginAttempts(newAttempts);
-        let alertMessage = t("alert.attempt");
-        if (newAttempts === 3) {
-          alertMessage = t("alert.attempt_3");
-        } else if (newAttempts === 4) {
-          alertMessage = t("alert.attempt_4");
-        } else if (newAttempts >= 5) {
-          setLockoutTimer(10 * 60); // 10분 동안 잠금
-          alertMessage = t("alert.locked");
+        const axiosError = error as AxiosError;
+        if (axiosError.response && axiosError.response.status >= 500) {
+          MySwal.fire({
+            title: t("error.server_error"),
+            text: t("alert.server_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
+        } else {
+          const newAttempts = loginAttempts + 1;
+          setLoginAttempts(newAttempts);
+
+          let alertMessage = t("alert.attempt");
+          if (newAttempts === 3) {
+            alertMessage = t("alert.attempt_3");
+          } else if (newAttempts === 4) {
+            alertMessage = t("alert.attempt_4");
+          } else if (newAttempts >= 5) {
+            const lockoutDuration = 10 * 60; // 10분
+            setLockoutTimer(lockoutDuration);
+            remainingTimeRef.current = {
+              minutes: Math.floor(lockoutDuration / 60),
+              seconds: lockoutDuration % 60,
+            };
+            alertMessage = t("alert.locked_time");
+          }
+
+          setLoginError(alertMessage);
+          MySwal.fire({
+            title: t("members.login_failed"),
+            text: alertMessage,
+            icon: "warning",
+            confirmButtonText: t("alert.ok"),
+          });
         }
-        setLoginError(alertMessage);
-        MySwal.fire({
-          title: t("members.login_failed"),
-          text: alertMessage,
-          icon: "warning",
-          confirmButtonText: t("alert.ok"),
-        });
       }
     },
   });
 
-  // 아이디 저장 상태가 변경될 때 로컬에 저장
+  // 타이머 줄이기 및 로그인 페이지 업데이트
   useEffect(() => {
+    if (lockoutTimer && lockoutTimer > 0) {
+      const interval = setInterval(() => {
+        setLockoutTimer((prev) =>
+          prev !== null && prev > 0 ? prev - 1 : null
+        );
+
+        // 남은 시간을 Ref로 업데이트, 두 자릿수로 표시
+        remainingTimeRef.current = {
+          minutes: Math.floor(lockoutTimer! / 60),
+          seconds: lockoutTimer! % 60,
+        };
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [lockoutTimer]);
+
+  // 아이디 저장 상태 변경 처리
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
     handleSaveId(formik.values.userId, saveId);
   }, [saveId, formik.values.userId]);
+
+  // UI에서 두 자릿수로 포맷된 초를 표시
+  const formatSeconds = (seconds: number) =>
+    seconds < 10 ? `0${seconds}` : seconds;
 
   return (
     <Wrapper>
@@ -155,9 +209,14 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
             />
           </div>
 
-          {lockoutMessage && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {lockoutMessage}
+          {/* 로그인 버튼 위에 남은 시간 안내 표시 */}
+          {lockoutTimer && lockoutTimer > 0 && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {t("alert.locked_time")}{" "}
+              {t("alert.try_again", {
+                minutes: remainingTimeRef.current.minutes,
+                seconds: formatSeconds(remainingTimeRef.current.seconds),
+              })}
             </Typography>
           )}
 

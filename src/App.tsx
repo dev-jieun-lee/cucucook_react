@@ -48,10 +48,10 @@ import Signup from "./routes/members/signUp/Signup";
 import NoticeForm from "./routes/board/notice/NoticeForm";
 import FaqForm from "./routes/board/Faq/FaqForm";
 import NoticeDetail from "./routes/board/notice/NoticeDetail";
-import Qna from './routes/board/qna/Qna';
-import QnaForm from './routes/board/qna/QnaForm';
-import QnaDetail from './routes/board/qna/QnaDetail';
-import AnswerForm from './routes/board/qna/AnswerForm';
+import Qna from "./routes/board/qna/Qna";
+import QnaForm from "./routes/board/qna/QnaForm";
+import QnaDetail from "./routes/board/qna/QnaDetail";
+import AnswerForm from "./routes/board/qna/AnswerForm";
 import FindId from "./routes/members/login/FindId";
 
 function App() {
@@ -66,7 +66,7 @@ function App() {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
     //로컬에 저장
-    localStorage.setItem("theme", newMode ? "dark" : "light"); 
+    localStorage.setItem("theme", newMode ? "dark" : "light");
   };
 
   useEffect(() => {
@@ -99,10 +99,10 @@ function App() {
                 </Box>
                 <Box
                   sx={{
-                    backgroundColor: 'background.default',
-                    minHeight: '100vh',
-                    width: '100%',
-                    margin: '120px auto',
+                    backgroundColor: "background.default",
+                    minHeight: "100vh",
+                    width: "100%",
+                    margin: "120px auto",
                   }}
                 >
                   <Routes>
@@ -408,52 +408,82 @@ function App() {
                           }}
                         >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <Qna/>
+                          <Qna />
                         </Box>
                       }
                     />
                     <Route
                       path="/qna/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <QnaDetail/>
+                          <QnaDetail />
                         </Box>
                       }
                     />
                     <Route
                       path="/qna/form"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <QnaForm/>
+                          <QnaForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/qna/form/:boardId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <QnaForm/>
+                          <QnaForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/qna/form/:boardId/answer"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <AnswerForm/>
+                          <AnswerForm />
                         </Box>
                       }
                     />
                     <Route
                       path="/qna/form/:boardId/answer/:answerId"
                       element={
-                        <Box sx={{ display: 'flex', width: '92%', margin: '140px auto' }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                          }}
+                        >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <AnswerForm/>
+                          <AnswerForm />
                         </Box>
                       }
                     />
