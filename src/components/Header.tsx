@@ -41,8 +41,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
 
-  console.log(user);
-  
 
 
   // 드로어 열기/닫기
@@ -99,7 +97,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           </div>
         </div>
         <div style={{ display: "flex" }}>
-          <Tooltip title={t("text.search")}>
+          {/* <Tooltip title={t("text.search")}>
             <MotionSearch onSubmit={handleSubmit(onValid)}>
               <MotionIconButton
                 onClick={toggleSearch}
@@ -118,7 +116,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
                 placeholder={t("sentence.searching")} // 플레이스홀더
               />
             </MotionSearch>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title={t("text.change_mode")}>
             <IconButton
               className="mode-icon"
