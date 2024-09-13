@@ -167,7 +167,8 @@
     "find_id_error": "There an error occured while find ID",
     "no_info_found": "No ID matching the entered name and email was found.",
     "login_success_info": "Login success information",
-    "ok": "OK"
+    "ok": "OK",
+    "login_failed": "Login Failed"
   },
   "mypage": {
     "Please enter your password": "Please enter your password",
@@ -193,11 +194,13 @@
     "requirement_saved": "Changes have been saved.",
     "canceled": "Operation canceled.",
     "confirmed": "Ok",
-    "attempt": "You have failed to log in. If you continue to fail, your account may be locked.",
-    "attempt_3": "Warning: You have failed to log in three times in a row. If you continue to fail, your account may be locked.",
-    "attempt_4": "Warning: You have failed to log in four times in a row. One more failure will lock your account.",
-    "locked": "Your account is locked. Please wait {{minutes}} minutes and {{seconds}} seconds before trying again.",
-    "try_again": "Try again later."
+    "try_again": "Try again later.",
+    "attempt": "Login attempt failed.",
+    "attempt_3": "You have failed to login 3 times.",
+    "attempt_4": "You have failed to login 4 times.",
+    "locked": "Your account is locked due to multiple failed login attempts.",
+    "locked_time": "Your account is locked. Time remaining: {{minutes}} minutes and {{seconds}} seconds",
+    "ok": "OK"
   },
   "AgreeContents": {
     "terms_required": "You must agree to the terms",
