@@ -42,8 +42,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const navigate = useNavigate(); // 페이지 이동 함수
 
   console.log(user);
-  
-
 
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
