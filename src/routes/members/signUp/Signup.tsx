@@ -279,7 +279,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <TextField
               id="name"
               name="name"
-              label={t("menu.mypage.name")}
+              label={t("mypage.name")}
               value={formik.values.name}
               onChange={handleNameChange}
               onBlur={formik.handleBlur}
@@ -293,7 +293,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <TextField
               id="phone"
               name="phone"
-              label={t("menu.mypage.phone_number")}
+              label={t("mypage.phone_number")}
               value={formik.values.phone}
               onChange={(e) => {
                 const onlyNums = e.target.value.replace(/[^0-9]/g, "");
