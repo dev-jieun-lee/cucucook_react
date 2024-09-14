@@ -8,6 +8,7 @@ import {
   MenuItem,
   FormHelperText,
   InputAdornment,
+  Button,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -346,15 +347,15 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </div>
           </FormControl>
 
-          <LoginSubmitButton
+          <Button
+            className="submit-btn"
             color="primary"
             variant="contained"
-            fullWidth
             type="submit"
             disabled={formik.isSubmitting || Boolean(phoneError)}
           >
             {t("members.signup")}
-          </LoginSubmitButton>
+          </Button>
         </form>
       </LoginWrapper>
     </Wrapper>

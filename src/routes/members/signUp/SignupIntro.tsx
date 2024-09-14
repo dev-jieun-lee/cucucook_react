@@ -21,8 +21,10 @@ import {
   StyledSubtitle,
   LeftAlignedFormControlLabel,
   CheckBoxContainer,
+  SignupIntroWrapper,
 } from "../login/LoginStyle";
 import { useEmailVerification } from "../../../hooks/useEmailVerification";
+import PersonIcon from '@mui/icons-material/Person';
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -88,13 +90,12 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
 
   return (
     <Wrapper>
-      <LoginWrapper>
+      <SignupIntroWrapper>
         <div className="title">
-          <Typography variant="h6">{t("members.join")}</Typography>
+          <PersonIcon className="title-icon" />
+          <span>{t("AgreeContents.terms_title")}</span>
         </div>
         <form onSubmit={formik.handleSubmit}>
-          {/* 동의 섹션 */}
-          <h2>{t("AgreeContents.terms_title")}</h2>
           <FormGroup>
             <Box marginBottom={2}>
               <StyledSubtitle>
@@ -102,10 +103,10 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
               </StyledSubtitle>
               <Box
                 sx={{
-                  maxHeight: 100,
+                  maxHeight: 300,
                   overflowY: "auto",
                   border: "1px solid #ccc",
-                  padding: "8px",
+                  padding: "10px",
                   position: "relative",
                 }}
               >
@@ -138,10 +139,10 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
               </StyledSubtitle>
               <Box
                 sx={{
-                  maxHeight: 100,
+                  maxHeight: 300,
                   overflowY: "auto",
                   border: "1px solid #ccc",
-                  padding: "8px",
+                  padding: "10px",
                   position: "relative",
                 }}
               >
@@ -177,8 +178,9 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   maxHeight: 100,
                   overflowY: "auto",
                   border: "1px solid #ccc",
-                  padding: "8px",
+                  padding: "10px",
                   position: "relative",
+                  textAlign: "left"
                 }}
               >
                 <Typography variant="body2">
@@ -215,7 +217,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
 
           {/* 이메일 인증 섹션 */}
           <Grid container spacing={2} alignItems="center" marginTop={4}>
-            <Grid item xs={8}>
+            <Grid item xs={10}>
               <TextField
                 fullWidth
                 id="email"
@@ -229,10 +231,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <Button
-                variant="contained"
-                color="primary"
+                className="email-btn"
+                variant="outlined"
+                color="secondary"
                 onClick={() => handleSendCode(formik.values.email)}
                 disabled={isCodeSent}
               >
@@ -240,8 +243,8 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
               </Button>
             </Grid>
             {isCodeSent && (
-              <Grid container spacing={2} marginTop={1}>
-                <Grid item xs={8}>
+              <Grid container spacing={2} alignItems="center" marginTop={1} marginLeft={0}>
+                <Grid item xs={10}>
                   <TextField
                     fullWidth
                     id="verificationCode"
@@ -251,10 +254,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                     onChange={(e) => setVerificationCode(e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                   <Button
-                    variant="contained"
-                    color="primary"
+                    className="email-btn"
+                    variant="outlined"
+                    color="secondary"
                     onClick={() =>
                       handleVerifyCode(formik.values.email, verificationCode)
                     }
@@ -274,17 +278,17 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
             )}
           </Grid>
 
-          <LoginSubmitButton
+          <Button
+            className="submit-btn"
             color="primary"
             variant="contained"
-            fullWidth
             type="submit"
             disabled={!isCodeVerified || !formik.isValid}
           >
             {t("members.register")}
-          </LoginSubmitButton>
+          </Button>
         </form>
-      </LoginWrapper>
+      </SignupIntroWrapper>
     </Wrapper>
   );
 }
