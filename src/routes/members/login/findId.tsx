@@ -15,8 +15,9 @@ import {
 import { useFormik } from "formik";
 import { findId } from "../api";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
+import { LoginWrapper, ButtonArea, StyledAnchor, FindIdBox } from "./LoginStyle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {
@@ -77,10 +78,10 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
     <Wrapper>
       <LoginWrapper>
         <div className="title">
-          <LockOpenIcon className="title-icon" />
-          <Typography variant="h6">{t("members.find_id")}</Typography>
+          <PersonSearchIcon className="title-icon" />
+          <span>{t("members.find_id")}</span>
         </div>
-        <Box>
+        <FindIdBox>
           <form onSubmit={formik.handleSubmit}>
             <FormControl fullWidth margin="normal">
               <InputLabel htmlFor="name">{t("members.name")}</InputLabel>
@@ -105,8 +106,9 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               </Grid>
               <Grid item xs={3}>
                 <Button
-                  color="primary"
-                  variant="contained"
+                  className="find-btn"
+                  color="secondary"
+                  variant="outlined"
                   onClick={() => handleSendCode(formik.values.email)}
                   fullWidth
                   disabled={
@@ -128,14 +130,15 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                       id="verificationCode"
                       value={verificationCode}
                       onChange={(e) => setVerificationCode(e.target.value)}
-                      label={t("members.confirmed")}
+                      label={t("members.verification_code")}
                     />
                   </FormControl>
                 </Grid>
                 <Grid item xs={3}>
                   <Button
-                    color="primary"
-                    variant="contained"
+                    className="find-btn"
+                    color="secondary"
+                    variant="outlined"
                     onClick={() =>
                       handleVerifyCode(formik.values.email, verificationCode)
                     }
@@ -153,8 +156,9 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               </Typography>
             )}
             <Button
+              className="submit"
               type="submit"
-              color="primary"
+              color="inherit"
               variant="contained"
               sx={{ mt: 2 }}
               disabled={!isCodeVerified}
@@ -200,7 +204,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               {t("members.find_id_error")}
             </Alert>
           </Snackbar>
-        </Box>
+        </FindIdBox>
       </LoginWrapper>
     </Wrapper>
   );

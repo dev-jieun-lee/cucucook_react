@@ -86,6 +86,9 @@ export const muiDarkTheme = createTheme({
     secondary: {
       main: '#FDA47E',
     },
+    info:{
+      main:'#d28c6f'
+    },
     background: {
       default: '#3D3737', // 다크 모드 배경 색상
       paper: '#424242',
