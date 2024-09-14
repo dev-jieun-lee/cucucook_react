@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import media from "../../../styles/MediaQuery";
-import { FormControlLabel, OutlinedInput } from "@mui/material";
+import { Box, FormControlLabel, OutlinedInput } from "@mui/material";
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -80,6 +80,60 @@ export const LoginWrapper = styled.div`
   ${media.small`
     width: 90%;
   `};
+
+  .email-btn{
+    height : 53px;
+    margin-top: -3px;
+    font-size : 15px;
+    margin-right: -5px;
+  }
+  .submit-btn{
+    margin-top: 50px;
+    height : 53px;
+    font-size : 15px;
+  }
+`;
+
+export const SignupIntroWrapper = styled.div`
+  text-align: center;
+  margin: 50px auto;
+  margin-bottom: 100px;
+  width: 55%;
+  ${media.medium`
+    width: 90%;
+  `};
+  .title {
+    margin-bottom: 30px;
+    color: ${(props) => props.theme.mainColor};
+    .title-icon {
+      transform: scale(1.6);
+      ${media.medium`
+        transform: scale(1.2);
+      `};
+    }
+    span {
+      display: block;
+      margin-top: 10px;
+      font-size: 25px;
+      font-weight: 600;
+      ${media.medium`
+        font-size: 20px;
+      `};
+    }
+    ${media.medium`
+      margin-bottom: 20px;
+    `};
+  }
+  .email-btn{
+    height : 53px;
+    margin-top: -3px;
+    font-size : 15px;
+  }
+  .submit-btn{
+    margin-top: 50px;
+    height : 53px;
+    font-size : 15px;
+  }
 `;
 
 export const ButtonArea = styled.div`
@@ -93,16 +147,12 @@ export const ButtonArea = styled.div`
     }
   }
   span {
-    margin: 0 10px;
+    margin: 0 13px;
     border-left: 1px solid;
     color: ${(props) => props.theme.mainColor};
   }
 `;
 
-//아이디찾기박스
-export const InputStyled = styled(OutlinedInput)`
-  border-color: ${(props) => props.theme.borderColor}; // 테두리 색상 설정
-`;
 
 export const ResultBox = styled.div`
   padding: 16px;
@@ -124,12 +174,17 @@ export const ResultBox = styled.div`
 export const LoginSubmitButton = styled(Button)`
   margin: 20px 0;
   height: 40px;
+  .intro-btn{
+    margin-top: 10px;
+  }
 `;
 
 export const StyledSubtitle = styled(Typography)`
   font-weight: bold;
   text-align: left;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
+  color: ${(props) => props.theme.textColor};
+  margin-bottom: 5px;
 `;
 
 export const LargeStyledSubtitle = styled(StyledSubtitle)`
@@ -150,11 +205,23 @@ export const CheckBoxContainer = styled.div`
 
 // Styled Link 컴포넌트
 export const StyledAnchor = styled(Link)`
-  color: black; // 기본 색상
-  text-decoration: none; // 밑줄 제거
+  font-size: 1rem;
+  color: ${(props) => props.theme.mainColor};
+  text-decoration: none; 
   &:hover {
-    color: ${(props) => props.theme.mainColor}; // 호버 시 색상 변경
     text-decoration: underline; // 호버 시 밑줄 추가
-    cursor: pointer; // 마우스 오버 시 커서 변경
+    cursor: pointer; 
+  }
+`;
+
+export const FindIdBox = styled(Box)`
+  .find-btn{
+    height: 53px;
+    margin-top: 6px;
+    font-size: 16px;
+  }
+  .submit{
+    height: 53px;
+    font-size: 16px;
   }
 `;
