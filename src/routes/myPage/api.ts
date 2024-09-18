@@ -45,7 +45,7 @@ export async function login(form: { userId: string; password: string }) {
   }
 }
 
-// 비밀번호 검증 API 호출
+//내정보 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
   try {
     console.log(`비밀번호 검증 시도: userId=${userId}`);
@@ -72,7 +72,7 @@ export const changePassword = async (userId: string, newPassword: string) => {
   }
 };
 
-// 회원 정보 수정 API 호출
+// 내정보 - 회원 정보 수정 API 호출
 export const updateUserInfo = async (
   userId: string,
   name: string,
@@ -91,7 +91,7 @@ export const updateUserInfo = async (
   }
 };
 
-// 회원 탈퇴 API 호출
+//내정보 - 회원 탈퇴 API 호출
 export const deleteUserAccount = async (userId: string) => {
   try {
     console.log(`회원 탈퇴 시도: userId=${userId}`);
@@ -137,5 +137,67 @@ export const resetPassword = async (email: string) => {
     return response.data;
   } catch (error) {
     handleApiError(error);
+  }
+};
+
+//댓글 가져오기
+export const fetchMyReplies = async (
+  memberId: string,
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getMyComments`, {
+      params: { page, pageSize, memberId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch replies:", error);
+    throw error;
+  }
+};
+
+//댓글 삭제
+export const deleteReply = async (commentId: string) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/delete`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to delete reply:", error);
+    throw error;
+  }
+};
+
+// 댓글 검색
+export const searchReplies = async (
+  keyword: string,
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/comments/search`, {
+      params: { keyword, page, pageSize },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to search replies:", error);
+    throw error;
+  }
+};
+
+// 댓글 필터링
+export const filterReplies = async (
+  filterParams: { category?: string; dateRange?: string },
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/comments/filter`, {
+      params: { ...filterParams, page, pageSize },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to filter replies:", error);
+    throw error;
   }
 };
