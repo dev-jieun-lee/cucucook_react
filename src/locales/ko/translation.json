@@ -147,7 +147,8 @@
     "Verify": "확인",
     "Success": "성공",
     "Password verification successful": "비밀번호 확인에 성공했습니다",
-    "OK": "확인"
+    "OK": "확인",
+    "mycommnet": "내가 쓴 댓글"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -258,7 +259,8 @@
     "attempt_4": "경고: 네 번 연속 로그인에 실패했습니다. 한 번 더 실패 시 계정이 잠깁니다.",
     "locked": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다. ",
     "locked_time": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다.",
-    "try_again": "  {{minutes}} 분 {{seconds}} 초 ,후 다시 시도해주세요."
+    "try_again": "  {{minutes}} 분 {{seconds}} 초 ,후 다시 시도해주세요.",
+    "contact_admin": "관리자에게 문의하세요"
   },
   "AgreeContents": {
     "terms_title": "회원가입을 위한 약관 동의",

@@ -31,16 +31,28 @@ export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
-    // 로그인 성공 시 JWT 토큰을 쿠키에 저장
+
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7, // 토큰 유효기간 7일
+        expires: 7,
         secure: true,
         sameSite: "Strict",
       });
     }
+
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      // 서버에서 전달된 전체 응답 데이터 출력
+      console.log("서버 응답 데이터:", error.response.data);
+
+      // 실패 횟수와 잠금 시간을 출력
+      console.log("실패 횟수:", error.response.data.failedAttempts || 0);
+      console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
+    } else {
+      console.error("알 수 없는 오류 발생:", error);
+    }
+
     handleApiError(error);
   }
 }

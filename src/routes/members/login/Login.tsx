@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import {
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -21,7 +19,6 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Cookies from "js-cookie";
-import { AxiosError } from "axios";
 import { useAuth } from "../../../auth/AuthContext";
 
 const MySwal = withReactContent(Swal);
@@ -38,7 +35,6 @@ function Login({ isDarkMode }: LoginProps) {
     () => localStorage.getItem("saveId") === "true"
   );
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [loginAttempts, setLoginAttempts] = useState(0);
   const [lockoutTimer, setLockoutTimer] = useState<number | null>(null);
   const remainingTimeRef = useRef<{ minutes: number; seconds: number }>({
     minutes: 0,
@@ -54,84 +50,103 @@ function Login({ isDarkMode }: LoginProps) {
       password: "",
     },
     onSubmit: async (values) => {
-      if (lockoutTimer && lockoutTimer > 0) {
-        MySwal.fire({
-          title: t("members.login_failed"),
-          text: t("locked"), // 'locked' 메시지만 출력
-          icon: "warning",
-          confirmButtonText: t("alert.ok"),
-        });
-
-        return;
-      }
-
       try {
-        const data = await login(values);
-        if (data && data.token) {
+        const response = await login(values);
+
+        if (response.token) {
           handleSaveId(values.userId, saveId);
           setUser({
-            userId: data.userId,
-            name: data.name,
-            role: data.role,
-            memberId: data.memberId,
+            userId: response.userId,
+            name: response.name,
+            role: response.role,
+            memberId: response.memberId,
           });
           setLoggedIn(true);
-
           const from = location.state?.from || "/";
           navigate(from);
-          setLoginAttempts(0);
-        } else {
-          throw new Error(t("members.login_failed"));
+          setLoginError(null);
         }
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response && axiosError.response.status >= 500) {
-          MySwal.fire({
-            title: t("error.server_error"),
-            text: t("alert.server_error"),
-            icon: "error",
-            confirmButtonText: t("alert.ok"),
-          });
-        } else {
-          const newAttempts = loginAttempts + 1;
-          setLoginAttempts(newAttempts);
+      } catch (error: any) {
+        // 서버 응답의 구조를 로그로 확인
+        console.log("서버 응답 데이터:", error);
+        console.log("서버 응답 데이터:", error.response?.data);
 
-          let alertMessage = t("alert.attempt");
-          if (newAttempts === 3) {
-            alertMessage = t("alert.attempt_3");
-          } else if (newAttempts === 4) {
-            alertMessage = t("alert.attempt_4");
-          } else if (newAttempts >= 5) {
-            const lockoutDuration = 10 * 60; // 10분
-            setLockoutTimer(lockoutDuration);
-            remainingTimeRef.current = {
-              minutes: Math.floor(lockoutDuration / 60),
-              seconds: lockoutDuration % 60,
-            };
-            alertMessage = t("alert.locked_time");
-          }
+        const failedAttempts = error.response?.data?.failedAttempts ?? 0;
+        const remainingTime = error.response?.data?.remainingTime ?? 0;
 
-          setLoginError(alertMessage);
+        console.error("로그인 에러 발생:", error); // 에러 발생 시 콘솔에 상세 정보 로그 출력
+        console.log("현재 실패 횟수: ", failedAttempts); // 디버깅용
+
+        if (error.response && error.response.status === 403) {
+          // 계정 잠김 상태 처리
+          setLockoutTimer(remainingTime);
           MySwal.fire({
             title: t("members.login_failed"),
-            text: alertMessage,
+            text: `${t("alert.locked")} ${remainingTime}초 남았습니다.`,
             icon: "warning",
             confirmButtonText: t("alert.ok"),
           });
+        } else if (error.response && error.response.status === 401) {
+          // 비밀번호 오류 처리
+          if (failedAttempts === 3) {
+            MySwal.fire({
+              title: t("members.login_failed"),
+              text: t("attempt_3"),
+              icon: "warning",
+              confirmButtonText: t("alert.ok"),
+            });
+          } else if (failedAttempts === 4) {
+            MySwal.fire({
+              title: t("members.login_failed"),
+              text: t("attempt_4"),
+              icon: "warning",
+              confirmButtonText: t("alert.ok"),
+            });
+          } else if (failedAttempts >= 5) {
+            MySwal.fire({
+              title: t("members.login_failed"),
+              text: t("locked"),
+              icon: "error",
+              confirmButtonText: t("alert.ok"),
+            });
+          } else {
+            MySwal.fire({
+              title: t("members.login_failed"),
+              text: t("attempt"),
+              icon: "warning",
+              confirmButtonText: t("alert.ok"),
+            });
+          }
+
+          if (remainingTime) {
+            setLockoutTimer(remainingTime); // 남은 잠금 시간이 있으면 타이머 설정
+          }
+        } else {
+          MySwal.fire({
+            title: t("error.server_error"),
+            text: error.message || t("error.unknown_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
+          setLoginError(
+            error.response?.data?.message || t("error.server_error")
+          );
         }
       }
     },
   });
 
-  // 타이머 줄이기 및 로그인 페이지 업데이트
+  // 남은 시간을 두 자릿수로 포맷팅하는 함수
+  const formatSeconds = (seconds: number) =>
+    seconds < 10 ? `0${seconds}` : seconds;
+
+  // 타이머 감소 및 남은 시간 업데이트
   useEffect(() => {
     if (lockoutTimer && lockoutTimer > 0) {
       const interval = setInterval(() => {
         setLockoutTimer((prev) =>
           prev !== null && prev > 0 ? prev - 1 : null
         );
-
-        // 남은 시간을 Ref로 업데이트, 두 자릿수로 표시
         remainingTimeRef.current = {
           minutes: Math.floor(lockoutTimer! / 60),
           seconds: lockoutTimer! % 60,
@@ -150,10 +165,6 @@ function Login({ isDarkMode }: LoginProps) {
     }
     handleSaveId(formik.values.userId, saveId);
   }, [saveId, formik.values.userId]);
-
-  // UI에서 두 자릿수로 포맷된 초를 표시
-  const formatSeconds = (seconds: number) =>
-    seconds < 10 ? `0${seconds}` : seconds;
 
   return (
     <Wrapper>
@@ -197,20 +208,7 @@ function Login({ isDarkMode }: LoginProps) {
             />
           </FormControl>
 
-          <div className="save-id">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={saveId}
-                  onChange={(e) => setSaveId(e.target.checked)}
-                />
-              }
-              label={t("members.save_id")}
-            />
-          </div>
-
-          {/* 로그인 버튼 위에 남은 시간 안내 표시 */}
-          {lockoutTimer && lockoutTimer > 0 && (
+          {lockoutTimer && (
             <Typography color="error" sx={{ mb: 2 }}>
               {t("alert.locked_time")}{" "}
               {t("alert.try_again", {
