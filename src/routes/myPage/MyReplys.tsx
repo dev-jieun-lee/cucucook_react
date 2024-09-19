@@ -8,6 +8,9 @@ import {
   ListItem,
   Fab,
   TextField,
+  FormControl,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +46,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   const [page, setPage] = useState(0);
   const [pageSize] = useState(5); // 처음에 5개씩 불러오도록 설정
   const [hasMore, setHasMore] = useState(true); // 더 로드할 데이터가 있는지 여부
+  const [searchType, setSearchType] = useState("content"); // 기본값으로 'content'
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortOption, setSortOption] = useState("comment");
   const navigate = useNavigate();
@@ -50,6 +54,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [sortDirection, setSortDirection] = useState("DESC"); // 정렬 방향 (DESC 또는 ASC)
+
   let memberId = user ? user.memberId.toString() : null;
 
   useEffect(() => {
@@ -57,7 +62,13 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   }, []);
 
   useEffect(() => {
-    loadReplies();
+    if (searchKeyword.trim()) {
+      // 검색어가 있으면 검색 결과에 따라 정렬
+      handleSearch();
+    } else {
+      // 검색어가 없으면 기본 댓글 로드
+      loadReplies();
+    }
   }, [sortOption, sortDirection, page]);
 
   useEffect(() => {
@@ -98,7 +109,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
     try {
       const newReplies = await fetchMyReplies(
         memberId,
-        page,
+        Math.max(page, 0), // 페이지 번호가 음수일 경우 0으로 처리,
         pageSize,
         sortOption,
         sortDirection
@@ -127,18 +138,32 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
       setSortDirection("DESC");
     }
     setPage(0); // 페이지 초기화
-    setMyReplies([]); // 댓글 목록 초기화
+    // 검색 상태에 따라 검색 결과 유지
+    if (searchKeyword.trim()) {
+      handleSearch(); // 검색 상태 유지
+    } else {
+      setMyReplies([]); // 검색어가 없으면 댓글 목록 초기화
+    }
   };
+
+  //댓글 검색
   const handleSearch = async () => {
+    setPage(0); // 페이지 초기화
     try {
       if (searchKeyword.trim() && memberId) {
         const searchedReplies = await searchReplies(
           searchKeyword,
-          page,
-          pageSize
+          searchType,
+          memberId,
+          0, // 페이지는 항상 처음부터 검색
+          pageSize,
+          sortOption,
+          sortDirection
         );
+        // 검색된 결과만 상태에 저장, 이전 데이터 제거
         setMyReplies(searchedReplies);
       } else {
+        // 검색어가 없을 경우 기존 로딩 로직 실행
         loadReplies();
       }
     } catch (error) {
@@ -153,11 +178,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   ) => {
     if (!pcommentId) {
       try {
-        const success = await deleteReply(
-          memberId,
-          commentId,
-          pcommentId ?? ""
-        );
+        const success = await deleteReply(memberId, commentId);
 
         if (success) {
           MySwal.fire({
@@ -244,14 +265,48 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
               mb: 2,
             }}
           >
-            <TextField
-              label="검색"
-              variant="outlined"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              sx={{ width: "60%" }}
-            />
+            {/* 검색 유형 선택과 검색창, 검색 버튼을 하나로 묶음 */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1, // 컴포넌트 사이 간격 최소화
+                width: "60%", // 전체 공간 차지 비율
+              }}
+            >
+              {/* 검색 유형 선택 (댓글 내용 / 레시피 번호) */}
+              <FormControl sx={{ minWidth: 120 }}>
+                <Select
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "검색 유형" }}
+                >
+                  <MenuItem value="content">댓글 내용</MenuItem>
+                  <MenuItem value="title">레시피</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* 검색창 */}
+              <TextField
+                label="검색"
+                variant="outlined"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                sx={{ flex: 1 }} // 버튼과 비율 맞추기 위해 flex 사용
+              />
+
+              {/* 검색 버튼 */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                sx={{ height: "56px" }} // 검색창과 버튼의 높이를 맞춤
+              >
+                검색
+              </Button>
+            </Box>
 
             {/* 정렬 버튼들 */}
             <Box sx={{ display: "flex", gap: "10px" }}>
@@ -294,76 +349,80 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
               maxHeight: "calc(100% - 48px)",
             }}
           >
-            {myReplies.map((reply, index) => (
-              <ListItem
-                key={reply.id}
-                ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "8px",
-                  borderBottom: "1px solid #ddd",
-                }}
-              >
-                {/* No 섹션 */}
-                <Box sx={{ flex: 1 }}>
-                  <Typography>{index + 1}</Typography>
-                </Box>
+            {myReplies && myReplies.length > 0 ? (
+              myReplies.map((reply, index) => (
+                <ListItem
+                  key={reply.id}
+                  ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "8px",
+                    borderBottom: "1px solid #ddd",
+                  }}
+                >
+                  {/* No 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography>{index + 1}</Typography>
+                  </Box>
 
-                {/* 게시글 제목 섹션 */}
-                <Box sx={{ flex: 2 }}>
-                  <Typography>{reply.title || ""}</Typography>
-                </Box>
+                  {/* 게시글 제목 섹션 */}
+                  <Box sx={{ flex: 2 }}>
+                    <Typography>{reply.title || ""}</Typography>
+                  </Box>
 
-                {/* 댓글 내용 섹션 */}
-                <Box sx={{ flex: 3 }}>
-                  <Typography>
-                    {reply.comment ? reply.comment.slice(0, 10) + "..." : ""}
-                  </Typography>
-                </Box>
+                  {/* 댓글 내용 섹션 */}
+                  <Box sx={{ flex: 3 }}>
+                    <Typography>
+                      {reply.comment ? reply.comment.slice(0, 10) + "..." : ""}
+                    </Typography>
+                  </Box>
 
-                {/* 작성 시간 섹션 */}
-                <Box sx={{ flex: 2 }}>
-                  <Typography>
-                    {reply.regDt
-                      ? dayjs(reply.regDt).format("YYYY-MM-DD HH:mm")
-                      : "시간 없음"}
-                  </Typography>
-                </Box>
+                  {/* 작성 시간 섹션 */}
+                  <Box sx={{ flex: 2 }}>
+                    <Typography>
+                      {reply.regDt
+                        ? dayjs(reply.regDt).format("YYYY-MM-DD HH:mm")
+                        : "시간 없음"}
+                    </Typography>
+                  </Box>
 
-                {/* 게시글 보기 섹션 */}
-                <Box sx={{ flex: 1 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() =>
-                      navigate(`/getMemberRecipe/${reply.recipeId}`)
-                    }
-                  >
-                    게시글 보기
-                  </Button>
-                </Box>
-
-                {/* 삭제 버튼 섹션 */}
-                <Box sx={{ flex: 1 }}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      if (reply.commentId) {
-                        handleDelete(
-                          reply.memberId,
-                          reply.commentId, // commentId가 있을 경우에만 실행
-                          reply.pcommentId
-                        );
+                  {/* 게시글 보기 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() =>
+                        navigate(`/getMemberRecipe/${reply.recipeId}`)
                       }
-                    }}
-                  >
-                    삭제
-                  </Button>
-                </Box>
-              </ListItem>
-            ))}
+                    >
+                      레시피 보기
+                    </Button>
+                  </Box>
+
+                  {/* 삭제 버튼 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        if (reply.commentId) {
+                          handleDelete(
+                            reply.memberId,
+                            reply.commentId, // commentId가 있을 경우에만 실행
+                            reply.pcommentId
+                          );
+                        }
+                      }}
+                    >
+                      삭제
+                    </Button>
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <Typography>댓글이 없습니다.</Typography>
+            )}
           </List>
         </Box>
       </Box>
