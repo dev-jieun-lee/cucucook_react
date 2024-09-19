@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Typography,
   Box,
@@ -14,47 +15,73 @@ import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { fetchMyReplies, deleteReply, searchReplies } from "./api";
 import { useAuth } from "../../auth/AuthContext";
-import dayjs from "dayjs"; // 날짜 형식화를 위해 dayjs 라이브러리를 사용
+import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 interface Reply {
   id: string;
   content: string;
-  title?: string; // 게시글 제목 (선택적으로 추가)
-  recipeId?: string; // recipeId를 postId로 사용
-  comment?: string; // 댓글 내용
-  regDt?: string; // 댓글 작성 시간
-  commentId?: string; // 댓글아이디
-  pcommentId?: string; // 대댓글아이디
+  title?: string;
+  recipeId?: string;
+  comment?: string;
+  regDt?: string;
+  commentId?: string;
+  pcommentId?: string;
 }
 
 interface MyReplysProps {
   isDarkMode: boolean;
 }
-
-const MySwal = withReactContent(Swal);
-
 const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
+  const { t } = useTranslation();
   const [myReplies, setMyReplies] = useState<Reply[]>([]);
-  const [page, setPage] = useState(0); // page 상태 정의
-  const [pageSize] = useState(20); // pageSize 상태 정의
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [page, setPage] = useState(0);
+  const [pageSize] = useState(5); // 처음에 5개씩 불러오도록 설정
+  const [hasMore, setHasMore] = useState(true); // 더 로드할 데이터가 있는지 여부
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [sortOption, setSortOption] = useState("comment"); // 정렬 옵션 추가
+  const [sortOption, setSortOption] = useState("comment");
   const navigate = useNavigate();
   const { user } = useAuth();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
   let memberId = user ? user.memberId.toString() : null;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     loadReplies();
-  }, [sortOption]); // 정렬 옵션 변경 시 댓글 다시 불러오기
+  }, [sortOption, page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const loadReplies = async () => {
     if (!memberId) {
       console.error("사용자 정보 없음");
 
-      // SweetAlert로 경고 메시지 표시
       await MySwal.fire({
         title: "잘못된 접근입니다",
         text: "사용자 정보가 없으므로 로그인 화면으로 이동합니다.",
@@ -62,29 +89,33 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
         confirmButtonText: "확인",
       });
 
-      // 로그인 화면으로 이동
       navigate("/login");
       return;
     }
 
     try {
-      const newReplies = await fetchMyReplies(memberId, page, pageSize);
-      console.log("데이터 로딩 성공:", newReplies);
-
-      // 정렬 로직 추가
-      const sortedReplies = [...newReplies].sort((a, b) => {
-        if (sortOption === "comment") {
-          return a.comment.localeCompare(b.comment); // 댓글 내용을 기준으로 정렬
-        } else if (sortOption === "recipeId") {
-          return (a.recipeId || "").localeCompare(b.recipeId || ""); // 레시피 번호를 기준으로 정렬
-        }
-        return 0;
-      });
-
-      setMyReplies(sortedReplies);
+      const newReplies = await fetchMyReplies(
+        memberId,
+        page,
+        pageSize,
+        sortOption
+      ); // sortOption 추가
+      if (page === 0) {
+        setMyReplies(newReplies); // 처음 로드 시에는 새로 불러온 데이터로 초기화
+      } else {
+        setMyReplies((prevReplies) => [...prevReplies, ...newReplies]); // 추가로 불러온 댓글은 기존 목록에 추가
+      }
+      setHasMore(newReplies.length === pageSize); // 더 로드할 댓글이 있는지 확인
     } catch (error) {
       console.error("데이터 로딩 실패:", error);
     }
+  };
+
+  // 정렬 옵션이 변경되면 페이지와 댓글 목록을 초기화
+  const handleSortChange = (newSortOption: string) => {
+    setSortOption(newSortOption); // 정렬 옵션 변경
+    setPage(0); // 페이지를 초기화
+    setMyReplies([]); // 기존 댓글 목록 초기화
   };
 
   const handleSearch = async () => {
@@ -95,7 +126,6 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
           page,
           pageSize
         );
-        console.log("검색 결과:", searchedReplies);
         setMyReplies(searchedReplies);
       } else {
         loadReplies();
@@ -105,11 +135,28 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
     }
   };
 
-  const handleDelete = async (commentId: string, pcommentId?: string) => {
-    if (pcommentId) {
-      console.error("대댓글이 있을 경우 삭제 불가");
+  const handleDelete = async (
+    commentId: string,
+    pcommentId: string | undefined
+  ) => {
+    if (!pcommentId) {
+      try {
+        await deleteReply(commentId, pcommentId ?? "");
 
-      // SweetAlert로 경고 메시지 표시
+        MySwal.fire({
+          title: "삭제 완료",
+          text: "댓글이 삭제되었습니다!",
+          icon: "success",
+          confirmButtonText: "확인",
+        });
+
+        setMyReplies((prevReplies) =>
+          prevReplies.filter((reply) => reply.commentId !== commentId)
+        );
+      } catch (error) {
+        console.error("댓글 삭제 실패:", error);
+      }
+    } else {
       await MySwal.fire({
         title: "삭제 불가한 댓글입니다.",
         text: "대댓글이 존재합니다.",
@@ -117,21 +164,24 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
         confirmButtonText: "확인",
       });
     }
-    try {
-      await deleteReply(commentId);
-      console.log("댓글 삭제 성공:", commentId);
-      setMyReplies((prev) => prev.filter((reply) => reply.id !== commentId));
-    } catch (error) {
-      console.error("댓글 삭제 실패:", error);
-    }
   };
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
-  const truncateComment = (comment: string) => {
-    return comment.length > 10 ? comment.slice(0, 10) + "..." : comment;
+  const lastReplyRef = (node: HTMLElement | null) => {
+    if (!hasMore || !node) return;
+
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prevPage) => prevPage + 1); // 페이지를 증가시켜 추가 댓글 로드
+      }
+    });
+
+    observerRef.current.observe(node);
   };
 
   return (
@@ -146,7 +196,9 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
               mb: 2,
             }}
           >
-            <Typography variant="subtitle1">내가 쓴 댓글</Typography>
+            <div className="title">
+              <span>{t("mypage.mycommnet")}</span>
+            </div>
             <Button variant="outlined" onClick={handleGoBack}>
               뒤로 가기
             </Button>
@@ -167,20 +219,20 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              sx={{ width: "60%" }} // 검색창 너비 설정
+              sx={{ width: "60%" }}
             />
 
             {/* 정렬 버튼들 */}
             <Box sx={{ display: "flex", gap: "10px" }}>
               <Button
                 variant={sortOption === "regDt" ? "contained" : "outlined"}
-                onClick={() => setSortOption("regDt")}
+                onClick={() => handleSortChange("regDt")} // 정렬 옵션 변경
               >
                 댓글 적은 순
               </Button>
               <Button
                 variant={sortOption === "recipeId" ? "contained" : "outlined"}
-                onClick={() => setSortOption("recipeId")}
+                onClick={() => handleSortChange("recipeId")} // 정렬 옵션 변경
               >
                 레시피 번호순
               </Button>
@@ -198,6 +250,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
             {myReplies.map((reply, index) => (
               <ListItem
                 key={reply.id}
+                ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -218,7 +271,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                 {/* 댓글 내용 섹션 */}
                 <Box sx={{ flex: 3 }}>
                   <Typography>
-                    {truncateComment(reply.comment || "")}
+                    {reply.comment ? reply.comment.slice(0, 10) + "..." : ""}
                   </Typography>
                 </Box>
 
@@ -238,7 +291,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                     color="primary"
                     onClick={() =>
                       navigate(`/getMemberRecipe/${reply.recipeId}`)
-                    } // 게시글 보기로 이동
+                    }
                   >
                     게시글 보기
                   </Button>
@@ -249,7 +302,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDelete(reply.id)} // 삭제 처리
+                    onClick={() => handleDelete(reply.id, reply.pcommentId)}
                   >
                     삭제
                   </Button>
@@ -258,17 +311,17 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
             ))}
           </List>
         </Box>
-        {showScrollButton && (
-          <Fab
-            color="primary"
-            size="small"
-            sx={scrollButtonStyles}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            <KeyboardArrowUp />
-          </Fab>
-        )}
       </Box>
+      {showScrollButton && (
+        <Fab
+          color="primary"
+          size="small"
+          sx={scrollButtonStyles}
+          onClick={scrollToTop}
+        >
+          <KeyboardArrowUp />
+        </Fab>
+      )}
     </Wrapper>
   );
 };
