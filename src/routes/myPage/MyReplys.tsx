@@ -18,6 +18,7 @@ import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 
 const MySwal = withReactContent(Swal);
 
@@ -47,7 +48,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   const { user } = useAuth();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
-
+  const [sortDirection, setSortDirection] = useState("DESC"); // 정렬 방향 (DESC 또는 ASC)
   let memberId = user ? user.memberId.toString() : null;
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
 
   useEffect(() => {
     loadReplies();
-  }, [sortOption, page]);
+  }, [sortOption, sortDirection, page]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,8 +99,9 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
         memberId,
         page,
         pageSize,
-        sortOption
-      ); // sortOption 추가
+        sortOption,
+        sortDirection
+      );
       if (page === 0) {
         setMyReplies(newReplies); // 처음 로드 시에는 새로 불러온 데이터로 초기화
       } else {
@@ -111,13 +113,21 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
     }
   };
 
-  // 정렬 옵션이 변경되면 페이지와 댓글 목록을 초기화
+  // 정렬 옵션과 방향을 토글하는 함수
   const handleSortChange = (newSortOption: string) => {
-    setSortOption(newSortOption); // 정렬 옵션 변경
-    setPage(0); // 페이지를 초기화
-    setMyReplies([]); // 기존 댓글 목록 초기화
+    if (newSortOption === sortOption) {
+      // 이미 선택된 정렬 기준이면 방향을 토글
+      setSortDirection((prevDirection) =>
+        prevDirection === "ASC" ? "DESC" : "ASC"
+      );
+    } else {
+      // 새로운 정렬 기준이 선택되면 기본으로 내림차순
+      setSortOption(newSortOption);
+      setSortDirection("DESC");
+    }
+    setPage(0); // 페이지 초기화
+    setMyReplies([]); // 댓글 목록 초기화
   };
-
   const handleSearch = async () => {
     try {
       if (searchKeyword.trim() && memberId) {
@@ -226,13 +236,29 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
             <Box sx={{ display: "flex", gap: "10px" }}>
               <Button
                 variant={sortOption === "regDt" ? "contained" : "outlined"}
-                onClick={() => handleSortChange("regDt")} // 정렬 옵션 변경
+                onClick={() => handleSortChange("regDt")}
+                endIcon={
+                  sortOption === "regDt" &&
+                  (sortDirection === "DESC" ? (
+                    <ArrowDownward />
+                  ) : (
+                    <ArrowUpward />
+                  ))
+                }
               >
                 댓글 적은 순
               </Button>
               <Button
                 variant={sortOption === "recipeId" ? "contained" : "outlined"}
-                onClick={() => handleSortChange("recipeId")} // 정렬 옵션 변경
+                onClick={() => handleSortChange("recipeId")}
+                endIcon={
+                  sortOption === "recipeId" &&
+                  (sortDirection === "DESC" ? (
+                    <ArrowDownward />
+                  ) : (
+                    <ArrowUpward />
+                  ))
+                }
               >
                 레시피 번호순
               </Button>
