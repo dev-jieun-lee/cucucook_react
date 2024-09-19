@@ -24,6 +24,7 @@ const MySwal = withReactContent(Swal);
 
 interface Reply {
   id: string;
+  memberId: string;
   content: string;
   title?: string;
   recipeId?: string;
@@ -146,25 +147,45 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   };
 
   const handleDelete = async (
+    memberId: string,
     commentId: string,
     pcommentId: string | undefined
   ) => {
     if (!pcommentId) {
       try {
-        await deleteReply(commentId, pcommentId ?? "");
-
-        MySwal.fire({
-          title: "삭제 완료",
-          text: "댓글이 삭제되었습니다!",
-          icon: "success",
-          confirmButtonText: "확인",
-        });
-
-        setMyReplies((prevReplies) =>
-          prevReplies.filter((reply) => reply.commentId !== commentId)
+        const success = await deleteReply(
+          memberId,
+          commentId,
+          pcommentId ?? ""
         );
+
+        if (success) {
+          MySwal.fire({
+            title: "삭제 완료",
+            text: "댓글이 삭제되었습니다!",
+            icon: "success",
+            confirmButtonText: "확인",
+          });
+
+          setMyReplies((prevReplies) =>
+            prevReplies.filter((reply) => reply.commentId !== commentId)
+          );
+        } else {
+          MySwal.fire({
+            title: "삭제 실패",
+            text: "댓글 삭제에 실패했습니다. 다시 시도해 주세요.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+        }
       } catch (error) {
         console.error("댓글 삭제 실패:", error);
+        MySwal.fire({
+          title: "삭제 실패",
+          text: "댓글 삭제 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
       }
     } else {
       await MySwal.fire({
@@ -328,7 +349,15 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDelete(reply.id, reply.pcommentId)}
+                    onClick={() => {
+                      if (reply.commentId) {
+                        handleDelete(
+                          reply.memberId,
+                          reply.commentId, // commentId가 있을 경우에만 실행
+                          reply.pcommentId
+                        );
+                      }
+                    }}
                   >
                     삭제
                   </Button>
