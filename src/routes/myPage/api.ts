@@ -144,12 +144,14 @@ export const resetPassword = async (email: string) => {
 export const fetchMyReplies = async (
   memberId: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  sortOption: string
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: { page, pageSize, memberId },
+      params: { page, pageSize, memberId, sortOption },
     });
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch replies:", error);
@@ -158,9 +160,11 @@ export const fetchMyReplies = async (
 };
 
 //댓글 삭제
-export const deleteReply = async (commentId: string) => {
+export const deleteReply = async (commentId: string, pcommentId: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/delete`);
+    console.log("api.ts진입");
+    const response = await axios.delete(`${BASE_URL}/delete/${commentId}`);
+    console.log("api.ts들어갔다 나옴");
     return response.data;
   } catch (error) {
     console.error("Failed to delete reply:", error);
