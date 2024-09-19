@@ -145,11 +145,12 @@ export const fetchMyReplies = async (
   memberId: string,
   page: number,
   pageSize: number,
-  sortOption: string
+  sortOption: string,
+  sortDirection: string
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: { page, pageSize, memberId, sortOption },
+      params: { page, pageSize, memberId, sortOption, sortDirection },
     });
     console.log(response.data);
     return response.data;
