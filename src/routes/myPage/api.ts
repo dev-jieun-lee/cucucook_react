@@ -161,11 +161,17 @@ export const fetchMyReplies = async (
 };
 
 //댓글 삭제
-export const deleteReply = async (commentId: string, pcommentId: string) => {
+export const deleteReply = async (
+  memberId: string,
+  commentId: string,
+  pcommentId: string
+) => {
   try {
-    console.log("api.ts진입");
-    const response = await axios.delete(`${BASE_URL}/delete/${commentId}`);
-    console.log("api.ts들어갔다 나옴");
+    console.log("api.ts 진입");
+    const response = await axios.delete(`${BASE_URL}/delete`, {
+      params: { memberId, commentId, pcommentId },
+    });
+    console.log("api.ts 들어갔다 나옴");
     return response.data;
   } catch (error) {
     console.error("Failed to delete reply:", error);
