@@ -43,7 +43,7 @@ function FaqForm() {
   const navigate = useNavigate();
 
   
-  //전체 카테고리 데이터 받아오기
+  //QNA 카테고리 데이터 받아오기
   const getBoardCategoryListApi = () => {
     const params = {
       search: "",
@@ -52,10 +52,18 @@ function FaqForm() {
     };
     return getBoardCategoryList(params);
   };
+  
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
-    getBoardCategoryListApi
+    getBoardCategoryListApi,
+    {
+      select: (data) => data.data.filter((item : any) => item.division === "QNA"),
+    }
   );
+
+  console.log(boardCategoryList);
+  
+
 
   //수정일 경우 카테고리 포함 보드 데이터 가져오기
   const getBoardWithCategory = async () => {
@@ -202,7 +210,7 @@ function FaqForm() {
                 required
                 // error={formik.touched.boardCategoryId && Boolean(formik.errors.boardCategoryId)}
               >
-                {(boardCategoryList?.data || []).map((category: any) => (
+                {(boardCategoryList || []).map((category: any) => (
                   <MenuItem
                     key={category.boardCategoryId}
                     value={category.boardCategoryId}
