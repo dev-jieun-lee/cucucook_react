@@ -33,7 +33,7 @@ function Qna() {
     setSearchParams({ search, searchType, category });
   }, [search, searchType, category, setSearchParams]);
 
-  //notice의 카테고리 데이터 받아오기
+  //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",

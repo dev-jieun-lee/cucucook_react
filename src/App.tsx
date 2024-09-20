@@ -8,6 +8,7 @@ import {
   Paper,
   StyledEngineProvider,
   Typography,
+  unstable_createMuiStrictModeTheme,
 } from "@mui/material";
 import {
   muiDarkTheme,
@@ -51,8 +52,8 @@ import NoticeDetail from "./routes/board/notice/NoticeDetail";
 import Qna from "./routes/board/qna/Qna";
 import QnaForm from "./routes/board/qna/QnaForm";
 import QnaDetail from "./routes/board/qna/QnaDetail";
-import AnswerForm from "./routes/board/qna/AnswerForm";
 import FindId from "./routes/members/login/FindId";
+
 
 function App() {
   // localStorage에서 초기 테마 설정 불러오기
@@ -303,7 +304,7 @@ function App() {
                           }}
                         >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <Notice />
+                          <FaqForm />
                         </Box>
                       }
                     />
@@ -454,36 +455,6 @@ function App() {
                         >
                           <BoardSideMenu isDarkMode={isDarkMode} />
                           <QnaForm />
-                        </Box>
-                      }
-                    />
-                    <Route
-                      path="/qna/form/:boardId/answer"
-                      element={
-                        <Box
-                          sx={{
-                            display: "flex",
-                            width: "92%",
-                            margin: "140px auto",
-                          }}
-                        >
-                          <BoardSideMenu isDarkMode={isDarkMode} />
-                          <AnswerForm />
-                        </Box>
-                      }
-                    />
-                    <Route
-                      path="/qna/form/:boardId/answer/:answerId"
-                      element={
-                        <Box
-                          sx={{
-                            display: "flex",
-                            width: "92%",
-                            margin: "140px auto",
-                          }}
-                        >
-                          <BoardSideMenu isDarkMode={isDarkMode} />
-                          <AnswerForm />
                         </Box>
                       }
                     />
