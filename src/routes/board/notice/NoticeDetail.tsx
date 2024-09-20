@@ -34,6 +34,9 @@ function NoticeDetail() {
       // 보드 데이터 가져오기
       const board = await getBoard(boardId);
 
+      console.log(board);
+      
+
       // 보드의 카테고리 정보 가져오기
       const categoryData = await getBoardCategory(board.data.boardCategoryId);
 

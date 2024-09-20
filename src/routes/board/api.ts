@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'http://localhost:8080/board';
+const BASE_URL = 'http://localhost:8080/api/board';
 
 
 //게시판 리스트 조회
@@ -14,6 +14,16 @@ export async function getBoardList(params : any) {
 //게시판 상세 조회
 export async function getBoard(id : any) {
   const response = await axios.get(`${BASE_URL}/getBoard`,{
+    params :  {
+      boardId : id
+    }
+  });
+  return response.data;
+}
+
+//게시판 답글 포함 상세 조회
+export async function getBoardWithReplies(id : any) {
+  const response = await axios.get(`${BASE_URL}/getBoardWithReplies`,{
     params :  {
       boardId : id
     }
