@@ -1,35 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
-import {
-  Fab,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Pagination,
-  Paper,
-  Select,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import { AnswerContainer, ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
+import React, { useEffect, useState } from "react";
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import { SetStateAction, useEffect, useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
-function Notice() {
+function Qna() {
   const { user } = useAuth(); //로그인 상태관리
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
@@ -57,7 +41,7 @@ function Notice() {
     };
     const response = await getBoardCategoryList(params);
     return response.data.filter(
-      (category: any) => category.division === "NOTICE"
+      (category: any) => category.division === "QNA"
     );
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
@@ -68,7 +52,7 @@ function Notice() {
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
     const params = {
-      division: "NOTICE",
+      division: "QNA",
       search: searchType === "category" ? "" : search,
       searchType: searchType,
       boardCategoryId: category,
@@ -80,11 +64,31 @@ function Notice() {
     return response;
   };
 
+  // 부모글 밑에 답글을 정렬하는 함수
+  const organizeBoardList = (boardList: any[]) => {
+    const parentPosts = boardList.filter((item) => item.status === "0");
+    const childPosts = boardList.filter((item) => item.status === "1");
+
+    // 부모글 밑에 답글을 배치하는 배열 생성
+    const organizedList = parentPosts.map((parentPost) => {
+      // 해당 부모글에 연결된 답글 찾기
+      const replies = childPosts.filter(
+        (reply) => reply.pboardId === parentPost.boardId
+      );
+
+      // 부모글 + 답글 배열로 리턴
+      return [parentPost, ...replies];
+    });
+
+    // 배열을 1차원으로 변환
+    return organizedList.flat();
+  };
+
+  // getBoardListWithCategory 수정
   const getBoardListWithCategory = async () => {
     try {
       const boardList = await getBoardListApi();
 
-      // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
         boardList.data.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
@@ -94,33 +98,28 @@ function Notice() {
           };
         })
       );
-      return boardListWithCategory;
+
+      // 부모글과 답글 정렬
+      const organizedList = organizeBoardList(boardListWithCategory);
+      return organizedList;
     } catch (error) {
       console.error(error);
       return [];
     }
   };
 
-  // 데이터 가져오기
-  const {
-    data: boardListWithCategory,
-    isLoading: boardListLoading,
-    refetch,
-  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
-    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
-    keepPreviousData: false, // 이전 데이터를 유지하지 않음
-    refetchOnWindowFocus: false, // 포커스 시 refetch 방지
-    staleTime: 0, // 데이터가 언제나 stale로 간주되도록 설정
-  });
-  
+    // 데이터 가져오기
+    const {
+      data: boardListWithCategory,
+      isLoading: boardListLoading,
+      refetch,
+    } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+      enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
+    });
 
-  // 트리거 변경 시 데이터 초기화 및 로딩 처리
-  useEffect(() => {
-    if (triggerSearch) {
-      setTriggerSearch(false); // 트리거를 false로 초기화
-      refetch(); // 데이터 가져오기
-    }
-  }, [triggerSearch, refetch]);
+    console.log(boardListWithCategory);
+    
+
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
@@ -136,58 +135,69 @@ function Notice() {
     }
   };
 
-  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
-  useEffect(() => {
-    if (category) {
-      setTriggerSearch(true);
+    // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+    useEffect(() => {
+      if (category) {
+        setTriggerSearch(true);
+        refetch();
+      }
+    }, [category, refetch]);
+  
+    // 검색 유형 select 변경 이벤트
+    const handleSearchTypeChange = (e: any) => {
+      setSearchType(e.target.value);
+      // 카테고리를 선택할 경우 search 값 초기화
+      if (e.target.value === "category") {
+        setSearch(""); // 카테고리 검색에서는 검색어 초기화
+      } else {
+        setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
+      }
+    };
+  
+    //카테고리 핸들러
+    const handleCategoryChange = (e: any) => {
+      setCategory(e.target.value);
+    };
+  
+    // 페이지 변경 핸들러
+    const handlePageChange = (event: any, page: any) => {
+      console.log(page);
+  
+      setCurrentPage(page);
+      setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
       refetch();
+    };
+  
+    //상세 페이지로 이동
+    const onClickDetail = (boardId: string, status : string) => {
+      if(status === "1"){
+        navigate(`/qna/${boardId}`, {
+          state: {
+            isReply: true,  // 답글임을 나타내는 상태
+            parentBoardId: boardId  // 부모글의 ID 전달
+          }
+        });
+      }else{
+        navigate(`/qna/${boardId}`);
+      }
+    };
+    //추가 페이지로 이동
+    const onClickAdd = () => {
+      navigate(`/qna/form`);
+    };
+  
+    //로딩
+    if (boardListLoading) {
+      return <Loading />;
     }
-  }, [category, refetch]);
+  
 
-  // 검색 유형 select 변경 이벤트
-  const handleSearchTypeChange = (e: any) => {
-    setSearchType(e.target.value);
-    // 카테고리를 선택할 경우 search 값 초기화
-    if (e.target.value === "category") {
-      setSearch(""); // 카테고리 검색에서는 검색어 초기화
-    } else {
-      setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
-    }
-  };
 
-  //카테고리 핸들러
-  const handleCategoryChange = (e: any) => {
-    setCategory(e.target.value);
-  };
-
-  // 페이지 변경 핸들러
-  const handlePageChange = (event: any, page: any) => {
-    console.log(page);
-
-    setCurrentPage(page);
-    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
-    refetch();
-  };
-
-  //상세 페이지로 이동
-  const onClickDetail = (boardId: string) => {
-    navigate(`/notice/${boardId}`);
-  };
-  //추가 페이지로 이동
-  const onClickAdd = () => {
-    navigate(`/notice/form`);
-  };
-
-  //로딩
-  if (boardListLoading ) {
-    return <Loading />;
-  }
-
-  return (
+  return(
     <Wrapper>
       <TitleCenter>
-        {t("menu.board.notice")}
-        {user?.role === "1" ? (
+        {t("menu.board.QNA")}
+        {user? (
           <Tooltip title={t("text.writing")}>
             <Fab
               className="add-btn"
@@ -202,6 +212,7 @@ function Notice() {
         ) : (
           <></>
         )}
+        
       </TitleCenter>
       <SearchArea>
         <Select
@@ -270,9 +281,9 @@ function Notice() {
           >
             <TableHead className="head">
               <TableRow>
-                <TableCell className="no-cell">No.</TableCell>
-                <TableCell className="category-cell">{t("text.category")}</TableCell>
-                <TableCell className="title-cell">{t("text.title")}</TableCell>
+                <TableCell>No.</TableCell>
+                <TableCell>{t("text.category")}</TableCell>
+                <TableCell>{t("text.title")}</TableCell>
                 <TableCell>{t("text.writer")}</TableCell>
                 <TableCell>{t("text.register_date")}</TableCell>
                 <TableCell>{t("text.view_count")}</TableCell>
@@ -286,7 +297,7 @@ function Notice() {
                     <TableRow
                       className="row"
                       key={index}
-                      onClick={() => onClickDetail(boardItem.boardId)}
+                      onClick={() => onClickDetail(boardItem.boardId, boardItem.status)}
                     >
                       <TableCell component="th" scope="row">
                         {(currentPage - 1) * display + index + 1}
@@ -299,7 +310,20 @@ function Notice() {
                           [ {boardItem.category.name} ]
                         </CustomCategory>
                       </TableCell>
-                      <TableCell>{boardItem.title}</TableCell>
+
+                      {/* 제목에 답글 여부 표시 */}
+                      {boardItem.status === "1" ? (
+                        <TableCell>
+                          <AnswerContainer>
+                            <SubdirectoryArrowRightIcon className="answer-icon" />
+                            <span className="answer-title">{t("menu.board.is_answer")}</span>
+                          </AnswerContainer>
+                        </TableCell>
+                      ) : (
+                        <TableCell>
+                          {boardItem.title}
+                        </TableCell>
+                      )}
                       <TableCell>{boardItem.userName}</TableCell>
                       <TableCell>
                         {moment(boardItem.udtDt).format("YYYY-MM-DD")}
@@ -328,7 +352,8 @@ function Notice() {
         </Stack>
       </ContentsArea>
     </Wrapper>
-  );
+  )
 }
 
-export default Notice;
+export default Qna;
+

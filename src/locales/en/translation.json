@@ -20,7 +20,8 @@
       "FAQ" : "FAQ",
       "QNA" : "Q&A",
       "question" : "It's a question.",
-      "answer" : "It's a answer.",
+      "answer" : "Answer",
+      "is_answer" : "It's a answer.",
       "Q_create": "Register questions",
       "Q_modify": "Question Modified",
       "A_create": "Register answers",
@@ -75,7 +76,8 @@
     "content": "Content",
     "go_back": "Go Back",
     "writing": "Writing",
-    "answer": "Answer"
+    "answer": "Answer",
+    "question" : "Question"
   },
   "sentence": {
     "no_data": "The data does not exist.",
