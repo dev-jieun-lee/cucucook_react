@@ -22,7 +22,8 @@
       "FAQ_modify" : "자주 묻는 질문 수정",
       "QNA" : "질의 응답",
       "question" : "질문입니다.",
-      "answer" : "답변입니다.",
+      "answer" : "답글",
+      "is_answer" : "답변입니다.",
       "Q_create" : "질문 등록",
       "Q_modify" : "질문 수정",
       "A_create" : "답변 등록",
@@ -81,7 +82,8 @@
     "content": "내용",
     "go_back": "뒤로가기",
     "writing": "글쓰기",
-    "answer": "답변"
+    "answer": "답변",
+    "question" : "질문"
   },
   "Footer": {
     "ceo": "대표 : 지으네림",

@@ -74,6 +74,17 @@ export const ContentsArea = styled.div`
     background: none;
     .head{
       text-align: center;
+      /* .no-cell{
+        width: 20px;
+      }
+      .category-cell{
+        width: 150px;
+      }
+      .title-cell{
+        width: 50%;
+        text-align: center;
+        background-color: pink;
+      } */
     }
     .row{
       text-align: center;
@@ -94,18 +105,16 @@ export const ContentsArea = styled.div`
     }
   }
 
-  .answer-container {
+`;
+
+export const AnswerContainer = styled.div`
   display: flex;
   align-items: center; 
-  }
-
   .answer-icon {
     transform: scale(0.6);
     color: ${(props) => props.theme.mainColor};
     margin-right: 4px; 
     margin-top: -4px;
-  }
-  .answer-title{
   }
 `;
 
@@ -190,9 +199,46 @@ export const DetailContents = styled.div`
   border-color:  ${(props) => props.theme.navBorderColor};
   .board-contents{
     float: left;
-
   }
 `;
+
+export const ParentBoardData = styled.div`
+  width: 100%;
+  .contents-area{
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 15px;
+    min-height: 350px;
+    overflow-y: auto;
+    margin-bottom: -40px;
+    .board-contents{
+      float: left;
+    }
+  }
+`;
+export const QnaContentsArea = styled.div`
+  width: 100%;
+  .board-contents{
+    width: 100%;
+    text-align: left;
+    padding: 10px 20px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow: auto;
+  }
+  .btn-area{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid;
+    border-color:  ${(props) => props.theme.navBorderColor};
+  }
+`;
+
+export const AnswerWrap = styled.div`
+  margin-top: -100px;
+`;
+
 
 export const BoardButtonArea = styled.div`
   margin: 0 auto 80px;
@@ -242,6 +288,8 @@ export const ContentsInputArea = styled.div`
     right: 0;
     padding-bottom: 10px;
   }
+  .answer-editor{
+  }
 `;
 
 export const QuestionArea = styled.div`
@@ -276,8 +324,7 @@ export const QuestionArea = styled.div`
 `;
 
 export const AnswerButton = styled(Button)`
-  margin-left: 20px;
-  margin-top: -3px;
+  margin-right: -15px;
 `;
 
 

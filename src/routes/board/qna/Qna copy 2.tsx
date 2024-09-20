@@ -110,6 +110,9 @@ function Qna() {
       enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
     });
 
+    console.log(boardListWithCategory);
+    
+
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
@@ -213,8 +216,9 @@ function Qna() {
           onChange={handleSearchTypeChange}
         >
           <MenuItem value="all">
-            {t("text.all")}
+            {t("text.title")} + {t("text.content")}
           </MenuItem>
+          <MenuItem value="title">{t("text.title")}</MenuItem>
           <MenuItem value="contents">{t("text.content")}</MenuItem>
           <MenuItem value="category">{t("text.category")}</MenuItem>
         </Select>
@@ -302,12 +306,12 @@ function Qna() {
                     {/* 답글 여부 표시 */}
                     <TableCell>
                       {boardItem.hasReply ? (
-                        <AnswerContainer className="answer-container">
+                        <>
                           <QuestionAnswerIcon className="answer-icon" />
                           <span className="answer_chk">{t("menu.board.answer_ok") }</span>
-                        </AnswerContainer>
+                        </>
                       ) : (
-                        <span style={{color : '#817878d5'}} className="answer_chk">{t("menu.board.answer_no") }</span>
+                        <span className="answer_chk">{t("menu.board.answer_no") }</span>
                       )}
                     </TableCell>
 
