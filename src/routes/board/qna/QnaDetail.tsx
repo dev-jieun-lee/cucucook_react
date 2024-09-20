@@ -23,7 +23,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAuth } from "../../../auth/AuthContext";
 import { useEffect, useState } from "react";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import AnswerForm from "./AnswerForm";
 import QuillEditer from "../QuillEditer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
