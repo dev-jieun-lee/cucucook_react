@@ -27,18 +27,21 @@ export const ContentsArea = styled.div`
     box-shadow: none;
     border-radius: 0;
     margin: 0;
+    border-bottom: 1px solid;
+      border-color: ${(props) => props.theme.navBorderColor};
     &:first-child{
       border-top: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
     }
-    &:last-child{
+    /* &:last-child{
       border-bottom: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
-    }
+    } */
   }
   .summary {
     &:hover {
-      .title{
+      .title, .q{
+        color: ${(props) => props.theme.textColor};
         font-weight: 600;
       }
 
@@ -46,6 +49,7 @@ export const ContentsArea = styled.div`
 
     /* Accordion이 열렸을 때 적용되는 스타일 */
     &.Mui-expanded {
+      color: ${(props) => props.theme.textColor};
       font-weight: 900;
       border-top: 1px solid;
       border-bottom: 1px solid;
@@ -55,9 +59,9 @@ export const ContentsArea = styled.div`
   }
 
   .detail{
-    /* background-color: ${(props) => props.theme.accordionColor}; */
+    background-color: ${(props) => props.theme.accordionColor};
     text-align: start;
-    padding: 20px 30px;
+    padding: 20px 60px;
     .btn-area{
       text-align: right;
       .update-btn{
@@ -122,34 +126,15 @@ export const AccordionTitle = styled.div`
   flex-direction: row;
 
   .title-area{
-    order: 1;
-    margin-bottom: 5px;
     .category{
       display: inline-block;
+      margin-right: 30px;
       width: 130px;
-      text-align: left;
+      text-align: center;
     }
     .q{
       font-weight: bold;
       margin-right: 10px;
-    }
-    .title{
-      font-size: 16px;
-    }
-  }
-  .info{
-    order: 2;
-    font-size: 13px;
-    color: ${(props) => props.theme.navBorderColor};
-    .border{
-      /* border-right: 1px solid; */
-      margin: 0 10px
-    }
-    .view-icon{
-      transform: scale(0.7);
-    }
-    .hit{
-      margin-right: 5px;
     }
   }
 `;

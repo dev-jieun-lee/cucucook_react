@@ -15,7 +15,9 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
+  Pagination,
   Select,
+  Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -77,6 +79,7 @@ function Faq() {
     "boardCategoryList",
     getBoardCategoryListApi
   );
+
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
@@ -305,7 +308,8 @@ function Faq() {
       </SearchArea>
       <ContentsArea>
         {boardListWithCategory && boardListWithCategory.length > 0 ? (
-          boardListWithCategory.map((boardItem: any, index: number) => (
+          boardListWithCategory
+           ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10).map((boardItem: any, index: number) => (
             <Accordion
               key={boardItem.boardId}
               className="accordion"
@@ -320,6 +324,7 @@ function Faq() {
               >
                 <AccordionTitle>
                   <div className="title-area">
+                    {/* <div className="index">{(currentPage - 1) * display + index + 1}</div> */}
                     <CustomCategory
                       style={{ color: `${boardItem.category.color}` }}
                       className="category"
@@ -329,16 +334,6 @@ function Faq() {
                     <span className="q">Q.</span>
                     <span className="title">{boardItem.title}</span>
                   </div>
-                  {/* <div className="info">
-                    <span className="date">{moment(boardItem.regDt).format("YYYY-MM-DD")}</span>
-                    <span className="border"></span>
-                    <span className="member">{boardItem.memberId}</span>
-                    <span className="border"></span>
-                    <span className="hit">{t("text.hit")}</span>
-                    <span className="viewCount">
-                      {boardItem.viewCount}
-                    </span>
-                  </div> */}
                 </AccordionTitle>
               </AccordionSummary>
               <AccordionDetails className="detail">
@@ -353,7 +348,7 @@ function Faq() {
                     className="update-btn"
                     type="button"
                     color="primary"
-                    variant="outlined"
+                    variant="contained"
                     onClick={() => onClickRegister(boardItem.boardId)}
                   >
                     {t("text.update")}
@@ -362,7 +357,7 @@ function Faq() {
                     className="delete-btn"
                     type="button"
                     color="warning"
-                    variant="outlined"
+                    variant="contained"
                     onClick={() => onClickDelete(boardItem.boardId)}
                   >
                     {t("text.delete")}
@@ -374,6 +369,15 @@ function Faq() {
         ) : (
           <div>{t("sentence.no_data")}</div>
         )}
+        <Stack className="pagination" spacing={2}>
+          <Pagination
+            className="pagination-btn"
+            count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Stack>
       </ContentsArea>
     </Wrapper>
   );
