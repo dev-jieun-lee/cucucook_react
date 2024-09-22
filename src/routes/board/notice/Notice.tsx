@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
+import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { ContentsArea, CustomCategory } from "../BoardStyle";
 import {
   Fab,
   IconButton,
@@ -329,7 +329,7 @@ function Notice() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Stack className="pagination" spacing={2}>
+        <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
             count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
@@ -337,7 +337,7 @@ function Notice() {
             onChange={handlePageChange}
             color="primary"
           />
-        </Stack>
+        </CustomPagination>
       </ContentsArea>
     </Wrapper>
   );

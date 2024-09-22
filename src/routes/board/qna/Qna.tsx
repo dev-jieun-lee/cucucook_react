@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { AnswerContainer, ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
+import { AnswerContainer, ContentsArea, CustomCategory } from "../BoardStyle";
 import React, { useEffect, useState } from "react";
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
@@ -341,7 +341,7 @@ function Qna() {
         </Table>
       </TableContainer>
 
-        <Stack className="pagination" spacing={2}>
+        <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
             count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
@@ -349,7 +349,7 @@ function Qna() {
             onChange={handlePageChange}
             color="primary"
           />
-        </Stack>
+        </CustomPagination>
       </ContentsArea>
     </Wrapper>
   )

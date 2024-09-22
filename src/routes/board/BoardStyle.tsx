@@ -1,22 +1,8 @@
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import styled from "styled-components";
+import media from "../../styles/MediaQuery";
 
-export const SearchArea = styled.div`
-  /* margin: 30px ; */
-  margin-top: 40px;
-  margin-bottom: 25px;
-  .select-category{
-    width: 130px;
-    margin-right: 50px;
-  }
-  .select-category-item{
-    width: 180px;
-    margin-right: 50px;
-  }
-  .search-input{
-    width: 350px;
-  }
-`;
+
 
 export const ContentsArea = styled.div`
   margin: 20px auto;
@@ -102,14 +88,10 @@ export const ContentsArea = styled.div`
       color: ${(props) => props.theme.mainColor};
     }
   }
-  .pagination{
-    margin: 15px;
-    .pagination-btn{
-      margin: 0 auto;
-    }
-  }
 
 `;
+
+
 
 export const AnswerContainer = styled.div`
   display: flex;
