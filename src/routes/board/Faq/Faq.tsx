@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import {
   AccordionTitle,
   ContentsArea,
   CustomCategory,
-  SearchArea,
 } from "../BoardStyle";
 import {
   Accordion,
@@ -381,7 +380,7 @@ function Faq() {
         ) : (
           <div>{t("sentence.no_data")}</div>
         )}
-        <Stack className="pagination" spacing={2}>
+        <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
             count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
@@ -389,7 +388,7 @@ function Faq() {
             onChange={handlePageChange}
             color="primary"
           />
-        </Stack>
+        </CustomPagination>
       </ContentsArea>
     </Wrapper>
   );
