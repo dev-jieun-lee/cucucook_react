@@ -20,6 +20,10 @@ export const styledLightTheme: DefaultTheme = {
   footerColor : "#f3f0e2",
   navBorderColor : "#ccc",
 
+  scrollbarBackColor : "#d5d2d25d",
+  scrollbarColor : "#88888878",
+  scrollboarHoverColor : "#55555575",
+
   subTextColor : '#253342',
 
   accordionColor : '#f3f0e27c'
@@ -30,6 +34,10 @@ export const styledDarkTheme: DefaultTheme = {
   mainColor : '#F2EFDB',
   footerColor : "#363131",
   navBorderColor : "#878585c1",
+
+  scrollbarBackColor : "#76757539",
+  scrollbarColor : "#88888878",
+  scrollboarHoverColor : "#74747478",
 
   subTextColor : '#d28c6f',
 
