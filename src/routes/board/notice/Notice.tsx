@@ -31,6 +31,7 @@ import { useAuth } from "../../../auth/AuthContext";
 
 function Notice() {
   const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -40,6 +41,7 @@ function Notice() {
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
   const navigate = useNavigate();
+
 
   const display = 10; // 한 페이지에 표시할 게시물 수
 
@@ -101,18 +103,28 @@ function Notice() {
     }
   };
 
-  // 데이터 가져오기
-  const {
-    data: boardListWithCategory,
-    isLoading: boardListLoading,
-    refetch,
-  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
-    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
-    keepPreviousData: false, // 이전 데이터를 유지하지 않음
-    refetchOnWindowFocus: false, // 포커스 시 refetch 방지
-    staleTime: 0, // 데이터가 언제나 stale로 간주되도록 설정
-  });
-  
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardListWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardListWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
+  };
+
+  const { data: boardListWithCategory,isLoading: boardListLoading, refetch } = useQuery(
+    "boardListWithCategory",
+    getBoardListWithDelay,
+    {
+      enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+    }
+  );
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -179,7 +191,7 @@ function Notice() {
   };
 
   //로딩
-  if (boardListLoading ) {
+  if (loading || boardListLoading ) {
     return <Loading />;
   }
 
