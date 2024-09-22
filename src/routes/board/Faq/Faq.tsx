@@ -33,13 +33,15 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import { useAuth } from "../../../auth/AuthContext";
 
 function Faq() {
+  const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
-  const [category, setCategory] = useState("");
-  const [boardCategoryId, setBoardCategoryId] = useState(""); // 카테고리 ID 
+  const [category, setCategory] = useState("all");
   const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
@@ -117,14 +119,24 @@ function Faq() {
     }
   };
 
-  
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardListWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardListWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
+  };
 
   // 데이터 가져오기
   const {
     data: boardListWithCategory,
     isLoading: boardListLoading,
     refetch,
-  } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+  } = useQuery("boardListWithCategory", getBoardListWithDelay, {
     enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
   });
 
@@ -228,7 +240,7 @@ function Faq() {
 
 
   // 로딩 처리
-  if (boardListLoading) {
+  if (loading || boardListLoading) {
     return <Loading />;
   }
 

@@ -174,12 +174,11 @@ export const TitleArea = styled.div`
 `;
 export const DetailContents = styled.div`
   width: 100%;
-  flex-grow: 1; 
+  /* flex-grow: 1;  */
+  min-height: 560px;
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 20px 15px;
-  min-height: 200px;
-  height: 100%;
   border-bottom: 1px solid;
   border-color:  ${(props) => props.theme.navBorderColor};
   .board-contents{
