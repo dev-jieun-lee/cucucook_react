@@ -30,8 +30,7 @@ function LoginUser() {
     setAnchorEl(null);
   };
 
-  console.log(user);
-  
+  //console.log(user);
 
   //로그아웃 api 호출
   const {

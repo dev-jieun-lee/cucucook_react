@@ -218,3 +218,29 @@ export const searchReplies = async (
     }
   }
 };
+
+//게시물
+export const fetchMyWrites = async (
+  memberId: string,
+  page: number,
+  pageSize: number,
+  boardDivision: string
+) => {
+  try {
+    // 여기서 boardDivision을 로깅합니다.
+    console.log("Fetching writes with boardDivision:", boardDivision);
+
+    const response = await axios.get(`/api/mypage/getMyBoards`, {
+      params: {
+        memberId,
+        page,
+        pageSize,
+        boardDivision,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my writes:", error);
+    throw error;
+  }
+};
