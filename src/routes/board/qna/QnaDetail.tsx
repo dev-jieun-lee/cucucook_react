@@ -38,6 +38,7 @@ import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRig
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
   const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
@@ -87,12 +88,25 @@ function QnaDetail() {
       return null;
     }
   };
+
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
+  };
+
   //데이터 받아오기
   const {
     data: boardWithCategory,
     isLoading: boardLoading,
     refetch,
-  } = useQuery("boardWithCategory", getBoardWithCategory, {
+  } = useQuery("boardWithCategory", getBoardWithDelay, {
     refetchOnWindowFocus: false,
     staleTime: 0,
   });
@@ -208,8 +222,8 @@ function QnaDetail() {
   };
 
   //로딩
-  if (boardLoading) {
-    return <Loading />;
+  if (loading || boardLoading) {
+    return <></>;
   }
 
   return (

@@ -25,7 +25,6 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import Loading from "../../../components/Loading";
 import { useFormik } from "formik";
 import "react-quill/dist/quill.snow.css";
 import QuillEditer from "../QuillEditer";
@@ -34,6 +33,7 @@ import SnackbarCustom from "../../../components/SnackbarCustom";
 import { useAuth } from "../../../auth/AuthContext";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import Loading from "../../../components/Loading";
 
 
 function FaqForm() {

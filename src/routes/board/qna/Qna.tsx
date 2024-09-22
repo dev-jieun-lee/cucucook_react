@@ -16,6 +16,7 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -99,14 +100,24 @@ function Qna() {
     }
   };
   
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardListWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
 
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardListWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
+  };
 
     // 데이터 가져오기
     const {
       data: boardListWithCategory,
       isLoading: boardListLoading,
       refetch,
-    } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+    } = useQuery("boardListWithCategory", getBoardListWithDelay, {
       enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
     });
 
@@ -177,7 +188,7 @@ function Qna() {
     };
   
     //로딩
-    if (boardListLoading) {
+    if (loading || boardListLoading) {
       return <Loading />;
     }
   
