@@ -8,12 +8,12 @@ import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 
 //메인
-const Main = lazy(() => import("./routes/main/Main"));
+const Main = lazy(() => import("./routes/main/Main2"));
 //로그인
 const Login = lazy(() => import("./routes/members/login/Login"));
 const SignupIntro = lazy(() => import("./routes/members/signUp/SignupIntro"));
 const Signup = lazy(() => import("./routes/members/signUp/Signup"));
-const FindId = lazy(() => import("./routes/members/login/FindId"));
+const FindId = lazy(() => import("./routes/members/login/FindId2"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
 //레시피
 const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
