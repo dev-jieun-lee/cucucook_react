@@ -16,18 +16,35 @@ import {
 import { userInfoStyles } from "./myPageStyles";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material"; // 눈 모양 아이콘 가져오기
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 import { useQuery } from "react-query";
-import { getMember } from "../members/api"; // 회원 정보를 불러오는 API
+import { getMember } from "../members/api"; // 회원 정보 및 비밀번호 변경 API 호출
 import { useAuth } from "../../auth/AuthContext";
+import { changePasswordByUser, updateUserInfo } from "./api";
+
+// 전화번호 포맷 함수
+const formatPhoneNumber = (value: string) => {
+  // 숫자만 추출
+  const cleaned = value.replace(/\D/g, "");
+
+  // 길이에 따라 하이픈 추가
+  if (cleaned.length <= 3) return cleaned;
+  if (cleaned.length <= 7) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+  return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(
+    7,
+    11
+  )}`;
+};
 
 // SweetAlert 초기화
 const MySwal = Swal;
 
 // 비밀번호 변경 아코디언 컴포넌트
-const ChangePasswordAccordion: React.FC = () => {
+const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
+  memberId,
+}) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,14 +53,24 @@ const ChangePasswordAccordion: React.FC = () => {
       newPassword: "",
       confirmNewPassword: "",
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       if (values.newPassword === values.confirmNewPassword) {
-        MySwal.fire({
-          title: t("mypage.password_changed"),
-          icon: "success",
-          confirmButtonText: t("alert.ok"),
-        });
-        formik.resetForm();
+        try {
+          await changePasswordByUser(memberId, values.newPassword);
+          MySwal.fire({
+            title: t("mypage.password_changed"),
+            icon: "success",
+            confirmButtonText: t("alert.ok"),
+          });
+          formik.resetForm();
+        } catch (error) {
+          MySwal.fire({
+            title: t("mypage.password_change_failed"),
+            text: t("mypage.password_change_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
+        }
       } else {
         MySwal.fire({
           title: t("mypage.password_mismatch"),
@@ -66,104 +93,136 @@ const ChangePasswordAccordion: React.FC = () => {
         <Typography>{t("mypage.change_password")}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <form onSubmit={formik.handleSubmit}>
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="newPassword">
-              {t("mypage.new_password")}
-            </InputLabel>
-            <OutlinedInput
-              id="newPassword"
-              label={t("mypage.new_password")}
-              type={showPassword ? "text" : "password"}
-              value={formik.values.newPassword}
-              onChange={formik.handleChange}
-              name="newPassword"
-              endAdornment={
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="newPassword">
+            {t("mypage.new_password")}
+          </InputLabel>
+          <OutlinedInput
+            id="newPassword"
+            label={t("mypage.new_password")}
+            type={showPassword ? "text" : "password"}
+            value={formik.values.newPassword}
+            onChange={formik.handleChange}
+            name="newPassword"
+            endAdornment={
+              <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={handleClickShowPassword}
                   edge="end"
                 >
-                  {showPassword ? <ExpandMore /> : <ExpandMore />}
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
-              }
-            />
-          </FormControl>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
 
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="confirmNewPassword">
-              {t("mypage.confirm_new_password")}
-            </InputLabel>
-            <OutlinedInput
-              id="confirmNewPassword"
-              label={t("mypage.confirm_new_password")}
-              type={showPassword ? "text" : "password"}
-              value={formik.values.confirmNewPassword}
-              onChange={formik.handleChange}
-              name="confirmNewPassword"
-              endAdornment={
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="confirmNewPassword">
+            {t("mypage.confirm_new_password")}
+          </InputLabel>
+          <OutlinedInput
+            id="confirmNewPassword"
+            label={t("mypage.confirm_new_password")}
+            type={showPassword ? "text" : "password"}
+            value={formik.values.confirmNewPassword}
+            onChange={formik.handleChange}
+            name="confirmNewPassword"
+            endAdornment={
+              <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={handleClickShowPassword}
                   edge="end"
                 >
-                  {showPassword ? <ExpandMore /> : <ExpandMore />}
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
-              }
-            />
-          </FormControl>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
 
-          <Button
-            color="primary"
-            variant="contained"
-            fullWidth
-            type="submit"
-            sx={userInfoStyles.button}
-          >
-            {t("mypage.pw_save_changes")}
-          </Button>
-        </form>
+        <Button
+          color="primary"
+          variant="contained"
+          fullWidth
+          onClick={() => formik.handleSubmit()}
+          sx={userInfoStyles.button}
+        >
+          {t("mypage.pw_save_changes")}
+        </Button>
       </AccordionDetails>
     </Accordion>
   );
 };
 
+// UserInfo 컴포넌트
 const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const memberId = user ? user.memberId.toString() : null;
+  const [phone, setPhone] = useState("");
 
   // useQuery로 회원 정보 불러오기
   const { data, isLoading, error } = useQuery(
     ["member", memberId],
     () => getMember(memberId!),
-    { enabled: !!memberId }
+    {
+      enabled: !!memberId,
+      onSuccess: (data) => {
+        setPhone(formatPhoneNumber(data.phone)); // 초기 전화번호 설정
+      },
+    }
   );
 
   const formik = useFormik({
     initialValues: {
       username: data?.userId || "",
       name: data?.name || "",
-      phone: data?.phone || "",
+      phone: phone || "",
       email: data?.email || "",
     },
     enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log("폼 제출:", values);
+    onSubmit: async (values) => {
+      try {
+        await updateUserInfo(
+          memberId!,
+          values.name,
+          values.email,
+          values.phone
+        );
+        MySwal.fire({
+          title: t("mypage.info_updated"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
+      } catch (error) {
+        MySwal.fire({
+          title: t("mypage.update_failed"),
+          icon: "error",
+          confirmButtonText: t("alert.ok"),
+        });
+      }
     },
   });
 
-  if (isLoading) return <div>{t("loading")}</div>;
-  if (error) return <div>{t("error.fetch_failed")}</div>;
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.replace(/\D/g, "").length <= 11) {
+      setPhone(formatPhoneNumber(value)); // 전화번호 형식 자동 적용
+      formik.setFieldValue("phone", value);
+    }
+  };
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await MySwal.fire({
@@ -195,6 +254,9 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   };
 
+  if (isLoading) return <div>{t("loading")}</div>;
+  if (error) return <div>{t("error.fetch_failed")}</div>;
+
   return (
     <Wrapper>
       <Box sx={userInfoStyles.container}>
@@ -203,7 +265,6 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         </div>
 
         <form onSubmit={formik.handleSubmit}>
-          {/* 사용자 ID */}
           <FormControl
             fullWidth
             sx={userInfoStyles.formControl}
@@ -218,7 +279,6 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             />
           </FormControl>
 
-          {/* 이름 */}
           <FormControl
             fullWidth
             sx={userInfoStyles.formControl}
@@ -234,7 +294,6 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             />
           </FormControl>
 
-          {/* 전화번호 */}
           <FormControl
             fullWidth
             sx={userInfoStyles.formControl}
@@ -244,13 +303,12 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <OutlinedInput
               id="phone"
               label={t("mypage.phone_number")}
-              value={formik.values.phone}
-              onChange={formik.handleChange}
+              value={phone}
+              onChange={handlePhoneChange}
               name="phone"
             />
           </FormControl>
 
-          {/* 이메일 */}
           <FormControl
             fullWidth
             sx={userInfoStyles.formControl}
@@ -266,7 +324,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             />
           </FormControl>
 
-          <ChangePasswordAccordion />
+          <ChangePasswordAccordion memberId={memberId!} />
 
           <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
             {t("mypage.connect_naver")}
@@ -274,7 +332,6 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
           <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
             {t("mypage.connect_kakao")}
           </Button>
-
           <Button
             color="primary"
             variant="contained"
