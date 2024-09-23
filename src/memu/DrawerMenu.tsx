@@ -21,9 +21,9 @@ function DrawerMenu({ toggleDrawer }: any) {
 
   // 메뉴 항목 정의
   const RecipeMenuItems = [
-    { label: t("menu.recipe.all"), path: "/all_recipe" },
-    { label: t("menu.recipe.public"), path: "/public_recipe" },
-    { label: t("menu.recipe.member"), path: "/member_recipe" },
+    { label: t("menu.recipe.all"), path: "/recipe/all_recipe_list" },
+    { label: t("menu.recipe.public"), path: "/recipe/public_recipe_list" },
+    { label: t("menu.recipe.member"), path: "/recipe/member_recipe_list" },
   ];
 
   const BoardMenuItems = [

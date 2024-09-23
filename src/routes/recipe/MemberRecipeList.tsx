@@ -1,4 +1,9 @@
-import { Girl, KeyboardArrowUp } from "@mui/icons-material";
+import { KeyboardArrowUp } from "@mui/icons-material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import SearchIcon from "@mui/icons-material/Search";
+import StarIcon from "@mui/icons-material/Star";
+import TextsmsIcon from "@mui/icons-material/Textsms";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
@@ -23,8 +28,8 @@ import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
   ScrollBtnFab,
-  Wrapper,
   SearchArea,
+  Wrapper,
 } from "../../styles/CommonStyles";
 import {
   SearchBox,
@@ -32,15 +37,9 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  ThumbnailTypography,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import StarIcon from "@mui/icons-material/Star";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import TextsmsIcon from "@mui/icons-material/Textsms";
-import SearchIcon from "@mui/icons-material/Search";
+import { useAuth } from "../../auth/AuthContext";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
@@ -52,6 +51,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [selectedCategoryKey, setSelectedCategoryKey] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(t("text.recent_order"));
   const [selectedOrderKey, setSelectedOrderKey] = useState("reg_dt");
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   // 로딩 상태 관리
   const [loading, setLoading] = useState(true);
   // 무한 스크롤 시작값
@@ -246,7 +246,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                   <InputAdornment position="end">
                     <IconButton
                       // color="primary"
-                      aria-label="toggle password visibility"
+                      aria-label={t("sentence.searching")}
                       onClick={handleSearch}
                       edge="end"
                     >
@@ -353,9 +353,11 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               </Button>
             ))}
           </Stack>
-          <Button variant="contained" onClick={handleRecipeWriteClick}>
-            {t("text.recipe_write")}
-          </Button>
+          {user?.memberId && (
+            <Button variant="contained" onClick={handleRecipeWriteClick}>
+              {t("text.recipe_write")}
+            </Button>
+          )}
         </TitleBox>
       </Box>
       <Box component="section" sx={{ width: "100%" }}>

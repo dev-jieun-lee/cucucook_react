@@ -15,6 +15,7 @@ import {
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
+import { useAuth } from "../../auth/AuthContext";
 
 const customStyles = recipeCommonStyles();
 
@@ -25,7 +26,7 @@ const RecipeCommentListBox: React.FC<{
 }> = ({ onCommentListChange, commentList, recipeId }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
   const [commentBoxStatus, setCommentBoxStatus] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
 
@@ -229,7 +230,7 @@ const RecipeCommentListBox: React.FC<{
                             className="comment-icons"
                             textAlign={"right"}
                           >
-                            {comment.status === "0" && (
+                            {comment.status === "0" && user?.memberId && (
                               <>
                                 <CommentIconButton
                                   aria-label="reply"
@@ -247,28 +248,35 @@ const RecipeCommentListBox: React.FC<{
                               </>
                             )}
 
-                            <CommentIconButton
-                              aria-label="edit"
-                              onClick={() =>
-                                handleReplyButtonClick(
-                                  comment.commentId,
-                                  "edit"
-                                )
-                              }
-                            >
-                              <EditIcon />
-                            </CommentIconButton>
-                            <CommentIconButton
-                              aria-label="delete"
-                              onClick={() =>
-                                handleDeleteCommentClick(
-                                  comment.commentId,
-                                  comment.hasChildComment
-                                )
-                              }
-                            >
-                              <ClearIcon />
-                            </CommentIconButton>
+                            {(user?.memberId === comment.member.memberId ||
+                              user?.role === "1") && (
+                              <>
+                                {user?.memberId === comment.member.memberId && (
+                                  <CommentIconButton
+                                    aria-label="edit"
+                                    onClick={() =>
+                                      handleReplyButtonClick(
+                                        comment.commentId,
+                                        "edit"
+                                      )
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </CommentIconButton>
+                                )}
+                                <CommentIconButton
+                                  aria-label="delete"
+                                  onClick={() =>
+                                    handleDeleteCommentClick(
+                                      comment.commentId,
+                                      comment.hasChildComment
+                                    )
+                                  }
+                                >
+                                  <ClearIcon />
+                                </CommentIconButton>
+                              </>
+                            )}
                           </Grid>
                         </>
                       )}
