@@ -8,7 +8,7 @@ import { useAuth } from "../auth/AuthContext";
 function Menu() {
   const { t } = useTranslation();
   const [activeMenu, setActiveMenu] = useState(null);
-  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
+  const { user } = useAuth(); //로그인 상태관리
 
   const handleMouseEnter = (index: any) => {
     setActiveMenu(index);
