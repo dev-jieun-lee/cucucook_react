@@ -32,9 +32,11 @@
     "phone": "^3.1.50",
     "quill-image-resize-module-ts": "^3.0.3",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.1",
     "react-i18next": "^15.0.1",
+    "react-intersection-observer": "^9.13.1",
     "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
     "react-quill": "^2.0.0",
@@ -51,12 +53,11 @@
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env NODE_OPTIONS='--max-old-space-size=2048' react-scripts start",
+    "build": "cross-env NODE_OPTIONS='--max-old-space-size=2048' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -77,6 +78,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
-    "@types/react-modal": "^3.16.3"
+    "@types/react-modal": "^3.16.3",
+    "cross-env": "^7.0.3"
   }
 }

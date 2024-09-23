@@ -1,19 +1,22 @@
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { ContentsArea, CustomCategory, SearchArea } from "../BoardStyle";
+import { AnswerContainer, ContentsArea, CustomCategory } from "../BoardStyle";
 import React, { useEffect, useState } from "react";
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
@@ -31,7 +34,7 @@ function Qna() {
     setSearchParams({ search, searchType, category });
   }, [search, searchType, category, setSearchParams]);
 
-  //notice의 카테고리 데이터 받아오기
+  //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
@@ -63,25 +66,50 @@ function Qna() {
     return response;
   };
 
+  // 부모글만 필터링하여 답글 여부를 추가하는 함수
   const getBoardListWithCategory = async () => {
     try {
       const boardList = await getBoardListApi();
-
-      // 각 보드의 카테고리 조회
+      
+      // 부모글만 필터링 (status가 0인 글)
+      const parentBoards = boardList.data.filter(
+        (board: any) => board.status === "0"
+      );
+  
       const boardListWithCategory = await Promise.all(
-        boardList.data.map(async (board: any) => {
+        parentBoards.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
+  
+          // 해당 부모글의 답글 여부 확인
+          const hasReply = boardList.data.some(
+            (reply: any) => reply.pboardId === board.boardId && reply.status === "1"
+          );
+  
           return {
             ...board,
             category: categoryData.data, // 카테고리 정보를 추가
+            hasReply, // 답글 여부 추가
           };
         })
       );
+  
       return boardListWithCategory;
     } catch (error) {
       console.error(error);
       return [];
     }
+  };
+  
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardListWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardListWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
   };
 
     // 데이터 가져오기
@@ -89,11 +117,9 @@ function Qna() {
       data: boardListWithCategory,
       isLoading: boardListLoading,
       refetch,
-    } = useQuery("boardListWithCategory", getBoardListWithCategory, {
+    } = useQuery("boardListWithCategory", getBoardListWithDelay, {
       enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
     });
-  
-console.log(boardListWithCategory);
 
 
   // 검색 버튼 클릭 핸들러
@@ -144,8 +170,17 @@ console.log(boardListWithCategory);
     };
   
     //상세 페이지로 이동
-    const onClickDetail = (boardId: string) => {
-      navigate(`/qna/${boardId}`);
+    const onClickDetail = (boardId: string, status : string) => {
+      if(status === "1"){
+        navigate(`/qna/${boardId}`, {
+          state: {
+            isReply: true,  // 답글임을 나타내는 상태
+            parentBoardId: boardId  // 부모글의 ID 전달
+          }
+        });
+      }else{
+        navigate(`/qna/${boardId}`);
+      }
     };
     //추가 페이지로 이동
     const onClickAdd = () => {
@@ -153,7 +188,7 @@ console.log(boardListWithCategory);
     };
   
     //로딩
-    if (boardListLoading) {
+    if (loading || boardListLoading) {
       return <Loading />;
     }
   
@@ -189,9 +224,8 @@ console.log(boardListWithCategory);
           onChange={handleSearchTypeChange}
         >
           <MenuItem value="all">
-            {t("text.title")} + {t("text.content")}
+            {t("text.all")}
           </MenuItem>
-          <MenuItem value="title">{t("text.title")}</MenuItem>
           <MenuItem value="contents">{t("text.content")}</MenuItem>
           <MenuItem value="category">{t("text.category")}</MenuItem>
         </Select>
@@ -239,109 +273,75 @@ console.log(boardListWithCategory);
         )}
       </SearchArea>
       <ContentsArea>
-        <TableContainer className="table-container" component={Paper}>
-          <Table
-            className="table"
-            sx={{ minWidth: 650 }}
-            aria-label="board table"
-          >
-            <TableHead className="head">
-              <TableRow>
-                <TableCell>No.</TableCell>
-                <TableCell>{t("text.category")}</TableCell>
-                <TableCell>{t("text.title")}</TableCell>
-                <TableCell>{t("text.writer")}</TableCell>
-                <TableCell>{t("text.register_date")}</TableCell>
-                <TableCell>{t("text.view_count")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {boardListWithCategory && boardListWithCategory.length > 0 ? (
-                // 데이터를 부모 글과 답글로 그룹화
-                boardListWithCategory
-                  .reduce((acc: any[], boardItem: any) => {
-                    if (boardItem.status === "0") {
-                      // 부모 글
-                      acc.push({ ...boardItem, isParent: true });
-                    } else if (boardItem.status === "1" && boardItem.pBoardId === boardItem.boardId) {
-                      // 답글
-                      const parentIndex = acc.findIndex(
-                        (item) => item.boardId === boardItem.pBoardId && item.isParent
-                      );
-                      if (parentIndex !== -1) {
-                        // 부모 글 바로 밑에 답글을 삽입
-                        acc.splice(parentIndex + 1, 0, { ...boardItem, isParent: false });
-                      }
-                    }
-                    return acc;
-                    }, [])
-                    ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                    .map((boardItem: any, index: number) => (
-                      <React.Fragment key={index}>
-                        {/* 부모 글 렌더링 */}
-                        {boardItem.isParent && (
-                          <TableRow
-                            className="row"
-                            onClick={() => onClickDetail(boardItem.boardId)}
-                          >
-                            <TableCell component="th" scope="row">
-                              {(currentPage - 1) * display + index + 1}
-                            </TableCell>
-                            <TableCell>
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell>{boardItem.title}</TableCell>
-                            <TableCell>{boardItem.userName}</TableCell>
-                            <TableCell>
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                            <TableCell>{boardItem.viewCount}</TableCell>
-                          </TableRow>
-                        )}
-                        {/* 답글 렌더링 */}
-                        {!boardItem.isParent && (
-                          <TableRow
-                            className="row reply-row"
-                            onClick={() => onClickDetail(boardItem.boardId)}
-                          >
-                            <TableCell component="th" scope="row" style={{ paddingLeft: "40px" }}>
-                              ↳ {(currentPage - 1) * display + index + 1}
-                            </TableCell>
-                            <TableCell>
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell>{boardItem.title}</TableCell>
-                            <TableCell>{boardItem.userName}</TableCell>
-                            <TableCell>
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                            <TableCell>{boardItem.viewCount}</TableCell>
-                          </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))
-                ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    {t("sentence.no_data")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+      <TableContainer className="table-container" component={Paper}>
+        <Table className="table" sx={{ minWidth: 650 }} aria-label="board table">
+          <TableHead className="head">
+            <TableRow>
+              <TableCell>No.</TableCell>
+              <TableCell>{t("text.category")}</TableCell>
+              <TableCell>{t("text.title")}</TableCell>
+              <TableCell>{t("menu.board.answer_chk")}</TableCell> {/* 답글 여부 컬럼 */}
+              <TableCell>{t("text.writer")}</TableCell>
+              <TableCell>{t("text.register_date")}</TableCell>
+              <TableCell>{t("text.view_count")}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {boardListWithCategory && boardListWithCategory.length > 0 ? (
+              boardListWithCategory
+                ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+                .map((boardItem: any, index: number) => (
+                  <TableRow
+                    className="row"
+                    key={index}
+                    onClick={() => onClickDetail(boardItem.boardId, boardItem.status)}
+                  >
+                    <TableCell component="th" scope="row">
+                      {(currentPage - 1) * display + index + 1}
+                    </TableCell>
+                    <TableCell className="category-cell">
+                      <CustomCategory
+                        style={{ color: `${boardItem.category.color}` }}
+                        className="category"
+                      >
+                        [ {boardItem.category.name} ]
+                      </CustomCategory>
+                    </TableCell>
 
-          </Table>
-        </TableContainer>
-        <Stack className="pagination" spacing={2}>
+                    {/* 제목 */}
+                    <TableCell className="title-cell">{boardItem.title}</TableCell>
+                    {/* 답글 여부 표시 */}
+                    <TableCell>
+                      {boardItem.hasReply ? (
+                        <AnswerContainer className="answer-container">
+                          <QuestionAnswerIcon className="answer-icon" />
+                          <span className="answer_chk">{t("menu.board.answer_ok") }</span>
+                        </AnswerContainer>
+                      ) : (
+                        <span style={{color : '#817878d5'}} className="answer_chk">{t("menu.board.answer_no") }</span>
+                      )}
+                    </TableCell>
+
+                    <TableCell>{boardItem.userName}</TableCell>
+                    <TableCell>
+                      {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                    </TableCell>
+                    <TableCell>{boardItem.viewCount}</TableCell>
+
+                  </TableRow>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  {t("sentence.no_data")}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+        <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
             count={Math.ceil(totalCount / display)} // 총 페이지 수 계산
@@ -349,10 +349,11 @@ console.log(boardListWithCategory);
             onChange={handlePageChange}
             color="primary"
           />
-        </Stack>
+        </CustomPagination>
       </ContentsArea>
     </Wrapper>
   )
 }
 
 export default Qna;
+

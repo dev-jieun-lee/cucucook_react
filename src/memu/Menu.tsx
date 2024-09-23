@@ -8,7 +8,7 @@ import { useAuth } from "../auth/AuthContext";
 function Menu() {
   const { t } = useTranslation();
   const [activeMenu, setActiveMenu] = useState(null);
-  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
+  const { user } = useAuth(); //로그인 상태관리
 
   const handleMouseEnter = (index: any) => {
     setActiveMenu(index);
@@ -37,15 +37,17 @@ function Menu() {
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/all_recipe">{t("menu.recipe.all")}</LinkItem>
+                  <LinkItem to="/recipe/all_recipe_list">
+                    {t("menu.recipe.all")}
+                  </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/public_recipe">
+                  <LinkItem to="/recipe/public_recipe_list">
                     {t("menu.recipe.public")}
                   </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/member_recipe">
+                  <LinkItem to="/recipe/member_recipe_list">
                     {t("menu.recipe.member")}
                   </LinkItem>
                 </li>
@@ -95,7 +97,7 @@ function Menu() {
                 <ul>
                   <li>
                     <LinkItem to="/myPage/Profile">
-                      {t("mypage.profile")}
+                      {t("menu.mypage.profile")}
                     </LinkItem>
                   </li>
                   <li>

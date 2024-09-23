@@ -234,11 +234,12 @@ function Login({ isDarkMode }: LoginProps) {
           <StyledAnchor to="/login/findId">
             {t("members.finding_id")}
           </StyledAnchor>
-          |
+          <span />
           <StyledAnchor to="/login/findPw">
             {t("members.finding_pw")}
           </StyledAnchor>
-          |<StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
+          <span />
+          <StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
         </ButtonArea>
       </LoginWrapper>
     </Wrapper>
