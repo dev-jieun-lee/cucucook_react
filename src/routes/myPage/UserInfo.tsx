@@ -16,26 +16,29 @@ import {
 import { userInfoStyles } from "./myPageStyles";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material"; // 눈 모양 아이콘 가져오기
+import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 import { useQuery } from "react-query";
-import { getMember } from "../members/api"; // 회원 정보 및 비밀번호 변경 API 호출
+import { getMember } from "../members/api";
 import { useAuth } from "../../auth/AuthContext";
-import { changePasswordByUser, updateUserInfo } from "./api";
+import { changePasswordByUser, updateMember } from "./api";
 
 // 전화번호 포맷 함수
 const formatPhoneNumber = (value: string) => {
-  // 숫자만 추출
-  const cleaned = value.replace(/\D/g, "");
-
-  // 길이에 따라 하이픈 추가
+  const cleaned = value.replace(/\D/g, ""); // 숫자만 추출
   if (cleaned.length <= 3) return cleaned;
   if (cleaned.length <= 7) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
   return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(
     7,
     11
   )}`;
+};
+
+// 입력된 이름을 한글로 변환하는 함수
+const convertToHangul = (input: string) => {
+  const hangulRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+  return input.match(hangulRegex)?.join("") || "";
 };
 
 // SweetAlert 초기화
@@ -155,7 +158,7 @@ const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
           color="primary"
           variant="contained"
           fullWidth
-          onClick={() => formik.handleSubmit()}
+          onClick={() => formik.handleSubmit()} // 비밀번호 변경 함수 호출
           sx={userInfoStyles.button}
         >
           {t("mypage.pw_save_changes")}
@@ -195,12 +198,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       try {
-        await updateUserInfo(
-          memberId!,
-          values.name,
-          values.email,
-          values.phone
-        );
+        await updateMember(memberId!, values.name, values.email, values.phone);
         MySwal.fire({
           title: t("mypage.info_updated"),
           icon: "success",
@@ -223,6 +221,27 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
       formik.setFieldValue("phone", value);
     }
   };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // 이메일에 영문자, 숫자, 특수문자만 허용
+    const validEmailRegex = /^[a-zA-Z0-9@._-]*$/;
+    if (validEmailRegex.test(value)) {
+      formik.setFieldValue("email", value);
+    }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const hangulValue = convertToHangul(value); // 한글로 변환
+    formik.setFieldValue("name", hangulValue); // 한글 외의 문자는 자동으로 제거됨
+  };
+
+  // 이름, 전화번호, 이메일 중 하나라도 변경되었는지 확인
+  const isFormModified =
+    formik.values.name !== data?.name ||
+    formik.values.phone !== data?.phone ||
+    formik.values.email !== data?.email;
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await MySwal.fire({
@@ -289,7 +308,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
               id="name"
               label={t("mypage.name")}
               value={formik.values.name}
-              onChange={formik.handleChange}
+              onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
               name="name"
             />
           </FormControl>
@@ -319,11 +338,12 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
               id="email"
               label={t("mypage.email")}
               value={formik.values.email}
-              onChange={formik.handleChange}
+              onChange={handleEmailChange} // 이메일에 문자 제한 추가
               name="email"
             />
           </FormControl>
 
+          {/* 비밀번호 변경 아코디언 */}
           <ChangePasswordAccordion memberId={memberId!} />
 
           <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
@@ -338,6 +358,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
             fullWidth
             sx={userInfoStyles.button}
             onClick={handleSaveChangesClick}
+            disabled={!isFormModified || !formik.isValid} // 값이 변경되지 않았거나 유효하지 않으면 비활성화
           >
             {t("mypage.save_changes")}
           </Button>
