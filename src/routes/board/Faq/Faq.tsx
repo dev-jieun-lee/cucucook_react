@@ -139,6 +139,7 @@ function Faq() {
     enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
   });
 
+
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
     setCurrentPage(1);
@@ -247,17 +248,22 @@ function Faq() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.FAQ")}
-        <Tooltip title={t("text.writing")}>
-          <Fab
-            className="add-btn"
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={onClickAdd}
-          >
-            <AddIcon />
-          </Fab>
-        </Tooltip>
+        {user?.role === "1" ? (
+          <Tooltip title={t("text.writing")}>
+            <Fab
+              className="add-btn"
+              size="small"
+              color="primary"
+              aria-label="add"
+              onClick={onClickAdd}
+            >
+              <AddIcon />
+            </Fab>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
+
       </TitleCenter>
       <SearchArea>
         <Select
@@ -354,26 +360,28 @@ function Faq() {
                     __html: expanded === boardItem.boardId ? sanitizer(`A. ${boardItem?.contents}` || "") : "",
                   }}
                 ></div>
-                <div className="btn-area">
-                  <Button
-                    className="update-btn"
-                    type="button"
-                    color="primary"
-                    variant="contained"
-                    onClick={() => onClickRegister(boardItem.boardId)}
-                  >
-                    {t("text.update")}
-                  </Button>
-                  <Button
-                    className="delete-btn"
-                    type="button"
-                    color="warning"
-                    variant="contained"
-                    onClick={() => onClickDelete(boardItem.boardId)}
-                  >
-                    {t("text.delete")}
-                  </Button>
-                </div>
+                  {user?.role === "1" && user?.memberId === boardItem.memberId ? (
+                    <div className="btn-area">
+                      <Button
+                        className="update-btn"
+                        type="button"
+                        color="primary"
+                        variant="contained"
+                        onClick={() => onClickRegister(boardItem.boardId)}
+                      >
+                        {t("text.update")}
+                      </Button>
+                      <Button
+                        className="delete-btn"
+                        type="button"
+                        color="warning"
+                        variant="contained"
+                        onClick={() => onClickDelete(boardItem.boardId)}
+                      >
+                        {t("text.delete")}
+                      </Button>
+                    </div>
+                  ) : null}
               </AccordionDetails>
             </Accordion>
           ))
