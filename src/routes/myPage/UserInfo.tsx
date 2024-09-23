@@ -38,14 +38,14 @@ const ChangePasswordAccordion: React.FC = () => {
       if (values.newPassword === values.confirmNewPassword) {
         console.log("Password changed");
         MySwal.fire({
-          title: t("menu.mypage.password_changed"),
+          title: t("mypage.password_changed"),
           icon: "success",
           confirmButtonText: t("alert.ok"),
         });
         formik.resetForm(); // Reset form after successful submission
       } else {
         MySwal.fire({
-          title: t("menu.mypage.password_mismatch"),
+          title: t("mypage.password_mismatch"),
           icon: "error",
           confirmButtonText: t("alert.ok"),
         });
@@ -67,7 +67,7 @@ const ChangePasswordAccordion: React.FC = () => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography>{t("menu.mypage.change_password")}</Typography>
+        <Typography>{t("mypage.change_password")}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <form onSubmit={formik.handleSubmit}>
@@ -77,11 +77,11 @@ const ChangePasswordAccordion: React.FC = () => {
             variant="outlined"
           >
             <InputLabel htmlFor="newPassword">
-              {t("menu.mypage.new_password")}
+              {t("mypage.new_password")}
             </InputLabel>
             <OutlinedInput
               id="newPassword"
-              label={t("menu.mypage.new_password")}
+              label={t("mypage.new_password")}
               type={showPassword ? "text" : "password"}
               value={formik.values.newPassword}
               onChange={formik.handleChange}
@@ -106,11 +106,11 @@ const ChangePasswordAccordion: React.FC = () => {
             variant="outlined"
           >
             <InputLabel htmlFor="confirmNewPassword">
-              {t("menu.mypage.confirm_new_password")}
+              {t("mypage.confirm_new_password")}
             </InputLabel>
             <OutlinedInput
               id="confirmNewPassword"
-              label={t("menu.mypage.confirm_new_password")}
+              label={t("mypage.confirm_new_password")}
               type={showPassword ? "text" : "password"}
               value={formik.values.confirmNewPassword}
               onChange={formik.handleChange}
@@ -136,7 +136,7 @@ const ChangePasswordAccordion: React.FC = () => {
             fullWidth
             sx={userInfoStyles.button}
           >
-            {t("menu.mypage.save_changes")}
+            {t("mypage.save_changes")}
           </Button>
         </form>
       </AccordionDetails>
@@ -150,8 +150,8 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   const handleCancelClick = async () => {
     const confirmCancel = await MySwal.fire({
-      title: t("menu.mypage.cancel_edit"),
-      text: t("menu.mypage.cancel_edit_confirm"),
+      title: t("mypage.cancel_edit"),
+      text: t("mypage.cancel_edit_confirm"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: t("alert.yes"),
@@ -165,8 +165,8 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await MySwal.fire({
-      title: t("menu.mypage.save_changes"),
-      text: t("menu.mypage.save_changes_confirm"),
+      title: t("mypage.save_changes"),
+      text: t("mypage.save_changes_confirm"),
       icon: "question",
       showCancelButton: true,
       confirmButtonText: t("alert.yes"),
@@ -185,8 +185,8 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   const handleDeleteAccountClick = async () => {
     const confirmDelete = await MySwal.fire({
-      title: t("menu.mypage.delete_account"),
-      text: t("menu.mypage.delete_account_confirm"),
+      title: t("mypage.delete_account"),
+      text: t("mypage.delete_account_confirm"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: t("alert.yes"),
@@ -202,34 +202,32 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     <Wrapper>
       <Box sx={userInfoStyles.container}>
         <div className="title">
-          <span>{t("menu.mypage.edit_info")}</span>
+          <span>{t("mypage.edit_info")}</span>
         </div>
         <FormControl
           fullWidth
           sx={userInfoStyles.formControl}
           variant="outlined"
         >
-          <InputLabel htmlFor="username">
-            {t("menu.mypage.username")}
-          </InputLabel>
-          <OutlinedInput id="username" label={t("menu.mypage.username")} />
+          <InputLabel htmlFor="username">{t("mypage.username")}</InputLabel>
+          <OutlinedInput id="username" label={t("mypage.username")} />
         </FormControl>
         <FormControl
           fullWidth
           sx={userInfoStyles.formControl}
           variant="outlined"
         >
-          <InputLabel htmlFor="email">{t("menu.mypage.email")}</InputLabel>
-          <OutlinedInput id="email" label={t("menu.mypage.email")} />
+          <InputLabel htmlFor="email">{t("mypage.email")}</InputLabel>
+          <OutlinedInput id="email" label={t("mypage.email")} />
         </FormControl>
 
         <ChangePasswordAccordion />
 
         <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-          {t("menu.mypage.connect_naver")}
+          {t("mypage.connect_naver")}
         </Button>
         <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-          {t("menu.mypage.connect_kakao")}
+          {t("mypage.connect_kakao")}
         </Button>
 
         <FormControl
@@ -238,12 +236,9 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
           variant="outlined"
         >
           <InputLabel htmlFor="phoneNumber">
-            {t("menu.mypage.phone_number")}
+            {t("mypage.phone_number")}
           </InputLabel>
-          <OutlinedInput
-            id="phoneNumber"
-            label={t("menu.mypage.phone_number")}
-          />
+          <OutlinedInput id="phoneNumber" label={t("mypage.phone_number")} />
         </FormControl>
 
         <Button
@@ -253,7 +248,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
           sx={userInfoStyles.button}
           onClick={handleSaveChangesClick}
         >
-          {t("menu.mypage.save_changes")}
+          {t("mypage.save_changes")}
         </Button>
 
         <Button
@@ -262,7 +257,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
           fullWidth
           onClick={handleDeleteAccountClick}
         >
-          {t("menu.mypage.delete_account")}
+          {t("mypage.delete_account")}
         </Button>
       </Box>
     </Wrapper>

@@ -22,6 +22,10 @@ export const styledLightTheme: DefaultTheme = {
   navBorderColor: "#ccc",
   searchBorderColor: "#ccc",
 
+  scrollbarBackColor: "#d5d2d25d",
+  scrollbarColor: "#88888878",
+  scrollboarHoverColor: "#55555575",
+
   subTextColor: "#253342",
   subTextColorGray: "#ccc",
 
@@ -34,6 +38,10 @@ export const styledDarkTheme: DefaultTheme = {
   mainColor: "#F2EFDB",
   footerColor: "#363131",
   navBorderColor: "#878585c1",
+
+  scrollbarBackColor: "#76757539",
+  scrollbarColor: "#88888878",
+  scrollboarHoverColor: "#74747478",
 
   subTextColor: "#d28c6f",
   subTextColorGray: "#878585c1",
@@ -90,6 +98,9 @@ export const muiDarkTheme = createTheme({
     },
     secondary: {
       main: "#FDA47E",
+    },
+    info: {
+      main: "#d28c6f",
     },
     background: {
       default: "#3D3737", // 다크 모드 배경 색상

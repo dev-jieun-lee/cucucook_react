@@ -13,6 +13,8 @@ export const SideMenu = styled(List)`
   border-color: ${(props) => props.theme.navBorderColor};
   border-radius: 10px;
   margin-left: -15px;
+  margin-right: 40px;
+  flex-shrink: 0;
   /* position: fixed; */
   .list-text{
     color: ${(props) => props.theme.subTextColor};

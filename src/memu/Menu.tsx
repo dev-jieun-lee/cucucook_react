@@ -37,17 +37,17 @@ function Menu() {
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/recipe/all_recipe_list">
+                  <LinkItem to="/all_recipe_list">
                     {t("menu.recipe.all")}
                   </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/recipe/public_recipe_list">
+                  <LinkItem to="/public_recipe_list">
                     {t("menu.recipe.public")}
                   </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/recipe/member_recipe_list">
+                  <LinkItem to="/member_recipe_list">
                     {t("menu.recipe.member")}
                   </LinkItem>
                 </li>
@@ -80,35 +80,35 @@ function Menu() {
               </ul>
             </SubMenu>
           </li>
-          {user?(
+          {user ? (
             <li
-            className="main-menu-item"
-            onMouseEnter={() => handleMouseEnter(2)}
-            onMouseLeave={handleMouseLeave}
+              className="main-menu-item"
+              onMouseEnter={() => handleMouseEnter(2)}
+              onMouseLeave={handleMouseLeave}
             >
-            <div>
-              <span
-                className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
-              >
-                {t("menu.mypage.original")}
-              </span>
-            </div>
-            <SubMenu className="sub-menu">
-              <ul>
-                <li>
-                  <LinkItem to="/myPage/Profile">
-                    {t("menu.mypage.profile")}
-                  </LinkItem>
-                </li>
-                <li>
-                  <LinkItem to="/myPage/Activity">
-                    {t("menu.mypage.activity")}
-                  </LinkItem>
-                </li>
-              </ul>
-            </SubMenu>
-          </li>
-          ):(
+              <div>
+                <span
+                  className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
+                >
+                  {t("menu.mypage.original")}
+                </span>
+              </div>
+              <SubMenu className="sub-menu">
+                <ul>
+                  <li>
+                    <LinkItem to="/myPage/Profile">
+                      {t("menu.mypage.profile")}
+                    </LinkItem>
+                  </li>
+                  <li>
+                    <LinkItem to="/myPage/Activity">
+                      {t("menu.mypage.activity")}
+                    </LinkItem>
+                  </li>
+                </ul>
+              </SubMenu>
+            </li>
+          ) : (
             <></>
           )}
 
