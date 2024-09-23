@@ -41,8 +41,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const inputAnimation = useAnimation(); // 애니메이션 제어
   const navigate = useNavigate(); // 페이지 이동 함수
 
-
-
   // 드로어 열기/닫기
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen); // 상태 업데이트

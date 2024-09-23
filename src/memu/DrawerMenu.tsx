@@ -34,8 +34,8 @@ function DrawerMenu({ toggleDrawer }: any) {
   ];
 
   const MypageMenuItems = [
-    { label: t("mypage.profile"), path: "/mypage/profile" },
-    { label: t("mypage.activity"), path: "/mypage/activity" },
+    { label: t("menu.mypage.profile"), path: "/mypage/profile" },
+    { label: t("menu.mypage.activity"), path: "/mypage/activity" },
   ];
 
   // 페이지 이동 함수

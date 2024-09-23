@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import media from "./MediaQuery";
-import { Stack } from "@mui/material";
+import { Fab, Stack } from "@mui/material";
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -16,6 +16,7 @@ export const Wrapper = styled.div`
     width: 100%;
   `};
 
+
   .add-btn {
     margin-top: -4px;
     margin-left: 15px;
@@ -24,14 +25,15 @@ export const Wrapper = styled.div`
     box-shadow: none;
   }
 
+
   .form {
     width: 100%;
   }
 
   /* scrollBar CSS */
   ::-webkit-scrollbar {
-  width: 7px;
-  height : 7px;
+    width: 7px;
+    height: 7px;
   }
   ::-webkit-scrollbar-track {
     background: ${(props) => props.theme.scrollbarBackColor};
@@ -61,14 +63,42 @@ export const TitleBasic = styled.div`
   color: ${(props) => props.theme.mainColor};
 `;
 
+export const PageTitleBasic = styled.div`
+  font-weight: 500;
+  font-size: 25px;
+  text-align: left;
+`;
+
+export const PageSubTitleBasic = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  text-align: left;
+`;
+
+//맨위로 가기 스크롤 버튼
+export const ScrollBtnFab = styled(Fab)`
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+
+  ${media.medium`
+    bottom: 8px,
+    right: 8px,
+    width: 40px,
+    height: 40px,
+  `};
+`;
+
 export const SearchArea = styled.div`
   /* margin: 30px ; */
   margin-top: 40px;
   margin-bottom: 25px;
   display: flex;
+  justify-content: center;
   ${media.small`
     display: block;
   `};
+
   .select-category {
     width: 130px;
     margin-right: 50px;
@@ -77,6 +107,7 @@ export const SearchArea = styled.div`
     margin-bottom : 10px;
   `};
   }
+
   .select-category-item {
     width: 180px;
     margin-right: 50px;
@@ -92,3 +123,4 @@ export const CustomPagination = styled(Stack)`
     margin: 0 auto;
   }
 `;
+
