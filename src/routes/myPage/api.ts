@@ -45,14 +45,35 @@ export async function login(form: { userId: string; password: string }) {
   }
 }
 
-//내정보 비밀번호 검증 API 호출
+// 내정보 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
   try {
-    console.log(`비밀번호 검증 시도: userId=${userId}`);
+    // API 호출 전 콘솔 로그
+    console.log(
+      `비밀번호 검증 API 호출 시도: userId=${userId}, password=******`
+    );
+
+    // API 호출
     const response = await api.post("/verify-password", { userId, password });
+
+    // 응답 상태와 데이터 출력
     console.log("비밀번호 검증 성공");
+    console.log("응답 상태 코드:", response.status);
+    console.log("응답 데이터:", response.data);
+
     return response.data;
   } catch (error) {
+    console.error("비밀번호 검증 API 호출 실패");
+
+    // 에러 로그 출력
+    if (axios.isAxiosError(error)) {
+      console.error("Axios 오류 메시지:", error.message);
+      console.error("응답 상태 코드:", error.response?.status);
+      console.error("응답 데이터:", error.response?.data);
+    } else {
+      console.error("알 수 없는 오류 발생:", error);
+    }
+
     handleApiError(error);
   }
 };

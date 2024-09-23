@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { fetchMyWrites } from "./api";
+import { getBoardCategoryList } from "../board/api";
+//mport { getRecipeCategoryList } from "../recipe/api";
 import { useAuth } from "../../auth/AuthContext";
 
 interface Write {
@@ -34,56 +36,56 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
   const { user } = useAuth();
   const memberId = user ? user.memberId.toString() : null;
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [boardDivision, setBoardDivision] = useState("QNA");
+  const [board_division, setBoardDivision] = useState("NOTICE"); // 기본값을 빈 문자열로 설정
   const [writes, setWrites] = useState<Write[]>([]);
+  const [categories, setCategories] = useState<any[]>([]); // 카테고리 목록 상태 추가
 
   const loadWrites = async (currentPage: number) => {
-    if (!memberId) return; // memberId가 없을 때는 함수 종료
+    if (!memberId) return;
 
     console.log(
       "Fetching data with memberId:",
       memberId,
       "page:",
       currentPage,
-      "boardDivision:",
-      boardDivision
+      "board_division:",
+      board_division
     );
     const response = await fetchMyWrites(
       memberId,
       currentPage,
       5,
-      boardDivision
+      board_division
     );
     console.log("Response data for page", currentPage, ":", response);
 
     if (currentPage === 0) {
-      setWrites(response); // 첫 페이지 데이터 로드
+      setWrites(response);
     } else {
-      setWrites((prev) => [...prev, ...response]); // 다음 페이지 데이터 추가
+      setWrites((prev) => [...prev, ...response]);
     }
   };
 
   useEffect(() => {
-    // 컴포넌트가 마운트될 때 페이지 상단으로 스크롤
     window.scrollTo(0, 0);
-  }, []); // 의존성 배열이 비어 있으므로 처음 마운트될 때만 실행
+  }, []);
 
   useEffect(() => {
     if (memberId) {
-      loadWrites(0); // 페이지 처음 로드 시
+      loadWrites(0);
     }
   }, [memberId]);
 
   useEffect(() => {
-    loadWrites(0); // boardDivision이 변경될 때마다 첫 페이지 데이터 로드
-  }, [boardDivision]);
+    loadWrites(0);
+  }, [board_division]);
 
-  const handleBoardDivisionChange = (event: SelectChangeEvent<string>) => {
-    const newDivision = event.target.value;
-    if (newDivision !== boardDivision) {
-      console.log("셀렉박스 선택값:", newDivision);
-      setBoardDivision(newDivision);
-      setWrites([]); // 이전 데이터 초기화
+  const handleboardDivisionChange = (event: SelectChangeEvent<string>) => {
+    const newBoardDivision = event.target.value;
+    if (newBoardDivision !== board_division) {
+      console.log("셀렉박스 선택값:", newBoardDivision);
+      setBoardDivision(newBoardDivision);
+      setWrites([]);
     }
   };
 
@@ -112,6 +114,50 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const loadCategories = async () => {
+    const params = {
+      search: "",
+      start: "",
+      display: "",
+    };
+    const response = await getBoardCategoryList(params);
+    console.log(response.data);
+
+    // board_category_id가 'BC'로 시작하는 카테고리들 필터링
+    const filteredCategories = response.data.filter(
+      (category: any) =>
+        category.boardCategoryId && category.boardCategoryId.startsWith("BC")
+    );
+
+    if (filteredCategories.length > 0) {
+      const boardDivision = filteredCategories[0].boardDivision; // 첫 번째 카테고리의 board_division 값 가져오기
+      console.log("board_division:", boardDivision);
+
+      // 필터링된 카테고리와 board_division을 상태로 설정
+      setCategories(filteredCategories);
+      setBoardDivision(boardDivision); // 첫 번째 필터링된 카테고리의 board_division 값을 설정
+    } else {
+      setCategories([]);
+      setBoardDivision(""); // 필터링된 결과가 없을 때는 셀렉트박스 초기화
+    }
+  };
+
+  // 페이지 진입 시 게시글 버튼을 자동으로 클릭
+  useEffect(() => {
+    handlePostButtonClick();
+  }, []);
+
+  const handlePostButtonClick = async () => {
+    setBoardDivision(""); // 셀렉트박스 초기화
+    await loadCategories(); // 게시글 버튼 클릭 시 카테고리 목록 로드
+  };
+
+  const handleRecipeButtonClick = () => {
+    console.log("레시피 버튼 클릭");
+    setWrites([]); // 리스트 초기화
+    setBoardDivision(""); // 셀렉트박스 초기화
+  };
+
   return (
     <Wrapper>
       <Box sx={activityStyles.container}>
@@ -130,17 +176,33 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
             </Button>
           </Box>
 
-          {/* 셀렉트 박스 */}
-          <Box sx={{ marginBottom: 2 }}>
-            <Select
-              value={boardDivision}
-              onChange={handleBoardDivisionChange}
-              displayEmpty
-              inputProps={{ "aria-label": "Board Division Select" }}
+          {/* 셀렉트 박스 및 버튼 */}
+          <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+            <Button
+              variant="contained"
+              onClick={handlePostButtonClick}
+              sx={{ marginRight: 1 }}
             >
-              <MenuItem value="QNA">QNA</MenuItem>
-              <MenuItem value="FAQ">FAQ</MenuItem>
-              <MenuItem value="NOTICE">NOTICE</MenuItem>
+              게시글
+            </Button>
+            <Button variant="contained" onClick={handleRecipeButtonClick}>
+              레시피
+            </Button>
+            <Select
+              value={board_division}
+              onChange={handleboardDivisionChange}
+              displayEmpty
+              inputProps={{ "aria-label": "Board categoryId Select" }}
+              sx={{ marginLeft: 1 }}
+            >
+              {categories.map((category) => (
+                <MenuItem
+                  key={category.boardDivision}
+                  value={category.boardDivision}
+                >
+                  {category.name}
+                </MenuItem>
+              ))}
             </Select>
           </Box>
 
