@@ -44,10 +44,13 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         console.log("API 호출 시 전달되는 userId:", user.userId);
         const response = await verifyPassword(user.userId, values.password);
 
-        // 서버 응답 메시지에 따라 처리
-        if (response.status === 200) {
-          console.log(response.data); // 서버에서 반환한 메시지를 확인
+        // 응답을 제대로 받았는지 확인하는 추가 콘솔 로그
+        console.log("API 응답 상태 코드:", response?.status);
+        console.log("API 응답 데이터:", response);
 
+        // 성공 여부에 따라 처리
+        if (response && response.success) {
+          console.log("비밀번호 검증 성공");
           // 비밀번호 모달을 먼저 닫음
           setPasswordDialogOpen(false);
 
@@ -64,9 +67,11 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
             });
           }, 300); // 모달 닫힘을 기다리기 위해 약간의 딜레이 추가
         } else {
+          console.log("비밀번호 검증 실패 또는 알 수 없는 오류");
           setErrors({ password: t("mypage.Invalid password") });
         }
       } catch (error) {
+        console.error("API 요청 중 오류 발생:", error);
         if (axios.isAxiosError(error)) {
           if (error.response && error.response.status === 401) {
             setErrors({ password: t("mypage.Invalid password") });

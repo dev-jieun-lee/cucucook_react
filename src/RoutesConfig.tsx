@@ -94,7 +94,7 @@ function RoutesConfig({ isDarkMode }: any) {
       />
 
       <Route
-        path="/recipe/public_recipe_list/:search?/:display?/:start?/:recipeCategoryId?"
+        path="/recipe/public_recipe_list"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
@@ -103,7 +103,7 @@ function RoutesConfig({ isDarkMode }: any) {
         }
       />
       <Route
-        path="/recipe/member_recipe_list/:search?/:display?/:start?/:recipeCategoryId?/:orderby?"
+        path="/recipe/member_recipe_list"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
@@ -112,7 +112,7 @@ function RoutesConfig({ isDarkMode }: any) {
         }
       />
       <Route
-        path="/recipe/public_recipe/:search/:display/:start"
+        path="/recipe/public_recipe"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />

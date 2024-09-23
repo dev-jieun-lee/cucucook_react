@@ -8,7 +8,7 @@ import { useAuth } from "../auth/AuthContext";
 function Menu() {
   const { t } = useTranslation();
   const [activeMenu, setActiveMenu] = useState(null);
-  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
+  const { user } = useAuth(); //로그인 상태관리
 
   const handleMouseEnter = (index: any) => {
     setActiveMenu(index);
@@ -90,7 +90,7 @@ function Menu() {
                 <span
                   className={`menu-title ${activeMenu === 2 ? "active" : ""}`}
                 >
-                  {t("menu.mypage.original")}
+                  {t("mypage.original")}
                 </span>
               </div>
               <SubMenu className="sub-menu">
@@ -102,7 +102,7 @@ function Menu() {
                   </li>
                   <li>
                     <LinkItem to="/myPage/Activity">
-                      {t("menu.mypage.activity")}
+                      {t("mypage.activity")}
                     </LinkItem>
                   </li>
                 </ul>

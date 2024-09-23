@@ -95,6 +95,7 @@ export const muiDarkTheme = createTheme({
     mode: "dark",
     primary: {
       main: "#F2EFDB",
+      contrastText: "#000",
     },
     secondary: {
       main: "#FDA47E",
@@ -106,6 +107,9 @@ export const muiDarkTheme = createTheme({
       default: "#3D3737", // 다크 모드 배경 색상
       paper: "#424242",
     },
+  },
+  typography: {
+    fontFamily: "Pretendard-Regular, Arial, sans-serif", // 기본 폰트 설정
   },
   components: {
     MuiTypography: {
