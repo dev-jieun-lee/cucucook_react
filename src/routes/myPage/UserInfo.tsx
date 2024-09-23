@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import {
   Button,
@@ -8,24 +8,24 @@ import {
   IconButton,
   InputAdornment,
   Box,
-  Modal,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import { modalStyles, userInfoStyles } from "./myPageStyles";
+import { userInfoStyles } from "./myPageStyles";
 import { useNavigate } from "react-router-dom";
+import { Wrapper } from "../../styles/CommonStyles";
+import { Visibility, VisibilityOff, ExpandMore } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-// 비밀번호 변경 모달 컴포넌트 타입 정의
-interface ChangePasswordModalProps {
-  isOpen: boolean;
-  closeModal: () => void;
-}
+// SweetAlert 초기화
+const MySwal = withReactContent(Swal);
 
-// 비밀번호 변경 모달 컴포넌트
-const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
-  isOpen,
-  closeModal,
-}) => {
+// 비밀번호 변경 아코디언 컴포넌트
+const ChangePasswordAccordion: React.FC = () => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -37,9 +37,18 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     onSubmit: (values) => {
       if (values.newPassword === values.confirmNewPassword) {
         console.log("Password changed");
-        closeModal();
+        MySwal.fire({
+          title: t("menu.mypage.password_changed"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
+        formik.resetForm(); // Reset form after successful submission
       } else {
-        alert(t("menu.mypage.password_mismatch"));
+        MySwal.fire({
+          title: t("menu.mypage.password_mismatch"),
+          icon: "error",
+          confirmButtonText: t("alert.ok"),
+        });
       }
     },
   });
@@ -52,168 +61,211 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   };
 
   return (
-    <></>
-    // <Modal
-    //   isOpen={isOpen}
-    //   onRequestClose={closeModal}
-    //   contentLabel="Change Password"
-    //   style={modalStyles}
-    // >
-    //   <h2>{t('menu.mypage.change_password')}</h2>
-    //   <form onSubmit={formik.handleSubmit}>
-    //     <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-    //       <InputLabel htmlFor="newPassword">{t('menu.mypage.new_password')}</InputLabel>
-    //       <OutlinedInput
-    //         id="newPassword"
-    //         label={t('menu.mypage.new_password')}
-    //         type={showPassword ? 'text' : 'password'}
-    //         value={formik.values.newPassword}
-    //         onChange={formik.handleChange}
-    //         endAdornment={
-    //           <InputAdornment position="end">
-    //             <IconButton
-    //               aria-label="toggle password visibility"
-    //               onClick={handleClickShowPassword}
-    //               onMouseDown={handleMouseDownPassword}
-    //               edge="end"
-    //             >
-    //               {showPassword ? <VisibilityOff /> : <Visibility />}
-    //             </IconButton>
-    //           </InputAdornment>
-    //         }
-    //       />
-    //     </FormControl>
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMore />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography>{t("menu.mypage.change_password")}</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <form onSubmit={formik.handleSubmit}>
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="newPassword">
+              {t("menu.mypage.new_password")}
+            </InputLabel>
+            <OutlinedInput
+              id="newPassword"
+              label={t("menu.mypage.new_password")}
+              type={showPassword ? "text" : "password"}
+              value={formik.values.newPassword}
+              onChange={formik.handleChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
 
-    //     <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-    //       <InputLabel htmlFor="confirmNewPassword">{t('menu.mypage.confirm_new_password')}</InputLabel>
-    //       <OutlinedInput
-    //         id="confirmNewPassword"
-    //         label={t('menu.mypage.confirm_new_password')}
-    //         type={showPassword ? 'text' : 'password'}
-    //         value={formik.values.confirmNewPassword}
-    //         onChange={formik.handleChange}
-    //         endAdornment={
-    //           <InputAdornment position="end">
-    //             <IconButton
-    //               aria-label="toggle password visibility"
-    //               onClick={handleClickShowPassword}
-    //               onMouseDown={handleMouseDownPassword}
-    //               edge="end"
-    //             >
-    //               {showPassword ? <VisibilityOff /> : <Visibility />}
-    //             </IconButton>
-    //           </InputAdornment>
-    //         }
-    //       />
-    //     </FormControl>
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="confirmNewPassword">
+              {t("menu.mypage.confirm_new_password")}
+            </InputLabel>
+            <OutlinedInput
+              id="confirmNewPassword"
+              label={t("menu.mypage.confirm_new_password")}
+              type={showPassword ? "text" : "password"}
+              value={formik.values.confirmNewPassword}
+              onChange={formik.handleChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
 
-    //     <Button
-    //       color="primary"
-    //       variant="contained"
-    //       type="submit"
-    //       fullWidth
-    //       sx={userInfoStyles.button}
-    //     >
-    //       {t('menu.mypage.save_changes')}
-    //     </Button>
-    //     <Button
-    //       variant="outlined"
-    //       onClick={closeModal}
-    //       fullWidth
-    //     >
-    //       {t('menu.mypage.cancel')}
-    //     </Button>
-    //   </form>
-    // </Modal>
+          <Button
+            color="primary"
+            variant="contained"
+            type="submit"
+            fullWidth
+            sx={userInfoStyles.button}
+          >
+            {t("menu.mypage.save_changes")}
+          </Button>
+        </form>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
 const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  const handleCancelClick = () => {
-    const confirmCancel = window.confirm("정말 수정을 취소하시겠습니까?");
-    if (confirmCancel) {
+  const handleCancelClick = async () => {
+    const confirmCancel = await MySwal.fire({
+      title: t("menu.mypage.cancel_edit"),
+      text: t("menu.mypage.cancel_edit_confirm"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmCancel.isConfirmed) {
       navigate("/mypage/Profile");
     }
   };
 
-  const handleSaveChangesClick = () => {
-    const confirmSave = window.confirm("변경사항을 저장하시겠습니까?");
-    if (confirmSave) {
-      alert("변경사항이 저장되었습니다.");
+  const handleSaveChangesClick = async () => {
+    const confirmSave = await MySwal.fire({
+      title: t("menu.mypage.save_changes"),
+      text: t("menu.mypage.save_changes_confirm"),
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmSave.isConfirmed) {
+      MySwal.fire({
+        title: t("alert.requirement_saved"),
+        icon: "success",
+        confirmButtonText: t("alert.ok"),
+      });
       navigate("/mypage/Profile");
-    } else {
-      alert("취소하였습니다.");
-      navigate("/mypage/Profile");
+    }
+  };
+
+  const handleDeleteAccountClick = async () => {
+    const confirmDelete = await MySwal.fire({
+      title: t("menu.mypage.delete_account"),
+      text: t("menu.mypage.delete_account_confirm"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("alert.yes"),
+      cancelButtonText: t("alert.no"),
+    });
+
+    if (confirmDelete.isConfirmed) {
+      navigate("/");
     }
   };
 
   return (
-    <Box sx={userInfoStyles.container}>
-      <ChangePasswordModal
-        isOpen={isModalOpen}
-        closeModal={() => setIsModalOpen(false)}
-      />
-      <div className="title">
-        <span>{t("menu.mypage.edit_info")}</span>
-      </div>
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="username">{t("menu.mypage.username")}</InputLabel>
-        <OutlinedInput id="username" label={t("menu.mypage.username")} />
-      </FormControl>
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="email">{t("menu.mypage.email")}</InputLabel>
-        <OutlinedInput id="email" label={t("menu.mypage.email")} />
-      </FormControl>
+    <Wrapper>
+      <Box sx={userInfoStyles.container}>
+        <div className="title">
+          <span>{t("menu.mypage.edit_info")}</span>
+        </div>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="username">
+            {t("menu.mypage.username")}
+          </InputLabel>
+          <OutlinedInput id="username" label={t("menu.mypage.username")} />
+        </FormControl>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="email">{t("menu.mypage.email")}</InputLabel>
+          <OutlinedInput id="email" label={t("menu.mypage.email")} />
+        </FormControl>
 
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => setIsModalOpen(true)}
-        fullWidth
-        sx={userInfoStyles.button}
-      >
-        {t("menu.mypage.change_password")}
-      </Button>
+        <ChangePasswordAccordion />
 
-      <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-        {t("menu.mypage.connect_naver")}
-      </Button>
-      <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-        {t("menu.mypage.connect_kakao")}
-      </Button>
+        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          {t("menu.mypage.connect_naver")}
+        </Button>
+        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          {t("menu.mypage.connect_kakao")}
+        </Button>
 
-      <FormControl fullWidth sx={userInfoStyles.formControl} variant="outlined">
-        <InputLabel htmlFor="phoneNumber">
-          {t("menu.mypage.phone_number")}
-        </InputLabel>
-        <OutlinedInput id="phoneNumber" label={t("menu.mypage.phone_number")} />
-      </FormControl>
+        <FormControl
+          fullWidth
+          sx={userInfoStyles.formControl}
+          variant="outlined"
+        >
+          <InputLabel htmlFor="phoneNumber">
+            {t("menu.mypage.phone_number")}
+          </InputLabel>
+          <OutlinedInput
+            id="phoneNumber"
+            label={t("menu.mypage.phone_number")}
+          />
+        </FormControl>
 
-      <Button
-        color="primary"
-        variant="contained"
-        fullWidth
-        sx={userInfoStyles.button}
-        onClick={handleSaveChangesClick}
-      >
-        {t("menu.mypage.save_changes")}
-      </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          fullWidth
+          sx={userInfoStyles.button}
+          onClick={handleSaveChangesClick}
+        >
+          {t("menu.mypage.save_changes")}
+        </Button>
 
-      <Button
-        variant="outlined"
-        color="error"
-        fullWidth
-        onClick={() =>
-          window.confirm("정말 회원 탈퇴를 하시겠습니까?") && navigate("/")
-        }
-      >
-        {t("menu.mypage.delete_account")}
-      </Button>
-    </Box>
+        <Button
+          variant="outlined"
+          color="error"
+          fullWidth
+          onClick={handleDeleteAccountClick}
+        >
+          {t("menu.mypage.delete_account")}
+        </Button>
+      </Box>
+    </Wrapper>
   );
 };
 
