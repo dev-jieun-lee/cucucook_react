@@ -1,47 +1,28 @@
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  getBoard,
-  getBoardCategory,
-  getBoardCategoryList,
-  insertBoard,
-  updateBoard,
-} from "../api";
-import { useMutation, useQuery } from "react-query";
-import {
-  BoardButtonArea,
-  ContentsInputArea,
-  TitleInputArea,
-} from "../BoardStyle";
-import {
-  AlertColor,
-  Button,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-} from "@mui/material";
-import Loading from "../../../components/Loading";
-import { useFormik } from "formik";
-import "react-quill/dist/quill.snow.css";
-import QuillEditer from "../QuillEditer";
-import * as Yup from "yup";
-import SnackbarCustom from "../../../components/SnackbarCustom";
 import { useAuth } from "../../../auth/AuthContext";
-import { useEffect, useState } from "react";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getBoard, getBoardCategory, getBoardCategoryList, insertBoard, updateBoard } from "../api";
+import { useMutation, useQuery } from "react-query";
 import Swal from "sweetalert2";
+import { useEffect } from "react";
+import { useFormik } from "formik";
+import Loading from "../../../components/Loading";
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
+import * as Yup from "yup";
+import { BoardButtonArea, ContentsInputArea, QuestionArea, TitleInputArea } from "../BoardStyle";
+import QuillEditer from "../QuillEditer";
+import dompurify from "dompurify";
 
-function NoticeForm() {
+function QnaForm() {
+  const sanitizer = dompurify.sanitize;
   const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
 
-  //notice의 카테고리 데이터 받아오기
+
+  //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = () => {
     const params = {
       search: "",
@@ -50,13 +31,12 @@ function NoticeForm() {
     };
     return getBoardCategoryList(params);
   };
-
+  
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi,
     {
-      select: (data) =>
-        data.data.filter((item: any) => item.division === "NOTICE"),
+      select: (data) => data.data.filter((item : any) => item.division === "QNA"),
     }
   );
 
@@ -93,17 +73,18 @@ function NoticeForm() {
 
   //boardId가 있을경우 수정, 없을경우 생성
   const mutation = useMutation(
-    (values) => (boardId ? updateBoard(boardId, values) : insertBoard(values)),
+    (values) => boardId ? updateBoard(boardId, values) : insertBoard(values),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: "success",
+          icon: 'success',
           title: t("text.save"),
           text: t("menu.board.alert.save"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check"),
+          confirmButtonText: t("text.check")
         });
-        navigate(-1);
+        navigate(-1); 
+        
       },
       onError: (error) => {
         // 에러 처리
@@ -111,18 +92,20 @@ function NoticeForm() {
     }
   );
 
+  
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       memberId: user?.memberId,
-      userName: user?.name,
-      title: boardId ? boardWithCategory?.data?.title || "" : "",
+      userName : user?.name,
+      title: `${t("menu.board.question")}`,
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
         : "",
       contents: boardId ? boardWithCategory?.data?.contents || "" : "",
       status: "0",
-      boardDivision: "NOTICE",
+      boardDivision: "QNA",
     },
     validationSchema: Yup.object({
       title: Yup.string().required(),
@@ -135,19 +118,20 @@ function NoticeForm() {
       mutation.mutate(values as any); // mutation 실행
     },
   });
-
+  
   // 내용 초기화
   useEffect(() => {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
         memberId: user?.memberId,
-        userName: user?.name,
-        title: "",
+        userName : user?.name,
+        // title: `"${user?.name}"님의 ${t("menu.board.question")}`,
+        title: `${t("menu.board.question")}`,
         boardCategoryId: "",
         contents: "",
         status: "0",
-        boardDivision: "NOTICE",
+        boardDivision: "QNA",
       });
     }
   }, [boardId]); // boardId가 없을 때 폼 값을 초기화
@@ -159,49 +143,38 @@ function NoticeForm() {
     formik.validateForm(); // 유효성 검사 트리거
   };
 
-  // // 타이틀 값 업데이트
-  // const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   formik.setFieldValue("title", event.target.value);
-  //   formik.setFieldTouched("title", true);
-  //   formik.validateForm();
-  // };
+    //글 작성 취소
+    const onClickCancel = () => {
+      Swal.fire({
+        icon: 'warning',
+        title: t("text.cancel"),
+        text: t("menu.board.alert.cancel"),
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: t("text.yes"),
+        cancelButtonText: t("text.no"),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate(-1);
+        }
+      });
+    };
+  
+  
+    //로딩
+    if (boardLoading || boardCategoryLoading) {
+      return <Loading />;
+    }
 
-  // // contents 값 업데이트
-  // const handleContentChange = (contents: string) => {
-  //   formik.setFieldValue("contents", contents);
-  //   formik.setFieldTouched("contents", true);
-  //   formik.validateForm();
-  // };
-
-  //글 작성 취소
-  const onClickCancel = () => {
-    Swal.fire({
-      icon: "warning",
-      title: t("text.cancel"),
-      text: t("menu.board.alert.cancel"),
-      showCancelButton: true,
-      showConfirmButton: true,
-      confirmButtonText: t("text.yes"),
-      cancelButtonText: t("text.no"),
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate(-1);
-      }
-    });
-  };
-
-  //로딩
-  if (boardLoading || boardCategoryLoading) {
-    return <Loading />;
-  }
-
-  return (
+  return(
     <Wrapper>
-      {boardId ? (
-        <TitleCenter>{t("menu.board.notice_modify")}</TitleCenter>
-      ) : (
-        <TitleCenter>{t("menu.board.notice_create")}</TitleCenter>
-      )}
+      <TitleCenter>
+        {boardId ? (
+          <TitleCenter>{t("menu.board.Q_modify")}</TitleCenter>
+        ) : (
+          <TitleCenter>{t("menu.board.Q_create")}</TitleCenter>
+        )}
+      </TitleCenter>
       <form className="form" onSubmit={formik.handleSubmit}>
         <TitleInputArea>
           <div className="category">
@@ -236,6 +209,7 @@ function NoticeForm() {
             <FormControl className="form-input">
               <InputLabel htmlFor="title">{t("text.title")}</InputLabel>
               <OutlinedInput
+                disabled
                 id="title"
                 label={t("text.title")}
                 value={formik.values.title}
@@ -243,9 +217,7 @@ function NoticeForm() {
                 error={formik.touched.title && Boolean(formik.errors.title)}
               />
               {formik.touched.title && formik.errors.title && (
-                <FormHelperText error>
-                  {t("menu.board.error.title")}
-                </FormHelperText>
+                <FormHelperText error>{t("menu.board.error.title")}</FormHelperText>
               )}
             </FormControl>
           </div>
@@ -253,13 +225,11 @@ function NoticeForm() {
         <ContentsInputArea>
           <QuillEditer
             value={formik.values.contents}
-            onChange={(text: any) => formik.setFieldValue("contents", text)}
+            onChange={(text: any) => formik.setFieldValue('contents', text)}
             error={formik.touched.contents && Boolean(formik.errors.contents)}
           />
           {formik.touched.contents && formik.errors.contents && (
-            <FormHelperText error>
-              {t("menu.board.error.contents")}
-            </FormHelperText>
+            <FormHelperText error>{t("menu.board.error.contents")}</FormHelperText>
           )}
         </ContentsInputArea>
         <BoardButtonArea>
@@ -272,13 +242,13 @@ function NoticeForm() {
           >
             {t("text.cancel")}
           </Button>
-          <Button className="save-btn" type="submit" variant="contained">
+          <Button className="save-btn" type="submit" variant="contained" >
             {t("text.save")}
           </Button>
         </BoardButtonArea>
       </form>
     </Wrapper>
-  );
+  )
 }
 
-export default NoticeForm;
+export default QnaForm;

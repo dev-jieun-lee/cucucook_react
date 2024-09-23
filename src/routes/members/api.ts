@@ -32,26 +32,15 @@ export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
-
     // 로그인 성공 시 JWT 토큰을 쿠키에 저장
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7,
+        expires: 7, // 토큰 유효기간 7일
         secure: true,
         sameSite: "Strict",
       });
     }
-
     return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-}
-
-// 로그인 실패 횟수 증가 요청
-export async function increaseFailedAttempts(userId: string) {
-  try {
-    await api.post("/increaseFailedAttempts", { userId });
   } catch (error) {
     handleApiError(error);
   }
@@ -177,3 +166,27 @@ export async function validateToken(token: string) {
     handleApiError(error);
   }
 }
+
+// 이메일, 이름, ID로 사용자 존재 여부 확인 API
+export async function checkUserInfoExists(
+  name: string,
+  email: string,
+  id: string
+) {
+  const response = await axios.post(`${BASE_URL}/check-user-info`, {
+    name,
+    email,
+    id,
+  });
+  console.log(
+    "이름, 이메일, 아이디로 존재 여부 확인 응답데이터",
+    response.data
+  );
+  return response.data; // 서버가 { exists: true/false } 형태로 반환한다고 가정
+}
+// 사용자 정보 확인 훅
+export const useCheckUserInfoExists = () =>
+  useMutation(
+    ({ name, email, id }: { name: string; email: string; id: string }) =>
+      checkUserInfoExists(name, email, id)
+  );

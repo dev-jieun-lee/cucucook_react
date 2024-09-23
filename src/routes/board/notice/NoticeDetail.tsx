@@ -11,15 +11,20 @@ import {
 } from "../BoardStyle";
 import Loading from "../../../components/Loading";
 import moment from "moment";
-import { Button } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { useAuth } from "../../../auth/AuthContext";
+import { useState } from "react";
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
   // 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
   const sanitizer = dompurify.sanitize;
 
+  const { user } = useAuth(); //로그인 상태관리
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
@@ -45,10 +50,23 @@ function NoticeDetail() {
       return null;
     }
   };
+
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가 
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardWithCategory(); // 데이터 불러오기
+    setLoading(false); 
+    return boardList;
+  };
+
   //데이터 받아오기
   const { data: boardWithCategory, isLoading: boardLoading } = useQuery(
     "boardWithCategory",
-    getBoardWithCategory
+    getBoardWithDelay
   );
 
 
@@ -100,13 +118,25 @@ function NoticeDetail() {
   };
 
   //로딩
-  if (boardLoading) {
-    return <Loading />;
+  if (loading || boardLoading) {
+    return<></>;
   }
 
   return (
     <Wrapper>
-      <TitleCenter>{t("menu.board.notice")}</TitleCenter>
+      <TitleCenter>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{marginTop : '-5px'}}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("menu.board.notice")}
+        </TitleCenter>
       <TitleArea>
         <div className="board-title">
           <CustomCategory
@@ -132,25 +162,30 @@ function NoticeDetail() {
         dangerouslySetInnerHTML={{ __html : sanitizer(`${boardWithCategory?.data.contents}`) }}
         ></div>
       </DetailContents>
-      <BoardButtonArea>
-        <Button
-          className="delete-btn"
-          type="button"
-          variant="outlined"
-          color="warning"
-          onClick={() => onClickDelete()}
-        >
-          {t("text.delete")}
-        </Button>
-        <Button
-          className="update-btn"
-          type="button"
-          variant="contained"
-          onClick={() => onClickRegister()}
-        >
-          {t("text.update")}
-        </Button>
-      </BoardButtonArea>
+      {user?.role === "1" ? (
+        <BoardButtonArea>
+          <Button
+            className="delete-btn"
+            type="button"
+            variant="outlined"
+            color="warning"
+            onClick={() => onClickDelete()}
+          >
+            {t("text.delete")}
+          </Button>
+          <Button
+            className="update-btn"
+            type="button"
+            variant="contained"
+            onClick={() => onClickRegister()}
+          >
+            {t("text.update")}
+          </Button>
+        </BoardButtonArea>
+      ) : (
+        <></>
+      )}
+
     </Wrapper>
   );
 }

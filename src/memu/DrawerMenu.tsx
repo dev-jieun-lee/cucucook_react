@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DrawerList } from "./MenuStyle";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 function DrawerMenu({ toggleDrawer }: any) {
   const { t } = useTranslation();
@@ -20,9 +21,9 @@ function DrawerMenu({ toggleDrawer }: any) {
 
   // 메뉴 항목 정의
   const RecipeMenuItems = [
-    { label: t("menu.recipe.all"), path: "/all_recipe_list" },
-    { label: t("menu.recipe.public"), path: "/recipe/public_recipe_list" },
-    { label: t("menu.recipe.member"), path: "/member_recipe_list" },
+    { label: t("menu.recipe.all"), path: "/all_recipe" },
+    { label: t("menu.recipe.public"), path: "/public_recipe" },
+    { label: t("menu.recipe.member"), path: "/member_recipe" },
   ];
 
   const BoardMenuItems = [

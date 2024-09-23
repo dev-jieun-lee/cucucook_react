@@ -75,6 +75,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
+
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
       <Col>
@@ -94,7 +95,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           </div>
         </div>
         <div style={{ display: "flex" }}>
-          <Tooltip title={t("text.search")}>
+          {/* <Tooltip title={t("text.search")}>
             <MotionSearch onSubmit={handleSubmit(onValid)}>
               <MotionIconButton
                 onClick={toggleSearch}
@@ -113,7 +114,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
                 placeholder={t("sentence.searching")} // 플레이스홀더
               />
             </MotionSearch>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title={t("text.change_mode")}>
             <IconButton
               className="mode-icon"

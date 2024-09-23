@@ -7,29 +7,34 @@
     "recipe": {
       "original": "Recipe",
       "all": "All",
-      "public": "Public Recipe",
-      "member": "Member Recipe",
+      "public": "Recipe",
+      "member": "D.I.Y. Recipe",
       "popularity": "popularity"
     },
-    "board": {
-      "original": "Board",
-      "notice": "Notice",
-      "notice_detail": "Notice details",
-      "notice_create": "Create Notice",
-      "notice_modify": "Modify Notice",
-      "FAQ": "FAQ",
-      "FAQ_create": "자주 묻는 질문 등록",
-      "FAQ_modify": "자주 묻는 질문 수정",
-      "QNA": "Q&A",
-      "category": "Category",
-      "category_select": "Select Category",
-      "notice_category": "Notice Category",
-      "faq_category": "FAQ Category",
-      "qna_category": "Q&A Category",
-      "error": {
-        "category": "Please select a category.",
-        "title": "Please enter a title.",
-        "contents": "Please enter content."
+    "board" : {
+      "original" : "Board",
+      "notice" : "Notice",
+      "notice_detail" : "Notice details",
+      "notice_create" : "Create Notice",
+      "notice_modify" : "Modify Notice",
+      "FAQ" : "FAQ",
+      "QNA" : "Q&A",
+      "question" : "It's a question.",
+      "answer" : "Answer",
+      "is_answer" : "It's a answer.",
+      "Q_create": "Register questions",
+      "Q_modify": "Question Modified",
+      "A_create": "Register answers",
+      "A_modify": "Modify answer",
+      "category" : "Category",
+      "category_select" : "Select Category",
+      "notice_category" : "Notice Category",
+      "faq_category" : "FAQ Category",
+      "qna_category" : "Q&A Category",
+      "error" : {
+        "category" : "Please select a category.",
+        "title" : "Please enter a title.",
+        "contents" : "Please enter content."
       },
       "alert": {
         "delete_confirm": "Do you want to delete the post?",
@@ -40,7 +45,7 @@
         "cancel": "Are you sure you want to cancel your post?"
       }
     },
-    "mypage": {
+      "mypage": {
       "original": "My Page",
       "profile": "My Profile",
       "activity": "My Activity",
@@ -91,6 +96,11 @@
     "check": "Check",
     "yes": "Yes",
     "no": "No",
+    "content": "Content",
+    "go_back": "Go Back",
+    "writing": "Writing",
+    "answer": "Answer",
+    "question" : "Question"
     "all_recipe": "All Recipes",
     "recipe": "Recipe",
     "public_recipe": "Public Recipe",
@@ -198,6 +208,7 @@
     "verification_failed": "Email verification failed.",
     "verification_error": "An error occurred during verification.",
     "send_verification_code": "Send Code",
+    "send_code": "ㄴ",
     "verify_code": "Verify Code",
     "complete_verification": "Please complete the email verification before submitting.",
     "register": "Register",
@@ -220,7 +231,22 @@
     "find_id_error": "There an error occured while find ID",
     "no_info_found": "No ID matching the entered name and email was found.",
     "login_success_info": "Login success information",
-    "ok": "OK"
+    "ok": "OK",
+    "login_failed": "Login Failed"
+  },
+  "mypage": {
+    "Please enter your password": "Please enter your password",
+    "User ID not found": "User ID not found",
+    "Please verify your password": "Please verify your password",
+    "Password": "Password",
+    "Invalid password": "Invalid password",
+    "Password verification error": "Password verification error",
+    "An unknown error occurred": "An unknown error occurred",
+    "Cancel": "Cancel",
+    "Verify": "Verify",
+    "Success": "Success",
+    "Password verification successful": "Password verification successful",
+    "OK": "OK"
   },
   "recipe": {
     "alert": {
@@ -272,11 +298,13 @@
     "requirement_saved": "Changes have been saved.",
     "canceled": "Operation canceled.",
     "confirmed": "Ok",
-    "attempt": "You have failed to log in. If you continue to fail, your account may be locked.",
-    "attempt_3": "Warning: You have failed to log in three times in a row. If you continue to fail, your account may be locked.",
-    "attempt_4": "Warning: You have failed to log in four times in a row. One more failure will lock your account.",
-    "locked": "Your account is locked. Please wait {{minutes}} minutes and {{seconds}} seconds before trying again.",
-    "try_again": "Try again later."
+    "try_again": "Try again later.",
+    "attempt": "Login attempt failed.",
+    "attempt_3": "You have failed to login 3 times.",
+    "attempt_4": "You have failed to login 4 times.",
+    "locked": "Your account is locked due to multiple failed login attempts.",
+    "locked_time": "Your account is locked. Time remaining: {{minutes}} minutes and {{seconds}} seconds",
+    "ok": "OK"
   },
   "AgreeContents": {
     "terms_required": "You must agree to the terms",
