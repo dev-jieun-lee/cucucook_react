@@ -2,7 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
 import { useMutation } from "react-query";
 
-const BASE_URL = "http://localhost:8080/api/members";
+const apiUrl = process.env.REACT_APP_API_URL;
+const BASE_URL = apiUrl + "/api/members";
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
