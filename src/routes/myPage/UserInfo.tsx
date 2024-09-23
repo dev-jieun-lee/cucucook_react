@@ -16,18 +16,20 @@ import {
 import { userInfoStyles } from "./myPageStyles";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { Visibility, VisibilityOff, ExpandMore } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { useQuery } from "react-query";
+import { getMember } from "../members/api"; // 회원 정보를 불러오는 API
+import { useAuth } from "../../auth/AuthContext";
 
 // SweetAlert 초기화
-const MySwal = withReactContent(Swal);
+const MySwal = Swal;
 
 // 비밀번호 변경 아코디언 컴포넌트
 const ChangePasswordAccordion: React.FC = () => {
   const { t } = useTranslation();
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -36,13 +38,12 @@ const ChangePasswordAccordion: React.FC = () => {
     },
     onSubmit: (values) => {
       if (values.newPassword === values.confirmNewPassword) {
-        console.log("Password changed");
         MySwal.fire({
           title: t("mypage.password_changed"),
           icon: "success",
           confirmButtonText: t("alert.ok"),
         });
-        formik.resetForm(); // Reset form after successful submission
+        formik.resetForm();
       } else {
         MySwal.fire({
           title: t("mypage.password_mismatch"),
@@ -54,11 +55,6 @@ const ChangePasswordAccordion: React.FC = () => {
   });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
 
   return (
     <Accordion>
@@ -85,17 +81,15 @@ const ChangePasswordAccordion: React.FC = () => {
               type={showPassword ? "text" : "password"}
               value={formik.values.newPassword}
               onChange={formik.handleChange}
+              name="newPassword"
               endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  edge="end"
+                >
+                  {showPassword ? <ExpandMore /> : <ExpandMore />}
+                </IconButton>
               }
             />
           </FormControl>
@@ -114,17 +108,15 @@ const ChangePasswordAccordion: React.FC = () => {
               type={showPassword ? "text" : "password"}
               value={formik.values.confirmNewPassword}
               onChange={formik.handleChange}
+              name="confirmNewPassword"
               endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  edge="end"
+                >
+                  {showPassword ? <ExpandMore /> : <ExpandMore />}
+                </IconButton>
               }
             />
           </FormControl>
@@ -132,11 +124,11 @@ const ChangePasswordAccordion: React.FC = () => {
           <Button
             color="primary"
             variant="contained"
-            type="submit"
             fullWidth
+            type="submit"
             sx={userInfoStyles.button}
           >
-            {t("mypage.save_changes")}
+            {t("mypage.pw_save_changes")}
           </Button>
         </form>
       </AccordionDetails>
@@ -147,21 +139,31 @@ const ChangePasswordAccordion: React.FC = () => {
 const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const memberId = user ? user.memberId.toString() : null;
 
-  const handleCancelClick = async () => {
-    const confirmCancel = await MySwal.fire({
-      title: t("mypage.cancel_edit"),
-      text: t("mypage.cancel_edit_confirm"),
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: t("alert.yes"),
-      cancelButtonText: t("alert.no"),
-    });
+  // useQuery로 회원 정보 불러오기
+  const { data, isLoading, error } = useQuery(
+    ["member", memberId],
+    () => getMember(memberId!),
+    { enabled: !!memberId }
+  );
 
-    if (confirmCancel.isConfirmed) {
-      navigate("/mypage/Profile");
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      username: data?.userId || "",
+      name: data?.name || "",
+      phone: data?.phone || "",
+      email: data?.email || "",
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      console.log("폼 제출:", values);
+    },
+  });
+
+  if (isLoading) return <div>{t("loading")}</div>;
+  if (error) return <div>{t("error.fetch_failed")}</div>;
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await MySwal.fire({
@@ -174,12 +176,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     });
 
     if (confirmSave.isConfirmed) {
-      MySwal.fire({
-        title: t("alert.requirement_saved"),
-        icon: "success",
-        confirmButtonText: t("alert.ok"),
-      });
-      navigate("/mypage/Profile");
+      formik.handleSubmit();
     }
   };
 
@@ -204,61 +201,99 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <div className="title">
           <span>{t("mypage.edit_info")}</span>
         </div>
-        <FormControl
-          fullWidth
-          sx={userInfoStyles.formControl}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="username">{t("mypage.username")}</InputLabel>
-          <OutlinedInput id="username" label={t("mypage.username")} />
-        </FormControl>
-        <FormControl
-          fullWidth
-          sx={userInfoStyles.formControl}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="email">{t("mypage.email")}</InputLabel>
-          <OutlinedInput id="email" label={t("mypage.email")} />
-        </FormControl>
 
-        <ChangePasswordAccordion />
+        <form onSubmit={formik.handleSubmit}>
+          {/* 사용자 ID */}
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="username">{t("mypage.username")}</InputLabel>
+            <OutlinedInput
+              id="username"
+              label={t("mypage.username")}
+              value={formik.values.username}
+              disabled
+            />
+          </FormControl>
 
-        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-          {t("mypage.connect_naver")}
-        </Button>
-        <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-          {t("mypage.connect_kakao")}
-        </Button>
+          {/* 이름 */}
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="name">{t("mypage.name")}</InputLabel>
+            <OutlinedInput
+              id="name"
+              label={t("mypage.name")}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              name="name"
+            />
+          </FormControl>
 
-        <FormControl
-          fullWidth
-          sx={userInfoStyles.formControl}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="phoneNumber">
-            {t("mypage.phone_number")}
-          </InputLabel>
-          <OutlinedInput id="phoneNumber" label={t("mypage.phone_number")} />
-        </FormControl>
+          {/* 전화번호 */}
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="phone">{t("mypage.phone_number")}</InputLabel>
+            <OutlinedInput
+              id="phone"
+              label={t("mypage.phone_number")}
+              value={formik.values.phone}
+              onChange={formik.handleChange}
+              name="phone"
+            />
+          </FormControl>
 
-        <Button
-          color="primary"
-          variant="contained"
-          fullWidth
-          sx={userInfoStyles.button}
-          onClick={handleSaveChangesClick}
-        >
-          {t("mypage.save_changes")}
-        </Button>
+          {/* 이메일 */}
+          <FormControl
+            fullWidth
+            sx={userInfoStyles.formControl}
+            variant="outlined"
+          >
+            <InputLabel htmlFor="email">{t("mypage.email")}</InputLabel>
+            <OutlinedInput
+              id="email"
+              label={t("mypage.email")}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              name="email"
+            />
+          </FormControl>
 
-        <Button
-          variant="outlined"
-          color="error"
-          fullWidth
-          onClick={handleDeleteAccountClick}
-        >
-          {t("mypage.delete_account")}
-        </Button>
+          <ChangePasswordAccordion />
+
+          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+            {t("mypage.connect_naver")}
+          </Button>
+          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+            {t("mypage.connect_kakao")}
+          </Button>
+
+          <Button
+            color="primary"
+            variant="contained"
+            fullWidth
+            sx={userInfoStyles.button}
+            onClick={handleSaveChangesClick}
+          >
+            {t("mypage.save_changes")}
+          </Button>
+
+          <Button
+            variant="outlined"
+            color="error"
+            fullWidth
+            onClick={handleDeleteAccountClick}
+          >
+            {t("mypage.delete_account")}
+          </Button>
+        </form>
       </Box>
     </Wrapper>
   );
