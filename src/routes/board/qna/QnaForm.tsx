@@ -40,6 +40,7 @@ function QnaForm() {
     }
   );
 
+
   //수정일 경우 카테고리 포함 보드 데이터 가져오기
   const getBoardWithCategory = async () => {
     try {
