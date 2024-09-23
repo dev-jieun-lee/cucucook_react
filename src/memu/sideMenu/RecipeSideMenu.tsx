@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { SideMenu } from "./SideMenuStyle";
+import { Divider, ListItem, ListItemButton } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LinkItem } from "../MenuStyle";
-import {
-  Divider,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  styled,
-} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { SideMenu } from "./SideMenuStyle";
 
 function RecipeSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
   const [activeButton, setActiveButton] = useState(""); // 활성 버튼을 관리하는 상태
@@ -20,30 +13,15 @@ function RecipeSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
 
   // URL 경로에 따라 활성 버튼 설정
   useEffect(() => {
-    switch (location.pathname) {
-      case "/recipe/all_recipe_list":
-        setSelectedIndex(0);
-        setActiveButton("all");
-        break;
-      case "/recipe/public_recipe_list":
-        setSelectedIndex(1);
-        setActiveButton("public");
-        break;
-      case "/recipe/public_recipe":
-        setSelectedIndex(1);
-        setActiveButton("public");
-        break;
-      case "/recipe/member_recipe_list":
-        setSelectedIndex(2);
-        setActiveButton("member");
-        break;
-      case "/recipe/member_recipe":
-        setSelectedIndex(2);
-        setActiveButton("member");
-        break;
-      default:
-        setSelectedIndex(null);
-        setActiveButton("");
+    if (location.pathname.startsWith("/recipe/all_recipe_list")) {
+      setSelectedIndex(0);
+      setActiveButton("all");
+    } else if (location.pathname.startsWith("/recipe/public_recipe")) {
+      setSelectedIndex(1);
+      setActiveButton("public");
+    } else if (location.pathname.startsWith("/recipe/member_recipe")) {
+      setSelectedIndex(2);
+      setActiveButton("member");
     }
   }, [location.pathname]);
 

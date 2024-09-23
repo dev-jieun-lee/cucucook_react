@@ -30,7 +30,6 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 
-
 function Faq() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -38,12 +37,11 @@ function Faq() {
   const sanitizer = dompurify.sanitize;
 
   // // 아코디언 패널 상태 관리
-  const handleChange = (panel: string) => async (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false);
-
-  };
-
-  
+  const handleChange =
+    (panel: string) =>
+    async (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
 
   // FAQ 데이터 가져오기 함수
   const getBoardListWithCategory = async () => {
@@ -55,7 +53,7 @@ function Faq() {
     };
 
     const boardList = await getBoardList(params);
-    
+
     const filteredBoardList = boardList.data.filter(
       (board: any) => board.boardDivision === "FAQ"
     );
@@ -80,32 +78,32 @@ function Faq() {
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
-    (boardId : string) => deleteBoard(boardId),
+    (boardId: string) => deleteBoard(boardId),
     {
       onSuccess: () => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
         window.location.reload();
       },
       onError: (error) => {
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
           text: t("menu.board.alert.delete_error"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (boardId : string) => {
+  const onClickDelete = (boardId: string) => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm"),
       showCancelButton: true,
@@ -117,7 +115,7 @@ function Faq() {
         deleteBoardMutation(boardId as string);
       }
     });
-    };
+  };
 
   //추가 페이지로 이동
   const onClickAdd = () => {
@@ -125,10 +123,9 @@ function Faq() {
   };
 
   //수정 페이지로 이동
-  const onClickRegister = (boardId:string) => {
+  const onClickRegister = (boardId: string) => {
     navigate(`/faq/form/${boardId}`);
   };
-
 
   // 로딩 처리
   if (boardListLoading) {
@@ -208,7 +205,10 @@ function Faq() {
                 <div
                   className="board-contents"
                   dangerouslySetInnerHTML={{
-                    __html: expanded === boardItem.boardId ? sanitizer(`A. ${boardItem?.contents}` || "") : "",
+                    __html:
+                      expanded === boardItem.boardId
+                        ? sanitizer(`A. ${boardItem?.contents}` || "")
+                        : "",
                   }}
                 ></div>
                 <div className="btn-area">

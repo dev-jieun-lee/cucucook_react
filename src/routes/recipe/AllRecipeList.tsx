@@ -1,51 +1,47 @@
-import React, { useEffect, useState } from "react";
+import { Add, KeyboardArrowUp } from "@mui/icons-material";
+import { Box, Button, Divider, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { getMemberRecipeList, getPublicRecipeList } from "../../api";
+import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
   ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { useTranslation } from "react-i18next";
-import { Box, Button, Grid, Typography } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import {
-  TitleBox,
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
   ThumbnailTypography,
+  TitleBox,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-import { useNavigate } from "react-router-dom";
-import { KeyboardArrowUp } from "@mui/icons-material";
-import { useQuery } from "react-query";
-import { getPublicRecipeList } from "../../api";
-import Loading from "../../components/Loading";
+import StarIcon from "@mui/icons-material/Star";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import TextsmsIcon from "@mui/icons-material/Textsms";
 
 const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
 
-  const fetchPublicRecipeList = () => {
-    const params = {
-      search: "",
-      start: "1",
-      display: "4",
-    };
-
-    return getPublicRecipeList(params); // 데이터 가져오기
-  };
-
-  // React Query를 사용하여 데이터 가져오기
-  const { data: publicRecipeList, isLoading: publicRecipeListLoading } =
-    useQuery("publicRecipeList", fetchPublicRecipeList);
-
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // 로딩 상태 관리
+  const [memberLoading, setMemberLoading] = useState(true);
+  const [publicLoading, setPublicLoading] = useState(true);
   const handleMoreViewClick = (value: string) => {
     navigate(value);
   };
 
+  const [memberMessage, setMemberMessage] = useState("");
+  const [publicMessage, setPublicMessage] = useState("");
+
   const handlViewDetailClick = (path: string, params: string) => {
-    const pullPath = `${path}?search=${encodeURIComponent(params)}`;
+    const pullPath = `${path}/` + params;
     navigate(pullPath);
   };
 
@@ -70,25 +66,93 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  //로딩
-  if (publicRecipeListLoading) {
-    return <Loading />;
-  }
+  // 공공상세 레시피 가져오기
+  const fetchAllPublicRecipeList = async () => {
+    try {
+      const params = {
+        search: "",
+        start: "1",
+        display: "4",
+        recipeCategoryId: "",
+      };
+      const allPublicRecipeList = await getPublicRecipeList(params);
+
+      return allPublicRecipeList.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
+  };
+  const { data: allPublicRecipeList } = useQuery(
+    "allPublicRecipeList",
+    fetchAllPublicRecipeList,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setPublicLoading(true);
+        setPublicMessage(
+          data.message
+            .replace('<script type="text/javascript">alert(\'', "")
+            .replace("'); history.back();</script>", "")
+        );
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err);
+        setPublicLoading(false);
+      },
+    }
+  );
+
+  // 회원 레시피 가져오기
+  const fetchAllMemberRecipeList = async () => {
+    try {
+      const params = {
+        search: "",
+        start: "0",
+        display: "4",
+        recipeCategoryId: "",
+        orderby: "",
+      };
+      const allPublicRecipeList = await getMemberRecipeList(params);
+
+      return allPublicRecipeList.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
+  };
+  const { data: allMemberRecipeList } = useQuery(
+    "allMemberRecipeList",
+    fetchAllMemberRecipeList,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setMemberLoading(true);
+        setMemberMessage(data.message);
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err);
+        setMemberLoading(false);
+      },
+    }
+  );
 
   return (
     <Wrapper>
       <Box component="section">
         <TitleBox>
           <PageTitleBasic>{t("text.public_recipe")}</PageTitleBasic>
-          {publicRecipeList?.data && publicRecipeList.data.length > 0 ? (
+          {allPublicRecipeList?.data && allPublicRecipeList.data.length > 0 ? (
             <Button
               variant="text"
               onClick={() => handleMoreViewClick("/recipe/public_recipe_list")}
             >
-              <AddIcon /> {t("text.more_view")}
+              <Add /> {t("text.more_view")}
             </Button>
           ) : (
-            ""
+            <>{allPublicRecipeList?.data}</>
           )}
         </TitleBox>
         <Grid
@@ -101,33 +165,50 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             },
           }}
         >
-          {publicRecipeList?.data && publicRecipeList.data.length > 0 ? (
-            publicRecipeList.data.map(
+          {allPublicRecipeList?.data && allPublicRecipeList.data.length > 0 ? (
+            allPublicRecipeList.data.map(
               (publicRecipeItem: any, index: number) => (
                 <Grid item xs={12} sm={6} md={3} key={index}>
                   <ThumbnailButton
                     onClick={() =>
                       handlViewDetailClick(
                         "/recipe/public_recipe",
-                        publicRecipeItem.rcpNm
+                        encodeURIComponent(publicRecipeItem.rcpNm) + "/1/1"
                       )
                     }
                   >
-                    <ThumbnailBoxContainer>
-                      <ThumbnailBox
-                        src={publicRecipeItem.attFileNoMk}
-                        alt={publicRecipeItem.rcpNm}
-                      ></ThumbnailBox>
-                    </ThumbnailBoxContainer>
-                    <ThumbnailTypography variant="subtitle1">
-                      {publicRecipeItem.rcpNm}
-                    </ThumbnailTypography>
+                    <Box className="thumbnail-box-wrap">
+                      <ThumbnailBoxContainer>
+                        <ThumbnailBox
+                          src={publicRecipeItem.attFileNoMk}
+                          alt={publicRecipeItem.rcpNm}
+                        ></ThumbnailBox>
+                      </ThumbnailBoxContainer>
+                      <Box className="thumbnail-info-box-wrap">
+                        <Box margin={"20px"}>
+                          <Box className="thumbnail-info-title-box">
+                            {publicRecipeItem.rcpNm}
+                          </Box>
+                          <Box>
+                            <Grid
+                              container
+                              className="thumbnail-info-default-box"
+                            >
+                              <Grid item></Grid>
+                              <Grid></Grid>
+                            </Grid>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
                   </ThumbnailButton>
                 </Grid>
               )
             )
           ) : (
-            <Grid component="div">{t("sentence.no_data")}</Grid>
+            <Grid padding={"20px 0"} item xs={12} sm={12} md={12}>
+              {publicLoading ? <LoadingNoMargin /> : <>{publicMessage}</>}
+            </Grid>
           )}
         </Grid>
       </Box>
@@ -138,69 +219,137 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             variant="text"
             onClick={() => handleMoreViewClick("/recipe/member_recipe")}
           >
-            <AddIcon /> {t("text.more_view")}
+            <Add /> {t("text.more_view")}
           </Button>
         </TitleBox>
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={3}>
-            <ThumbnailButton onClick={() => alert("클릭이벤트")}>
-              <ThumbnailBoxContainer>
-                <ThumbnailBox
-                  src="https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg"
-                  alt="강아지사진"
-                ></ThumbnailBox>
-              </ThumbnailBoxContainer>
-              <ThumbnailTypography variant="subtitle1">
-                강아지귀엽당
-              </ThumbnailTypography>
-            </ThumbnailButton>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box>
-              <ThumbnailButton onClick={() => alert("클릭이벤트")}>
-                <ThumbnailBoxContainer>
-                  <ThumbnailBox
-                    src="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg"
-                    alt="강아지사진2"
-                  ></ThumbnailBox>
-                </ThumbnailBoxContainer>
-                <ThumbnailTypography variant="subtitle1">
-                  강아지 너무 귀엽당
-                </ThumbnailTypography>
-              </ThumbnailButton>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box>
-              <ThumbnailButton onClick={() => alert("클릭이벤트")}>
-                <ThumbnailBoxContainer>
-                  <ThumbnailBox
-                    src="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg"
-                    alt="강아지사진2"
-                  ></ThumbnailBox>
-                </ThumbnailBoxContainer>
-                <ThumbnailTypography variant="subtitle1">
-                  강아지 짱짱짱짱짱 대박적이게 귀엽당ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ
-                  긴말은 말줄임표 해야징
-                </ThumbnailTypography>
-              </ThumbnailButton>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box>
-              <ThumbnailButton onClick={() => alert("클릭이벤트")}>
-                <ThumbnailBoxContainer>
-                  <ThumbnailBox
-                    src="https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13262118&filePath=L2Rpc2sxL25ld2RhdGEvMjAyMC8yMS9DTFMxMDAwNi82MmZhMWExMy03ZjRmLTQ1NWMtYTZlNy02ZTk2YjhjMjBkYTk=&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10006"
-                    alt="꽃사진"
-                  ></ThumbnailBox>
-                </ThumbnailBoxContainer>
-                <ThumbnailTypography variant="subtitle1">
-                  꽃이당
-                </ThumbnailTypography>
-              </ThumbnailButton>
-            </Box>
-          </Grid>
+          {allMemberRecipeList?.data && allMemberRecipeList.data.length > 0 ? (
+            allMemberRecipeList.data.map(
+              (memberRecipeItem: any, index: number) => (
+                <Grid item xs={12} sm={6} md={3} key={index}>
+                  <ThumbnailButton
+                    onClick={() =>
+                      handlViewDetailClick(
+                        "/recipe/member_recipe",
+                        encodeURIComponent(memberRecipeItem.recipeId)
+                      )
+                    }
+                  >
+                    <Box className="thumbnail-box-wrap">
+                      <ThumbnailBoxContainer>
+                        <ThumbnailBox
+                          src={
+                            memberRecipeItem.memberRecipeImages
+                              ? `${process.env.REACT_APP_API_URL}${memberRecipeItem.memberRecipeImages.webImgPath}/${memberRecipeItem.memberRecipeImages.serverImgName}.${memberRecipeItem.memberRecipeImages.extension}`
+                              : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
+                          }
+                          alt={memberRecipeItem.recipeId}
+                        ></ThumbnailBox>
+                      </ThumbnailBoxContainer>
+                      <Box className="thumbnail-info-box-wrap">
+                        <Box margin={"20px"}>
+                          <Box className="thumbnail-info-title-box">
+                            {memberRecipeItem.title}
+                          </Box>
+                          <Box>
+                            <Grid
+                              container
+                              className="thumbnail-info-default-box"
+                            >
+                              <Grid item>{memberRecipeItem.member.name}</Grid>
+                              <Grid item>
+                                <Grid container spacing={1}>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <VisibilityIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+
+                                      <Box component="span" ml={0.5}>
+                                        {memberRecipeItem.viewCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <TextsmsIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+
+                                      <Box component="span" ml={0.5}>
+                                        {memberRecipeItem.commentCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <StarIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+                                      <Box component="span" ml={0.5}>
+                                        {memberRecipeItem.commentRate}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <FavoriteIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+                                      <Box component="span" ml={0.5}>
+                                        {memberRecipeItem.likeCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </ThumbnailButton>
+                </Grid>
+              )
+            )
+          ) : (
+            <Grid padding={"20px 0"} item xs={12} sm={12} md={12}>
+              {memberLoading ? <LoadingNoMargin /> : <>{memberMessage}</>}
+            </Grid>
+          )}
         </Grid>
       </Box>
       {showScrollButton && (

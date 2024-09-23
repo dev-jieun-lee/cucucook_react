@@ -18,18 +18,16 @@ import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper } from "./LoginStyle";
 import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 // API 호출 함수
 const fetchPassword = async (values: any) => {
-  const response = await axios.post(
-    "http://localhost:8080/api/members/find-pw",
-    {
-      name: values.name,
-      phone: values.phone,
-      userId: values.userId,
-      verificationCode: values.verificationCode,
-    }
-  );
+  const response = await axios.post(apiUrl + "/api/members/find-pw", {
+    name: values.name,
+    phone: values.phone,
+    userId: values.userId,
+    verificationCode: values.verificationCode,
+  });
   console.log("Server Response:", response.data); // 서버 응답 확인용 콘솔 로그
   return response.data;
 };
