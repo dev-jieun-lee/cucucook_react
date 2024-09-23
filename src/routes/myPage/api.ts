@@ -251,7 +251,7 @@ export const fetchMyWrites = async (
     // 여기서 boardDivision을 로깅합니다.
     console.log("Fetching writes with boardDivision:", boardDivision);
 
-    const response = await axios.get(`/api/mypage/getMyBoards`, {
+    const response = await axios.get(`${BASE_URL}/getMyBoards`, {
       params: {
         memberId,
         page,
@@ -312,3 +312,16 @@ export async function changePasswordByUser(
     throw error;
   }
 }
+
+// 회원 활동 통계 정보 가져오기
+export const fetchActivityStats = async (memberId: number) => {
+  try {
+    const response = await axios.get(`/api/mypage/getActivityStats`, {
+      params: { memberId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching activity stats:", error);
+    throw error;
+  }
+};
