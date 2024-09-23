@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import {
@@ -15,166 +15,145 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
-import { login, increaseFailedAttempts } from "../api";
+import { login } from "../api";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Cookies from "js-cookie";
+import { AxiosError } from "axios";
+import { useAuth } from "../../../auth/AuthContext";
 
 const MySwal = withReactContent(Swal);
 
-// 쿠키 저장 및 삭제 처리 함수
-const handleCookies = (userId: string, saveId: boolean) => {
-  if (saveId) {
-    Cookies.set("userId", userId, { expires: 7 }); // 아이디 저장
-    Cookies.set("saveId", "true", { expires: 7 }); // 체크박스 상태 저장
-  } else {
-    Cookies.remove("userId"); // 아이디 삭제
-    Cookies.remove("saveId"); // 체크박스 상태 삭제
-  }
+type LoginProps = {
+  isDarkMode: boolean;
 };
 
-// 로그인 실패 시도와 잠금 상태를 관리하는 컴포넌트
-function Login({ isDarkMode }: { isDarkMode: boolean }) {
-  const { t } = useTranslation(); // 번역 훅
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태
-  const [saveId, setSaveId] = useState(false); // 아이디 저장 체크박스 상태
-  const [loginError, setLoginError] = useState<string | null>(null); // 로그인 오류 메시지
-  const [loginAttempts, setLoginAttempts] = useState(0); // 로그인 시도 횟수
-  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null); // 잠금 타이머
-  const [lockoutMessage, setLockoutMessage] = useState<string | null>(null); // 잠금 메시지
-  const navigate = useNavigate(); // 페이지 이동 훅
-  const location = useLocation(); // 현재 위치 훅
+function Login({ isDarkMode }: LoginProps) {
+  const { t } = useTranslation();
+  const { setUser, setLoggedIn } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [saveId, setSaveId] = useState(
+    () => localStorage.getItem("saveId") === "true"
+  );
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockoutTimer, setLockoutTimer] = useState<number | null>(null);
+  const remainingTimeRef = useRef<{ minutes: number; seconds: number }>({
+    minutes: 0,
+    seconds: 0,
+  });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const initialRender = useRef(true);
 
   const formik = useFormik({
     initialValues: {
-      userId: "",
+      userId: localStorage.getItem("userId") || "",
       password: "",
     },
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values) => {
       if (lockoutTimer && lockoutTimer > 0) {
-        // 잠금 상태일 경우
-        setLoginError(lockoutMessage || ""); // 잠금 메시지 설정
         MySwal.fire({
           title: t("members.login_failed"),
-          text: lockoutMessage || "", // 잠금 메시지
+          text: t("locked"), // 'locked' 메시지만 출력
           icon: "warning",
           confirmButtonText: t("alert.ok"),
         });
-        console.log("로그인 실패 - 잠금 상태");
+
         return;
       }
 
       try {
-        const data = await login(values); // 로그인 API 호출
-        if (data.token) {
-          // 로그인 성공 시
-          handleCookies(values.userId, saveId); // 쿠키 설정
-          const from = location.state?.from || "/"; // 이전 페이지로 이동
+        const data = await login(values);
+        if (data && data.token) {
+          handleSaveId(values.userId, saveId);
+          setUser({
+            userId: data.userId,
+            name: data.name,
+            role: data.role,
+            memberId: data.memberId,
+          });
+          setLoggedIn(true);
+
+          const from = location.state?.from || "/";
           navigate(from);
-          setLoginAttempts(0); // 로그인 성공 시 실패 횟수 초기화
-          setLockoutMessage(null); // 메시지 초기화
-          console.log("로그인 성공");
+          setLoginAttempts(0);
         } else {
-          throw new Error("로그인 실패"); // 로그인 실패
+          throw new Error(t("members.login_failed"));
         }
       } catch (error) {
-        const newAttempts = loginAttempts + 1; // 로그인 시도 횟수 증가
-        setLoginAttempts(newAttempts);
+        const axiosError = error as AxiosError;
+        if (axiosError.response && axiosError.response.status >= 500) {
+          MySwal.fire({
+            title: t("error.server_error"),
+            text: t("alert.server_error"),
+            icon: "error",
+            confirmButtonText: t("alert.ok"),
+          });
+        } else {
+          const newAttempts = loginAttempts + 1;
+          setLoginAttempts(newAttempts);
 
-        let alertMessage = t("alert.attempt");
+          let alertMessage = t("alert.attempt");
+          if (newAttempts === 3) {
+            alertMessage = t("alert.attempt_3");
+          } else if (newAttempts === 4) {
+            alertMessage = t("alert.attempt_4");
+          } else if (newAttempts >= 5) {
+            const lockoutDuration = 10 * 60; // 10분
+            setLockoutTimer(lockoutDuration);
+            remainingTimeRef.current = {
+              minutes: Math.floor(lockoutDuration / 60),
+              seconds: lockoutDuration % 60,
+            };
+            alertMessage = t("alert.locked_time");
+          }
 
-        if (newAttempts === 3) {
-          alertMessage = t("alert.attempt_3");
-        } else if (newAttempts === 4) {
-          alertMessage = t("alert.attempt_4");
-        } else if (newAttempts >= 5) {
-          const additionalLockoutTime = 5 * 60; // 5분 추가 잠금
-          setLockoutTimer((prev) => (prev || 10 * 60) + additionalLockoutTime); // 10분 기본 잠금 + 추가 5분
-          alertMessage = t("alert.locked");
+          setLoginError(alertMessage);
+          MySwal.fire({
+            title: t("members.login_failed"),
+            text: alertMessage,
+            icon: "warning",
+            confirmButtonText: t("alert.ok"),
+          });
         }
-
-        increaseFailedAttempts(values.userId); // 실패 횟수 증가 API 호출
-        console.error("로그인 오류: ", error);
-
-        MySwal.fire({
-          title: t("members.login_failed"),
-          text: alertMessage,
-          icon: "warning",
-          confirmButtonText: t("alert.ok"),
-        });
-
-        setLoginError(alertMessage); // 로그인 오류 메시지 설정
-        console.log("로그인 실패 - 시도 횟수: ", newAttempts);
       }
     },
   });
 
-  // 로그인 시 저장된 아이디 및 체크박스 상태 불러오기
+  // 타이머 줄이기 및 로그인 페이지 업데이트
   useEffect(() => {
-    const savedId = Cookies.get("userId") || ""; // 저장된 아이디 읽기
-    const shouldSaveId = Cookies.get("saveId") === "true"; // 체크박스 상태 읽기
-    setSaveId(shouldSaveId);
-    if (savedId && shouldSaveId) {
-      formik.setFieldValue("userId", savedId); // 저장된 아이디를 폼에 설정
-    }
-  }, [formik]);
-
-  // 체크박스 상태에 따라 쿠키 저장 및 삭제
-  useEffect(() => {
-    handleCookies(formik.values.userId, saveId); // 체크박스 상태에 따라 쿠키 설정 및 삭제
-  }, [saveId]); // saveId가 변경될 때만 실행
-
-  // 잠금 타이머 처리
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-
     if (lockoutTimer && lockoutTimer > 0) {
-      timer = setInterval(() => {
-        setLockoutTimer((prev) => {
-          if (prev === null || prev <= 0) {
-            clearInterval(timer);
-            setLockoutMessage(null); // 타이머 종료 시 메시지 초기화
-            console.log("타이머 종료");
-            return null;
-          }
-          console.log("타이머 감소: ", prev);
-          return prev - 1;
-        });
-      }, 1000); // 1초마다 감소
-    }
+      const interval = setInterval(() => {
+        setLockoutTimer((prev) =>
+          prev !== null && prev > 0 ? prev - 1 : null
+        );
 
-    return () => {
-      if (timer) {
-        clearInterval(timer); // 컴포넌트 언마운트 시 타이머 정리
-      }
-    };
+        // 남은 시간을 Ref로 업데이트, 두 자릿수로 표시
+        remainingTimeRef.current = {
+          minutes: Math.floor(lockoutTimer! / 60),
+          seconds: lockoutTimer! % 60,
+        };
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
   }, [lockoutTimer]);
 
-  // 잠금 타이머에 따른 메시지 업데이트
+  // 아이디 저장 상태 변경 처리
   useEffect(() => {
-    if (lockoutTimer !== null && lockoutTimer > 0) {
-      // 남은 시간 계산
-      const minutes = Math.floor(lockoutTimer / 60);
-      const seconds = lockoutTimer % 60;
-
-      // 메시지 구성
-      const timeMessage =
-        t("alert.locked", { minutes, seconds }) + " " + t("alert.try_again");
-      setLockoutMessage(timeMessage); // 메시지 상태 업데이트
-      console.log("타이머 메시지 업데이트: ", timeMessage);
-    } else {
-      setLockoutMessage(null); // 타이머가 없으면 메시지 초기화
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
     }
-  }, [lockoutTimer, t]);
+    handleSaveId(formik.values.userId, saveId);
+  }, [saveId, formik.values.userId]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // 영어와 숫자만 허용
-    const value = event.target.value;
-    const filteredValue = value.replace(/[^a-zA-Z0-9]/g, "");
-    formik.setFieldValue("userId", filteredValue); // 필터링된 값 설정
-  };
+  // UI에서 두 자릿수로 포맷된 초를 표시
+  const formatSeconds = (seconds: number) =>
+    seconds < 10 ? `0${seconds}` : seconds;
 
   return (
     <Wrapper>
@@ -191,9 +170,10 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               id="userId"
               label={t("members.id")}
               value={formik.values.userId}
-              onChange={handleInputChange} // 필터링된 입력값을 설정
+              onChange={formik.handleChange}
             />
           </FormControl>
+
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
             <InputLabel htmlFor="password">{t("members.password")}</InputLabel>
             <OutlinedInput
@@ -205,8 +185,8 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={() => setShowPassword((show) => !show)}
-                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => setShowPassword(!showPassword)}
+                    onMouseDown={(e) => e.preventDefault()}
                     edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -216,28 +196,27 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
               label={t("members.password")}
             />
           </FormControl>
+
           <div className="save-id">
             <FormControlLabel
-              className="id-chk"
               control={
                 <Checkbox
                   checked={saveId}
-                  onChange={(event) => {
-                    // 체크박스 상태가 변경되면, 상태를 업데이트하고 쿠키도 변경함
-                    const newSaveId = event.target.checked;
-                    setSaveId(newSaveId);
-                    handleCookies(formik.values.userId, newSaveId);
-                  }}
+                  onChange={(e) => setSaveId(e.target.checked)}
                 />
               }
               label={t("members.save_id")}
             />
           </div>
 
-          {/* 잠금 안내 문구 추가 */}
-          {lockoutMessage && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {lockoutMessage}
+          {/* 로그인 버튼 위에 남은 시간 안내 표시 */}
+          {lockoutTimer && lockoutTimer > 0 && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {t("alert.locked_time")}{" "}
+              {t("alert.try_again", {
+                minutes: remainingTimeRef.current.minutes,
+                seconds: formatSeconds(remainingTimeRef.current.seconds),
+              })}
             </Typography>
           )}
 
@@ -247,7 +226,7 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
             variant="contained"
             type="submit"
             fullWidth
-            disabled={!!lockoutTimer && lockoutTimer > 0} // 잠금 상태에서 버튼 비활성화
+            disabled={!!lockoutTimer && lockoutTimer > 0}
           >
             {t("members.login")}
           </Button>
@@ -255,16 +234,14 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 
         <ButtonArea>
           <StyledAnchor to="/login/findId">
-            {t("members.finding_id") + "     "}
+            {t("members.finding_id")}
           </StyledAnchor>
-          |
+          <span />
           <StyledAnchor to="/login/findPw">
-            {"     " + t("members.finding_pw") + "     "}
+            {t("members.finding_pw")}
           </StyledAnchor>
-          |
-          <StyledAnchor to="/signup/intro">
-            {"     " + t("members.join")}
-          </StyledAnchor>
+          <span />
+          <StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
         </ButtonArea>
       </LoginWrapper>
     </Wrapper>
@@ -272,3 +249,13 @@ function Login({ isDarkMode }: { isDarkMode: boolean }) {
 }
 
 export default Login;
+
+function handleSaveId(userId: string, saveId: boolean) {
+  if (saveId) {
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("saveId", "true");
+  } else {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("saveId");
+  }
+}

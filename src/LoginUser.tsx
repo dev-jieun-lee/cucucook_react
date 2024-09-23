@@ -21,7 +21,7 @@ function LoginUser() {
   const [logoutError, setLogoutError] = useState<string | null>(null); //로그아웃 오류 메시지 상태
   const navigate = useNavigate(); // 페이지 이동 함수
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,6 +29,7 @@ function LoginUser() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
 
   //로그아웃 api 호출
   const {

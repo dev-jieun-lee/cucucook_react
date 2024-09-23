@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -13,31 +13,30 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useFormik } from "formik";
-import {
-  useSendEmailVerificationCode,
-  useVerifyEmailCode,
-  useFetchPassword,
-} from "../api"; // API 훅 가져오기
+import { useFetchPassword } from "../api"; // 비밀번호 찾기 API 훅 사용
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper } from "./LoginStyle";
 import { useSearchParams, Link } from "react-router-dom";
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import { useEmailVerification } from "../../../hooks/useEmailVerification"; // 인증 관련 훅 가져오기
 
 function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialId = searchParams.get("id") || "";
+  const {
+    verificationCode,
+    setVerificationCode,
+    isCodeSent,
+    isCodeVerified, // 여기서 isCodeVerified 사용
+    handleSendCode,
+    handleVerifyCode,
+    verificationResult,
+    timer,
+  } = useEmailVerification();
 
-  const [verificationTimeout, setVerificationTimeout] = useState<number | null>(
-    null
-  );
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [showVerificationBox, setShowVerificationBox] = useState(false);
-  const [timer, setTimer] = useState<number>(0);
   const [resultVisible, setResultVisible] = useState<boolean>(false);
-  const [isVerificationSuccess, setIsVerificationSuccess] = useState(false); // 인증 성공 상태
-
-  const sendVerificationCodeMutation = useSendEmailVerificationCode();
-  const verifyCodeMutation = useVerifyEmailCode();
+  const [loginError, setLoginError] = useState<string | null>(null);
   const fetchPasswordMutation = useFetchPassword(); // 비밀번호 찾기 API 훅 사용
 
   const formik = useFormik({
@@ -52,82 +51,32 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
       if (!values.name) errors.name = t("members.name_required");
       if (!values.email) errors.email = t("members.email_required");
       if (!values.userId) errors.userId = t("members.id_required");
-      if (showVerificationBox && !values.verificationCode)
+      if (isCodeSent && !values.verificationCode)
         errors.verificationCode = t("members.verification_code_required");
       return errors;
     },
     onSubmit: (values) => {
       fetchPasswordMutation.mutate(values, {
         onSuccess: (data) => {
-          console.log("비밀번호 찾기 성공:", data);
-          setResultVisible(true);
-          setLoginError(null);
+          if (data.success) {
+            setResultVisible(true);
+            setLoginError(null);
+          } else {
+            setResultVisible(true);
+            setLoginError(data.message || t("members.unexpected_error"));
+          }
         },
         onError: (error) => {
           setResultVisible(true);
-          setLoginError(t("members.no_member_info"));
+          // error 타입을 명시적으로 any로 캐스팅하여 사용
+          const errorMessage =
+            (error as any).response?.data?.message ||
+            t("members.no_member_info");
+          setLoginError(errorMessage);
         },
       });
     },
   });
-
-  const handleVerifyClick = () => {
-    if (formik.values.name && formik.values.email && formik.values.userId) {
-      sendVerificationCodeMutation.mutate(formik.values.email, {
-        onSuccess: () => {
-          setShowVerificationBox(true);
-          setVerificationTimeout(Date.now() + 60000);
-          setTimer(60);
-          setLoginError(null);
-        },
-        onError: () => {
-          setLoginError(t("members.verification_error"));
-        },
-      });
-    } else {
-      setLoginError(t("members.name_or_phone_or_id_required"));
-    }
-  };
-
-  const handleConfirmClick = () => {
-    if (!formik.values.verificationCode) {
-      setLoginError(t("members.verification_code_required"));
-    } else {
-      verifyCodeMutation.mutate(
-        {
-          email: formik.values.email,
-          code: formik.values.verificationCode,
-        },
-        {
-          onSuccess: () => {
-            setIsVerificationSuccess(true);
-            setLoginError(null);
-          },
-          onError: () => {
-            setLoginError(t("members.verification_failed"));
-          },
-        }
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (verificationTimeout) {
-      const interval = setInterval(() => {
-        if (Date.now() > verificationTimeout) {
-          clearInterval(interval);
-          setVerificationTimeout(null);
-          setTimer(0);
-        } else {
-          setTimer(
-            Math.max(0, Math.floor((verificationTimeout - Date.now()) / 1000))
-          );
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [verificationTimeout]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -141,9 +90,9 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
     <Wrapper>
       <LoginWrapper>
         <div className="title">
-          <Typography variant="h6">{t("members.find_pw")}</Typography>
+          <PersonSearchIcon className="title-icon" />
+          <span>{t("members.find_pw")}</span>
         </div>
-
         <form className="form" onSubmit={formik.handleSubmit}>
           <FormControl
             className="input-form"
@@ -186,35 +135,44 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
           </FormControl>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <FormControl
-              className="input-form"
-              sx={{ m: 1, flexGrow: 1 }}
-              variant="outlined"
-              error={!!formik.errors.email}
-            >
-              <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
-              <OutlinedInput
-                id="email"
-                name="email"
-                label={t("members.email")}
-                value={formik.values.email}
-                onChange={formik.handleChange}
-              />
-              {formik.errors.email && (
-                <FormHelperText error>{formik.errors.email}</FormHelperText>
-              )}
-            </FormControl>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ flexShrink: 0 }}
-              onClick={handleVerifyClick}
-            >
-              {t("members.verify")}
-            </Button>
+              <FormControl
+                sx={{ flex: 8, m: 1 }}
+                className="input-form"
+                variant="outlined"
+                error={!!formik.errors.email}
+              >
+                <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
+                <OutlinedInput
+                  className="email-input"
+                  id="email"
+                  name="email"
+                  label={t("members.email")}
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                />
+                {formik.errors.email && (
+                  <FormHelperText error>{formik.errors.email}</FormHelperText>
+                )}
+              </FormControl>
+              <Button
+                sx={{ flex: 2 , m : 0}} 
+                className="email-btn"
+                color="secondary"
+                variant="outlined"
+                onClick={() => handleSendCode(formik.values.email)}
+                fullWidth
+                disabled={
+                  !formik.values.name ||
+                  !formik.values.email ||
+                  !formik.values.userId ||
+                  isCodeSent
+                } // 이름, 이메일, ID가 모두 입력되지 않으면 버튼 비활성화
+              >
+                {t("members.send_code")}
+              </Button>
           </Box>
 
-          {showVerificationBox && (
+          {isCodeSent && (
             <>
               <Box
                 sx={{
@@ -226,7 +184,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               >
                 <FormControl
                   className="input-form"
-                  sx={{ m: 1, flexGrow: 1 }}
+                  sx={{ flex: 8, m: 1 }}
                   variant="outlined"
                   error={!!formik.errors.verificationCode}
                 >
@@ -237,8 +195,8 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                     id="verificationCode"
                     name="verificationCode"
                     label={t("members.verification_code")}
-                    value={formik.values.verificationCode}
-                    onChange={formik.handleChange}
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
                     inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                     endAdornment={
                       <InputAdornment position="end">
@@ -255,28 +213,33 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                   )}
                 </FormControl>
                 <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ flexShrink: 0 }}
-                  onClick={handleConfirmClick}
+                  className="email-btn"
+                  color="secondary"
+                  variant="outlined"
+                  sx={{ flex: 2 , m : 0}} 
+                  onClick={() =>
+                    handleVerifyCode(formik.values.email, verificationCode)
+                  }
+                  disabled={isCodeVerified}
                 >
                   {t("members.confirmed")}
                 </Button>
               </Box>
-              {isVerificationSuccess && (
-                <Typography variant="body2" color="green" sx={{ mt: 1 }}>
-                  {t("members.verification_success")}
+              {verificationResult && (
+                <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                  {verificationResult}
                 </Typography>
               )}
             </>
           )}
 
           <Button
+            className="submit-btn"
             variant="contained"
             color="primary"
             type="submit"
             sx={{ mt: 2 }}
-            disabled={!isVerificationSuccess || fetchPasswordMutation.isLoading}
+            disabled={!isCodeVerified || fetchPasswordMutation.isLoading}
           >
             {t("members.find_pw")}
           </Button>

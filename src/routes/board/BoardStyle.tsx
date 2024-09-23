@@ -1,3 +1,4 @@
+import { Button, Stack } from "@mui/material";
 import styled from "styled-components";
 
 export const SearchArea = styled.div`
@@ -13,31 +14,32 @@ export const SearchArea = styled.div`
 
 export const ContentsArea = styled.div`
   margin: 20px auto;
-  margin-bottom: 100px;
+  margin-bottom: 100px;;
   width: 80%;
-  .accordion {
-    background: none;
+  .accordion{
+    background : none;
     box-shadow: none;
     border-radius: 0;
     margin: 0;
-    &:first-child {
+    &:first-child{
       border-top: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
     }
-    &:last-child {
+    &:last-child{
       border-bottom: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
-    }
+    } */
   }
   .summary {
     &:hover {
-      .title {
+      .title{
         font-weight: 600;
       }
     }
 
     /* Accordion이 열렸을 때 적용되는 스타일 */
     &.Mui-expanded {
+      color: ${(props) => props.theme.textColor};
       font-weight: 900;
       border-top: 1px solid;
       border-bottom: 1px solid;
@@ -46,11 +48,11 @@ export const ContentsArea = styled.div`
     }
   }
 
-  .detail {
+  .detail{
     /* background-color: ${(props) => props.theme.accordionColor}; */
     text-align: start;
     padding: 20px 30px;
-    .btn-area {
+    .btn-area{
       text-align: right;
       .update-btn {
         margin-right: 10px;
@@ -66,6 +68,17 @@ export const ContentsArea = styled.div`
     background: none;
     .head {
       text-align: center;
+      /* .no-cell{
+        width: 20px;
+      }
+      .category-cell{
+        width: 150px;
+      }
+      .title-cell{
+        width: 50%;
+        text-align: center;
+        background-color: pink;
+      } */
     }
     .row {
       text-align: center;
@@ -79,9 +92,9 @@ export const ContentsArea = styled.div`
       color: ${(props) => props.theme.mainColor};
     }
   }
-  .pagination {
+  .pagination{
     margin: 15px;
-    .pagination-btn {
+    .pagination-btn{
       margin: 0 auto;
     }
   }
@@ -95,8 +108,9 @@ export const AccordionTitle = styled.div`
     margin-bottom: 5px;
     .category {
       display: inline-block;
+      margin-right: 30px;
       width: 130px;
-      text-align: left;
+      text-align: center;
     }
     .q {
       font-weight: bold;
@@ -132,8 +146,9 @@ export const CustomCategory = styled.span`
 export const TitleArea = styled.div`
   display: flex;
   margin: 50px auto 0;
-  width: 80%;
-  height: 60px;
+  width: 100%;
+  min-height: 60px;
+  max-height: 60px;
   border-top: 1px solid;
   border-bottom: 1px solid;
   border-color: ${(props) => props.theme.navBorderColor};
@@ -156,16 +171,39 @@ export const TitleArea = styled.div`
   }
 `;
 export const DetailContents = styled.div`
-  width: 80%;
+  width: 100%;
+  /* flex-grow: 1;  */
+  min-height: 560px;
   margin: 0 auto;
   margin-bottom: 20px;
   padding: 20px 15px;
-  min-height: 500px;
   border-bottom: 1px solid;
   border-color: ${(props) => props.theme.navBorderColor};
   .board-contents {
     float: left;
   }
+`;
+export const QnaContentsArea = styled.div`
+  width: 100%;
+  .board-contents {
+    width: 100%;
+    text-align: left;
+    padding: 10px 20px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow: auto;
+  }
+  .btn-area {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid;
+    border-color: ${(props) => props.theme.navBorderColor};
+  }
+`;
+
+export const AnswerWrap = styled.div`
+  margin-top: -100px;
 `;
 
 export const BoardButtonArea = styled.div`
@@ -182,7 +220,7 @@ export const BoardButtonArea = styled.div`
 `;
 
 export const TitleInputArea = styled.div`
-  width: 81%;
+  width: 100%;
   margin: 50px auto 20px;
   display: flex;
   justify-content: space-between;

@@ -20,6 +20,16 @@ export async function getBoard(id: any) {
   return response.data;
 }
 
+//게시판 답글 포함 상세 조회
+export async function getBoardWithReplies(id: any) {
+  const response = await axios.get(`${BASE_URL}/getBoardWithReplies`, {
+    params: {
+      boardId: id,
+    },
+  });
+  return response.data;
+}
+
 //게시판 등록
 export async function insertBoard(form: any) {
   const response = await axios.post(`${BASE_URL}/insertBoard`, form);
