@@ -124,6 +124,7 @@
     "new_password": "새 비밀번호",
     "confirm_new_password": "새 비밀번호 확인",
     "save_changes": "변경 사항 저장",
+    "pw_save_changes": "비밀번호 변경",
     "cancel": "취소",
     "change_password": "비밀번호 변경",
     "kakao_login": "카카오 로그인",

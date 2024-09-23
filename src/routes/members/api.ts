@@ -201,3 +201,29 @@ export const useCheckUserInfoExists = () =>
     ({ name, email, id }: { name: string; email: string; id: string }) =>
       checkUserInfoExists(name, email, id)
   );
+
+// 회원 정보를 가져오는 API 호출 함수
+export async function getMember(memberId: string) {
+  console.log(`회원 정보 조회 요청: memberId=${memberId}`); // 요청 로그
+  try {
+    const response = await axios.get(`${BASE_URL}/getMember`, {
+      params: { memberId },
+    });
+
+    console.log("서버 응답 상태 코드:", response.status); // 응답 상태 코드 로그
+    console.log("서버 응답 헤더:", response.headers); // 응답 헤더 로그
+    console.log("회원 정보 조회 성공:", response.data); // 응답 성공 로그
+
+    return response.data; // 전체 회원 정보를 반환
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // Axios 에러 객체일 경우
+      console.error("Axios 에러 발생:", error.response?.data);
+      console.error("응답 상태 코드:", error.response?.status); // 응답 상태 코드 로그
+    } else {
+      // 기타 에러
+      console.error("회원 정보 조회 중 에러 발생:", error);
+    }
+    throw error; // 에러 발생 시 throw
+  }
+}
