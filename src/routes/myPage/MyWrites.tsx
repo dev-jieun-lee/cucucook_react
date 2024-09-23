@@ -18,7 +18,6 @@ import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { fetchMyWrites } from "./api";
 import { getBoardCategoryList } from "../board/api";
-//mport { getRecipeCategoryList } from "../recipe/api";
 import { useAuth } from "../../auth/AuthContext";
 
 interface Write {
@@ -36,27 +35,23 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
   const { user } = useAuth();
   const memberId = user ? user.memberId.toString() : null;
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [board_division, setBoardDivision] = useState("NOTICE"); // 기본값을 빈 문자열로 설정
+  const [board_division, setBoardDivision] = useState<string>("NOTICE"); // 기본값 NOTICE로 설정
   const [writes, setWrites] = useState<Write[]>([]);
   const [categories, setCategories] = useState<any[]>([]); // 카테고리 목록 상태 추가
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false); // 카테고리 로드 상태
 
-  const loadWrites = async (currentPage: number) => {
-    if (!memberId) return;
+  const loadWrites = async (currentPage: number, division: string) => {
+    if (!memberId || !division) return;
 
     console.log(
-      "Fetching data with memberId:",
+      "Fetching writes with memberId:",
       memberId,
       "page:",
       currentPage,
       "board_division:",
-      board_division
+      division
     );
-    const response = await fetchMyWrites(
-      memberId,
-      currentPage,
-      5,
-      board_division
-    );
+    const response = await fetchMyWrites(memberId, currentPage, 5, division);
     console.log("Response data for page", currentPage, ":", response);
 
     if (currentPage === 0) {
@@ -66,26 +61,54 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
     }
   };
 
+  const loadCategoriesAndWrites = async () => {
+    const params = {
+      search: "",
+      start: "",
+      display: "",
+    };
+    const response = await getBoardCategoryList(params);
+    console.log(response.data);
+
+    const filteredCategories = response.data.filter(
+      (category: any) =>
+        category.boardCategoryId && category.boardCategoryId.startsWith("BC")
+    );
+
+    if (filteredCategories.length > 0) {
+      setCategories(filteredCategories);
+      setCategoriesLoaded(true); // 카테고리 로드 완료 상태 설정
+      const defaultBoardDivision = "NOTICE";
+      setBoardDivision(defaultBoardDivision);
+
+      await loadWrites(0, defaultBoardDivision); // 기본 카테고리로 게시글 로드
+    } else {
+      setCategories([]);
+      setBoardDivision(""); // 필터링된 결과가 없을 때는 셀렉트박스 초기화
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // 페이지 진입 시 카테고리 및 게시글을 로드
   useEffect(() => {
-    if (memberId) {
-      loadWrites(0);
-    }
+    loadCategoriesAndWrites();
   }, [memberId]);
 
   useEffect(() => {
-    loadWrites(0);
-  }, [board_division]);
+    console.log("Categories on change:", categories);
+    console.log("Current board_division:", board_division);
+  }, [categories, board_division]);
 
   const handleboardDivisionChange = (event: SelectChangeEvent<string>) => {
     const newBoardDivision = event.target.value;
     if (newBoardDivision !== board_division) {
       console.log("셀렉박스 선택값:", newBoardDivision);
       setBoardDivision(newBoardDivision);
-      setWrites([]);
+      setWrites([]); // 선택한 카테고리에 따라 게시물 목록 초기화 후 새로 로드
+      loadWrites(0, newBoardDivision); // 새로운 카테고리로 게시글 로드
     }
   };
 
@@ -114,48 +137,17 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const loadCategories = async () => {
-    const params = {
-      search: "",
-      start: "",
-      display: "",
-    };
-    const response = await getBoardCategoryList(params);
-    console.log(response.data);
-
-    // board_category_id가 'BC'로 시작하는 카테고리들 필터링
-    const filteredCategories = response.data.filter(
-      (category: any) =>
-        category.boardCategoryId && category.boardCategoryId.startsWith("BC")
-    );
-
-    if (filteredCategories.length > 0) {
-      const boardDivision = filteredCategories[0].boardDivision; // 첫 번째 카테고리의 board_division 값 가져오기
-      console.log("board_division:", boardDivision);
-
-      // 필터링된 카테고리와 board_division을 상태로 설정
-      setCategories(filteredCategories);
-      setBoardDivision(boardDivision); // 첫 번째 필터링된 카테고리의 board_division 값을 설정
-    } else {
-      setCategories([]);
-      setBoardDivision(""); // 필터링된 결과가 없을 때는 셀렉트박스 초기화
-    }
-  };
-
-  // 페이지 진입 시 게시글 버튼을 자동으로 클릭
-  useEffect(() => {
-    handlePostButtonClick();
-  }, []);
-
   const handlePostButtonClick = async () => {
-    setBoardDivision(""); // 셀렉트박스 초기화
-    await loadCategories(); // 게시글 버튼 클릭 시 카테고리 목록 로드
+    console.log("게시글 버튼 클릭");
+    setWrites([]); // 리스트 초기화
+    await loadCategoriesAndWrites(); // 게시글 버튼 클릭 시 카테고리 및 게시글 로드
   };
 
   const handleRecipeButtonClick = () => {
     console.log("레시피 버튼 클릭");
     setWrites([]); // 리스트 초기화
     setBoardDivision(""); // 셀렉트박스 초기화
+    // 레시피 관련 로직 추가 필요
   };
 
   return (
@@ -176,7 +168,7 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
             </Button>
           </Box>
 
-          {/* 셀렉트 박스 및 버튼 */}
+          {/* 게시글, 레시피 버튼 및 셀렉트 박스 */}
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
             <Button
               variant="contained"
@@ -189,20 +181,25 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
               레시피
             </Button>
             <Select
-              value={board_division}
+              value={board_division} // board_division 값을 직접 설정
               onChange={handleboardDivisionChange}
               displayEmpty
               inputProps={{ "aria-label": "Board categoryId Select" }}
               sx={{ marginLeft: 1 }}
             >
-              {categories.map((category) => (
-                <MenuItem
-                  key={category.boardDivision}
-                  value={category.boardDivision}
-                >
-                  {category.name}
-                </MenuItem>
-              ))}
+              {categories.map((category, index) => {
+                console.log(
+                  `Rendering MenuItem: ${category.name} with value: ${category.division}`
+                );
+                return (
+                  <MenuItem
+                    key={category.boardCategoryId}
+                    value={category.division} // division 값을 사용하여 셀렉트 박스에서 선택
+                  >
+                    {category.name}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </Box>
 
