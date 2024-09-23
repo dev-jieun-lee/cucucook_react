@@ -37,6 +37,7 @@ import RecipeProcessListInput from "./RecipeProcessListInput";
 import RecpieIngredientInputList from "./RecpieIngredientInputList";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import Loading from "../../components/Loading";
+import { useAuth } from "../../auth/AuthContext";
 
 export interface FocusableButton {
   focus: () => void;
@@ -47,6 +48,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   const currentLang = i18n.language;
   const [showScrollButton, setShowScrollButton] = useState(false);
   const { recipeId } = useParams(); //레시피 아이디 파라미터 받아오기
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
   const [touchedChanged, setTouchedChanged] = useState(false);
   const [style, setStyle] = useState<React.CSSProperties>({});
@@ -155,7 +157,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     initialValues: {
       recipeInfo: {
         recipeId: recipeId ? recipeId || null : null,
-        memberId: 1,
+        memberId: user?.memberId,
         title: recipeId ? memberRecipe?.data?.memberRecipe?.title || "" : "",
         recipeCategoryId: recipeId
           ? memberRecipe?.data?.memberRecipe?.recipeCategoryId || ""
@@ -468,7 +470,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       formik.setValues({
         recipeInfo: {
           recipeId: "",
-          memberId: 1,
+          memberId: user?.memberId,
           title: "",
           recipeCategoryId: "",
           method: "",

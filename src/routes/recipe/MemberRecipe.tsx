@@ -45,11 +45,12 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
+import { useAuth } from "../../auth/AuthContext";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
-
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
   const handleRecipeListClick = () => {
     navigate("/recipe/member_recipe_list");
@@ -60,7 +61,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const [isLike, setIsLike] = useState(false); //좋아요 상태
-  const [likeCount, setLikeCount] = useState(false); //좋아요 갯수
+  const [likeCount, setLikeCount] = useState<number>(0); //좋아요 갯수
   const scrollCommentRef = useRef<HTMLDivElement | null>(null);
 
   const customStyles = recipeCommonStyles();
@@ -104,7 +105,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   // 멤버 상세 레시피 가져오기
   const fetchMemberRecipe = async () => {
-    const params = { recipeId };
+    const params = { recipeId, memberId: user?.memberId };
     try {
       const publicRecipe = await getMemberRecipe(params);
       return publicRecipe.data;
@@ -121,8 +122,11 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   } = useQuery("memberRecipe", fetchMemberRecipe, {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
+      if (data.success) {
+        setIsLike(data?.data.isMemberRecipeLike);
+        setLikeCount(data?.data.memberRecipe.likeCount);
+      }
       setIsLoading(false);
-      setLikeCount(data.data.memberRecipe.likeCount);
     },
     onError: (err) => {
       console.error(err);
@@ -201,7 +205,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //좋아요등록
   const { mutate: insertMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: 1 };
+      const params = { recipeId: recipeId, memberId: user?.memberId };
       return insertMemberRecipeLike(params);
     },
     {
@@ -218,7 +222,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //좋아요삭제
   const { mutate: deleteMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: 1 };
+      const params = { recipeId: recipeId, memberId: user?.memberId };
       return deleteMemberRecipeLike(params);
     },
     {
@@ -291,29 +295,36 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               {t("text.detail_more")}
             </PageTitleBasic>
             <Box>
-              <Button
-                variant="contained"
-                onClick={() => handleRecipeWriteClick()}
-                sx={{
-                  marginRight: "10px",
-                  boxShadow: "none",
-                  "&:hover": {
-                    boxShadow: "none",
-                  },
-                }}
-              >
-                {t("text.update")}
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{ marginRight: "10px" }}
-                type="button"
-                color="warning"
-                aria-label="delete"
-                onClick={() => handleRecipeDeleteClick(recipeId || "")}
-              >
-                {t("text.delete")}
-              </Button>
+              {user?.memberId &&
+                (user?.role === "1" ||
+                  user?.memberId ===
+                    memberRecipe?.data.memberRecipe.member.memberId) && (
+                  <>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleRecipeWriteClick()}
+                      sx={{
+                        marginRight: "10px",
+                        boxShadow: "none",
+                        "&:hover": {
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      {t("text.update")}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{ marginRight: "10px" }}
+                      type="button"
+                      color="warning"
+                      aria-label="delete"
+                      onClick={() => handleRecipeDeleteClick(recipeId || "")}
+                    >
+                      {t("text.delete")}
+                    </Button>
+                  </>
+                )}
               <Button variant="outlined" onClick={handleRecipeListClick}>
                 {t("text.list")}
               </Button>
@@ -433,24 +444,39 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                               sx={{ height: "20px" }}
                             />
                             <Box className="recipe-eval-info">
-                              <Button variant="text" onClick={handleLikeClick}>
+                              {user?.memberId ? (
+                                <Button
+                                  variant="text"
+                                  onClick={handleLikeClick}
+                                >
+                                  <Box display="flex" alignItems="center">
+                                    {isLike ? (
+                                      <FavoriteIcon
+                                        fontSize="small"
+                                        style={{ verticalAlign: "middle" }}
+                                      />
+                                    ) : (
+                                      <FavoriteBorderIcon
+                                        fontSize="small"
+                                        style={{ verticalAlign: "middle" }}
+                                      />
+                                    )}
+                                    <Box component="span" ml={0.5}>
+                                      {likeCount}
+                                    </Box>
+                                  </Box>
+                                </Button>
+                              ) : (
                                 <Box display="flex" alignItems="center">
-                                  {isLike ? (
-                                    <FavoriteIcon
-                                      fontSize="small"
-                                      style={{ verticalAlign: "middle" }}
-                                    />
-                                  ) : (
-                                    <FavoriteBorderIcon
-                                      fontSize="small"
-                                      style={{ verticalAlign: "middle" }}
-                                    />
-                                  )}
+                                  <FavoriteBorderIcon
+                                    fontSize="small"
+                                    style={{ verticalAlign: "middle" }}
+                                  />
                                   <Box component="span" ml={0.5}>
                                     {likeCount}
                                   </Box>
                                 </Box>
-                              </Button>
+                              )}
                             </Box>
                           </Grid>
                         </Grid>
