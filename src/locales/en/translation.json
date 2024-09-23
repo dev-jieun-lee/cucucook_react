@@ -11,30 +11,30 @@
       "member": "D.I.Y. Recipe",
       "popularity": "popularity"
     },
-    "board" : {
-      "original" : "Board",
-      "notice" : "Notice",
-      "notice_detail" : "Notice details",
-      "notice_create" : "Create Notice",
-      "notice_modify" : "Modify Notice",
-      "FAQ" : "FAQ",
-      "QNA" : "Q&A",
-      "question" : "It's a question.",
-      "answer" : "Answer",
-      "is_answer" : "It's a answer.",
+    "board": {
+      "original": "Board",
+      "notice": "Notice",
+      "notice_detail": "Notice details",
+      "notice_create": "Create Notice",
+      "notice_modify": "Modify Notice",
+      "FAQ": "FAQ",
+      "QNA": "Q&A",
+      "question": "It's a question.",
+      "answer": "Answer",
+      "is_answer": "It's a answer.",
       "Q_create": "Register questions",
       "Q_modify": "Question Modified",
       "A_create": "Register answers",
       "A_modify": "Modify answer",
-      "category" : "Category",
-      "category_select" : "Select Category",
-      "notice_category" : "Notice Category",
-      "faq_category" : "FAQ Category",
-      "qna_category" : "Q&A Category",
-      "error" : {
-        "category" : "Please select a category.",
-        "title" : "Please enter a title.",
-        "contents" : "Please enter content."
+      "category": "Category",
+      "category_select": "Select Category",
+      "notice_category": "Notice Category",
+      "faq_category": "FAQ Category",
+      "qna_category": "Q&A Category",
+      "error": {
+        "category": "Please select a category.",
+        "title": "Please enter a title.",
+        "contents": "Please enter content."
       },
       "alert": {
         "delete_confirm": "Do you want to delete the post?",
@@ -45,7 +45,7 @@
         "cancel": "Are you sure you want to cancel your post?"
       }
     },
-      "mypage": {
+    "mypage": {
       "original": "My Page",
       "profile": "My Profile",
       "activity": "My Activity",
@@ -100,7 +100,7 @@
     "go_back": "Go Back",
     "writing": "Writing",
     "answer": "Answer",
-    "question" : "Question"
+    "question": "Question",
     "all_recipe": "All Recipes",
     "recipe": "Recipe",
     "public_recipe": "Public Recipe",

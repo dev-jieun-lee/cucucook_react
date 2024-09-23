@@ -1,6 +1,6 @@
 import axios from "axios";
 const apiUrl = process.env.REACT_APP_API_URL;
-const BASE_URL = apiUrl + "/board";
+const BASE_URL = apiUrl + "/api/board";
 
 //게시판 리스트 조회
 export async function getBoardList(params: any) {

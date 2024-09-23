@@ -1,5 +1,14 @@
 import { KeyboardArrowUp } from "@mui/icons-material";
-import { Box, Button, Divider, Grid, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
@@ -13,6 +22,7 @@ import {
   PageTitleBasic,
   ScrollBtnFab,
   Wrapper,
+  SearchArea,
 } from "../../styles/CommonStyles";
 import {
   SearchBox,
@@ -23,7 +33,7 @@ import {
   ThumbnailTypography,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import { SearchArea } from "../board/BoardStyle";
+import SearchIcon from "@mui/icons-material/Search";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -163,7 +173,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   return (
     <Wrapper>
-      <Box component="section">
+      <Box component="section" sx={{ width: "100%" }}>
         <TitleBox>
           <PageTitleBasic>{t("text.public_recipe")}</PageTitleBasic>
         </TitleBox>
@@ -177,6 +187,20 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyUp={handleSearchKeyUp}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      // color="primary"
+                      aria-label="toggle password visibility"
+                      onClick={handleSearch}
+                      edge="end"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </SearchArea>
 

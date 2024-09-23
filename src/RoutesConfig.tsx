@@ -16,9 +16,15 @@ const Signup = lazy(() => import("./routes/members/signUp/Signup"));
 const FindId = lazy(() => import("./routes/members/login/FindId"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
 //레시피
-const AllRecipe = lazy(() => import("./routes/recipe/AllRecipe"));
-const PublicRecipe = lazy(() => import("./routes/recipe/PublicRecipe"));
+const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
 const MemberRecipe = lazy(() => import("./routes/recipe/MemberRecipe"));
+const MemberRecipeList = lazy(() => import("./routes/recipe/MemberRecipeList"));
+const PublicRecipe = lazy(() => import("./routes/recipe/PublicRecipe"));
+const PublicRecipeList = lazy(() => import("./routes/recipe/PublicRecipeList"));
+const MemberRecipeWrite = lazy(
+  () => import("./routes/recipe/MemberRecipeWrite")
+);
+
 //보드
 const Notice = lazy(() => import("./routes/board/notice/Notice"));
 const NoticeDetail = lazy(() => import("./routes/board/notice/NoticeDetail"));
@@ -78,29 +84,57 @@ function RoutesConfig({ isDarkMode }: any) {
 
       {/* 레시피 */}
       <Route
-        path="/all_recipe"
+        path="/recipe/all_recipe_list"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <AllRecipe />
+            <AllRecipeList isDarkMode={isDarkMode} />
+          </RouteBox>
+        }
+      />
+
+      <Route
+        path="/recipe/public_recipe_list/:search?/:display?/:start?/:recipeCategoryId?"
+        element={
+          <RouteBox>
+            <RecipeSideMenu isDarkMode={isDarkMode} />
+            <PublicRecipeList isDarkMode={isDarkMode} />
           </RouteBox>
         }
       />
       <Route
-        path="/public_recipe"
+        path="/recipe/member_recipe_list/:search?/:display?/:start?/:recipeCategoryId?/:orderby?"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <PublicRecipe />
+            <MemberRecipeList isDarkMode={isDarkMode} />
           </RouteBox>
         }
       />
       <Route
-        path="/member_recipe"
+        path="/recipe/public_recipe/:search/:display/:start"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <MemberRecipe />
+            <PublicRecipe isDarkMode={isDarkMode} />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/recipe/member_recipe/:recipeId?"
+        element={
+          <RouteBox>
+            <RecipeSideMenu isDarkMode={isDarkMode} />
+            <MemberRecipe isDarkMode={isDarkMode} />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/recipe/member_recipe_write/:recipeId?"
+        element={
+          <RouteBox>
+            <RecipeSideMenu isDarkMode={isDarkMode} />
+            <MemberRecipeWrite isDarkMode={isDarkMode} />
           </RouteBox>
         }
       />
@@ -205,7 +239,7 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-      
+
       {/* 마이페이지 */}
       <Route
         path="/mypage/profile"

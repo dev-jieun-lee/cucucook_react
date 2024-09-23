@@ -132,6 +132,7 @@ export const recipeCommonStyles = () => ({
 });
 
 export const MemberRecipeView = styled.div`
+  width: 100%;
   .recipe-info-container {
     .recipe-info-img-container {
       width: 100%;
@@ -191,6 +192,7 @@ export const MemberRecipeView = styled.div`
 `;
 
 export const PublicRecipeView = styled.div`
+  width: 100%;
   .recipe-info-container {
     .recipe-info-img-container {
       width: 100%;
