@@ -75,8 +75,12 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
 
 
   //공지사항 페이지로 이동
-  const onClickNotice = () => {
-    navigate(`/notice`);
+  const onClickNotice = (boardId? : string) => {
+    if(boardId){
+      navigate(`/notice/${boardId}`);
+    }else{
+      navigate(`/notice`);
+    }
   };
   //레시피 페이지로 이동
   const onClickRecipe = (kind : string) => {
@@ -155,7 +159,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
           <NoticeTable>
           <div className="title">
             <CampaignIcon className="noti-icon" />
-            <span onClick={onClickNotice}>{t("menu.board.notice")}</span>
+            <span onClick={() => onClickNotice()}>{t("menu.board.notice")}</span>
           </div>
             <div className="notice-table">
               <TableContainer className="table-container" component={Paper}>
@@ -178,18 +182,18 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                           <TableRow
                             className="row"
                             key={index}
-                            // onClick={() => onClickDetail(boardItem.boardId)}
+                            onClick={() => onClickNotice(boardItem.boardId)}
                           >
-                            <TableCell>
+                            <TableCell className="cell">
                               <CustomCategory
                                 style={{ color: `${boardItem.category.color}` }}
                                 className="category"
                               >
                                 [ {boardItem.category.name} ]
                               </CustomCategory>
-                            </TableCell>
-                            <TableCell>{boardItem.title}</TableCell>
-                            <TableCell>
+                            </TableCell >
+                            <TableCell className="cell">{boardItem.title}</TableCell>
+                            <TableCell className="cell">
                               {moment(boardItem.udtDt).format("YYYY-MM-DD")}
                             </TableCell>
                           </TableRow>
