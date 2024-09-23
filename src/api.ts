@@ -33,7 +33,6 @@ export async function getMemberRecipeList(params: any) {
 
 // 공공 레시피 상세조회
 export async function getPublicRecipe(params: any) {
-  console.log("????");
   const response = await axios.get(`${BASE_URL}/getPublicRecipe`, {
     params: params,
   });
