@@ -1,155 +1,300 @@
-import React, { useState, ChangeEvent } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  Rating,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { PageSubTitleBasic } from "../../styles/CommonStyles";
-import { useTranslation } from "react-i18next";
-import {
-  CommentIconButton,
-  recipeCommonStyles,
-} from "../../styles/RecipeStyle";
-import { RecipeCommentList } from "../../styles/RecipeStyle";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 import ClearIcon from "@mui/icons-material/Clear";
 import EditIcon from "@mui/icons-material/Edit";
 import ReplyIcon from "@mui/icons-material/Reply";
+import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import { Box, Divider, Grid, Rating, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMutation } from "react-query";
 import { useTheme } from "styled-components";
+import Swal from "sweetalert2";
+import { deleteRecipeComment, deleteRecipeCommentHasChild } from "../../api";
+import {
+  CommentIconButton,
+  RecipeCommentList,
+  recipeCommonStyles,
+} from "../../styles/RecipeStyle";
+import RecipeCommentWriteBox from "./RecipeCommentWrite";
 
 const customStyles = recipeCommonStyles();
 
-const RecipeCommentListBox: React.FC = () => {
+const RecipeCommentListBox: React.FC<{
+  onCommentListChange: () => void;
+  commentList: any[];
+  recipeId: string;
+}> = ({ onCommentListChange, commentList, recipeId }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const [comments, setComments] = useState<string[]>([]);
-  const [input, setInput] = useState<string>("");
-  const [value, setValue] = useState<number | null>(0);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+  const [activeCommentId, setActiveCommentId] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
+  const [commentBoxStatus, setCommentBoxStatus] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
+
+  const handleDeleteCommentClick = async (
+    commentId: any,
+    hasChildComment: any
+  ) => {
+    try {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: t("text.delete"),
+        text: t("recipe.alert.delete_comment_confirm"),
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: t("text.yes"),
+        cancelButtonText: t("text.no"),
+      });
+
+      // 결과 확인 후 API 호출
+      if (result.isConfirmed) {
+        const params = {
+          recipeId: recipeId as string,
+          commentId: commentId,
+          hasChildComment: hasChildComment,
+        };
+        if (hasChildComment) {
+          // 대댓글이 있을 때 호출하는 API
+          deleteRecipeCommentHasChildMutation(params);
+        } else {
+          // 대댓글이 없을 때 호출하는 API
+          deleteRecipeCommentMutation(params);
+        }
+      }
+    } catch (error) {
+      console.error("Error", error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
   };
 
-  const handleAddComment = () => {
-    if (input.trim()) {
-      setComments([...comments, input]);
-      setInput("");
+  //댓글삭제
+  const { mutate: deleteRecipeCommentHasChildMutation } = useMutation(
+    (params: {
+      recipeId: string;
+      commentId: string;
+      hasChildComment: boolean;
+    }) => deleteRecipeCommentHasChild(params),
+    {
+      onSuccess: () => {
+        Swal.fire({
+          icon: "success",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+        onCommentListChange();
+      },
+      onError: (error) => {
+        Swal.fire({
+          icon: "error",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_error"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+      },
     }
+  );
+  //대댓글있는값삭제
+  const { mutate: deleteRecipeCommentMutation } = useMutation(
+    (params: {
+      recipeId: string;
+      commentId: string;
+      hasChildComment: boolean;
+    }) => deleteRecipeComment(params),
+    {
+      onSuccess: () => {
+        Swal.fire({
+          icon: "success",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+        onCommentListChange();
+      },
+      onError: (error) => {
+        Swal.fire({
+          icon: "error",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_error"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+      },
+    }
+  );
+
+  const handleReplyButtonClick = (commentId: string, status: string) => {
+    if (commentId === activeCommentId && status === commentBoxStatus) {
+      handleReplyCancelEdit();
+    } else {
+      setActiveCommentId(commentId);
+      setCommentBoxStatus(status);
+    }
+  };
+
+  const handleReplyCancelEdit = () => {
+    setActiveCommentId(null);
+    setCommentBoxStatus(null);
   };
 
   return (
     <RecipeCommentList>
       <Box className="comment-list-container">
         <Box className="comment-container">
-          <Box paddingBottom={2} className="comment-content-container-parents">
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                display: "grid",
-                gap: 2,
-                gridTemplateColumns: "1fr 100px",
-                "& > .MuiGrid-item": {
-                  padding: 0,
-                  margin: 0,
-                },
-                ...customStyles.resetMuiGrid,
-                paddingBottom: "10px",
-              }}
-            >
-              <Grid item className="comment-content">
-                <Box className="comment-info">
-                  <Typography
-                    className="comment-info-name"
-                    component="span"
-                    variant="subtitle1"
-                  >
-                    이름
-                  </Typography>
-                  <Typography
-                    className="comment-info-dt"
-                    component="span"
-                    variant="subtitle2"
-                  >
-                    2024.07.25 15:32
-                  </Typography>
-                </Box>
-                <Box> 내용입니당아아아아앙</Box>
-              </Grid>
-              <Grid item className="comment-icons">
-                <CommentIconButton aria-label="reply">
-                  <ReplyIcon sx={{ transform: "rotate(180deg)" }} />
-                </CommentIconButton>
-                <CommentIconButton aria-label="edit">
-                  <EditIcon />
-                </CommentIconButton>
-                <CommentIconButton aria-label="delete">
-                  <ClearIcon />
-                </CommentIconButton>
-              </Grid>
-            </Grid>
-          </Box>
-          <Box className="comment-content-container-child">
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                display: "grid",
-                gap: 2,
-                gridTemplateColumns: "30px 1fr 100px",
-                "& > .MuiGrid-item": {
-                  padding: 0,
-                  margin: 0,
-                },
-                ...customStyles.resetMuiGrid,
-                paddingBottom: "10px",
-              }}
-            >
-              <Grid>
-                <SubdirectoryArrowRightIcon
-                  fontSize="medium"
-                  sx={{ color: theme.mainColor }}
-                />
-              </Grid>
-              <Grid item className="comment-content">
-                <Box className="comment-info">
-                  <Typography
-                    className="comment-info-name"
-                    component="span"
-                    variant="subtitle1"
-                  >
-                    이름
-                  </Typography>
-                  <Typography
-                    className="comment-info-dt"
-                    component="span"
-                    variant="subtitle2"
-                  >
-                    2024.07.25 15:32
-                  </Typography>
-                </Box>
-                <Box> 내용입니당아아아아앙</Box>
-              </Grid>
-              <Grid item className="comment-icons">
-                <CommentIconButton aria-label="reply">
-                  <ReplyIcon sx={{ transform: "rotate(180deg)" }} />
-                </CommentIconButton>
-                <CommentIconButton aria-label="edit">
-                  <EditIcon />
-                </CommentIconButton>
-                <CommentIconButton aria-label="delete">
-                  <ClearIcon />
-                </CommentIconButton>
-              </Grid>
-            </Grid>
-          </Box>
+          {commentList.map((comment) => (
+            <React.Fragment key={comment.commentId}>
+              <Box
+                padding={"20px 0"}
+                className={
+                  comment.status === "0"
+                    ? "comment-content-container-parents"
+                    : "comment-content-container-child"
+                }
+              >
+                {((commentBoxStatus === "edit" &&
+                  activeCommentId !== comment.commentId) ||
+                  commentBoxStatus !== "edit") && (
+                  <>
+                    <Grid
+                      container
+                      sx={{
+                        display: "grid",
+                        gap: 2,
+
+                        gridTemplateColumns:
+                          comment.status === "0"
+                            ? "1fr 100px"
+                            : "30px 1fr 100px",
+                        "& > .MuiGrid-item": {
+                          padding: 0,
+                          margin: 0,
+                        },
+                        ...customStyles.resetMuiGrid,
+                        paddingBottom: "10px",
+                      }}
+                    >
+                      {comment.status !== "0" && (
+                        <Grid>
+                          <SubdirectoryArrowRightIcon
+                            fontSize="medium"
+                            sx={{ color: theme.mainColor }}
+                          />
+                        </Grid>
+                      )}
+                      <Grid item className="comment-content">
+                        <Box className="comment-info">
+                          <Typography
+                            className="comment-info-name"
+                            component="span"
+                            variant="subtitle1"
+                          >
+                            {comment.member.name}
+                          </Typography>
+                          <Typography
+                            className="comment-info-name"
+                            component="span"
+                            variant="subtitle1"
+                            sx={{
+                              verticalAlign: "text-top",
+                              lineHeight: 0,
+                            }}
+                          >
+                            <Rating
+                              name="read-only"
+                              value={comment.rate || 0}
+                              readOnly
+                              size="small"
+                            />
+                          </Typography>
+
+                          <Typography
+                            className="comment-info-dt"
+                            component="span"
+                            variant="subtitle2"
+                          >
+                            {comment.regDt}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          {comment.delYn === "N"
+                            ? comment.comment
+                            : t("recipe.sentence.delete_comment")}
+                        </Box>
+                      </Grid>
+                      {comment.delYn === "N" && (
+                        <>
+                          <Grid
+                            item
+                            className="comment-icons"
+                            textAlign={"right"}
+                          >
+                            {comment.status === "0" && (
+                              <>
+                                <CommentIconButton
+                                  aria-label="reply"
+                                  onClick={() =>
+                                    handleReplyButtonClick(
+                                      comment.commentId,
+                                      "reply"
+                                    )
+                                  }
+                                >
+                                  <ReplyIcon
+                                    sx={{ transform: "rotate(180deg)" }}
+                                  />
+                                </CommentIconButton>
+                              </>
+                            )}
+
+                            <CommentIconButton
+                              aria-label="edit"
+                              onClick={() =>
+                                handleReplyButtonClick(
+                                  comment.commentId,
+                                  "edit"
+                                )
+                              }
+                            >
+                              <EditIcon />
+                            </CommentIconButton>
+                            <CommentIconButton
+                              aria-label="delete"
+                              onClick={() =>
+                                handleDeleteCommentClick(
+                                  comment.commentId,
+                                  comment.hasChildComment
+                                )
+                              }
+                            >
+                              <ClearIcon />
+                            </CommentIconButton>
+                          </Grid>
+                        </>
+                      )}
+                    </Grid>
+                  </>
+                )}
+
+                {/* 활성화된 댓글 ID와 현재 댓글 ID가 같을 때만 RecipeCommentWriteBox를 표시 */}
+                {activeCommentId === comment.commentId && (
+                  <RecipeCommentWriteBox
+                    onCommentSubmit={() => {
+                      onCommentListChange();
+                      handleReplyCancelEdit(); // 댓글 작성 후 취소
+                    }}
+                    activeCommentId={activeCommentId}
+                    activeBoxStatus={commentBoxStatus}
+                    onCancel={handleReplyCancelEdit} // 취소 함수 전달
+                  />
+                )}
+              </Box>
+              <Divider />
+            </React.Fragment>
+          ))}
         </Box>
       </Box>
     </RecipeCommentList>
   );
 };
-
 export default RecipeCommentListBox;

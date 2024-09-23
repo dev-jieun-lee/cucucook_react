@@ -1,130 +1,146 @@
-import React, { useEffect, useState } from "react";
+import { KeyboardArrowUp } from "@mui/icons-material";
+import { Box, Button, Divider, Grid, Stack, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useInView } from "react-intersection-observer";
+import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "styled-components";
+import { getPublicRecipeList } from "../../api";
+import Loading from "../../components/Loading";
+import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
   ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
 import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
-} from "@mui/material";
-import {
-  TitleBox,
+  SearchBox,
+  SearchBoxContainer,
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
   ThumbnailTypography,
-  SearchBox,
-  SearchBoxContainer,
-  SearchTextField,
+  TitleBox,
 } from "../../styles/RecipeStyle";
-import { useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import { BorderBottom, KeyboardArrowUp } from "@mui/icons-material";
-
-const thumbnails = [
-  {
-    id: 1,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 2,
-    src: "https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 3,
-    src: "https://news.nateimg.co.kr/orgImg/ns/2023/10/12/NISI20231012_0020087516_web.jpg",
-    title: "누가루이고누가후이겡",
-  },
-  {
-    id: 4,
-    src: "https://cdn.thetitlenews.net/news/photo/202312/3303_7663_341.png",
-    title: "판다는 왜 귀여운 것일까 아이바오 귀엽당",
-  },
-  {
-    id: 5,
-    src: "https://img.khan.co.kr/news/2024/03/04/news-p.v1.20240303.0c4af180e49842269d2c5044819efb9a.png",
-    title: "푸바오오~~~~~~~~~~~~~~",
-  },
-  {
-    id: 6,
-    src: "https://i.namu.wiki/i/N7XtnLu7mENPBU1wMlAoOo5_w13roksendvuswR8gkFw_8SilcxCpT3kTTdzaP42jSpZAQ2-R4x3aNxaj6A3JA.webp",
-    title: "러바오도있음",
-  },
-  {
-    id: 7,
-    src: "https://ppss.kr/wp-content/uploads/2018/09/zzzzzz.jpg",
-    title:
-      "너무나ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ귀여운~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-  },
-  {
-    id: 8,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 9,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 10,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 11,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 12,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-];
+import { SearchArea } from "../board/BoardStyle";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const handleMoreViewClick = (value: string) => {
-    navigate(value);
+  const categories = ["전체", "국&찌개", "반찬", "밥", "일품", "후식"];
+  // 검색어
+  const [searchTerm, setSearchTerm] = useState("");
+  // 로딩 상태 관리
+  const [loading, setLoading] = useState(true);
+  // 무한 스크롤 시작값
+  const [start, setStart] = useState(1);
+  // 무한 스크롤 데이터가 더 있는지 체크
+  const [hasMore, setHasMore] = useState(false);
+  // 기존 값에 이어붙이기용
+  const [recipes, setRecipes] = useState<any[]>([]);
+  //선택된 카테고리값
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const display = 20;
+  const [message, setMessage] = useState("");
+
+  const updateMessage = (data: any) => {
+    if (data.message === "E_ADMIN") setMessage(t("CODE." + data.message));
+    else
+      setMessage(
+        data.message
+          .replace('<script type="text/javascript">alert(\'', "")
+          .replace("'); history.back();</script>", "")
+      );
   };
-  const theme = useTheme();
 
-  const categories = ["전체(27)", "한식(2)", "양식(5)", "중식(1)", "일식(19)"];
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체(27)");
+  const handleViewDetailClick = (path: string, params: string) => {
+    const pullPath = `${path}/` + params;
+    navigate(pullPath);
+  };
 
-  const orderList = [
-    t("text.recent_order"),
-    t("text.count_order"),
-    t("text.comment_order"),
-    t("text.rate_order"),
-  ];
-  const [selectedOrder, setSelectedOrder] = useState<string>(
-    t("text.recent_order")
+  //마지막 항목이 화면에 보일때 마다 새로운 페이지 데이터 로드
+  const { ref: lastItemRef, inView } = useInView({
+    threshold: 1,
+  });
+
+  useEffect(() => {
+    if (inView && hasMore) {
+      setLoading(true);
+      setStart((prevStart) => prevStart + display);
+    }
+  }, [inView, hasMore]);
+
+  // 공공 레시피 목록가져오기
+  const fetchPublicRecipeList = async () => {
+    try {
+      const params = {
+        search: searchTerm,
+        start: start,
+        display: display,
+        recipeCategoryId: selectedCategory,
+      };
+      const publicRecipeList = await getPublicRecipeList(params);
+
+      return publicRecipeList.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
+  };
+
+  const { refetch } = useQuery(
+    //쿼리키 (category, start 값이 번경되면 데이터 요청)
+    ["publicRecipeList", selectedCategory, start],
+    fetchPublicRecipeList,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setLoading(false);
+        if (data) {
+          setHasMore(data.addData?.hasMore ?? false);
+          if (data.data != null) {
+            setRecipes((prevRecipes) => [...prevRecipes, ...data.data]);
+          }
+          updateMessage(data);
+        }
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err);
+        setLoading(false);
+      },
+      keepPreviousData: true, // 페이지를 이동할 때 이전 데이터 유지
+    }
   );
 
-  const handleCategoryClick = (category: string) => {
+  // 검색시
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      //start값, more값 초기화
+      setStart(1);
+      setHasMore(true);
+      setRecipes([]);
+      await refetch();
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSearchKeyUp = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+  //카테고리 선택시
+  const handleCategoryClick = async (category: string) => {
     setSelectedCategory(category);
-    console.log(`Selected Category: ${category}`);
+    handleSearch();
   };
 
-  const handleOrderClick = (order: string) => {
-    setSelectedOrder(order);
-    console.log(`Selected order: ${order}`);
-  };
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -151,26 +167,19 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <TitleBox>
           <PageTitleBasic>{t("text.public_recipe")}</PageTitleBasic>
         </TitleBox>
+        <Divider />
         <SearchBoxContainer>
-          <SearchBox>
-            <Box
-              sx={{
-                display: "flex",
-              }}
-            >
-              <SearchTextField
-                label={t("sentence.searching")}
-                variant="outlined"
-                size="small"
-              />
-              <IconButton
-                aria-label="search"
-                sx={{ ml: 1, color: theme.mainColor, transform: "scale(1.3)" }}
-              >
-                <SearchIcon fontSize="medium" />
-              </IconButton>
-            </Box>
-          </SearchBox>
+          <SearchArea>
+            <TextField
+              className="search-input"
+              variant="standard"
+              placeholder={t("sentence.searching")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyUp={handleSearchKeyUp}
+            />
+          </SearchArea>
+
           <SearchBox>
             <Stack
               direction="row"
@@ -214,69 +223,54 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </Stack>
           </SearchBox>
         </SearchBoxContainer>
-
-        <TitleBox margin={"20px 0"}>
-          <Stack
-            direction="row"
-            flexWrap="wrap"
-            sx={{
-              "& .MuiButton-root": {
-                marginLeft: "0",
-              },
-            }}
-          >
-            {orderList.map((order) => (
-              <Button
-                key={order}
-                variant="text"
-                sx={{
-                  backgroundColor: "transparent",
-                  color:
-                    selectedOrder === order ? "primary.main" : "text.primary",
-                  "&:hover": {
-                    backgroundColor: "none",
-                    color: "primary.main",
-                  },
-                  "&:hover .hoverBox": {
-                    backgroundColor: "primary.main",
-                  },
-                }}
-                onClick={() => handleOrderClick(order)}
-              >
-                <Box
-                  className="hoverBox"
-                  sx={{
-                    display: "inline-block",
-                    width: "3px",
-                    height: "3px",
-                    borderRadius: "50%",
-                    backgroundColor:
-                      selectedOrder === order ? "primary.main" : "text.primary",
-                    marginRight: "8px",
-                  }}
-                />
-                {order}
-              </Button>
-            ))}
-          </Stack>
-        </TitleBox>
-
+        <Divider />
+        <TitleBox margin={"20px 0"}></TitleBox>
         <Grid container spacing={2}>
-          {thumbnails.map((thumbnails) => (
-            <Grid item xs={12} sm={6} md={3} key={thumbnails.id}>
-              <ThumbnailButton onClick={() => alert("클릭이벤트")}>
-                <ThumbnailBoxContainer>
-                  <ThumbnailBox
-                    src={thumbnails.src}
-                    alt={thumbnails.title}
-                  ></ThumbnailBox>
-                </ThumbnailBoxContainer>
-                <ThumbnailTypography variant="subtitle1">
-                  {thumbnails.title}
-                </ThumbnailTypography>
-              </ThumbnailButton>
+          {loading && !hasMore ? (
+            <Loading />
+          ) : recipes.length > 0 ? (
+            <>
+              {recipes.map((publicRecipeItem: any, index: number) => (
+                <Grid item xs={12} sm={6} md={3} key={index}>
+                  <ThumbnailButton
+                    onClick={() =>
+                      handleViewDetailClick(
+                        "/recipe/public_recipe",
+                        encodeURIComponent(publicRecipeItem.rcpNm) + "/1/1"
+                      )
+                    }
+                  >
+                    <Box className="thumbnail-box-wrap">
+                      <ThumbnailBoxContainer>
+                        <ThumbnailBox
+                          src={publicRecipeItem.attFileNoMk}
+                          alt={publicRecipeItem.rcpNm}
+                        ></ThumbnailBox>
+                      </ThumbnailBoxContainer>
+
+                      <Box className="thumbnail-info-box-wrap">
+                        <Box margin={"20px"}>
+                          <Box className="thumbnail-info-title-box">
+                            {publicRecipeItem.rcpNm}
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </ThumbnailButton>
+                </Grid>
+              ))}
+              {hasMore && (
+                <Grid item xs={12} sm={12} md={12}>
+                  {loading && <LoadingNoMargin />}
+                </Grid>
+              )}
+              <Box ref={lastItemRef} /> {/* 마지막 항목의 참조 */}
+            </>
+          ) : (
+            <Grid padding={"20px 0"} item xs={12} sm={12} md={12}>
+              {loading ? <Loading /> : <>{message}</>}
             </Grid>
-          ))}
+          )}
         </Grid>
       </Box>
       {showScrollButton && (

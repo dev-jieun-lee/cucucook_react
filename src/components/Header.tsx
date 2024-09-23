@@ -75,9 +75,6 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`); // 검색 결과 페이지로 이동
   };
-
-  console.log(user);
-
   return (
     <Nav className={isScrolled ? "scrolled" : ""}>
       <Col>

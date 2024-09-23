@@ -1,96 +1,314 @@
-import React, { useState, ChangeEvent } from "react";
-import { Box, Button, Grid, Rating, TextField } from "@mui/material";
-import { PageSubTitleBasic } from "../../styles/CommonStyles";
+import {
+  Box,
+  Button,
+  Grid,
+  Rating,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { recipeCommonStyles } from "../../styles/RecipeStyle";
-import { RecipeCommentWrite } from "../../styles/RecipeStyle";
+import { useMutation, useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import * as Yup from "yup";
+import {
+  getRecipeComment,
+  insertRecipeComment,
+  updateRecipeComment,
+} from "../../api";
+import {
+  RecipeCommentWrite,
+  recipeCommonStyles,
+} from "../../styles/RecipeStyle";
 
 const customStyles = recipeCommonStyles();
 
-const RecipeCommentWriteBox: React.FC = () => {
-  const { t } = useTranslation();
-  const [comments, setComments] = useState<string[]>([]);
-  const [input, setInput] = useState<string>("");
-  const [value, setValue] = useState<number | null>(0);
+interface RecipeCommentWriteBoxProps {
+  onCommentSubmit: () => void;
+  activeBoxStatus?: string | null; // 현재 박스상태
+  activeCommentId?: string | null | undefined; // 활성화된 답글/수정 comment_id가져오기
+  onCancel?: () => void;
+}
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
+  onCommentSubmit,
+  activeBoxStatus,
+  activeCommentId,
+  onCancel,
+}) => {
+  const { t } = useTranslation();
+  const { recipeId } = useParams();
+  const [commentId, setCommentId] = useState<string | null>(null);
+  const [pCommentId, setPCommentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeBoxStatus === "edit" && activeCommentId)
+      setCommentId(activeCommentId);
+    else if (activeBoxStatus === "reply" && activeCommentId)
+      setPCommentId(activeCommentId);
+    else {
+      setCommentId(null);
+      setPCommentId(null);
+    }
+  }, [activeBoxStatus, activeCommentId]);
+
+  const params = {
+    commentId: commentId,
+    recipeId: recipeId,
   };
 
-  const handleAddComment = () => {
-    if (input.trim()) {
-      setComments([...comments, input]);
-      setInput("");
+  //수정일 경우 코멘트 데이터 가져오기
+  const fetchRecipeComment = async () => {
+    try {
+      const recipeComment = await getRecipeComment(params);
+      return recipeComment.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
+  const { data: recipeComment } = useQuery(
+    ["recipeComment", commentId],
+    fetchRecipeComment,
+    { enabled: !!commentId }
+  );
+
+  // commentId 있을 경우 수정, 없을 경우 생성
+  const mutation = useMutation(
+    (values) =>
+      commentId ? updateRecipeComment(values) : insertRecipeComment(values),
+    {
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: t("text.save"),
+          text: t("menu.board.alert.save"),
+          confirmButtonText: t("text.check"),
+          timer: 1000,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
+
+        formik.resetForm();
+        onCommentSubmit();
+      },
+      onError: (error) => {
+        // 에러 처리
+      },
+    }
+  );
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      memberId: "1",
+      recipeId: recipeId,
+      commentId: commentId,
+      comment: commentId ? recipeComment?.data.comment || "" : "",
+      rate: commentId ? recipeComment?.data.rate || 0 : 0,
+      status: commentId ? recipeComment?.data.status || 0 : pCommentId ? 1 : 0,
+      pCommentId: pCommentId ? pCommentId || 0 : null,
+      name:
+        activeBoxStatus === "edit" ? recipeComment?.data.member.name || 0 : "",
+    },
+    validationSchema: Yup.object({
+      comment: Yup.string().required(t("recipe.alert.empty_comment")),
+      rate: Yup.number().min(1, t("recipe.alert.empty_rate")),
+    }),
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: (values) => {
+      if (!values.comment.trim()) {
+        Swal.fire({ icon: "warning", text: t("recipe.alert.empty_comment") });
+        return;
+      }
+      mutation.mutate(values as any);
+    },
+  });
+
+  // 버튼 렌더링 함수
+  const renderButtons = () => (
+    <Box marginTop="10px" textAlign="right">
+      <Button variant="contained" type="submit">
+        {activeBoxStatus === "reply"
+          ? t("text.comment_reply")
+          : activeBoxStatus === "edit"
+          ? t("text.comment_edit")
+          : t("text.comment_write")}
+      </Button>
+      {activeBoxStatus && (
+        <Button
+          variant="outlined"
+          sx={{ marginLeft: "10px" }}
+          onClick={onCancel}
+        >
+          {t("text.comment_cancel")}
+        </Button>
+      )}
+    </Box>
+  );
+
   return (
     <RecipeCommentWrite>
-      <Box paddingBottom={2}>
-        <PageSubTitleBasic>{t("text.comment")}(10)</PageSubTitleBasic>
-      </Box>
-      <Box className="comment-wirte-container">
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            display: "grid",
-            gap: 2,
-            gridTemplateColumns: "40px 1fr",
-            "& > .MuiGrid-item": {
-              padding: 0,
-              margin: 0,
-              width: 100,
-            },
-            ...customStyles.resetMuiGrid,
-            paddingBottom: "10px",
-          }}
-        >
-          <Grid sx={{ textAlign: "center" }}>{t("text.rate")}</Grid>
-          <Grid>
-            <Rating
-              name="simple-controlled"
-              value={value}
-              onChange={(event, newValue) => {
-                setValue(newValue);
-              }}
-            />
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            display: "grid",
-            gap: 2,
-            gridTemplateColumns: "40px 1fr",
-            "& > .MuiGrid-item": {
-              padding: 0,
-              margin: 0,
-              width: 100,
-            },
-            ...customStyles.resetMuiGrid,
-          }}
-        >
-          <Grid sx={{ textAlign: "center" }}>{t("text.comment")}</Grid>
-          <Grid>
-            <TextField
-              label={t("text.comment")}
-              multiline
-              rows={3} // 텍스트 영역의 초기 높이 설정
-              variant="outlined" // 외곽선이 있는 스타일
-              fullWidth // 가로로 전체 너비를 차지
-              value={input}
-              onChange={handleInputChange}
-            />
-            <Box marginTop={2} className="right-button">
-              <Button variant="contained" onClick={handleAddComment}>
-                {t("text.comment_write")}
-              </Button>
+      <form className="form" onSubmit={formik.handleSubmit}>
+        {activeBoxStatus !== "edit" ? (
+          <>
+            <Box className="comment-wirte-container">
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: "40px 1fr",
+                  "& > .MuiGrid-item": {
+                    padding: 0,
+                    margin: 0,
+                    width: 100,
+                  },
+                  ...customStyles.resetMuiGrid,
+                  paddingBottom: "10px",
+                }}
+              >
+                <Grid sx={{ textAlign: "center" }}>{t("text.rate")}</Grid>
+                <Grid>
+                  <Tooltip
+                    title={formik.errors.rate ? String(formik.errors.rate) : ""}
+                    open={Boolean(formik.touched.rate && formik.errors.rate)}
+                    arrow
+                    placement="top-start"
+                  >
+                    <span>
+                      <Rating
+                        name="simple-controlled"
+                        value={formik.values.rate || 0}
+                        onChange={(event, newValue) => {
+                          formik.setFieldValue("rate", newValue);
+                        }}
+                      />
+                    </span>
+                  </Tooltip>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: "40px 1fr",
+                  "& > .MuiGrid-item": {
+                    padding: 0,
+                    margin: 0,
+                    width: 100,
+                  },
+                  ...customStyles.resetMuiGrid,
+                }}
+              >
+                <Grid sx={{ textAlign: "center" }}>{t("text.comment")}</Grid>
+                <Grid>
+                  <TextField
+                    label={t("text.comment")}
+                    multiline
+                    rows={3}
+                    variant="outlined"
+                    fullWidth
+                    value={formik.values.comment}
+                    error={
+                      formik.touched.comment && Boolean(formik.errors.comment)
+                    }
+                    onChange={(event) =>
+                      formik.setFieldValue("comment", event.target.value)
+                    }
+                    helperText={
+                      formik.touched.comment && formik.errors.comment
+                        ? t("recipe.alert.empty_comment") // 에러 메시지 텍스트
+                        : "" // 빈 값이면 helperText를 빈 문자열로 설정
+                    }
+                  />
+                </Grid>
+              </Grid>
+              {renderButtons()}
             </Box>
-          </Grid>
-        </Grid>
-      </Box>
+          </>
+        ) : (
+          <>
+            <Box>
+              <Grid item className="comment-content">
+                <Box className="comment-info" marginBottom={"10px"}>
+                  <Typography
+                    className="comment-info-name"
+                    component="span"
+                    variant="subtitle1"
+                  >
+                    {recipeComment?.data.member.name}
+                  </Typography>
+                  <Typography
+                    className="comment-info-name"
+                    component="span"
+                    variant="subtitle1"
+                    sx={{ verticalAlign: "text-top", lineHeight: 0 }}
+                  >
+                    <Tooltip
+                      title={
+                        formik.errors.rate ? String(formik.errors.rate) : ""
+                      }
+                      open={Boolean(formik.touched.rate && formik.errors.rate)}
+                      arrow
+                      placement="top-start"
+                    >
+                      <span>
+                        <Rating
+                          name="simple-controlled"
+                          value={formik.values.rate || 0}
+                          onChange={(event, newValue) => {
+                            formik.setFieldValue("rate", newValue);
+                          }}
+                        />
+                      </span>
+                    </Tooltip>
+                  </Typography>
+
+                  <Typography
+                    className="comment-info-dt"
+                    component="span"
+                    variant="subtitle2"
+                  ></Typography>
+                </Box>
+                <Box>
+                  <Grid>
+                    <TextField
+                      label={t("text.comment")}
+                      multiline
+                      rows={3} // 텍스트 영역의 초기 높이 설정
+                      variant="outlined" // 외곽선이 있는 스타일
+                      fullWidth // 가로로 전체 너비를 차지
+                      value={formik.values.comment}
+                      error={
+                        formik.touched.comment && Boolean(formik.errors.comment)
+                      }
+                      onChange={(event) =>
+                        formik.setFieldValue("comment", event.target.value)
+                      }
+                      helperText={
+                        formik.touched.comment && formik.errors.comment
+                          ? t("recipe.alert.empty_comment") // 에러 메시지 텍스트
+                          : "" // 빈 값이면 helperText를 빈 문자열로 설정
+                      }
+                    />
+                  </Grid>
+                </Box>
+              </Grid>
+
+              {renderButtons()}
+            </Box>
+          </>
+        )}
+      </form>
     </RecipeCommentWrite>
   );
 };

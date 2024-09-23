@@ -1,55 +1,49 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Paper,
-  StyledEngineProvider,
-  Typography,
-} from "@mui/material";
+import { Box, CssBaseline, StyledEngineProvider } from "@mui/material";
+import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
 import {
   muiDarkTheme,
   muiLightTheme,
   styledDarkTheme,
   styledLightTheme,
 } from "./theme";
-import Header from "./components/Header";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 // material-ui
 import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 // styled-components
+import { I18nextProvider } from "react-i18next";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import TestPage from "./TestPage";
 import Footer from "./components/Footer";
-import { I18nextProvider } from "react-i18next";
 import i18n from "./locales/i18n";
-import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
-import AllRecipeList from "./routes/recipe/AllRecipeList";
-import PublicRecipeList from "./routes/recipe/PublicRecipeList";
-import PublicRecipe from "./routes/recipe/PublicRecipe";
-import MemberRecipeList from "./routes/recipe/MemberRecipeList";
-import MemberRecipe from "./routes/recipe/MemberRecipe";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
+import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import Login from "./routes/members/login/Login";
-import Profile from "./routes/myPage/Profile";
 import Activity from "./routes/myPage/Activity";
-import UserInfo from "./routes/myPage/UserInfo";
 import LikeLists from "./routes/myPage/LikeLists";
-import MyWrites from "./routes/myPage/MyWrites";
 import MyReplys from "./routes/myPage/MyReplys";
+import MyWrites from "./routes/myPage/MyWrites";
+import Profile from "./routes/myPage/Profile";
+import UserInfo from "./routes/myPage/UserInfo";
+import AllRecipeList from "./routes/recipe/AllRecipeList";
+import MemberRecipe from "./routes/recipe/MemberRecipe";
+import MemberRecipeList from "./routes/recipe/MemberRecipeList";
+import PublicRecipe from "./routes/recipe/PublicRecipe";
+import PublicRecipeList from "./routes/recipe/PublicRecipeList";
 
-import Notice from "./routes/board/notice/Notice";
-import Faq from "./routes/board/Faq/Faq";
-import Main from "./routes/main/Main";
 import { AuthProvider } from "./auth/AuthContext";
-import SignupIntro from "./routes/members/signUp/SignupIntro";
-import Signup from "./routes/members/signUp/Signup";
+import Faq from "./routes/board/Faq/Faq";
+import FaqForm from "./routes/board/Faq/FaqForm";
+import Notice from "./routes/board/notice/Notice";
 import NoticeDetail from "./routes/board/notice/NoticeDetail";
 import NoticeForm from "./routes/board/notice/NoticeForm";
-import FaqForm from "./routes/board/Faq/FaqForm";
+import Main from "./routes/main/Main";
+import FindId from "./routes/members/login/FindId";
+import FindPw from "./routes/members/login/FindPw";
+import Signup from "./routes/members/signUp/Signup";
+import SignupIntro from "./routes/members/signUp/SignupIntro";
+import MemberRecipeWrite from "./routes/recipe/MemberRecipeWrite";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -170,7 +164,7 @@ function App() {
                       }
                     />
                     <Route
-                      path="/recipe/public_recipe_list"
+                      path="/recipe/public_recipe_list/:search?/:display?/:start?/:recipeCategoryId?"
                       element={
                         <Box
                           sx={{
@@ -186,7 +180,7 @@ function App() {
                       }
                     />
                     <Route
-                      path="/recipe/member_recipe_list"
+                      path="/recipe/member_recipe_list/:search?/:display?/:start?/:recipeCategoryId?/:orderby?"
                       element={
                         <Box
                           sx={{
@@ -202,7 +196,23 @@ function App() {
                       }
                     />
                     <Route
-                      path="/recipe/member_recipe"
+                      path="/recipe/public_recipe/:search/:display/:start"
+                      element={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "92%",
+                            margin: "140px auto",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <RecipeSideMenu isDarkMode={isDarkMode} />
+                          <PublicRecipe isDarkMode={isDarkMode} />
+                        </Box>
+                      }
+                    />
+                    <Route
+                      path="/recipe/member_recipe/:recipeId?"
                       element={
                         <Box
                           sx={{
@@ -217,9 +227,8 @@ function App() {
                         </Box>
                       }
                     />
-
                     <Route
-                      path="/recipe/public_recipe"
+                      path="/recipe/member_recipe_write/:recipeId?"
                       element={
                         <Box
                           sx={{
@@ -230,10 +239,10 @@ function App() {
                           }}
                         >
                           <RecipeSideMenu isDarkMode={isDarkMode} />
-                          <PublicRecipe isDarkMode={isDarkMode} />
+                          <MemberRecipeWrite isDarkMode={isDarkMode} />
                         </Box>
                       }
-                    ></Route>
+                    />
 
                     {/* 보드 */}
                     <Route
