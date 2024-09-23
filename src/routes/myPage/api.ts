@@ -265,3 +265,45 @@ export const fetchMyWrites = async (
     throw error;
   }
 };
+
+// 회원 정보를 업데이트하는 API 호출 함수
+export async function updateMember(memberId: string, memberData: any) {
+  console.log(
+    `회원 정보 업데이트 요청: memberId=${memberId}, data=${JSON.stringify(
+      memberData
+    )}`
+  );
+  try {
+    const response = await axios.put(`${BASE_URL}/updateMember`, {
+      memberId,
+      ...memberData,
+    });
+    console.log("회원 정보 업데이트 성공:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("회원 정보 업데이트 실패:", error);
+    throw error;
+  }
+}
+
+// 비밀번호 변경 API 호출 함수
+export async function changePasswordByUser(
+  memberId: string,
+  newPassword: string
+) {
+  console.log(`비밀번호 변경 요청: memberId=${memberId}`);
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/ChangePasswordByUserAccordion`,
+      {
+        memberId,
+        newPassword,
+      }
+    );
+    console.log("비밀번호 변경 성공:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("비밀번호 변경 실패:", error);
+    throw error;
+  }
+}
