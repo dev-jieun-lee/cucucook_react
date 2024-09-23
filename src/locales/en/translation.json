@@ -81,16 +81,14 @@
   },
   "sentence": {
     "no_data": "The data does not exist.",
-    "explain1": "기존 레시피 :",
-    "explain2": "회원 레시피 : 회원들이 직접 등록한 레시피입니다.",
-    "explain3": "인기 레시피 : 인기 레시피입니다.",
     "slogan": "while doing",
     "slogan2": "add to one's laughter!",
     "slogan3": "My own recipe that makes a sound",
     "cucucook": "Cucucook",
     "searching": "Please enter a search term.",
     "choose": "Please choose",
-    "input_domain": "Please enter a domain."
+    "input_domain": "Please enter a domain.",
+    "greeting" : "Hello! Welcome to Cucucook.^__^ Check out a variety of delicious and cool recipes. Please upload and share recipes with your own know-how!"
   },
   "members": {
     "original": "member",
