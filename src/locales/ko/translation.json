@@ -131,8 +131,13 @@
     "new_password": "새 비밀번호",
     "confirm_new_password": "새 비밀번호 확인",
     "save_changes": "변경 사항 저장",
+    "pw_save_changes": "비밀번호 변경",
     "cancel": "취소",
     "change_password": "비밀번호 변경",
+    "password_too_short": "비밀번호가 너무 짧습니다. 8~15글자로 설정해주세요.",
+    "password_changed": "비밀번호가 변경되었습니다.",
+    "save_changes_confirm": "정보를 수정하시겠습니까?",
+    "update_failed": "정보 수정에 실패하였습니다.",
     "kakao_login": "카카오 로그인",
     "connect_kakao": "카카오 연동",
     "kakao_disconnect": "카카오 연결 끊기",
@@ -140,8 +145,9 @@
     "connect_naver": "네이버 연동",
     "naver_disconnect": "네이버 연결 끊기",
     "delete_account": "회원 탈퇴",
+    "account_deleted": "회원탈퇴가 완료되었습니다.",
     "confirm_cancel": "정말 수정을 취소하시겠습니까?",
-    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
+    "delete_account_confirm": "정말 회원 탈퇴를 하시겠습니까?",
     "password_mismatch": "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.",
     "Please enter your password": "비밀번호를 입력하세요",
     "User ID not found": "사용자 ID를 찾을 수 없습니다",
@@ -154,7 +160,8 @@
     "Verify": "확인",
     "Success": "성공",
     "Password verification successful": "비밀번호 확인에 성공했습니다",
-    "OK": "확인"
+    "OK": "확인",
+    "mycommnet": "내가 쓴 댓글"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -263,7 +270,10 @@
     "attempt_4": "경고: 네 번 연속 로그인에 실패했습니다. 한 번 더 실패 시 계정이 잠깁니다.",
     "locked": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다. ",
     "locked_time": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다.",
-    "try_again": "  {{minutes}} 분 {{seconds}} 초 ,후 다시 시도해주세요."
+    "try_again": "  {{minutes}} 분 {{seconds}} 초 ,후 다시 시도해주세요.",
+    "contact_admin": "관리자에게 문의하세요",
+    "yes": "네",
+    "no": "아니오"
   },
   "AgreeContents": {
     "terms_title": "회원가입을 위한 약관 동의",
