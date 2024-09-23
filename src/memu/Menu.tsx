@@ -37,17 +37,17 @@ function Menu() {
             <SubMenu className="sub-menu">
               <ul>
                 <li>
-                  <LinkItem to="/all_recipe_list">
+                  <LinkItem to="/recipe/all_recipe_list">
                     {t("menu.recipe.all")}
                   </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/public_recipe_list">
+                  <LinkItem to="/recipe/public_recipe_list">
                     {t("menu.recipe.public")}
                   </LinkItem>
                 </li>
                 <li>
-                  <LinkItem to="/member_recipe_list">
+                  <LinkItem to="/recipe/member_recipe_list">
                     {t("menu.recipe.member")}
                   </LinkItem>
                 </li>

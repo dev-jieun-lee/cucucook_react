@@ -15,9 +15,14 @@ import {
 import { useFormik } from "formik";
 import { findId } from "../api";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper, ButtonArea, StyledAnchor, FindIdBox } from "./LoginStyle";
+import {
+  LoginWrapper,
+  ButtonArea,
+  StyledAnchor,
+  FindIdBox,
+} from "./LoginStyle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
 
 function FindId({ isDarkMode }: { isDarkMode: boolean }) {

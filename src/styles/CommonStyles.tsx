@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import media from "./MediaQuery";
-import { Stack } from "@mui/material";
+import { Fab, Stack } from "@mui/material";
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -61,11 +61,38 @@ export const TitleBasic = styled.div`
   color: ${(props) => props.theme.mainColor};
 `;
 
+export const PageTitleBasic = styled.div`
+  font-weight: 500;
+  font-size: 25px;
+  text-align: left;
+`;
+
+export const PageSubTitleBasic = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  text-align: left;
+`;
+
+//맨위로 가기 스크롤 버튼
+export const ScrollBtnFab = styled(Fab)`
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+
+  ${media.medium`
+    bottom: 8px,
+    right: 8px,
+    width: 40px,
+    height: 40px,
+  `};
+`;
+
 export const SearchArea = styled.div`
   /* margin: 30px ; */
   margin-top: 40px;
   margin-bottom: 25px;
   display: flex;
+  justify-content: center;
   ${media.small`
     display: block;
   `};
