@@ -1,130 +1,196 @@
-import React, { useEffect, useState } from "react";
+import { Girl, KeyboardArrowUp } from "@mui/icons-material";
+import { Box, Button, Divider, Grid, Stack, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useInView } from "react-intersection-observer";
+import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import {
+  getMemberRecipeList,
+  getRecipeCategoryListWithMemberRecipeCount,
+} from "../../api";
+import Loading from "../../components/Loading";
+import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
   ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
 import {
-  Box,
-  Button,
-  Divider,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
-} from "@mui/material";
-import {
-  TitleBox,
+  SearchBox,
+  SearchBoxContainer,
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
   ThumbnailTypography,
-  SearchBox,
-  SearchBoxContainer,
-  SearchTextField,
+  TitleBox,
 } from "../../styles/RecipeStyle";
-import { useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import { BorderBottom, KeyboardArrowUp } from "@mui/icons-material";
-
-const thumbnails = [
-  {
-    id: 1,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 2,
-    src: "https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 3,
-    src: "https://news.nateimg.co.kr/orgImg/ns/2023/10/12/NISI20231012_0020087516_web.jpg",
-    title: "누가루이고누가후이겡",
-  },
-  {
-    id: 4,
-    src: "https://cdn.thetitlenews.net/news/photo/202312/3303_7663_341.png",
-    title: "판다는 왜 귀여운 것일까 아이바오 귀엽당",
-  },
-  {
-    id: 5,
-    src: "https://img.khan.co.kr/news/2024/03/04/news-p.v1.20240303.0c4af180e49842269d2c5044819efb9a.png",
-    title: "푸바오오~~~~~~~~~~~~~~",
-  },
-  {
-    id: 6,
-    src: "https://i.namu.wiki/i/N7XtnLu7mENPBU1wMlAoOo5_w13roksendvuswR8gkFw_8SilcxCpT3kTTdzaP42jSpZAQ2-R4x3aNxaj6A3JA.webp",
-    title: "러바오도있음",
-  },
-  {
-    id: 7,
-    src: "https://ppss.kr/wp-content/uploads/2018/09/zzzzzz.jpg",
-    title:
-      "너무나ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ귀여운~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-  },
-  {
-    id: 8,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 9,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 10,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 11,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-  {
-    id: 12,
-    src: "https://png.pngtree.com/thumb_back/fh260/background/20230609/pngtree-three-puppies-with-their-mouths-open-are-posing-for-a-photo-image_2902292.jpg",
-    title: "강아지너무귀여웡 ㅠ_ㅠ",
-  },
-];
+import { SearchArea } from "../board/BoardStyle";
+import StarIcon from "@mui/icons-material/Star";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import TextsmsIcon from "@mui/icons-material/Textsms";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const navigate = useNavigate();
-  const handleRecipeViewClick = () => {
-    navigate("/recipe/member_recipe", { state: { recipeId: "0" } });
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categories, setcategories] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const [selectedCategoryKey, setSelectedCategoryKey] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(t("text.recent_order"));
+  const [selectedOrderKey, setSelectedOrderKey] = useState("reg_dt");
+  // 로딩 상태 관리
+  const [loading, setLoading] = useState(true);
+  // 무한 스크롤 시작값
+  const [start, setStart] = useState(0);
+  // 무한 스크롤 데이터가 더 있는지 체크
+  const [hasMore, setHasMore] = useState(true);
+  // 레시피 정보
+  const [recipes, setRecipes] = useState<any[]>([]);
+
+  const display = 10;
+  const [message, setMessage] = useState("");
+
+  const orderMap: { [key: string]: string } = {
+    reg_dt: t("text.recent_order"),
+    view_count: t("text.count_order"),
+    comment_count: t("text.comment_order"),
+    comment_rate: t("text.rate_order"),
   };
-  const theme = useTheme();
 
-  const categories = ["전체(27)", "한식(2)", "양식(5)", "중식(1)", "일식(19)"];
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체(27)");
+  //마지막 항목이 화면에 보일때 마다 새로운 페이지 데이터 로드
+  const { ref: lastItemRef, inView } = useInView({
+    threshold: 1,
+  });
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      setStart((prevStart) => prevStart + display);
+    }
+  }, [inView, hasMore, loading]);
 
-  const orderList = [
-    t("text.recent_order"),
-    t("text.count_order"),
-    t("text.comment_order"),
-    t("text.rate_order"),
-  ];
-  const [selectedOrder, setSelectedOrder] = useState<string>(
-    t("text.recent_order")
+  const handleViewDetailClick = (path: string, params: string) => {
+    const pullPath = `${path}/` + params;
+    navigate(pullPath);
+  };
+
+  // 레시피 카테고리 목록 가져오기
+  const fetchRecipeCategoryList = async () => {
+    const params = {
+      search: searchTerm,
+    };
+
+    try {
+      const recipeCategoryList =
+        await getRecipeCategoryListWithMemberRecipeCount(params);
+      return recipeCategoryList.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
+  };
+
+  const { refetch: refetchCategories } = useQuery(
+    ["recipeCategoryList"],
+    fetchRecipeCategoryList,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setcategories(data.data);
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err);
+      },
+    }
   );
 
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
-    console.log(`Selected Category: ${category}`);
+  // 레시피 목록 가져오기
+  const fetchMemberRecipeList = async () => {
+    const params = {
+      search: searchTerm,
+      start: start,
+      display: display,
+      recipeCategoryId: selectedCategoryKey,
+      orderby: selectedOrderKey,
+    };
+
+    try {
+      const memberRecipeList = await getMemberRecipeList(params);
+
+      return memberRecipeList.data;
+    } catch (error) {
+      console.error(error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
   };
 
-  const handleOrderClick = (order: string) => {
+  const { refetch } = useQuery(
+    ["memberRecipeList", selectedCategoryKey, selectedOrderKey, start],
+    fetchMemberRecipeList,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setLoading(false);
+        setHasMore(data?.addData?.hasMore ?? false);
+        setRecipes((prevRecipes) => [...prevRecipes, ...(data.data ?? [])]);
+        setMessage(data.message);
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err);
+        setLoading(false);
+      },
+    }
+  );
+
+  const handleSearch = async () => {
+    // 시작값 초기화
+    setStart(0);
+    // 데이터 가져와야 함
+    setHasMore(true);
+    // 레시피 목록 초기화
+    setRecipes([]);
+
+    await refetch();
+  };
+
+  const handleSearchKeyUp = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleSearch();
+      // 카테고리 목록 초기화
+      setcategories([]);
+      await refetchCategories();
+    }
+  };
+
+  //카테고리 선택시
+  const handleCategoryClick = async (name: string, categoryId: string) => {
+    setSelectedCategory(name);
+    setSelectedCategoryKey(categoryId);
+    setStart(0);
+    setRecipes([]);
+    setHasMore(true);
+    setLoading(true);
+    await refetch();
+  };
+
+  //순서선택시
+  const handleOrderClick = async (order: string, key: string) => {
     setSelectedOrder(order);
-    console.log(`Selected order: ${order}`);
+    setSelectedOrderKey(key);
+    setStart(0);
+    setRecipes([]);
+    setHasMore(true);
+    setLoading(true);
+    await refetch();
   };
 
-  const [showScrollButton, setShowScrollButton] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -145,6 +211,10 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleRecipeWriteClick = () => {
+    navigate("/recipe/member_recipe_write");
+  };
+
   return (
     <Wrapper>
       <Box component="section">
@@ -152,26 +222,18 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           <PageTitleBasic>{t("text.member_recipe")}</PageTitleBasic>
         </TitleBox>
         <Divider />
+
         <SearchBoxContainer>
-          <SearchBox>
-            <Box
-              sx={{
-                display: "flex",
-              }}
-            >
-              <SearchTextField
-                label={t("sentence.searching")}
-                variant="outlined"
-                size="small"
-              />
-              <IconButton
-                aria-label="search"
-                sx={{ ml: 1, color: theme.mainColor, transform: "scale(1.3)" }}
-              >
-                <SearchIcon fontSize="medium" />
-              </IconButton>
-            </Box>
-          </SearchBox>
+          <SearchArea>
+            <TextField
+              className="search-input"
+              variant="standard"
+              placeholder={t("sentence.searching")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyUp={handleSearchKeyUp}
+            />
+          </SearchArea>
           <SearchBox>
             <Stack
               direction="row"
@@ -191,12 +253,12 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             >
               {categories.map((category) => (
                 <Button
-                  key={category}
+                  key={category.recipeCategoryId}
                   variant="text"
                   sx={{
                     backgroundColor: "transparent",
                     color:
-                      selectedCategory === category
+                      selectedCategory === category.name
                         ? "primary.main"
                         : "text.primary",
                     "&:hover": {
@@ -207,9 +269,15 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                       backgroundColor: "none",
                     },
                   }}
-                  onClick={() => handleCategoryClick(category)}
+                  onClick={() =>
+                    handleCategoryClick(
+                      category.name,
+                      category.recipeCategoryId
+                    )
+                  }
                 >
-                  {category}
+                  {currentLang === "ko" ? category.name : category.nameEn} (
+                  {category.count})
                 </Button>
               ))}
             </Stack>
@@ -228,14 +296,14 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               },
             }}
           >
-            {orderList.map((order) => (
+            {Object.entries(orderMap).map(([key, value]) => (
               <Button
-                key={order}
+                key={key}
                 variant="text"
                 sx={{
                   backgroundColor: "transparent",
                   color:
-                    selectedOrder === order ? "primary.main" : "text.primary",
+                    selectedOrder === value ? "primary.main" : "text.primary",
                   "&:hover": {
                     backgroundColor: "none",
                     color: "primary.main",
@@ -244,7 +312,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     backgroundColor: "primary.main",
                   },
                 }}
-                onClick={() => handleOrderClick(order)}
+                onClick={() => handleOrderClick(value, key)}
               >
                 <Box
                   className="hoverBox"
@@ -254,34 +322,161 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     height: "3px",
                     borderRadius: "50%",
                     backgroundColor:
-                      selectedOrder === order ? "primary.main" : "text.primary",
+                      selectedOrder === value ? "primary.main" : "text.primary",
                     marginRight: "8px", // Spacing between dot and text,
                   }}
                 />
-                {order}
+                {value}
               </Button>
             ))}
           </Stack>
-          <Button variant="contained">{t("text.recipe_write")}</Button>
+          <Button variant="contained" onClick={handleRecipeWriteClick}>
+            {t("text.recipe_write")}
+          </Button>
         </TitleBox>
       </Box>
       <Box component="section">
         <Grid container spacing={2}>
-          {thumbnails.map((thumbnails) => (
-            <Grid item xs={12} sm={6} md={3} key={thumbnails.id}>
-              <ThumbnailButton onClick={handleRecipeViewClick} disableRipple>
-                <ThumbnailBoxContainer>
-                  <ThumbnailBox
-                    src={thumbnails.src}
-                    alt={thumbnails.title}
-                  ></ThumbnailBox>
-                </ThumbnailBoxContainer>
-                <ThumbnailTypography variant="subtitle1">
-                  {thumbnails.title}
-                </ThumbnailTypography>
-              </ThumbnailButton>
+          {loading && !hasMore ? (
+            <Loading />
+          ) : recipes.length > 0 ? (
+            <>
+              {recipes.map((recipeItem) => (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={3}
+                  key={recipeItem.recipeId}
+                  sx={{ flexDirection: "column" }}
+                >
+                  <ThumbnailButton
+                    onClick={() =>
+                      handleViewDetailClick(
+                        "/recipe/member_recipe",
+                        encodeURIComponent(recipeItem.recipeId)
+                      )
+                    }
+                  >
+                    <Box className="thumbnail-box-wrap">
+                      <ThumbnailBoxContainer>
+                        <ThumbnailBox
+                          src={
+                            recipeItem.memberRecipeImages
+                              ? `${process.env.REACT_APP_API_URL}${recipeItem.memberRecipeImages.webImgPath}/${recipeItem.memberRecipeImages.serverImgName}.${recipeItem.memberRecipeImages.extension}`
+                              : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
+                          }
+                          alt={recipeItem.title}
+                        ></ThumbnailBox>
+                      </ThumbnailBoxContainer>
+                      <Box className="thumbnail-info-box-wrap">
+                        <Box margin={"20px"}>
+                          <Box className="thumbnail-info-title-box">
+                            {recipeItem.title}
+                          </Box>
+                          <Box>
+                            <Grid
+                              container
+                              className="thumbnail-info-default-box"
+                            >
+                              <Grid item>{recipeItem.member.name}</Grid>
+                              <Grid item>
+                                <Grid container spacing={1}>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <VisibilityIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+
+                                      <Box component="span" ml={0.5}>
+                                        {recipeItem.viewCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <TextsmsIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+
+                                      <Box component="span" ml={0.5}>
+                                        {recipeItem.commentCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <StarIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+                                      <Box component="span" ml={0.5}>
+                                        {recipeItem.commentRate}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item>
+                                    <Divider
+                                      className="recipe-eval-info"
+                                      orientation="vertical"
+                                      sx={{ height: "20px" }}
+                                    />
+                                  </Grid>
+                                  <Grid item>
+                                    <Box display="flex" alignItems="center">
+                                      <FavoriteIcon
+                                        style={{
+                                          verticalAlign: "middle",
+                                          fontSize: "0.9rem",
+                                        }}
+                                      />
+                                      <Box component="span" ml={0.5}>
+                                        {recipeItem.likeCount}
+                                      </Box>
+                                    </Box>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </ThumbnailButton>
+                </Grid>
+              ))}
+              <Grid item xs={12} sm={12} md={12}>
+                {hasMore && <LoadingNoMargin />}
+              </Grid>
+              <Box ref={lastItemRef} /> {/* 마지막 항목의 참조 */}
+            </>
+          ) : (
+            <Grid padding={"20px 0"} item xs={12} sm={12} md={12}>
+              {loading ? <Loading /> : <>{t("CODE." + message)}</>}
             </Grid>
-          ))}
+          )}
         </Grid>
       </Box>
       {showScrollButton && (
