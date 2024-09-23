@@ -20,6 +20,8 @@ import moment from "moment";
 import CampaignIcon from '@mui/icons-material/Campaign';
 import { Wrapper } from "../../styles/CommonStyles";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -85,15 +87,24 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
   //레시피 페이지로 이동
   const onClickRecipe = (kind : string) => {
     if(kind === "public"){
-      navigate(`/public_recipe`);
+      navigate(`/recipe/public_recipe_list`);
     }
     else if(kind === "members"){
-      navigate(`/member_recipe`);
+      navigate(`/recipe/member_recipe_list`);
     }
     else if(kind === "popular"){
-      navigate(`/all_recipe`);
+      navigate(`/recipe/all_recipe_list`);
+    }
+    else if(kind === "form"){
+      navigate(`/recipe/member_recipe_write/:recipeId?`);
     }
   };
+
+  //로딩
+  if (boardListLoading ) {
+    return <Loading />;
+  }
+  
   
   return (
     <Wrapper>
@@ -191,7 +202,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                               >
                                 [ {boardItem.category.name} ]
                               </CustomCategory>
-                            </TableCell >
+                            </TableCell>
                             <TableCell className="cell">{boardItem.title}</TableCell>
                             <TableCell className="cell">
                               {moment(boardItem.udtDt).format("YYYY-MM-DD")}
@@ -226,6 +237,17 @@ export default Main;
 
 function SloganMain() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth(); //로그인 상태관리
+    //레시피 페이지로 이동
+    const onClickRecipe = () => {
+      if(user){
+        navigate(`/recipe/member_recipe_write`);
+      }
+      else{
+        navigate(`/login`);
+      }
+    };
   return (
     <>
       <Slogan>
@@ -246,6 +268,7 @@ function SloganMain() {
         className="icon-btn"
         variant="outlined"
         color="secondary"
+        onClick={()=> onClickRecipe()}
         endIcon={<KeyboardDoubleArrowRightIcon />}
       >
         {t("text.go_upload")}

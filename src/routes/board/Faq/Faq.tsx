@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import {
-  AccordionTitle,
-  ContentsArea,
-  CustomCategory,
-} from "../BoardStyle";
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../../styles/CommonStyles";
+import { AccordionTitle, ContentsArea, CustomCategory } from "../BoardStyle";
 import {
   Accordion,
   AccordionDetails,
@@ -22,7 +23,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { deleteBoard, getBoard, getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
+import {
+  deleteBoard,
+  getBoard,
+  getBoardCategory,
+  getBoardCategoryList,
+  getBoardList,
+} from "../api";
 import { useMutation, useQuery } from "react-query";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Loading from "../../../components/Loading";
@@ -41,20 +48,20 @@ function Faq() {
   const [search, setSearch] = useState(""); //검색어
   const [searchType, setSearchType] = useState("all"); // 검색 유형
   const [category, setCategory] = useState("all");
-  const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거 
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 
+  const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | false>(false);
   const sanitizer = dompurify.sanitize;
-  
 
   // // 아코디언 패널 상태 관리
-  const handleChange = (panel: string) => async (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false);
-
-  };
+  const handleChange =
+    (panel: string) =>
+    async (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
 
   const display = 10; // 한 페이지에 표시할 게시물 수
 
@@ -62,7 +69,6 @@ function Faq() {
   useEffect(() => {
     setSearchParams({ search, searchType, category });
   }, [search, searchType, category, setSearchParams]);
-
 
   //FAQ 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
@@ -72,20 +78,17 @@ function Faq() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-    return response.data.filter(
-      (category: any) => category.division === "FAQ"
-    );
+    return response.data.filter((category: any) => category.division === "FAQ");
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
 
-
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
     const params = {
-      division : "FAQ",
+      division: "FAQ",
       search: searchType === "category" ? "" : search,
       searchType: searchType,
       boardCategoryId: category,
@@ -93,13 +96,12 @@ function Faq() {
       display: display, //페이지당 표시할 갯수
     };
     const response = await getBoardList(params);
-    setTotalCount(response.data.length); 
-    return response; 
+    setTotalCount(response.data.length);
+    return response;
   };
 
   const getBoardListWithCategory = async () => {
     try {
-
       const boardList = await getBoardListApi();
       // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
@@ -122,11 +124,11 @@ function Faq() {
   const getBoardListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardListWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 
@@ -189,32 +191,32 @@ function Faq() {
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
-    (boardId : string) => deleteBoard(boardId),
+    (boardId: string) => deleteBoard(boardId),
     {
       onSuccess: () => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
         window.location.reload();
       },
       onError: (error) => {
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
           text: t("menu.board.alert.delete_error"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (boardId : string) => {
+  const onClickDelete = (boardId: string) => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm"),
       showCancelButton: true,
@@ -226,7 +228,7 @@ function Faq() {
         deleteBoardMutation(boardId as string);
       }
     });
-    };
+  };
 
   //추가 페이지로 이동
   const onClickAdd = () => {
@@ -234,10 +236,9 @@ function Faq() {
   };
 
   //수정 페이지로 이동
-  const onClickRegister = (boardId:string) => {
+  const onClickRegister = (boardId: string) => {
     navigate(`/faq/form/${boardId}`);
   };
-
 
   // 로딩 처리
   if (loading || boardListLoading) {
@@ -326,65 +327,67 @@ function Faq() {
       <ContentsArea>
         {boardListWithCategory && boardListWithCategory.length > 0 ? (
           boardListWithCategory
-           ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10).map((boardItem: any, index: number) => (
-            <Accordion
-              key={boardItem.boardId}
-              className="accordion"
-              expanded={expanded === boardItem.boardId}
-              onChange={handleChange(boardItem.boardId)}
-            >
-              <AccordionSummary
-                className="summary"
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}bh-content`}
-                id={`panel${index}bh-header`}
+            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+            .map((boardItem: any, index: number) => (
+              <Accordion
+                key={boardItem.boardId}
+                className="accordion"
+                expanded={expanded === boardItem.boardId}
+                onChange={handleChange(boardItem.boardId)}
               >
-                <AccordionTitle>
-                  <div className="title-area">
-                    {/* <div className="index">{(currentPage - 1) * display + index + 1}</div> */}
-                    <CustomCategory
-                      style={{ color: `${boardItem.category.color}` }}
-                      className="category"
-                    >
-                      [ {boardItem.category.name} ]
-                    </CustomCategory>
-                    <span className="q">Q.</span>
-                    <span className="title">{boardItem.title}</span>
-                  </div>
-                </AccordionTitle>
-              </AccordionSummary>
-              <AccordionDetails className="detail">
-                <div
-                  className="board-contents"
-                  dangerouslySetInnerHTML={{
-                    __html: expanded === boardItem.boardId ? sanitizer(`A. ${boardItem?.contents}` || "") : "",
-                  }}
-                ></div>
-                  {user?.role === "1" && user?.memberId === boardItem.memberId ? (
-                    <div className="btn-area">
-                      <Button
-                        className="update-btn"
-                        type="button"
-                        color="primary"
-                        variant="contained"
-                        onClick={() => onClickRegister(boardItem.boardId)}
+                <AccordionSummary
+                  className="summary"
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel${index}bh-content`}
+                  id={`panel${index}bh-header`}
+                >
+                  <AccordionTitle>
+                    <div className="title-area">
+                      {/* <div className="index">{(currentPage - 1) * display + index + 1}</div> */}
+                      <CustomCategory
+                        style={{ color: `${boardItem.category.color}` }}
+                        className="category"
                       >
-                        {t("text.update")}
-                      </Button>
-                      <Button
-                        className="delete-btn"
-                        type="button"
-                        color="warning"
-                        variant="contained"
-                        onClick={() => onClickDelete(boardItem.boardId)}
-                      >
-                        {t("text.delete")}
-                      </Button>
+                        [ {boardItem.category.name} ]
+                      </CustomCategory>
+                      <span className="q">Q.</span>
+                      <span className="title">{boardItem.title}</span>
                     </div>
-                  ) : null}
-              </AccordionDetails>
-            </Accordion>
-          ))
+                  </AccordionTitle>
+                </AccordionSummary>
+                <AccordionDetails className="detail">
+                  <div
+                    className="board-contents"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        expanded === boardItem.boardId
+                          ? sanitizer(`A. ${boardItem?.contents}` || "")
+                          : "",
+                    }}
+                  ></div>
+                  <div className="btn-area">
+                    <Button
+                      className="update-btn"
+                      type="button"
+                      color="primary"
+                      variant="contained"
+                      onClick={() => onClickRegister(boardItem.boardId)}
+                    >
+                      {t("text.update")}
+                    </Button>
+                    <Button
+                      className="delete-btn"
+                      type="button"
+                      color="warning"
+                      variant="contained"
+                      onClick={() => onClickDelete(boardItem.boardId)}
+                    >
+                      {t("text.delete")}
+                    </Button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+            ))
         ) : (
           <div>{t("sentence.no_data")}</div>
         )}

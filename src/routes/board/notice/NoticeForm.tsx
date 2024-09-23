@@ -41,7 +41,6 @@ function NoticeForm() {
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
 
-  
   //notice의 카테고리 데이터 받아오기
   const getBoardCategoryListApi = () => {
     const params = {
@@ -51,12 +50,13 @@ function NoticeForm() {
     };
     return getBoardCategoryList(params);
   };
-  
+
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi,
     {
-      select: (data) => data.data.filter((item : any) => item.division === "NOTICE"),
+      select: (data) =>
+        data.data.filter((item: any) => item.division === "NOTICE"),
     }
   );
 
@@ -93,30 +93,29 @@ function NoticeForm() {
 
   //boardId가 있을경우 수정, 없을경우 생성
   const mutation = useMutation(
-    (values) => boardId ? updateBoard(boardId, values) : insertBoard(values),
+    (values) => (boardId ? updateBoard(boardId, values) : insertBoard(values)),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.save"),
           text: t("menu.board.alert.save"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
-        navigate(-1); 
-        
+        navigate(-1);
       },
       onError: (error) => {
         // 에러 처리
       },
     }
   );
-  
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       memberId: user?.memberId,
-      userName : user?.name,
+      userName: user?.name,
       title: boardId ? boardWithCategory?.data?.title || "" : "",
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -136,7 +135,7 @@ function NoticeForm() {
       mutation.mutate(values as any); // mutation 실행
     },
   });
-  
+
   // 내용 초기화
   useEffect(() => {
     if (!boardId) {
@@ -177,7 +176,7 @@ function NoticeForm() {
   //글 작성 취소
   const onClickCancel = () => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.cancel"),
       text: t("menu.board.alert.cancel"),
       showCancelButton: true,
@@ -190,8 +189,6 @@ function NoticeForm() {
       }
     });
   };
-
-
 
   //로딩
   if (boardLoading || boardCategoryLoading) {
@@ -246,7 +243,9 @@ function NoticeForm() {
                 error={formik.touched.title && Boolean(formik.errors.title)}
               />
               {formik.touched.title && formik.errors.title && (
-                <FormHelperText error>{t("menu.board.error.title")}</FormHelperText>
+                <FormHelperText error>
+                  {t("menu.board.error.title")}
+                </FormHelperText>
               )}
             </FormControl>
           </div>
@@ -254,11 +253,13 @@ function NoticeForm() {
         <ContentsInputArea>
           <QuillEditer
             value={formik.values.contents}
-            onChange={(text: any) => formik.setFieldValue('contents', text)}
+            onChange={(text: any) => formik.setFieldValue("contents", text)}
             error={formik.touched.contents && Boolean(formik.errors.contents)}
           />
           {formik.touched.contents && formik.errors.contents && (
-            <FormHelperText error>{t("menu.board.error.contents")}</FormHelperText>
+            <FormHelperText error>
+              {t("menu.board.error.contents")}
+            </FormHelperText>
           )}
         </ContentsInputArea>
         <BoardButtonArea>
@@ -271,7 +272,7 @@ function NoticeForm() {
           >
             {t("text.cancel")}
           </Button>
-          <Button className="save-btn" type="submit" variant="contained" >
+          <Button className="save-btn" type="submit" variant="contained">
             {t("text.save")}
           </Button>
         </BoardButtonArea>

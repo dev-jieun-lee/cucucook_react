@@ -59,5 +59,4 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
   );
 });
 
-
 export default QuillEditer;

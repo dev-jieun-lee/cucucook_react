@@ -2,7 +2,9 @@ import { Button, Card } from "@mui/material";
 import styled from "styled-components";
 import media from "../../styles/MediaQuery";
 
-export const Banner = styled(({ isDarkMode, ...rest }: any) => (
+
+
+export const Banner = styled(({ isDarkMode, ...rest } : any) => (
   <div {...rest} />
 ))<{ isDarkMode: boolean }>`
   width: 100%;
@@ -14,22 +16,25 @@ export const Banner = styled(({ isDarkMode, ...rest }: any) => (
   background-size: cover;
   background-position: center;
   display: flex;
+
 `;
+
 
 export const CustomBtn = styled(Button)`
   border-radius: 20px;
 `;
 
+
 export const BannerLeft = styled.div`
   width: 63%;
   display: flex;
   flex-direction: column;
-  .card-area {
+  .card-area{
     order: 1;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 50px 8% 0;
+    padding: 70px 8% 0;
     margin-bottom: 10px;
     ${media.medium`
       order: 2;
@@ -39,7 +44,7 @@ export const BannerLeft = styled.div`
       display: block;
     `};
   }
-  .slogan-main {
+  .slogan-main{
     display: none;
     ${media.medium`
       display : block;
@@ -50,13 +55,14 @@ export const BannerLeft = styled.div`
     width : 100%;
     padding : 0px -20px;
   `};
+
 `;
 export const BannerRight = styled.div`
   height: 100vh;
   background-color: ${(props) => props.theme.mainColor};
   display: flex;
-  flex-direction: column; /* 요소들을 세로로 배치 */
-  align-items: flex-end; /* 요소들을 오른쪽으로 정렬 */
+  flex-direction: column;  /* 요소들을 세로로 배치 */
+  align-items: flex-end;   /* 요소들을 오른쪽으로 정렬 */
   width: 37%;
   padding-top: 250px;
   padding-right: 3%;
@@ -75,7 +81,7 @@ export const MainCard = styled.div`
   border-color: ${(props) => props.theme.mainColor};
   text-align: center;
   /* margin: 0 25px; */
-  img {
+  img{
     width: 100px;
     margin: 30px 0;
     ${media.small`
@@ -83,7 +89,7 @@ export const MainCard = styled.div`
       margin: 10px;
   `};
   }
-
+  
   ${media.small`
     width: 100%;
     height: 120px;
@@ -99,7 +105,7 @@ export const BannerButton = styled(Button)`
   width: 150px;
   height: 40px;
   font-size: 17px;
-
+    
   ${media.small`
     width : 130px;
     font-size: 15px;    
@@ -109,41 +115,43 @@ export const BannerButton = styled(Button)`
   `};
 `;
 
-export const Slogan = styled.div`
-  margin-bottom: 20px;
 
-  .box1,
-  .box2,
-  .box3 {
-    font-family: "ONE-Mobile-POP";
+
+export const Slogan = styled.div`
+  margin-bottom: 20px;    
+  
+  .box1, .box2, .box3 {
+    font-family: 'ONE-Mobile-POP';
     display: flex;
     flex-direction: row;
     justify-content: flex-end; /* 각 박스 안의 텍스트를 오른쪽으로 정렬 */
+
   }
-  .box1 {
+  .box1{
     ${media.medium`
       display : none;
     `};
   }
-  .box2 {
+  .box2{
     ${media.medium`
       display : none;
     `};
   }
-  .box3 {
+  .box3{
     ${media.medium`
       display : none;
     `};
   }
-  .medium-box {
+  .medium-box{
     display: none;
-    font-family: "ONE-Mobile-POP";
+    font-family: 'ONE-Mobile-POP';
     ${media.small`
       display : block;
     `};
+    
   }
-
-  .strong {
+  
+  .strong{
     font-size: 3rem;
     font-weight: 600;
     color: ${(props) => props.theme.textColor};
@@ -156,17 +164,17 @@ export const Slogan = styled.div`
       font-size: 1.5rem;
     `};
   }
-  .basic {
+  .basic{
     margin-left: 10px;
     margin-top: 15px;
     font-size: 2rem;
     font-weight: 600;
-    color: ${(props) => props.theme.subTextColor};
+    color :${(props) => props.theme.subTextColor};
 
     ${media.medium`
       font-size: 1.5rem;
     `};
-
+    
     ${media.small`
       font-size: 1rem;
     `};
@@ -217,7 +225,7 @@ export const NoticeTable = styled.div`
     font-weight: bold;
     font-size: 20px;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; 
 
     .noti-icon {
       transform: scale(0.9);
@@ -225,10 +233,11 @@ export const NoticeTable = styled.div`
       margin-top: -4px;
     }
 
-    span:hover {
+    span:hover{
       cursor: pointer;
       text-decoration: underline;
     }
+
   }
 
   .notice-table {
@@ -242,29 +251,21 @@ export const NoticeTable = styled.div`
       .MuiTableCell-root {
         border-bottom: 1px solid;
         border-color: ${(props) => {
-          const rgbaColor = `rgba(${parseInt(
-            props.theme.textColor.slice(1, 3),
-            16
-          )},
-                                ${parseInt(
-                                  props.theme.textColor.slice(3, 5),
-                                  16
-                                )},
-                                ${parseInt(
-                                  props.theme.textColor.slice(5, 7),
-                                  16
-                                )},
+          const rgbaColor = `rgba(${parseInt(props.theme.textColor.slice(1, 3), 16)},
+                                ${parseInt(props.theme.textColor.slice(3, 5), 16)},
+                                ${parseInt(props.theme.textColor.slice(5, 7), 16)},
                                 0.5)`; // 0.5는 50% 투명도
           return rgbaColor;
         }};
       }
 
       .row {
+        height: 20px;
         &:hover {
-          font-weight: bold !important;
+          
           cursor: pointer;
-          .cell {
-            font-weight: inherit !important;
+          .cell{
+            font-weight: bold !important;
           }
         }
       }
@@ -274,9 +275,9 @@ export const NoticeTable = styled.div`
 
 export const GreetingsWrapper = styled.div`
   order: 2;
-  width: 84%;
-  margin: 0 auto;
-  overflow: hidden;
+  width: 84%; 
+  margin: 0 auto; 
+  overflow: hidden; 
   color: ${(props) => props.theme.mainColor};
   .greetings-wrapper {
     display: flex;
