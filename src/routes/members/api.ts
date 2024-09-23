@@ -227,3 +227,18 @@ export async function getMember(memberId: string) {
     throw error; // 에러 발생 시 throw
   }
 }
+
+// 회원 탈퇴 API 호출 함수
+export const deleteAccount = async (memberId: string) => {
+  try {
+    console.log(`회원 탈퇴 시도: memberId=${memberId}`);
+    const response = await axios.delete(
+      `${BASE_URL}/deleteAccount/${memberId}`
+    );
+    console.log("회원 탈퇴 성공:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("회원 탈퇴 실패:", error);
+    throw error;
+  }
+};

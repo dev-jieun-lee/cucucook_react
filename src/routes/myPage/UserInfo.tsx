@@ -20,9 +20,10 @@ import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 import { useQuery } from "react-query";
-import { getMember } from "../members/api";
+import { getMember, deleteAccount } from "../members/api";
 import { useAuth } from "../../auth/AuthContext";
 import { changePasswordByUser, updateMember } from "./api";
+import Cookies from "js-cookie"; // 쿠키를 삭제하기 위해 필요
 
 // 전화번호 포맷 함수
 const formatPhoneNumber = (value: string) => {
@@ -268,8 +269,24 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
       cancelButtonText: t("alert.no"),
     });
 
-    if (confirmDelete.isConfirmed) {
-      navigate("/");
+    if (confirmDelete.isConfirmed && memberId) {
+      try {
+        await deleteAccount(memberId); // 회원 탈퇴 API 호출 (타입 변환 제거)
+        Cookies.remove("auth_token"); // 쿠키에 저장된 인증 토큰 삭제 (로그아웃)
+        MySwal.fire({
+          title: t("mypage.account_deleted"),
+          icon: "success",
+          confirmButtonText: t("alert.ok"),
+        });
+        navigate("/"); // 성공 후 홈으로 이동
+      } catch (error) {
+        MySwal.fire({
+          title: t("mypage.delete_failed"),
+          text: t("mypage.delete_account_error"),
+          icon: "error",
+          confirmButtonText: t("alert.ok"),
+        });
+      }
     }
   };
 
