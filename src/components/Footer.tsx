@@ -2,14 +2,24 @@ import { MenuItem, Select } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import i18n from "../locales/i18n";
+import media from "../styles/MediaQuery";
+import { useEffect } from "react";
 
 function Footer({ isDarkMode }: any) {
-  const { t, i18n } = useTranslation(); // i18next 훅 사용
+  const { t, i18n } = useTranslation(); 
 
   const handleLangChange = (event: any) => {
     const selectedLang = event.target.value;
     i18n.changeLanguage(selectedLang);
+    sessionStorage.setItem('selectedLang', selectedLang); 
   };
+
+  useEffect(() => {
+    const savedLang = sessionStorage.getItem('selectedLang');
+    if (savedLang) {
+      i18n.changeLanguage(savedLang); // 저장된 언어로 설정
+    }
+  }, [i18n]);
 
   return (
     <FooterWrapper>

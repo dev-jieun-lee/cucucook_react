@@ -2,14 +2,13 @@ import { Button, Card } from "@mui/material";
 import styled from "styled-components";
 import media from "../../styles/MediaQuery";
 
-export const MainWrapper = styled.div`
-`;
+
 
 export const Banner = styled(({ isDarkMode, ...rest } : any) => (
   <div {...rest} />
 ))<{ isDarkMode: boolean }>`
   width: 100%;
-  height: 850px;
+  height: 100vh;
   background-image: ${({ isDarkMode }) =>
     isDarkMode
       ? "url('/image/banner_middle_dark.png')"
@@ -17,13 +16,6 @@ export const Banner = styled(({ isDarkMode, ...rest } : any) => (
   background-size: cover;
   background-position: center;
   display: flex;
-
-  ${media.medium`
-    height : 750px;
-  `};
-  ${media.small`
-    height : 600px;
-  `};
 
 `;
 
@@ -42,10 +34,11 @@ export const BannerLeft = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 250px 8% 0;
+    padding: 70px 8% 0;
+    margin-bottom: 10px;
     ${media.medium`
       order: 2;
-      padding: 0px 8% 0;
+      padding: 30px 8% 0;
     `};
     ${media.small`
       display: block;
@@ -55,7 +48,7 @@ export const BannerLeft = styled.div`
     display: none;
     ${media.medium`
       display : block;
-      order : 3;
+      order : 1;
   `};
   }
   ${media.medium`
@@ -65,6 +58,7 @@ export const BannerLeft = styled.div`
 
 `;
 export const BannerRight = styled.div`
+  height: 100vh;
   background-color: ${(props) => props.theme.mainColor};
   display: flex;
   flex-direction: column;  /* 요소들을 세로로 배치 */
@@ -122,25 +116,8 @@ export const BannerButton = styled(Button)`
 `;
 
 
-export const NoticeTable = styled.div`
-  
-`;
 
-export const Slogan1 = styled.div`
-  margin: 10px 8% ;
-  color: ${(props) => props.theme.mainColor};
-  order: 2;
-  ${media.medium`
-    order: 1;
-    margin: 50px 8% 20px;
-  `};
-  ${media.small`
-    margin-top : 10px;
-    font-size : 12px
-  `};
-`;
-
-export const Slogan2 = styled.div`
+export const Slogan = styled.div`
   margin-bottom: 20px;    
   
   .box1, .box2, .box3 {
@@ -151,17 +128,17 @@ export const Slogan2 = styled.div`
 
   }
   .box1{
-    ${media.small`
+    ${media.medium`
       display : none;
     `};
   }
   .box2{
-    ${media.small`
+    ${media.medium`
       display : none;
     `};
   }
   .box3{
-    ${media.small`
+    ${media.medium`
       display : none;
     `};
   }
@@ -219,15 +196,105 @@ export const SloganButton = styled(Button)`
   font-weight: 600;
 
   ${media.medium`
-    width: 150px;
+    display : none;
+    /* width: 150px;
     height: 40px;
     font-size: 15px;
     font-weight: 600; 
     float : right;  
-    margin : 0 8%;
+    margin : 0 8%; */
+
   `};
 
   ${media.small`
     display : none;
   `};
+`;
+
+///메인의 공지사항 테이블
+export const NoticeTable = styled.div`
+  width: 100%;
+  order: 3;
+
+  .title {
+    width: 85%;
+    margin: 50px auto;
+    margin-bottom: -5px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+    position: relative;
+    overflow: hidden; 
+
+    .noti-icon {
+      transform: scale(0.9);
+      margin-right: 4px;
+      margin-top: -4px;
+    }
+
+    span:hover{
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+  }
+
+  .notice-table {
+    width: 85%;
+    margin: 20px auto;
+
+    .table-container {
+      background: none;
+      box-shadow: none;
+
+      .MuiTableCell-root {
+        border-bottom: 1px solid;
+        border-color: ${(props) => {
+          const rgbaColor = `rgba(${parseInt(props.theme.textColor.slice(1, 3), 16)},
+                                ${parseInt(props.theme.textColor.slice(3, 5), 16)},
+                                ${parseInt(props.theme.textColor.slice(5, 7), 16)},
+                                0.5)`; // 0.5는 50% 투명도
+          return rgbaColor;
+        }};
+      }
+
+      .row {
+        height: 20px;
+        &:hover {
+          
+          cursor: pointer;
+          .cell{
+            font-weight: bold !important;
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GreetingsWrapper = styled.div`
+  order: 2;
+  width: 84%; 
+  margin: 0 auto; 
+  overflow: hidden; 
+  color: ${(props) => props.theme.mainColor};
+  .greetings-wrapper {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 15s linear infinite; /* 15초 동안 무한 반복 */
+  }
+
+  .greetings {
+    padding-right: 15px; /* 텍스트 간 간격 */
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0); /* 시작 지점 */
+    }
+    100% {
+      transform: translateX(-100%); /* 텍스트 전체가 이동 */
+    }
+  }
 `;
