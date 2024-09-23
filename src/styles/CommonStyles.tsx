@@ -16,6 +16,7 @@ export const Wrapper = styled.div`
     width: 100%;
   `};
 
+
   .add-btn {
     margin-top: -4px;
     margin-left: 15px;
@@ -23,6 +24,7 @@ export const Wrapper = styled.div`
     z-index: 1;
     box-shadow: none;
   }
+
 
   .form {
     width: 100%;
@@ -96,6 +98,7 @@ export const SearchArea = styled.div`
   ${media.small`
     display: block;
   `};
+
   .select-category {
     width: 130px;
     margin-right: 50px;
@@ -104,6 +107,7 @@ export const SearchArea = styled.div`
     margin-bottom : 10px;
   `};
   }
+
   .select-category-item {
     width: 180px;
     margin-right: 50px;
@@ -119,3 +123,4 @@ export const CustomPagination = styled(Stack)`
     margin: 0 auto;
   }
 `;
+

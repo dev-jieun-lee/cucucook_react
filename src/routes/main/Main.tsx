@@ -1,34 +1,41 @@
-import { Button, Card, Typography } from "@mui/material";
+import { Button, Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import React from "react";
 import {
   Banner,
   BannerButton,
   BannerLeft,
   BannerRight,
+  GreetingsWrapper,
   MainCard,
-  MainWrapper,
   NoticeTable,
-  Slogan1,
-  Slogan2,
+  Slogan,
   SloganButton,
 } from "./MainStyle";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import { useTranslation } from "react-i18next";
 import { getBoardCategory, getBoardList } from "../board/api";
 import { useQuery } from "react-query";
+import { AnswerContainer, CustomCategory } from "../board/BoardStyle";
+import moment from "moment";
+import CampaignIcon from '@mui/icons-material/Campaign';
+import { Wrapper } from "../../styles/CommonStyles";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = () => {
     const params = {
-      division: "NOTICE",
       search: "",
       searchType: "",
       boardCategoryId: "",
       start: 1,
       display: 10,
+      division: "NOTICE"
     };
     return getBoardList(params);
   };
@@ -37,13 +44,17 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const getBoardListWithCategory = async () => {
     try {
       const boardList = await getBoardListApi();
-      //NOTICE일 경우만 필터링
-      const filteredBoardList = boardList.data.filter(
-        (board: any) => board.boardDivision === "NOTICE"
-      );
+      // NOTICE일 경우만 필터링
+      const filteredBoardList = boardList.data
+        .filter((board: any) => board.boardDivision === "NOTICE")
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // 최신순 정렬
+      
+      // 상위 5개의 게시물만 가져오기
+      const top5BoardList = filteredBoardList.slice(0, 5);
+  
       // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
-        filteredBoardList.map(async (board: any) => {
+        top5BoardList.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
           return {
             ...board,
@@ -59,13 +70,44 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   // 데이터 가져오기
-  const { data: boardListWithCategory, isLoading: boardListLoading } = useQuery(
-    "boardListWithCategory",
-    getBoardListWithCategory
-  );
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+  } = useQuery("boardListWithCategory", getBoardListWithCategory);
 
+
+  //공지사항 페이지로 이동
+  const onClickNotice = (boardId? : string) => {
+    if(boardId){
+      navigate(`/notice/${boardId}`);
+    }else{
+      navigate(`/notice`);
+    }
+  };
+  //레시피 페이지로 이동
+  const onClickRecipe = (kind : string) => {
+    if(kind === "public"){
+      navigate(`/recipe/public_recipe_list`);
+    }
+    else if(kind === "members"){
+      navigate(`/recipe/member_recipe_list`);
+    }
+    else if(kind === "popular"){
+      navigate(`/recipe/all_recipe_list`);
+    }
+    else if(kind === "form"){
+      navigate(`/recipe/member_recipe_write/:recipeId?`);
+    }
+  };
+
+  //로딩
+  if (boardListLoading ) {
+    return <Loading />;
+  }
+  
+  
   return (
-    <MainWrapper>
+    <Wrapper>
       <Banner isDarkMode={isDarkMode}>
         <BannerLeft>
           <div className="card-area">
@@ -78,7 +120,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                 )}
               </div>
               <div>
-                <BannerButton variant="contained" color="secondary">
+                <BannerButton variant="contained" color="secondary" onClick={()=>onClickRecipe("public")}>
                   {t("menu.recipe.public")}
                 </BannerButton>
               </div>
@@ -92,7 +134,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                 )}
               </div>
               <div>
-                <BannerButton variant="contained" color="secondary">
+                <BannerButton variant="contained" color="secondary" onClick={()=>onClickRecipe("members")}>
                   {t("menu.recipe.member")}
                 </BannerButton>
               </div>
@@ -106,22 +148,79 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                 )}
               </div>
               <div>
-                <BannerButton variant="contained" color="secondary">
+                <BannerButton variant="contained" color="secondary" onClick={()=>onClickRecipe("popular")}>
                   {t("menu.recipe.popularity")}
                 </BannerButton>
               </div>
             </MainCard>
           </div>
+          <GreetingsWrapper >
+            <div className="greetings-wrapper">
+              <span className="greetings">
+                {t("sentence.greeting")}
+              </span>
+              <span className="greetings">
+                {t("sentence.greeting")}
+              </span>
+              <span className="greetings">
+                {t("sentence.greeting")}
+              </span>
+            </div>
+          </GreetingsWrapper>
           <NoticeTable>
-            <div className="title">{t("menu.board.notice")}</div>
+          <div className="title">
+            <CampaignIcon className="noti-icon" />
+            <span onClick={() => onClickNotice()}>{t("menu.board.notice")}</span>
+          </div>
+            <div className="notice-table">
+              <TableContainer className="table-container" component={Paper}>
+                <Table
+                  className="table"
+                  sx={{ minWidth: 650 }}
+                  aria-label="board table"
+                >
+                  <TableHead className="head">
+                    <TableRow>
+                      <TableCell className="category-cell">{t("text.category")}</TableCell>
+                      <TableCell className="title-cell">{t("text.title")}</TableCell>
+                      <TableCell>{t("text.register_date")}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {boardListWithCategory && boardListWithCategory.length > 0 ? (
+                      boardListWithCategory
+                        .map((boardItem: any, index: number) => (
+                          <TableRow
+                            className="row"
+                            key={index}
+                            onClick={() => onClickNotice(boardItem.boardId)}
+                          >
+                            <TableCell className="cell">
+                              <CustomCategory
+                                style={{ color: `${boardItem.category.color}` }}
+                                className="category"
+                              >
+                                [ {boardItem.category.name} ]
+                              </CustomCategory>
+                            </TableCell>
+                            <TableCell className="cell">{boardItem.title}</TableCell>
+                            <TableCell className="cell">
+                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center">
+                          {t("sentence.no_data")}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
           </NoticeTable>
-          {/* <Slogan1>
-            <h3>Cook Up the Fun, Stir Up the Flavor!</h3>
-            <small>기존 레시피 : </small> <br />
-            <small>회원 레시피 : 회원들이 직접 등록한 레시피입니다.</small>
-            <br />
-            <small>인기 레시피 : 인기 레시피입니다.</small>
-          </Slogan1> */}
           <div className="slogan-main">
             <SloganMain />
           </div>
@@ -130,7 +229,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
           <SloganMain />
         </BannerRight>
       </Banner>
-    </MainWrapper>
+    </Wrapper>
   );
 }
 
@@ -138,9 +237,20 @@ export default Main;
 
 function SloganMain() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth(); //로그인 상태관리
+    //레시피 페이지로 이동
+    const onClickRecipe = () => {
+      if(user){
+        navigate(`/recipe/member_recipe_write`);
+      }
+      else{
+        navigate(`/login`);
+      }
+    };
   return (
     <>
-      <Slogan2>
+      <Slogan>
         <div className="box1">
           <span className="strong">Cook</span>
           <span className="basic">{t("sentence.slogan")}</span>
@@ -153,11 +263,12 @@ function SloganMain() {
           <span className="strong">{t("sentence.cucucook")}</span>
           <span className="basic">{t("sentence.slogan3")}</span>
         </div>
-      </Slogan2>
+      </Slogan>
       <SloganButton
         className="icon-btn"
         variant="outlined"
         color="secondary"
+        onClick={()=> onClickRecipe()}
         endIcon={<KeyboardDoubleArrowRightIcon />}
       >
         {t("text.go_upload")}

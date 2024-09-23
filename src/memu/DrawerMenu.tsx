@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 function DrawerMenu({ toggleDrawer }: any) {
+  const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -27,9 +28,9 @@ function DrawerMenu({ toggleDrawer }: any) {
   ];
 
   const BoardMenuItems = [
-    { label: t("menu.board.notice"), path: "/board/notice" },
-    { label: t("menu.board.FAQ"), path: "/board/faq" },
-    { label: t("menu.board.QNA"), path: "/board/qna" },
+    { label: t("menu.board.notice"), path: "/notice" },
+    { label: t("menu.board.FAQ"), path: "/faq" },
+    { label: t("menu.board.QNA"), path: "/qna" },
   ];
 
   const MypageMenuItems = [
@@ -70,12 +71,16 @@ function DrawerMenu({ toggleDrawer }: any) {
         {renderMenuItems(BoardMenuItems)}
       </DrawerList>
       <Divider />
-      <DrawerList>
-        <ListItem className="list-item">
-          <span className="list-text">{t("menu.mypage.original")}</span>
-        </ListItem>
-        {renderMenuItems(MypageMenuItems)}
-      </DrawerList>
+      {user ? (
+        <DrawerList>
+          <ListItem className="list-item">
+            <span className="list-text">{t("mypage.original")}</span>
+          </ListItem>
+          {renderMenuItems(MypageMenuItems)}
+        </DrawerList>
+      ) : (
+        <></>
+      )}
     </Box>
   );
 }
