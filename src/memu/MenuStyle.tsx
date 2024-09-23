@@ -133,7 +133,7 @@ export const MainMenu = styled.div`
     position: absolute;
     width: 0;
     height: 2px;
-    bottom: -5px;
+    bottom: -3px;
     left: 50%;
     background-color: ${(props) => props.theme.mainColor};
     transition: width 0.3s ease, left 0.3s ease;
@@ -156,7 +156,7 @@ export const MainMenu = styled.div`
 
 export const SubMenu = styled.div`
   display: none;
-  margin-top: 3.6px;
+  margin-top: 1.5;
   padding-top: 5px;
   position: absolute;
   color: ${(props) => props.theme.bgColor};;
