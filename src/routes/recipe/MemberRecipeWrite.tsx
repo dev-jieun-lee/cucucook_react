@@ -545,7 +545,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
 
   return (
     <Wrapper>
-      <Box component="section">
+      <Box component="section" sx={{ width: "100%" }}>
         <TitleBox>
           <PageTitleBasic>
             {t("text.member_recipe")}{" "}

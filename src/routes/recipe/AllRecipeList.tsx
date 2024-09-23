@@ -141,7 +141,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   return (
     <Wrapper>
-      <Box component="section">
+      <Box component="section" sx={{ width: "100%" }}>
         <TitleBox>
           <PageTitleBasic>{t("text.public_recipe")}</PageTitleBasic>
           {allPublicRecipeList?.data && allPublicRecipeList.data.length > 0 ? (
@@ -212,7 +212,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      <Box component="section" mt={4}>
+      <Box component="section" sx={{ width: "100%" }} mt={4}>
         <TitleBox>
           <PageTitleBasic>{t("text.member_recipe")}</PageTitleBasic>
           <Button

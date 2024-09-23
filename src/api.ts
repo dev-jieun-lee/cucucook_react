@@ -1,7 +1,7 @@
 import axios from "axios";
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const BASE_URL = apiUrl + "/recipe";
+const BASE_URL = apiUrl + "/api/recipe";
 // http://openapi.foodsafetykorea.go.kr/api/keyId/COOKRCP01/json/1/5
 // 1	keyId	STRING(필수)	인증키	OepnAPI 에서 발급된 인증키
 // 2	serviceId	STRING(필수)	서비스명	요청대상인 해당 서비스명
@@ -33,6 +33,7 @@ export async function getMemberRecipeList(params: any) {
 
 // 공공 레시피 상세조회
 export async function getPublicRecipe(params: any) {
+  console.log("????");
   const response = await axios.get(`${BASE_URL}/getPublicRecipe`, {
     params: params,
   });

@@ -23,6 +23,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = () => {
     const params = {
+      division: "NOTICE",
       search: "",
       searchType: "",
       boardCategoryId: "",
@@ -58,10 +59,10 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
   };
 
   // 데이터 가져오기
-  const {
-    data: boardListWithCategory,
-    isLoading: boardListLoading,
-  } = useQuery("boardListWithCategory", getBoardListWithCategory);
+  const { data: boardListWithCategory, isLoading: boardListLoading } = useQuery(
+    "boardListWithCategory",
+    getBoardListWithCategory
+  );
 
   return (
     <MainWrapper>
@@ -112,9 +113,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
             </MainCard>
           </div>
           <NoticeTable>
-            <div className="title">
-              {t("menu.board.notice")}
-            </div>
+            <div className="title">{t("menu.board.notice")}</div>
           </NoticeTable>
           {/* <Slogan1>
             <h3>Cook Up the Fun, Stir Up the Flavor!</h3>
