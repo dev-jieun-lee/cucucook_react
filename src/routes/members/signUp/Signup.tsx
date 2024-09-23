@@ -21,7 +21,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const phoneNumber = location.state?.phone;
+  const email = location.state?.email;
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [customDomain, setCustomDomain] = useState("");
 
@@ -32,7 +32,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     { value: "custom", label: t("members.custom_input") },
   ];
 
-  // 아이디 중복검사
+  // ID 중복 확인 함수
   const idDuplicationChk = async (id: string) => {
     try {
       const isAvailable = await idCheck(id);
@@ -51,7 +51,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   };
 
-  // 한글 자모로 변환하는 함수
+  // 입력된 이름을 한글로 변환하는 함수
   const convertToHangul = (input: string) => {
     const jamo = /[\u3131-\u3163\uac00-\ud7a3]/; // 자음 및 모음 유니코드 범위
     const isHangul = input.split("").every((char) => jamo.test(char));
@@ -63,6 +63,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       .join("");
   };
 
+  // 폼 유효성 검사 함수
   const validate = async (values: any) => {
     const errors: any = {};
     const {
@@ -75,6 +76,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       customDomain,
     } = values;
 
+    // ID 유효성 검사
     if (!id) {
       errors.id = t("members.id_required");
     } else if (id.length < 4) {
@@ -90,6 +92,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       }
     }
 
+    // 비밀번호 유효성 검사
     if (!password) {
       errors.password = t("members.password_required");
     } else if (
@@ -98,10 +101,12 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.password = t("members.password_rules");
     }
 
+    // 비밀번호 확인 유효성 검사
     if (confirmPassword !== password) {
       errors.confirmPassword = t("members.passwords_match");
     }
 
+    // 이름 유효성 검사
     if (!name) {
       errors.name = t("members.name_required");
     } else if (!/^[가-힣\s]+$/.test(name)) {
@@ -109,6 +114,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
       errors.name = t("members.name_korean_only"); // 한글만 허용
     }
 
+    // 이메일 유효성 검사
     if (!emailLocalPart) {
       errors.emailLocalPart = t("members.email_required");
     }
@@ -143,7 +149,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
           userId: values.id,
           password: values.password,
           name: values.name,
-          phone: phoneNumber,
+          phone: values.phone,
           email: fullEmail,
           smsNoti: true,
           emailNoti: true,
@@ -163,14 +169,14 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
   });
 
-  // 아이디 입력값 정제 함수
+  // ID 입력 변경 핸들러
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // 영문자와 숫자만 허용
     const value = event.target.value.replace(/[^a-zA-Z0-9]/g, "");
     formik.setFieldValue("id", value);
   };
 
-  // 이름 입력값 정제 함수
+  // 이름 입력 변경 핸들러
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     const filteredValue = convertToHangul(value);
@@ -191,10 +197,15 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               name="id"
               label={t("members.id")}
               value={formik.values.id}
-              onChange={handleIdChange} // 아이디 정제 핸들러 사용
+              onChange={handleIdChange}
               onBlur={formik.handleBlur}
               error={formik.touched.id && Boolean(formik.errors.id)}
-              helperText={formik.touched.id && formik.errors.id}
+              helperText={
+                formik.touched.id &&
+                (formik.errors.id ||
+                  (isIdAvailable === false && t("members.id_in_use")) ||
+                  (isIdAvailable === true && t("members.id_available")))
+              }
               margin="normal"
             />
             {formik.touched.id && isIdAvailable === false && (
@@ -246,7 +257,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               name="name"
               label={t("menu.mypage.name")}
               value={formik.values.name}
-              onChange={handleNameChange} // 이름 정제 핸들러 사용
+              onChange={handleNameChange}
               onBlur={formik.handleBlur}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
@@ -262,6 +273,8 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               value={phoneNumber}
               disabled
               margin="normal"
+              error={Boolean(phoneError)}
+              helperText={phoneError}
             />
           </FormControl>
 
@@ -299,6 +312,7 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     setCustomDomain("");
                   }
                 }}
+                disabled
               >
                 {emailDomains.map((domain) => (
                   <MenuItem key={domain.value} value={domain.value}>

@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import media from "../../../styles/MediaQuery";
-import { OutlinedInput } from "@mui/material";
+import { FormControlLabel, OutlinedInput } from "@mui/material";
 import { Button } from "@mui/material";
+import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 ///**로그인, 회원가입 스타일
 
@@ -122,4 +124,37 @@ export const ResultBox = styled.div`
 export const LoginSubmitButton = styled(Button)`
   margin: 20px 0;
   height: 40px;
+`;
+
+export const StyledSubtitle = styled(Typography)`
+  font-weight: bold;
+  text-align: left;
+  font-size: 1.25rem;
+`;
+
+export const LargeStyledSubtitle = styled(StyledSubtitle)`
+  font-size: 1.5rem; /* 큰 글씨 크기 설정 */
+`;
+
+export const LeftAlignedFormControlLabel = styled(FormControlLabel)`
+  .MuiTypography-root {
+    text-align: left;
+  }
+`;
+
+export const CheckBoxContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+`;
+
+// Styled Link 컴포넌트
+export const StyledAnchor = styled(Link)`
+  color: black; // 기본 색상
+  text-decoration: none; // 밑줄 제거
+  &:hover {
+    color: ${(props) => props.theme.mainColor}; // 호버 시 색상 변경
+    text-decoration: underline; // 호버 시 밑줄 추가
+    cursor: pointer; // 마우스 오버 시 커서 변경
+  }
 `;

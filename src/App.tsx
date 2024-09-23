@@ -1,49 +1,57 @@
-import { Box, CssBaseline, StyledEngineProvider } from "@mui/material";
-import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Paper,
+  StyledEngineProvider,
+  Typography,
+} from "@mui/material";
 import {
   muiDarkTheme,
   muiLightTheme,
   styledDarkTheme,
   styledLightTheme,
 } from "./theme";
+import Header from "./components/Header";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 // material-ui
 import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 // styled-components
-import { I18nextProvider } from "react-i18next";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import TestPage from "./TestPage";
 import Footer from "./components/Footer";
+import { I18nextProvider } from "react-i18next";
 import i18n from "./locales/i18n";
-import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
-import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
-import Login from "./routes/members/login/Login";
-import Activity from "./routes/myPage/Activity";
-import LikeLists from "./routes/myPage/LikeLists";
-import MyReplys from "./routes/myPage/MyReplys";
-import MyWrites from "./routes/myPage/MyWrites";
-import Profile from "./routes/myPage/Profile";
-import UserInfo from "./routes/myPage/UserInfo";
 import AllRecipeList from "./routes/recipe/AllRecipeList";
 import MemberRecipe from "./routes/recipe/MemberRecipe";
 import MemberRecipeList from "./routes/recipe/MemberRecipeList";
 import PublicRecipe from "./routes/recipe/PublicRecipe";
 import PublicRecipeList from "./routes/recipe/PublicRecipeList";
-
-import { AuthProvider } from "./auth/AuthContext";
-import Faq from "./routes/board/Faq/Faq";
-import FaqForm from "./routes/board/Faq/FaqForm";
-import Notice from "./routes/board/notice/Notice";
-import NoticeDetail from "./routes/board/notice/NoticeDetail";
-import NoticeForm from "./routes/board/notice/NoticeForm";
-import Main from "./routes/main/Main";
+import MemberRecipeWrite from "./routes/recipe/MemberRecipeWrite";
+import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
+import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
+import Login from "./routes/members/login/Login";
+import Profile from "./routes/myPage/Profile";
+import Activity from "./routes/myPage/Activity";
+import UserInfo from "./routes/myPage/UserInfo";
+import LikeLists from "./routes/myPage/LikeLists";
+import MyWrites from "./routes/myPage/MyWrites";
+import MyReplys from "./routes/myPage/MyReplys";
 import FindId from "./routes/members/login/FindId";
 import FindPw from "./routes/members/login/FindPw";
-import Signup from "./routes/members/signUp/Signup";
+import Notice from "./routes/board/notice/Notice";
+import Faq from "./routes/board/Faq/Faq";
+import Main from "./routes/main/Main";
+import { AuthProvider } from "./auth/AuthContext";
 import SignupIntro from "./routes/members/signUp/SignupIntro";
-import MemberRecipeWrite from "./routes/recipe/MemberRecipeWrite";
+import Signup from "./routes/members/signUp/Signup";
+import NoticeForm from "./routes/board/notice/NoticeForm";
+import FaqForm from "./routes/board/Faq/FaqForm";
+import NoticeDetail from "./routes/board/notice/NoticeDetail";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -203,7 +211,6 @@ function App() {
                             display: "flex",
                             width: "92%",
                             margin: "140px auto",
-                            alignItems: "flex-start",
                           }}
                         >
                           <RecipeSideMenu isDarkMode={isDarkMode} />
@@ -219,7 +226,6 @@ function App() {
                             display: "flex",
                             width: "92%",
                             margin: "140px auto",
-                            alignItems: "flex-start",
                           }}
                         >
                           <RecipeSideMenu isDarkMode={isDarkMode} />
@@ -235,7 +241,6 @@ function App() {
                             display: "flex",
                             width: "92%",
                             margin: "140px auto",
-                            alignItems: "flex-start",
                           }}
                         >
                           <RecipeSideMenu isDarkMode={isDarkMode} />
@@ -331,7 +336,7 @@ function App() {
                           }}
                         >
                           <BoardSideMenu isDarkMode={isDarkMode} />
-                          <FaqForm />
+                          <Notice />
                         </Box>
                       }
                     />

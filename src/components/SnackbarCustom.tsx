@@ -1,4 +1,4 @@
-import { Box, Snackbar, Alert, AlertColor } from '@mui/material';
+import { Box, Snackbar, Alert, AlertColor } from "@mui/material";
 
 function SnackbarCustom({
   open,
@@ -10,12 +10,13 @@ function SnackbarCustom({
   message: string;
   onClose: () => void;
   severity: AlertColor;
+  autoHideDuration?: number;
 }) {
-  const vertical: 'top' | 'bottom' = 'top';
-  const horizontal: 'left' | 'center' | 'right' = 'right';
+  const vertical: "top" | "bottom" = "top";
+  const horizontal: "left" | "center" | "right" = "right";
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}
@@ -26,7 +27,7 @@ function SnackbarCustom({
         <Alert
           onClose={onClose}
           severity={severity} // 'success' or 'error'
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {message}
         </Alert>
