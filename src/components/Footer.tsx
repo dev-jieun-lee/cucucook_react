@@ -2,6 +2,7 @@ import { MenuItem, Select } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import i18n from "../locales/i18n";
+import media from "../styles/MediaQuery";
 
 function Footer({ isDarkMode }: any) {
   const { t, i18n } = useTranslation(); // i18next 훅 사용
