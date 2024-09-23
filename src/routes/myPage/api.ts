@@ -267,16 +267,21 @@ export const fetchMyWrites = async (
 };
 
 // 회원 정보를 업데이트하는 API 호출 함수
-export async function updateMember(memberId: string, memberData: any) {
+export async function updateMember(
+  memberId: string,
+  name: string,
+  email: string,
+  phone: string
+) {
   console.log(
-    `회원 정보 업데이트 요청: memberId=${memberId}, data=${JSON.stringify(
-      memberData
-    )}`
+    `회원 정보 업데이트 요청: memberId=${memberId}, name=${name}, email=${email}, phone=${phone}`
   );
   try {
     const response = await axios.put(`${BASE_URL}/updateMember`, {
       memberId,
-      ...memberData,
+      name,
+      email,
+      phone,
     });
     console.log("회원 정보 업데이트 성공:", response.data);
     return response.data;
