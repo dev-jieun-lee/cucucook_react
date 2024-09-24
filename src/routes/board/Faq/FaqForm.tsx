@@ -44,24 +44,26 @@ function FaqForm() {
 
   
   //QNA 카테고리 데이터 받아오기
-  const getBoardCategoryListApi = () => {
+  const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
       start: "",
       display: "",
     };
-    return getBoardCategoryList(params);
+    const response = await getBoardCategoryList(params);
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "FAQ"
+        );
+      }
+
+      return [];
   };
-  
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
-    getBoardCategoryListApi,
-    {
-      select: (data) => data.data.filter((item : any) => item.division === "QNA"),
-    }
+    getBoardCategoryListApi
   );
 
-  console.log(boardCategoryList);
   
 
 
