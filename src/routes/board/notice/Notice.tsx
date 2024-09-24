@@ -58,9 +58,13 @@ function Notice() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-    return response.data.filter(
-      (category: any) => category.division === "NOTICE"
-    );
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "NOTICE"
+        );
+      }
+
+      return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
