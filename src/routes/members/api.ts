@@ -103,6 +103,7 @@ export const findId = async (data: {
   email: string;
   verificationCode: string;
 }) => {
+  console.log("아이디찾기data:", data);
   const response = await fetch("/api/members/find-id", {
     method: "POST",
     headers: {
