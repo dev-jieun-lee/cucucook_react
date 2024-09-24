@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios"; // AxiosError를 import
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useMutation } from "react-query";
 
@@ -251,7 +251,7 @@ export const fetchMyWrites = async (
     // 여기서 boardDivision을 로깅합니다.
     console.log("Fetching writes with boardDivision:", boardDivision);
 
-    const response = await axios.get(`/api/mypage/getMyBoards`, {
+    const response = await axios.get(`${BASE_URL}/getMyBoards`, {
       params: {
         memberId,
         page,
@@ -312,3 +312,78 @@ export async function changePasswordByUser(
     throw error;
   }
 }
+
+// 회원 활동 통계 정보 가져오기
+export const fetchActivityStats = async (memberId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getActivityStats`, {
+      params: { memberId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching activity stats:", error);
+    throw error;
+  }
+};
+
+// 최신 게시글 5개 가져오는 함수
+export const fetchMemberBoardList = async (memberId: number, limit: number) => {
+  try {
+    console.log("Fetching member board list. Params:", { memberId, limit });
+
+    // 백엔드 API 호출
+    const response = await axios.get(`${BASE_URL}/getMemberBoardList`, {
+      params: {
+        memberId,
+        limit, // 가져올 게시글 수 (최신순으로 5개)
+      },
+    });
+
+    console.log("Response from API:", response.data);
+
+    // 서버에서 반환된 게시글 목록을 리턴
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError; // 에러를 AxiosError 타입으로 캐스팅
+
+    if (error.response) {
+      // 서버에서 오류 응답을 반환한 경우
+      console.error("Error response from server:", {
+        status: error.response.status,
+        data: error.response.data,
+      });
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답을 받지 못한 경우
+      console.error(
+        "No response received from server. Request:",
+        error.request
+      );
+    } else {
+      // 요청 설정 중에 오류가 발생한 경우
+      console.error("Error setting up the request:", error.message);
+    }
+    throw error; // 에러가 발생하면 호출한 곳에서 처리할 수 있도록 에러를 던집니다.
+  }
+};
+
+// 최신 댓글 5개 가져오는 함수
+export const fetchMyComments = async (
+  memberId: number,
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getMyComments`, {
+      params: {
+        memberId,
+        page: 5,
+        pageSize: 0,
+      },
+    });
+    console.log("Response from API:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    throw error;
+  }
+};
