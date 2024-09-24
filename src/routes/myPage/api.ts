@@ -251,7 +251,7 @@ export const fetchMyWrites = async (
     // 여기서 boardDivision을 로깅합니다.
     console.log("Fetching writes with boardDivision:", boardDivision);
 
-    const response = await axios.get(`/api/mypage/getMyBoards`, {
+    const response = await axios.get(`${BASE_URL}/getMyBoards`, {
       params: {
         memberId,
         page,

@@ -38,6 +38,8 @@ export const styledDarkTheme: DefaultTheme = {
   mainColor: "#F2EFDB",
   footerColor: "#363131",
   navBorderColor: "#878585c1",
+  avBorderColor: "#ccc",
+  searchBorderColor: "#ccc",
 
   scrollbarBackColor: "#76757539",
   scrollbarColor: "#88888878",
