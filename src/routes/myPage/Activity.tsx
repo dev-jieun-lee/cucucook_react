@@ -18,7 +18,11 @@ import {
 } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useAuth } from "../../auth/AuthContext";
-import { fetchActivityStats } from "./api"; // 활동 정보 API 함수 가져오기
+import {
+  fetchActivityStats,
+  fetchMemberBoardList,
+  fetchMyComments,
+} from "./api"; // 활동 정보 API 함수 가져오기
 
 type SectionProps = {
   title: string;
@@ -53,11 +57,13 @@ interface ActivityProps {
 
 const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
   const { user } = useAuth();
-  console.log(user);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [likeCount, setLikeCount] = useState(0); // likeCount 상태
   const [writeCount, setWriteCount] = useState(0); // writeCount 상태
   const [replyCount, setReplyCount] = useState(0); // replyCount 상태
+  const [latestPosts, setLatestPosts] = useState([]); // 최신 게시글 상태
+  const [latestReplies, setLatestReplies] = useState([]); // 최신 댓글 상태
+
   const username = user?.name || "회원";
 
   const likedRecipes = [
@@ -67,14 +73,6 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
     "레시피 D",
     "레시피 E",
   ];
-  const writtenPosts = [
-    "게시글 A",
-    "게시글 B",
-    "게시글 C",
-    "게시글 D",
-    "게시글 E",
-  ];
-  const writtenReplies = ["댓글 A", "댓글 B", "댓글 C", "댓글 D", "댓글 E"];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,10 +108,36 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
     }
   };
 
-  // 컴포넌트가 마운트될 때 활동 통계 정보 불러오기
+  // 최신 게시글 목록 불러오는 함수
+  const loadLatestPosts = async () => {
+    if (user?.memberId) {
+      try {
+        const posts = await fetchMemberBoardList(user.memberId, 5); // 최신 5개의 게시글
+        setLatestPosts(posts);
+      } catch (error) {
+        console.error("Error loading latest posts:", error);
+      }
+    }
+  };
+
+  // 최신 댓글 5개
+  const loadLatestReplies = async () => {
+    if (user?.memberId) {
+      try {
+        const replies = await fetchMyComments(user.memberId, 5, 0); // 최신 5개의 댓글
+        setLatestReplies(replies);
+      } catch (error) {
+        console.error("Error loading latest replies:", error);
+      }
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 댓글 정보도 불러오기
   useEffect(() => {
     loadActivityStats();
-  }, [user]); // [] 안에 user 추가하여 user가 변경될 때만 재실행되도록 수정
+    loadLatestPosts(); // 최신 게시글 정보 로드
+    loadLatestReplies(); // 최신 댓글 정보 로드
+  }, [user]);
 
   return (
     <Wrapper>
@@ -166,21 +190,36 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
 
         <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
           <List>
-            {writtenPosts.map((post, index) => (
-              <ListItem key={index} sx={{ borderBottom: "1px solid #ddd" }}>
-                <ListItemText primary={post} />
-              </ListItem>
-            ))}
+            {latestPosts.length > 0 ? (
+              latestPosts.map((post: any, index: number) => (
+                <ListItem key={post.id} sx={{ borderBottom: "1px solid #ddd" }}>
+                  <ListItemText primary={post.title} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ padding: 2 }}>
+                게시물이 없습니다.
+              </Typography>
+            )}
           </List>
         </Section>
 
         <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
           <List>
-            {writtenReplies.map((reply, index) => (
-              <ListItem key={index} sx={{ borderBottom: "1px solid #ddd" }}>
-                <ListItemText primary={reply} />
-              </ListItem>
-            ))}
+            {latestReplies.length > 0 ? (
+              latestReplies.map((reply: any, index: number) => (
+                <ListItem
+                  key={reply.commentId}
+                  sx={{ borderBottom: "1px solid #ddd" }}
+                >
+                  <ListItemText primary={reply.comment} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ padding: 2 }}>
+                댓글이 없습니다.
+              </Typography>
+            )}
           </List>
         </Section>
       </Box>
