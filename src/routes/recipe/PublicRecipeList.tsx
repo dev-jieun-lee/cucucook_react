@@ -66,6 +66,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleViewDetailClick = (path: string, params: string) => {
+    console.log(params);
+    
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };

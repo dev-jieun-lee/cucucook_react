@@ -261,7 +261,8 @@
     "find_id_error": "An error occurred while finding the ID.",
     "id_found": "Found User ID",
     "no_info_found": "No ID matches the entered name and email.",
-    "login_success_info": "Login successful information."
+    "login_success_info": "Login successful information.",
+    "password_chk_info" : "Please enter your password for identification."
   },
   "recipe": {
     "alert": {
