@@ -8,12 +8,12 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
 import { useTheme } from "styled-components";
 import Swal from "sweetalert2";
-import { deleteRecipeComment, deleteRecipeCommentHasChild } from "../../api";
+import { deleteRecipeComment, deleteRecipeCommentHasChild } from "./recipeApi";
 import {
   CommentIconButton,
   RecipeCommentList,
   recipeCommonStyles,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 import { useAuth } from "../../auth/AuthContext";
 

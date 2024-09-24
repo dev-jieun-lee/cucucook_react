@@ -1,5 +1,5 @@
 # 1단계: Node.js 환경에서 React 애플리케이션 빌드
-FROM node:20-alpine as build
+FROM node:20-alpine AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -14,8 +14,8 @@ RUN npm ci
 COPY . .
 
 # 애플리케이션 빌드
-RUN npm run build
-
+# Node.js 메모리 한도 설정 (4GB로 설정)
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 # 2단계: Nginx로 정적 파일 서빙
 FROM nginx:alpine

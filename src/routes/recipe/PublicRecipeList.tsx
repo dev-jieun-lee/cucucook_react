@@ -15,7 +15,7 @@ import { useInView } from "react-intersection-observer";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "styled-components";
-import { getPublicRecipeList } from "../../api";
+import { getPublicRecipeList } from "./recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
@@ -30,9 +30,8 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  ThumbnailTypography,
   TitleBox,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 import SearchIcon from "@mui/icons-material/Search";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {

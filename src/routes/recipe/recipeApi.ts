@@ -163,8 +163,6 @@ export async function insertMemberRecipe(form: any) {
 }
 
 //회원 레시피 수정
-
-// 회원 레시피 등록
 export async function updateMemberRecipe(recipeId: string, form: any) {
   const formData = new FormData();
 
@@ -178,7 +176,6 @@ export async function updateMemberRecipe(recipeId: string, form: any) {
   formData.append("thumbnailServerImgId", form.thumbnailServerImgId);
 
   // 레시피 썸네일 추가 (파일 객체)
-  console.log(form);
   if (form.recipeInfo.thumbnail) {
     formData.append("thumbnail", form.recipeInfo.thumbnail);
   } else {
