@@ -230,7 +230,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
                         <ThumbnailBox
                           src={
                             memberRecipeItem.memberRecipeImages
-                              ? `${process.env.REACT_APP_API_URL}${memberRecipeItem.memberRecipeImages.webImgPath}/${memberRecipeItem.memberRecipeImages.serverImgName}.${memberRecipeItem.memberRecipeImages.extension}`
+                              ? `${process.env.REACT_APP_FILE_URL}${memberRecipeItem.memberRecipeImages.webImgPath}/${memberRecipeItem.memberRecipeImages.serverImgName}.${memberRecipeItem.memberRecipeImages.extension}`
                               : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                           }
                           alt={memberRecipeItem.recipeId}
