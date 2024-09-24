@@ -122,7 +122,7 @@ function FaqForm() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      memberId: "1",
+      memberId: user?.memberId,
       title: boardId ? boardWithCategory?.data?.title || "" : "",
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -148,7 +148,7 @@ function FaqForm() {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
-        memberId: "1",
+        memberId: user?.memberId,
         title: "",
         boardCategoryId: "",
         contents: "",
