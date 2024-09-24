@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "styled-components";
-import media from "./MediaQuery";
+import media from "../../styles/MediaQuery";
 export const RecipeWrapper = styled.div``;
 export const TitleBox = styled(Box)`
   display: grid;
@@ -33,18 +33,20 @@ export const ThumbnailBox = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.5s;
+  &:hover {
+    transform: scale(1.2);
+    transition: transform 0.5s;
+  }
 `;
 export const ThumbnailButton = styled(Button)`
   display: flex;
   justify-content: flex-start;
   width: 100%;
-  height: 100%;
   flex-direction: column;
   padding: 0;
   color: ${(props) => props.theme.textColor};
-  &:hover {
-    color: ${(props) => props.theme.mainColor};
-  }
 
   .thumbnail-box-wrap {
     width: 100%;
@@ -54,26 +56,25 @@ export const ThumbnailButton = styled(Button)`
   }
   .thumbnail-info-box-wrap {
     width: 100%;
-    background: #ffffff;
+    height: 100%;
+    background: #f5f5f5;
     overflow: auto;
     text-align: left;
   }
+
   .thumbnail-info-title-box {
     font-size: 18px;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    margin: 10px 0;
   }
   .thumbnail-info-default-box {
     align-items: center;
     justify-content: space-between;
   }
-`;
-
-export const ThumbnailTypography = styled(Typography)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-  margin: 10px 0;
 `;
 
 export const SearchBoxContainer = styled(Box)`
@@ -130,7 +131,7 @@ export const recipeCommonStyles = () => ({
   },
 });
 
-export const MemberRecipeView = styled.div`
+export const RecipeView = styled.div`
   width: 100%;
   .recipe-info-container {
     .recipe-info-img-container {
@@ -167,15 +168,24 @@ export const MemberRecipeView = styled.div`
     .recipe-info-grid-title {
       background-color: ${(props) => props.theme.mainColor};
       padding: 10px;
-      color: ${(props) => props.theme.textColorWhite};
+      color: ${(props) => props.theme.textColor};
+      border-bottom: 1px solid ${(props) => props.theme.contrastColor};
     }
+    .recipe-info-grid div.recipe-info-grid-title:nth-of-type(1) {
+      border-top: 1px solid ${(props) => props.theme.mainColor};
+    }
+    .recipe-info-grid div.recipe-info-grid-title:nth-last-of-type(2) {
+      border-bottom: 1px solid ${(props) => props.theme.mainColor};
+    }
+
     .recipe-info-grid-text {
       padding: 10px;
       text-align: left;
+      color: ${(props) => props.theme.textColor};
       border-bottom: 1px solid ${(props) => props.theme.mainColor};
       border-right: 1px solid ${(props) => props.theme.mainColor};
     }
-    .recipe-info-grid .recipe-info-grid-text:first-of-type {
+    .recipe-info-grid div.recipe-info-grid-text:nth-of-type(2) {
       border-top: 1px solid ${(props) => props.theme.mainColor};
     }
   }
@@ -191,43 +201,6 @@ export const MemberRecipeView = styled.div`
     margin: 15px;
     .pagination-btn {
       margin: 0 auto;
-    }
-  }
-`;
-
-export const PublicRecipeView = styled.div`
-  width: 100%;
-  .recipe-info-container {
-    .recipe-info-img-container {
-      width: 100%;
-      aspect-ratio: 3 / 2;
-      position: relative;
-    }
-    .recipe-info-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    .recipe-info-grid-title {
-      background-color: ${(props) => props.theme.mainColor};
-      padding: 10px;
-      color: ${(props) => props.theme.textColorWhite};
-    }
-    .recipe-info-grid-text {
-      padding: 10px;
-      text-align: left;
-    }
-  }
-
-  .recipe-description-grid-container {
-    .recipe-description-grid-img-container {
-    }
-    .recipe-description-grid-text-container {
-      text-align: left;
     }
   }
 `;

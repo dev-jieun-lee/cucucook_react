@@ -20,7 +20,7 @@ import {
   getMemberRecipe,
   getRecipeCommentList,
   insertMemberRecipeLike,
-} from "../../api";
+} from "./recipeApi";
 import Loading from "../../components/Loading";
 import {
   PageSubTitleBasic,
@@ -31,12 +31,12 @@ import {
 import {
   CommentIconButton,
   IngredientGrid,
-  MemberRecipeView,
+  RecipeView,
   RecepiImgBox,
   RecepiImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 import Swal from "sweetalert2";
@@ -287,7 +287,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   return (
     <Wrapper>
-      <MemberRecipeView>
+      <RecipeView>
         <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
@@ -762,7 +762,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             )}
           </Box>
         )}
-      </MemberRecipeView>
+      </RecipeView>
       {showScrollButton && (
         <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
           <KeyboardArrowUp />

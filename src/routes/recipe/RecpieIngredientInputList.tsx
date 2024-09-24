@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { recipeCommonStyles } from "../../styles/RecipeStyle";
+import { recipeCommonStyles } from "./RecipeStyle";
 
 interface Ingredient {
   name: string;

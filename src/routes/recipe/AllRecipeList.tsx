@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getMemberRecipeList, getPublicRecipeList } from "../../api";
+import { getMemberRecipeList, getPublicRecipeList } from "./recipeApi";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
@@ -15,10 +15,9 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  ThumbnailTypography,
   TitleBox,
   recipeCommonStyles,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 import StarIcon from "@mui/icons-material/Star";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -155,16 +154,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <>{allPublicRecipeList?.data}</>
           )}
         </TitleBox>
-        <Grid
-          container
-          spacing={4}
-          sx={{
-            ...customStyles.resetMuiGrid,
-            "& > .MuiGrid-item": {
-              padding: "5px",
-            },
-          }}
-        >
+        <Grid container spacing={2}>
           {allPublicRecipeList?.data && allPublicRecipeList.data.length > 0 ? (
             allPublicRecipeList.data.map(
               (publicRecipeItem: any, index: number) => (
@@ -222,7 +212,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <Add /> {t("text.more_view")}
           </Button>
         </TitleBox>
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           {allMemberRecipeList?.data && allMemberRecipeList.data.length > 0 ? (
             allMemberRecipeList.data.map(
               (memberRecipeItem: any, index: number) => (

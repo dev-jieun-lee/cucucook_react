@@ -9,7 +9,7 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { recipeCommonStyles } from "../../styles/RecipeStyle";
+import { recipeCommonStyles } from "./RecipeStyle";
 import RecipeImageUpload from "./RecipeImageUpload";
 import { RefObject, useEffect, useState } from "react";
 import { FocusableButton } from "./MemberRecipeWrite";

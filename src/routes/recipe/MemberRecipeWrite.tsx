@@ -25,13 +25,13 @@ import {
   getRecipeCategoryListForWrite,
   insertMemberRecipe,
   updateMemberRecipe,
-} from "../../api";
+} from "./recipeApi";
 import {
   PageTitleBasic,
   ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { MemberRecipeWirteForm, TitleBox } from "../../styles/RecipeStyle";
+import { MemberRecipeWirteForm, TitleBox } from "./RecipeStyle";
 import RecipeImageUpload from "./RecipeImageUpload";
 import RecipeProcessListInput from "./RecipeProcessListInput";
 import RecpieIngredientInputList from "./RecpieIngredientInputList";
@@ -108,8 +108,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     {
       enabled: !!recipeId,
       onSuccess: (data) => {
-        if (data.success && data.data.memberRecipeImages)
-          setServerThumbnail(data.data.memberRecipeImages);
+        if (data.success && data.data.memberRecipe.memberRecipeImages)
+          setServerThumbnail(data.data.memberRecipe.memberRecipeImages);
 
         setIsLoading(false);
       },
