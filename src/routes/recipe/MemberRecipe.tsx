@@ -359,7 +359,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           alt={memberRecipe.data.memberRecipe.title}
                           src={
                             memberRecipe.data.memberRecipeImages
-                              ? `${process.env.REACT_APP_API_URL}${memberRecipe.data.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipeImages.extension}`
+                              ? `${process.env.REACT_APP_FILE_URL}${memberRecipe.data.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipeImages.extension}`
                               : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                           }
                         ></Box>
@@ -688,7 +688,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                                 alt={memberRecipeProcessItem.imgId}
                                 src={
                                   memberRecipeProcessItem.memberRecipeImages
-                                    ? `${process.env.REACT_APP_API_URL}${memberRecipeProcessItem.memberRecipeImages.webImgPath}/${memberRecipeProcessItem.memberRecipeImages.serverImgName}.${memberRecipeProcessItem.memberRecipeImages.extension}`
+                                    ? `${process.env.REACT_APP_FILE_URL}${memberRecipeProcessItem.memberRecipeImages.webImgPath}/${memberRecipeProcessItem.memberRecipeImages.serverImgName}.${memberRecipeProcessItem.memberRecipeImages.extension}`
                                     : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                                 }
                               ></RecepiImgBox>
