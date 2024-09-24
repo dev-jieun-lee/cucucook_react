@@ -173,7 +173,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     onClick={() =>
                       handlViewDetailClick(
                         "/recipe/public_recipe",
-                        encodeURIComponent(publicRecipeItem.rcpNm) + "/1/1"
+                        encodeURIComponent(publicRecipeItem.rcpNm)
                       )
                     }
                   >
