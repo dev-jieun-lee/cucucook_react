@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "styled-components";
-import { getPublicRecipe } from "../../api";
+import { getPublicRecipe } from "./recipeApi";
 import Loading from "../../components/Loading";
 import {
   PageSubTitleBasic,
@@ -15,12 +15,12 @@ import {
   Wrapper,
 } from "../../styles/CommonStyles";
 import {
-  PublicRecipeView,
+  RecipeView,
   RecepiImgBox,
   RecepiImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -96,7 +96,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   return (
     <Wrapper>
       {
-        <PublicRecipeView>
+        <RecipeView>
           <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
             <TitleBox margin={"20px 0"}>
               <PageTitleBasic>
@@ -311,7 +311,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </Grid>
           )}
           <Box padding={"20px 0"}></Box>
-        </PublicRecipeView>
+        </RecipeView>
       }
       {showScrollButton && (
         <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>

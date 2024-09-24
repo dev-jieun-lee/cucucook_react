@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getMemberRecipeList,
   getRecipeCategoryListWithMemberRecipeCount,
-} from "../../api";
+} from "./recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
@@ -38,7 +38,7 @@ import {
   ThumbnailBoxContainer,
   ThumbnailButton,
   TitleBox,
-} from "../../styles/RecipeStyle";
+} from "./RecipeStyle";
 import { useAuth } from "../../auth/AuthContext";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -283,7 +283,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     color:
                       selectedCategory === category.name
                         ? "primary.main"
-                        : "text.primary",
+                        : "secondary.main",
                     "&:hover": {
                       backgroundColor: "none",
                       color: "primary.main",
@@ -326,7 +326,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 sx={{
                   backgroundColor: "transparent",
                   color:
-                    selectedOrder === value ? "primary.main" : "text.primary",
+                    selectedOrder === value ? "primary.main" : "secondary.main",
                   "&:hover": {
                     backgroundColor: "none",
                     color: "primary.main",
@@ -345,8 +345,10 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     height: "3px",
                     borderRadius: "50%",
                     backgroundColor:
-                      selectedOrder === value ? "primary.main" : "text.primary",
-                    marginRight: "8px", // Spacing between dot and text,
+                      selectedOrder === value
+                        ? "primary.main"
+                        : "secondary.main",
+                    marginRight: "8px",
                   }}
                 />
                 {value}

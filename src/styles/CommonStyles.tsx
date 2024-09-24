@@ -62,9 +62,9 @@ export const TitleBasic = styled.div`
 `;
 
 export const PageTitleBasic = styled.div`
+  text-align: left;
   font-size: 25px;
   font-weight: 600;
-  text-align: left;
   color: ${(props) => props.theme.mainColor};
 `;
 

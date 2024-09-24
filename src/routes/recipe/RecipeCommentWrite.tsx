@@ -18,11 +18,8 @@ import {
   getRecipeComment,
   insertRecipeComment,
   updateRecipeComment,
-} from "../../api";
-import {
-  RecipeCommentWrite,
-  recipeCommonStyles,
-} from "../../styles/RecipeStyle";
+} from "./recipeApi";
+import { RecipeCommentWrite, recipeCommonStyles } from "./RecipeStyle";
 import { useAuth } from "../../auth/AuthContext";
 
 const customStyles = recipeCommonStyles();
