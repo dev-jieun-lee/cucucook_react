@@ -643,11 +643,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           >
                             <Grid item xs={6} md={3}>
                               <Typography variant="subtitle2">
-                                {memberRecipeIngredientItem.name}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                              <Typography variant="subtitle2">
+                                {memberRecipeIngredientItem.name} :{" "}
                                 {memberRecipeIngredientItem.amount}
                               </Typography>
                             </Grid>

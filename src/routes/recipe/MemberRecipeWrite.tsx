@@ -764,6 +764,10 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                       }
                       onBlur={formik.handleBlur}
                       value={formik.values.recipeInfo.level}
+                      error={
+                        formik.touched.recipeInfo?.level &&
+                        Boolean(formik.errors.recipeInfo?.level)
+                      }
                     >
                       {(getRecipeCategoryList?.data.levelList || []).map(
                         (category: any) => (
@@ -781,7 +785,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                     {formik.touched.recipeInfo?.level &&
                       formik.errors.recipeInfo?.level && (
                         <FormHelperText error>
-                          {t("recipe.error.level")}
+                          {t("recipe.error.recipeLevelId")}
                         </FormHelperText>
                       )}
                   </FormControl>

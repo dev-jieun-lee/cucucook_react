@@ -61,7 +61,6 @@ export const ThumbnailButton = styled(Button)`
   .thumbnail-info-title-box {
     font-size: 18px;
     font-weight: 600;
-    color: ${(props) => props.theme.mainColor};
   }
   .thumbnail-info-default-box {
     align-items: center;
@@ -173,6 +172,11 @@ export const MemberRecipeView = styled.div`
     .recipe-info-grid-text {
       padding: 10px;
       text-align: left;
+      border-bottom: 1px solid ${(props) => props.theme.mainColor};
+      border-right: 1px solid ${(props) => props.theme.mainColor};
+    }
+    .recipe-info-grid .recipe-info-grid-text:first-of-type {
+      border-top: 1px solid ${(props) => props.theme.mainColor};
     }
   }
 
