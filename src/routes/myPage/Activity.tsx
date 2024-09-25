@@ -23,6 +23,7 @@ import {
   fetchMemberBoardList,
   fetchMyComments,
   fecthMyRecipeList,
+  fetchLikedRecipes,
 } from "./api"; // 활동 정보 API 함수 가져오기
 
 type SectionProps = {
@@ -103,6 +104,19 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
     }
   };
 
+  // 찜한 레시피 정보 로드하는 함수
+  const loadLikedRecipes = async () => {
+    if (user?.memberId) {
+      try {
+        const likedrecipes = await fetchLikedRecipes(user.memberId);
+        setLikedRecipes(likedrecipes);
+        console.log("찜한 레시피 정보 ", likedrecipes);
+      } catch (error) {
+        console.error("찜한 레시피 로드 오류:", error);
+      }
+    }
+  };
+
   // 최신 게시글 목록 불러오는 함수
   const loadLatestPosts = async () => {
     if (user?.memberId) {
@@ -123,7 +137,6 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
         const recipes = await fecthMyRecipeList(user.memberId, 5); // API 요청을 통해 최신 레시피 가져오가
 
         setLatestRecipes(recipes); // 최신 레시피 상태 업데이트
-        console.log("ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ", recipes);
       } catch (error) {
         console.error("Error loading latest recipes:", error);
       }
@@ -134,8 +147,9 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
   const loadLatestReplies = async () => {
     if (user?.memberId) {
       try {
-        const replies = await fetchMyComments(user.memberId, 5, 0); // 최신 5개의 댓글
+        const replies = await fetchMyComments(user.memberId, 1, 5); // 최신 5개의 댓글
         setLatestReplies(replies);
+        console.log("최신 댓글", replies);
       } catch (error) {
         console.error("Error loading latest replies:", error);
       }
@@ -145,6 +159,7 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
   // 컴포넌트가 마운트될 때 댓글 정보도 불러오기
   useEffect(() => {
     loadActivityStats();
+    loadLikedRecipes();
     loadLatestPosts(); // 최신 게시글 정보 로드
     loadLatestRecipes(); // 최신 레시피 정보 로드
     loadLatestReplies(); // 최신 댓글 정보 로드
@@ -190,14 +205,24 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
         </Box>
 
         <Section title="레시피 찜목록" linkTo="/myPage/LikeLists">
-          <Box sx={myPageGridStyles.gridContainer}>
-            {likedRecipes.map((recipe, index) => (
-              <Box key={index} sx={myPageGridStyles.itemBox}>
-                <Typography>{recipe}</Typography>
-              </Box>
-            ))}
-          </Box>
+          <List>
+            {likedRecipes?.length > 0 ? (
+              likedRecipes.map((likedrecipes: any, index: number) => (
+                <ListItem
+                  key={likedrecipes.id}
+                  sx={{ borderBottom: "1px solid #ddd" }}
+                >
+                  <ListItemText primary={likedrecipes.title} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ padding: 2 }}>
+                찜한 레시피가 없습니다.
+              </Typography>
+            )}
+          </List>
         </Section>
+
         <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
           <List>
             {latestPosts?.length > 0 ? (
