@@ -3,10 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/plugin-transform-class-properties": "^7.25.4",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+    "@babel/plugin-transform-numeric-separator": "^7.24.7",
+    "@babel/plugin-transform-private-methods": "^7.25.4",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@eslint/config-array": "^0.18.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "@tanstack/react-query": "^5.56.2",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^29.5.13",
     "@types/node": "^22.7.0",
@@ -62,9 +68,13 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+    "@babel/plugin-transform-private-property-in-object": "^7.24.7",
     "@types/js-cookie": "^3.0.6",
     "@types/react-modal": "^3.16.3",
     "typescript": "^4.9.5"
+  },
+  "overrides": {
+    "autoprefixer": "10.4.5"
   }
 }
