@@ -22,6 +22,7 @@ import {
   fetchActivityStats,
   fetchMemberBoardList,
   fetchMyComments,
+  fecthMyRecipeList,
 } from "./api"; // 활동 정보 API 함수 가져오기
 
 type SectionProps = {
@@ -61,18 +62,12 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
   const [likeCount, setLikeCount] = useState(0); // likeCount 상태
   const [writeCount, setWriteCount] = useState(0); // writeCount 상태
   const [replyCount, setReplyCount] = useState(0); // replyCount 상태
+  const [likedRecipes, setLikedRecipes] = useState([]); //찜한레시피
   const [latestPosts, setLatestPosts] = useState([]); // 최신 게시글 상태
   const [latestReplies, setLatestReplies] = useState([]); // 최신 댓글 상태
+  const [latestRecipes, setLatestRecipes] = useState([]); // 최신 레시피 상태
 
   const username = user?.name || "회원";
-
-  const likedRecipes = [
-    "레시피 A",
-    "레시피 B",
-    "레시피 C",
-    "레시피 D",
-    "레시피 E",
-  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,6 +115,21 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
     }
   };
 
+  // 최신 DIY 레시피
+  // 최신 DIY 레시피 가져오는 함수
+  const loadLatestRecipes = async () => {
+    if (user?.memberId) {
+      try {
+        const recipes = await fecthMyRecipeList(user.memberId, 5); // API 요청을 통해 최신 레시피 가져오가
+
+        setLatestRecipes(recipes); // 최신 레시피 상태 업데이트
+        console.log("ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ", recipes);
+      } catch (error) {
+        console.error("Error loading latest recipes:", error);
+      }
+    }
+  };
+
   // 최신 댓글 5개
   const loadLatestReplies = async () => {
     if (user?.memberId) {
@@ -136,6 +146,7 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
   useEffect(() => {
     loadActivityStats();
     loadLatestPosts(); // 최신 게시글 정보 로드
+    loadLatestRecipes(); // 최신 레시피 정보 로드
     loadLatestReplies(); // 최신 댓글 정보 로드
   }, [user]);
 
@@ -187,10 +198,9 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
             ))}
           </Box>
         </Section>
-
         <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
           <List>
-            {latestPosts.length > 0 ? (
+            {latestPosts?.length > 0 ? (
               latestPosts.map((post: any, index: number) => (
                 <ListItem key={post.id} sx={{ borderBottom: "1px solid #ddd" }}>
                   <ListItemText primary={post.title} />
@@ -204,9 +214,28 @@ const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
           </List>
         </Section>
 
+        <Section title="나의 DIY 레시피" linkTo="/myPage/MyRecipes">
+          <List>
+            {latestRecipes?.length > 0 ? (
+              latestRecipes.map((recipe: any, index: number) => (
+                <ListItem
+                  key={recipe.recipeId}
+                  sx={{ borderBottom: "1px solid #ddd" }}
+                >
+                  <ListItemText primary={recipe.title} />
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ padding: 2 }}>
+                레시피가 없습니다.
+              </Typography>
+            )}
+          </List>
+        </Section>
+
         <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
           <List>
-            {latestReplies.length > 0 ? (
+            {latestReplies?.length > 0 ? (
               latestReplies.map((reply: any, index: number) => (
                 <ListItem
                   key={reply.commentId}
