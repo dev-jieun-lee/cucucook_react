@@ -329,7 +329,7 @@ export const fetchActivityStats = async (memberId: number) => {
 // 최신 게시글 5개 가져오는 함수
 export const fetchMemberBoardList = async (memberId: number, limit: number) => {
   try {
-    console.log("Fetching member board list. Params:", { memberId, limit });
+    console.log("최신게시글 Params:", { memberId, limit });
 
     // 백엔드 API 호출
     const response = await axios.get(`${BASE_URL}/getMemberBoardList`, {
@@ -339,7 +339,7 @@ export const fetchMemberBoardList = async (memberId: number, limit: number) => {
       },
     });
 
-    console.log("Response from API:", response.data);
+    console.log("최신게시글esponse from API:", response.data);
 
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
@@ -380,10 +380,50 @@ export const fetchMyComments = async (
         pageSize: 0,
       },
     });
-    console.log("Response from API:", response.data);
+    console.log("최신 댓글Response from API:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching comments:", error);
     throw error;
+  }
+};
+
+// 최신 레시피 5개 가져오는 함수
+export const fecthMyRecipeList = async (memberId: number, limit: number) => {
+  try {
+    console.log(" 최신 레시피 5개 Params:", { memberId, limit });
+
+    // 백엔드 API 호출
+    const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
+      params: {
+        memberId,
+        limit, // 가져올 게시글 수 (최신순으로 5개)
+      },
+    });
+
+    console.log(" 최신 레시피 5개 Response from API:", response.data);
+
+    // 서버에서 반환된 게시글 목록을 리턴
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError; // 에러를 AxiosError 타입으로 캐스팅
+
+    if (error.response) {
+      // 서버에서 오류 응답을 반환한 경우
+      console.error("Error response from server:", {
+        status: error.response.status,
+        data: error.response.data,
+      });
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답을 받지 못한 경우
+      console.error(
+        "No response received from server. Request:",
+        error.request
+      );
+    } else {
+      // 요청 설정 중에 오류가 발생한 경우
+      console.error("Error setting up the request:", error.message);
+    }
+    throw error; // 에러가 발생하면 호출한 곳에서 처리할 수 있도록 에러를 던집니다.
   }
 };
