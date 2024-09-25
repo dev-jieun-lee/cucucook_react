@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-transform-class-properties": "^7.25.4",
-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
-    "@babel/plugin-transform-numeric-separator": "^7.24.7",
-    "@babel/plugin-transform-private-methods": "^7.25.4",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@eslint/config-array": "^0.18.0",
@@ -19,7 +15,6 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "axios": "^1.7.4",
-    "cucucook_react": "file:./",
     "dayjs": "^1.11.13",
     "dompurify": "^3.1.6",
     "formik": "^2.4.6",
@@ -49,12 +44,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -68,13 +57,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-transform-optional-chaining": "^7.24.8",
-    "@babel/plugin-transform-private-property-in-object": "^7.24.7",
     "@types/js-cookie": "^3.0.6",
     "@types/react-modal": "^3.16.3",
     "typescript": "^4.9.5"
-  },
-  "overrides": {
-    "autoprefixer": "10.4.5"
   }
 }
