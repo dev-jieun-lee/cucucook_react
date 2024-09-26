@@ -43,6 +43,7 @@ function Login({ isDarkMode }: LoginProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const initialRender = useRef(true);
+  const [idError, setIdError] = useState<string | null>(null); // idError 상태 변수 정의
 
   const formik = useFormik({
     initialValues: {
@@ -166,6 +167,22 @@ function Login({ isDarkMode }: LoginProps) {
     handleSaveId(formik.values.userId, saveId);
   }, [saveId, formik.values.userId]);
 
+  // 입력값 핸들링 함수
+  const handleUserIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const alphanumericRegex = /^[a-zA-Z0-9!@#$%^&*()_+=-]*$/; // 허용할 문자 정의
+
+    if (!alphanumericRegex.test(value)) {
+      setIdError(t("members.id_alphanumeric_only")); // 비알파벳 문자가 있을 경우 오류 메시지 설정
+    } else {
+      setIdError(null); // 입력이 유효할 경우 오류 메시지 제거
+    }
+
+    // 유효하지 않은 문자 제거
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-]/g, ""); // 허용된 문자만 남기기
+    formik.setFieldValue("userId", sanitizedValue); // sanitizedValue로 필드 값 업데이트
+  };
+
   return (
     <Wrapper>
       <LoginWrapper>
@@ -181,8 +198,10 @@ function Login({ isDarkMode }: LoginProps) {
               id="userId"
               label={t("members.id")}
               value={formik.values.userId}
-              onChange={formik.handleChange}
+              onChange={handleUserIdChange} // 핸들링 함수 사용
             />
+            {idError && <div style={{ color: "red" }}>{idError}</div>}{" "}
+            {/* 오류 메시지 표시 */}
           </FormControl>
 
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
@@ -256,4 +275,7 @@ function handleSaveId(userId: string, saveId: boolean) {
     localStorage.removeItem("userId");
     localStorage.removeItem("saveId");
   }
+}
+function setIdError(arg0: string) {
+  throw new Error("Function not implemented.");
 }

@@ -32,7 +32,7 @@ function handleApiError(error: unknown) {
 export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
-    console.log("로그인 응답데이터", response.data);
+    console.log("mypage로그인 응답데이터", response.data);
     // 로그인 성공 시 JWT 토큰을 쿠키에 저장
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
