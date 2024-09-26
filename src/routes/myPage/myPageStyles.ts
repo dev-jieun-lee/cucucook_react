@@ -1,13 +1,14 @@
 import { SxProps, Theme } from "@mui/material/styles";
 import { CSSProperties } from "react";
 
-export const modalStyles: {
+// 모달 스타일
+export const activityModalStyles: {
   overlay: CSSProperties;
   content: CSSProperties;
 } = {
   overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경을 흐리게 처리
-    zIndex: 1000, // 모달의 z-index를 높게 설정
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1000,
   },
   content: {
     top: "50%",
@@ -16,16 +17,17 @@ export const modalStyles: {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "90%", // 반응형: 작은 화면에서는 전체 너비의 90%
+    width: "90%",
     maxWidth: "500px",
     padding: "20px",
     borderRadius: "8px",
     background: "#fff",
-    zIndex: 1100, // 모달 내부 컨텐츠의 z-index 설정
+    zIndex: 1100,
   },
 };
 
-export const userInfoStyles: {
+// 사용자 정보 수정 스타일
+export const activityUserInfoStyles: {
   container: SxProps;
   formControl: SxProps;
   button: SxProps;
@@ -55,6 +57,8 @@ export const userInfoStyles: {
     },
   },
 };
+
+// 활동 스타일
 export const activityStyles: Record<string, SxProps<Theme>> = {
   container: {
     display: "flex",
@@ -111,30 +115,8 @@ export const activityStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
-export const myPageGridStyles = {
-  gridContainer: {
-    display: "grid",
-    gap: "16px",
-    gridTemplateColumns: "repeat(5, 1fr)", // 기본 5개
-    "@media (max-width: 1200px)": {
-      gridTemplateColumns: "repeat(4, 1fr)", // 중간 화면 4개
-    },
-    "@media (max-width: 900px)": {
-      gridTemplateColumns: "repeat(3, 1fr)", // 중간 화면 3개
-    },
-    "@media (max-width: 600px)": {
-      gridTemplateColumns: "repeat(2, 1fr)", // 작은 화면 2개
-    },
-  },
-  itemBox: {
-    padding: "16px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "8px",
-    textAlign: "center",
-  },
-};
-
-export const profileStyles: Record<string, SxProps<Theme>> = {
+// 프로필 페이지 스타일
+export const activityProfileStyles: Record<string, SxProps<Theme>> = {
   profileContainer: {
     textAlign: "center",
     margin: "20px auto",
@@ -149,7 +131,31 @@ export const profileStyles: Record<string, SxProps<Theme>> = {
   },
 };
 
-//맨위로 가기 스크롤 버튼
+// 그리드 스타일
+export const activityGridStyles = {
+  gridContainer: {
+    display: "grid",
+    gap: "16px",
+    gridTemplateColumns: "repeat(5, 1fr)",
+    "@media (max-width: 1200px)": {
+      gridTemplateColumns: "repeat(4, 1fr)",
+    },
+    "@media (max-width: 900px)": {
+      gridTemplateColumns: "repeat(3, 1fr)",
+    },
+    "@media (max-width: 600px)": {
+      gridTemplateColumns: "repeat(2, 1fr)",
+    },
+  },
+  itemBox: {
+    padding: "16px",
+    backgroundColor: "#f0f0f0",
+    borderRadius: "8px",
+    textAlign: "center",
+  },
+};
+
+// 스크롤 버튼 스타일
 export const scrollButtonStyles: SxProps<Theme> = {
   position: "fixed",
   bottom: 16,

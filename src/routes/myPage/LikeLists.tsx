@@ -1,103 +1,240 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Box, Button, Avatar, Fab } from '@mui/material';
-import { KeyboardArrowUp } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 추가
-import { activityStyles, myPageGridStyles, scrollButtonStyles } from './myPageStyles';
-import { Wrapper } from '../../styles/CommonStyles';
+import { Box, Divider, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useInView } from "react-intersection-observer";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
+import LoadingNoMargin from "../../components/LoadingNoMargin";
+import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import TextsmsIcon from "@mui/icons-material/Textsms";
+import StarIcon from "@mui/icons-material/Star";
+import {
+  ThumbnailBox,
+  ThumbnailBoxContainer,
+  ThumbnailButton,
+  TitleBox,
+} from "../../styles/RecipeStyle";
+import { getRecipeLikeListOtherInfo } from "./api";
 
-// 더미 데이터 생성 함수
-const fetchLikeLists = async (page: number, pageSize: number) => {
-  return Array.from({ length: pageSize }, (_, index) => ({
-    id: page * pageSize + index + 1, // 1부터 시작하는 고유 ID
-    name: `찜한 레시피 ${page * pageSize + index + 1}`,
-  }));
-};
+const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const memberId = user?.memberId;
 
-const LikeLists: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
-  const [likeLists, setLikeLists] = useState<any[]>([]);
-  const [page, setPage] = useState(0);
-  const [pageSize] = useState(20); // 한 페이지에 표시할 항목 수
-  const [showScrollButton, setShowScrollButton] = useState(false); // 스크롤 버튼 표시 여부
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
+  const [start, setStart] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
-  useEffect(() => {
-    const loadLikes = async () => {
-      const newLikes = await fetchLikeLists(page, pageSize);
-      setLikeLists(newLikes);
-    };
+  const display = 10;
+  const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
 
-    loadLikes();
-  }, [page, pageSize]);
+  const fetchData = async () => {
+    if (loading || isFetching || !hasMore) return; // 중복 호출 방지 조건
+    setLoading(true);
+    setIsFetching(true);
 
-  // 스크롤 이벤트 리스너
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
+    if (!memberId) {
+      console.error("memberId is undefined");
+      setLoading(false);
+      setIsFetching(false);
+      return;
+    }
+
+    try {
+      const response = await getRecipeLikeListOtherInfo(
+        memberId,
+        "all",
+        "reg_dt",
+        display,
+        start
+      );
+
+      if (response && response.length > 0) {
+        setLikedRecipes((prevRecipes) => [...prevRecipes, ...response]);
       } else {
-        setShowScrollButton(false);
+        setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
       }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // 페이지 맨 위로 이동하는 함수
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false); // 로딩 종료
+      setIsFetching(false); // 호출 완료 상태로 변경
+    }
   };
 
-  const handleNextPage = async () => {
-    const newPage = page + 1;
-    const newLikes = await fetchLikeLists(newPage, pageSize);
-    setLikeLists((prev) => [...prev, ...newLikes]);
-    setPage(newPage);
-  };
+  useEffect(() => {
+    if (memberId) {
+      fetchData(); // memberId가 유효할 때만 fetchData 호출
+    }
+  }, [memberId, start]); // memberId 또는 start가 변경될 때만 호출
 
-  const handleGoBack = () => {
-    navigate(-1); // 이전 페이지로 이동
-  };
+  useEffect(() => {
+    if (inView && hasMore && !loading && !isFetching) {
+      setStart((prevStart) => prevStart + display); // 다음 데이터 요청
+    }
+  }, [inView, hasMore, loading, isFetching]); // 추가적인 상태 추가
 
+  const handleViewDetailClick = (path: string, params: string) => {
+    const pullPath = `${path}/` + params;
+    navigate(pullPath);
+  };
   return (
     <Wrapper>
-    <Box sx={activityStyles.container}>
-      <Box sx={activityStyles.content}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="subtitle1">찜한 레시피 목록</Typography>
-          <Button variant="outlined" onClick={handleGoBack}>
-            뒤로 가기
-          </Button>
-        </Box>
-        <Box sx={myPageGridStyles.gridContainer}>
-          {likeLists.map((like) => (
-            <Box key={like.id} sx={myPageGridStyles.itemBox}>
-              <Avatar sx={{ width: '100%', height: '100%', backgroundColor: '#ccc' }}>
-                {like.name.charAt(0)}
-              </Avatar>
-            </Box>
-          ))}
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <Button variant="contained" onClick={handleNextPage}>
-            다음 페이지
-          </Button>
+      <Box component="section" sx={{ width: "100%" }}>
+        <TitleBox>
+          <PageTitleBasic>{t("mypage.liked_recipes")}</PageTitleBasic>
+        </TitleBox>
+
+        <Box component="section" sx={{ width: "100%" }}>
+          <Grid container spacing={2}>
+            {loading && !hasMore ? (
+              <Loading />
+            ) : likedRecipes.length > 0 ? (
+              <>
+                {likedRecipes.map((recipeItem, index) => (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    key={`${recipeItem.recipeId}-${index}`}
+                    sx={{ flexDirection: "column" }} // 필요한 경우 추가
+                  >
+                    <ThumbnailButton
+                      onClick={() =>
+                        handleViewDetailClick(
+                          "/recipe/member_recipe",
+                          encodeURIComponent(recipeItem.recipeId)
+                        )
+                      }
+                    >
+                      <Box className="thumbnail-box-wrap">
+                        <ThumbnailBoxContainer>
+                          <ThumbnailBox
+                            src={
+                              recipeItem.memberRecipeImages
+                                ? `${process.env.REACT_APP_API_URL}${recipeItem.memberRecipeImages.webImgPath}/${recipeItem.memberRecipeImages.serverImgName}.${recipeItem.memberRecipeImages.extension}`
+                                : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
+                            }
+                            alt={recipeItem.title}
+                          />
+                        </ThumbnailBoxContainer>
+                        <Box className="thumbnail-info-box-wrap">
+                          <Box margin={"20px"}>
+                            <Box className="thumbnail-info-title-box">
+                              {recipeItem.title}
+                            </Box>
+                            <Box>
+                              <Grid
+                                container
+                                className="thumbnail-info-default-box"
+                              >
+                                <Grid item>{recipeItem.member.name}</Grid>
+                                <Grid item>
+                                  <Grid container spacing={1}>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <VisibilityIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.viewCount}
+                                        </Box>
+                                      </Box>
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
+                                      />
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <TextsmsIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.commentCount}
+                                        </Box>
+                                      </Box>
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
+                                      />
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <StarIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.commentRate}
+                                        </Box>
+                                      </Box>
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
+                                      />
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <FavoriteIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.likeCount}
+                                        </Box>
+                                      </Box>
+                                    </Grid>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </ThumbnailButton>
+                  </Grid>
+                ))}
+
+                <Grid item xs={12}>
+                  {hasMore && <LoadingNoMargin />}
+                </Grid>
+                <Box ref={lastItemRef} />
+              </>
+            ) : (
+              <Grid padding={"20px 0"} item xs={12}>
+                {loading ? <Loading /> : <>No data found.</>}
+              </Grid>
+            )}
+          </Grid>
         </Box>
       </Box>
-
-      {/* 맨 위로 가기 버튼 */}
-      {showScrollButton && (
-        <Fab
-          color="primary"
-          size="small"
-          sx={scrollButtonStyles} // 스타일을 적용
-          onClick={scrollToTop}
-        >
-          <KeyboardArrowUp />
-        </Fab>
-      )}
-    </Box>
     </Wrapper>
   );
 };

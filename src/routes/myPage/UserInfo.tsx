@@ -13,7 +13,8 @@ import {
   AccordionDetails,
   Typography,
 } from "@mui/material";
-import { userInfoStyles } from "./myPageStyles";
+import { activityUserInfoStyles } from "./myPageStyles";
+
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
 import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
@@ -99,7 +100,7 @@ const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
       <AccordionDetails>
         <FormControl
           fullWidth
-          sx={userInfoStyles.formControl}
+          sx={activityUserInfoStyles.formControl}
           variant="outlined"
         >
           <InputLabel htmlFor="newPassword">
@@ -128,7 +129,7 @@ const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
 
         <FormControl
           fullWidth
-          sx={userInfoStyles.formControl}
+          sx={activityUserInfoStyles.formControl}
           variant="outlined"
         >
           <InputLabel htmlFor="confirmNewPassword">
@@ -160,7 +161,7 @@ const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
           variant="contained"
           fullWidth
           onClick={() => formik.handleSubmit()} // 비밀번호 변경 함수 호출
-          sx={userInfoStyles.button}
+          sx={activityUserInfoStyles.button}
         >
           {t("mypage.pw_save_changes")}
         </Button>
@@ -295,7 +296,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   return (
     <Wrapper>
-      <Box sx={userInfoStyles.container}>
+      <Box sx={activityUserInfoStyles.container}>
         <div className="title">
           <span>{t("mypage.edit_info")}</span>
         </div>
@@ -303,7 +304,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <form onSubmit={formik.handleSubmit}>
           <FormControl
             fullWidth
-            sx={userInfoStyles.formControl}
+            sx={activityUserInfoStyles.formControl}
             variant="outlined"
           >
             <InputLabel htmlFor="username">{t("mypage.username")}</InputLabel>
@@ -317,7 +318,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
           <FormControl
             fullWidth
-            sx={userInfoStyles.formControl}
+            sx={activityUserInfoStyles.formControl}
             variant="outlined"
           >
             <InputLabel htmlFor="name">{t("mypage.name")}</InputLabel>
@@ -332,7 +333,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
           <FormControl
             fullWidth
-            sx={userInfoStyles.formControl}
+            sx={activityUserInfoStyles.formControl}
             variant="outlined"
           >
             <InputLabel htmlFor="phone">{t("mypage.phone_number")}</InputLabel>
@@ -347,7 +348,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
           <FormControl
             fullWidth
-            sx={userInfoStyles.formControl}
+            sx={activityUserInfoStyles.formControl}
             variant="outlined"
           >
             <InputLabel htmlFor="email">{t("mypage.email")}</InputLabel>
@@ -363,17 +364,25 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
           {/* 비밀번호 변경 아코디언 */}
           <ChangePasswordAccordion memberId={memberId!} />
 
-          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={activityUserInfoStyles.button}
+          >
             {t("mypage.connect_naver")}
           </Button>
-          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={activityUserInfoStyles.button}
+          >
             {t("mypage.connect_kakao")}
           </Button>
           <Button
             color="primary"
             variant="contained"
             fullWidth
-            sx={userInfoStyles.button}
+            sx={activityUserInfoStyles.button}
             onClick={handleSaveChangesClick}
             disabled={!isFormModified || !formik.isValid} // 값이 변경되지 않았거나 유효하지 않으면 비활성화
           >

@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { profileStyles } from "./myPageStyles";
+import { activityProfileStyles } from "./myPageStyles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { verifyPassword } from "./api"; // api.tsx에서 가져옴
@@ -92,7 +92,7 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
 
   return (
     <Wrapper>
-      <Box sx={profileStyles?.profileContainer ?? {}}>
+      <Box sx={activityProfileStyles?.profileContainer ?? {}}>
         <Typography variant="h5" component="h2" gutterBottom>
           {t("mypage.profile")}
         </Typography>
