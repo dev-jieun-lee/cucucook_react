@@ -233,7 +233,7 @@
     "Notifiction": "알림",
     "duplication_chk": "중복확인",
     "temp_password_issued": "등록한 메일로 임시비밀번호를 발급하였습니다.로그인 후 반드시 비밀번호를 변경해 주세요.",
-    "email_invalid": "유효한 이메일 주소를 입력해주세요.",
+    "email_invalid": "한글은 입력이 불가합니다.",
     "verification_code_sent": "인증 코드가 발송되었습니다.",
     "verification_code_error": "인증 코드 발송에 실패했습니다.",
     "verification_code_expired": "인증 코드가 만료되었습니다.",
