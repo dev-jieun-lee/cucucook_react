@@ -175,7 +175,7 @@ export const fetchMyReplies = async (
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
       params: { page, pageSize, memberId, sortOption, sortDirection },
     });
-    //  console.log(response.data);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch replies:", error);
@@ -340,7 +340,6 @@ export const fetchMemberBoardList = async (memberId: number, limit: number) => {
         limit, // 가져올 게시글 수 (최신순으로 5개)
       },
     });
-
     //  console.log("최신게시글esponse from API:", response.data);
 
     // 서버에서 반환된 게시글 목록을 리턴
@@ -391,19 +390,20 @@ export const fetchMyComments = async (
   }
 };
 
-// 최신 레시피 5개 가져오는 함수
-export const fetchMyRecipeList = async (memberId: number, limit: number) => {
+// 모든 레시피를 가져오는 함수
+export const fetchMyRecipeList = async (memberId: number, limit?: number) => {
   try {
-    //console.log(" 최신 레시피 5개 Params:", { memberId, limit });
+    // console.log("레시피 Params:", { memberId, limit });
 
     // 백엔드 API 호출
     const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
       params: {
         memberId,
-        limit, // 가져올 게시글 수 (최신순으로 5개)
+        ...(limit !== undefined && { limit }), // limit이 undefined가 아닐 경우에만 포함
       },
     });
-    //   console.log(" 최신 레시피 5개 Response from API:", response.data);
+
+    console.log("레시피 Response from API:", response.data);
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
   } catch (err) {

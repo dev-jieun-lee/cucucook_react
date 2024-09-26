@@ -41,6 +41,7 @@ const Activity = lazy(() => import("./routes/myPage/Activity"));
 const LikeLists = lazy(() => import("./routes/myPage/LikeLists"));
 const MyWrites = lazy(() => import("./routes/myPage/MyWrites"));
 const MyReplys = lazy(() => import("./routes/myPage/MyReplys"));
+const MyRecipes = lazy(() => import("./routes/myPage/MyRecipes"));
 
 function RoutesConfig({ isDarkMode }: any) {
   return (
@@ -292,6 +293,15 @@ function RoutesConfig({ isDarkMode }: any) {
           <RouteBox>
             <MypageSideMenu isDarkMode={isDarkMode} />
             <MyReplys isDarkMode={false} />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/mypage/MyRecipes"
+        element={
+          <RouteBox>
+            <MypageSideMenu isDarkMode={isDarkMode} />
+            <MyRecipes isDarkMode={false} />
           </RouteBox>
         }
       />
