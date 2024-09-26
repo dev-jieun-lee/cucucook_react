@@ -27,7 +27,8 @@ export async function getMemberRecipeList(params: any) {
   const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
     params: params,
   });
-
+  console.log(response);
+  console.log(response.data);
   return response;
 }
 
