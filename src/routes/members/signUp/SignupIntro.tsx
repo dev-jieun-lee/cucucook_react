@@ -93,7 +93,8 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   // 이메일 핸들링 함수
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const emailRegex = /^[a-zA-Z0-9!@#$%^&*()_+=-]*$/; // 허용할 문자 정의
+    // 이메일 주소에 허용된 문자 및 기호 정의
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(value)) {
       setEmailError(t("members.email_invalid")); // 유효하지 않은 이메일일 경우 오류 메시지 설정
@@ -101,9 +102,9 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
       setEmailError(null); // 유효한 이메일일 경우 오류 메시지 제거
     }
 
-    // 유효하지 않은 문자 제거
-    const sanitizedValue = value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-]/g, ""); // 허용된 문자만 남기기
-    formik.setFieldValue("userId", sanitizedValue); // sanitizedValue로 필드 값 업데이트
+    // 허용된 문자와 기호만 남기기 (정규 표현식에 맞는 문자)
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9._%+-@]/g, "");
+    formik.setFieldValue("email", sanitizedValue); // sanitizedValue로 필드 값 업데이트
   };
 
   return (
