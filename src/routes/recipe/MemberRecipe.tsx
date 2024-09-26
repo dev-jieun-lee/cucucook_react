@@ -358,8 +358,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           className="recipe-info-img"
                           alt={memberRecipe.data.memberRecipe.title}
                           src={
-                            memberRecipe.data.memberRecipeImages
-                              ? `${process.env.REACT_APP_FILE_URL}${memberRecipe.data.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipeImages.extension}`
+                            memberRecipe.data.memberRecipe.memberRecipeImages
+                              ? `${process.env.REACT_APP_FILE_URL}${memberRecipe.data.memberRecipe.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipe.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipe.memberRecipeImages.extension}`
                               : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                           }
                         ></Box>
