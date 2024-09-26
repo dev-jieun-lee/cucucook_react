@@ -51,8 +51,9 @@
       }
     },
     "mypage": {
-      "profile": "프로필",
-      "edit_info": "정보 수정"
+      "profile": "내 정보",
+      "edit_info": "정보 수정",
+      "activity": "내 활동"
     }
   },
   "text": {
@@ -165,7 +166,8 @@
     "OK": "확인",
     "mycommnet": "내가 쓴 댓글",
     "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
-    "liked_recipes": "레시피 찜 목록"
+    "liked_recipes": "레시피 찜 목록",
+    "my_recipes": "나의 DIY 레시피"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",

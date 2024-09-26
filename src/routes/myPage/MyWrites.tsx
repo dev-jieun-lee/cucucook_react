@@ -23,6 +23,7 @@ import { useAuth } from "../../auth/AuthContext";
 interface Write {
   title: string;
   id: number;
+  boardId: string;
 }
 
 interface MyWritesProps {
@@ -143,13 +144,6 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
     await loadCategoriesAndWrites(); // 게시글 버튼 클릭 시 카테고리 및 게시글 로드
   };
 
-  const handleRecipeButtonClick = () => {
-    console.log("레시피 버튼 클릭");
-    setWrites([]); // 리스트 초기화
-    setBoardDivision(""); // 셀렉트박스 초기화
-    // 레시피 관련 로직 추가 필요
-  };
-
   return (
     <Wrapper>
       <Box sx={activityStyles.container}>
@@ -168,18 +162,7 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
             </Button>
           </Box>
 
-          {/* 게시글, 레시피 버튼 및 셀렉트 박스 */}
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              onClick={handlePostButtonClick}
-              sx={{ marginRight: 1 }}
-            >
-              게시글
-            </Button>
-            <Button variant="contained" onClick={handleRecipeButtonClick}>
-              레시피
-            </Button>
             <Select
               value={board_division} // board_division 값을 직접 설정
               onChange={handleboardDivisionChange}
@@ -215,6 +198,8 @@ const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
                 <ListItem
                   key={write.id}
                   sx={{ padding: "8px", borderBottom: "1px solid #ddd" }}
+                  button
+                  onClick={() => navigate(`/notice/${write.boardId}`)}
                 >
                   <ListItemText primary={write.title} />
                 </ListItem>
