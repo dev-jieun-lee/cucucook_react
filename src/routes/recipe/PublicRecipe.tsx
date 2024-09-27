@@ -95,6 +95,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   );
 
   const handleImageClick = (title: string, imgPath: string) => {
+    const img = new Image();
     const imageUrl = imgPath;
     Swal.fire({
       imageAlt: title,
@@ -102,6 +103,29 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       showCloseButton: true,
       showConfirmButton: false,
     });
+    img.src = imageUrl;
+    img.onload = () => {
+      const windowHeight = window.innerHeight; // 브라우저 높이
+      if (img.width > img.height) {
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+        });
+      } else {
+        const maxImageHeight = windowHeight * 0.8;
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+          imageHeight: maxImageHeight,
+        });
+      }
+    };
   };
 
   return (
