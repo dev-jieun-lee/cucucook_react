@@ -31,8 +31,8 @@ import {
 import {
   IngredientGrid,
   RecipeView,
-  RecepiImgBox,
-  RecepiImgBoxContainer,
+  RecipeImgBox,
+  RecipeImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
 } from "./RecipeStyle";
@@ -45,6 +45,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
 import { useAuth } from "../../auth/AuthContext";
+import { title } from "process";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -106,8 +107,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const fetchMemberRecipe = async () => {
     const params = { recipeId, memberId: user?.memberId };
     try {
-      const publicRecipe = await getMemberRecipe(params);
-      return publicRecipe.data;
+      const memberRecipe = await getMemberRecipe(params);
+      return memberRecipe.data;
     } catch (error) {
       console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
@@ -122,7 +123,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
       if (data.success) {
-        setIsLike(data?.data.isMemberRecipeLike);
+        setIsLike(data?.data.memberRecipe.memberRecipeLike);
         setLikeCount(data?.data.memberRecipe.likeCount);
       }
       setIsLoading(false);
@@ -204,7 +205,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //좋아요등록
   const { mutate: insertMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: user?.memberId };
+      const params = { recipeId, memberId: user?.memberId };
       return insertMemberRecipeLike(params);
     },
     {
@@ -221,7 +222,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //좋아요삭제
   const { mutate: deleteMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: user?.memberId };
+      const params = { recipeId, memberId: user?.memberId };
       return deleteMemberRecipeLike(params);
     },
     {
@@ -241,6 +242,29 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     } else {
       deleteMemberRecipeLikeMutation();
     }
+  };
+
+  const handleImageClick = (
+    title: string,
+    serverImgName: string,
+    extension: string,
+    webImgPath: string,
+    isImg: boolean
+  ) => {
+    const imageUrl = isImg
+      ? process.env.REACT_APP_FILE_URL +
+        webImgPath +
+        "/" +
+        serverImgName +
+        "." +
+        extension
+      : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image";
+    Swal.fire({
+      imageAlt: title,
+      imageUrl: imageUrl,
+      showCloseButton: true,
+      showConfirmButton: false,
+    });
   };
 
   const handleCommentScroll = () => {
@@ -354,6 +378,28 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                       <Box className="recipe-info-img-container">
                         <Box
                           component="img"
+                          onClick={() =>
+                            handleImageClick(
+                              memberRecipe.data.memberRecipe.title,
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .serverImgName
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.serverImgName
+                                : "",
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .extension
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.extension
+                                : "",
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .webImgPath
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.webImgPath
+                                : "",
+
+                              memberRecipe.data.memberRecipe.memberRecipeImages
+                            )
+                          }
                           className="recipe-info-img"
                           alt={memberRecipe.data.memberRecipe.title}
                           src={
@@ -642,7 +688,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           >
                             <Grid item xs={6} md={3}>
                               <Typography variant="subtitle2">
-                                {memberRecipeIngredientItem.name} :{" "}
+                                {memberRecipeIngredientItem.name}{" "}
                                 {memberRecipeIngredientItem.amount}
                               </Typography>
                             </Grid>
@@ -655,7 +701,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 <Divider />
                 <Box padding={"20px 0"}>
                   <Box paddingBottom={1}>
-                    <PageSubTitleBasic>{t("text.recipe")}</PageSubTitleBasic>
+                    <PageSubTitleBasic>
+                      {t("text.recipe_process")}
+                    </PageSubTitleBasic>
                   </Box>
                   <Box>
                     {memberRecipe.data.memberRecipeProcessList.map(
@@ -681,17 +729,38 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                             xs={12}
                             md={2}
                           >
-                            <RecepiImgBoxContainer>
-                              <RecepiImgBox
+                            <RecipeImgBoxContainer>
+                              <RecipeImgBox
                                 className="recipe-info-img"
+                                onClick={() =>
+                                  handleImageClick(
+                                    memberRecipe.data.memberRecipe.title,
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.serverImgName
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.serverImgName
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.extension
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.extension
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.webImgPath
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.webImgPath
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                  )
+                                }
                                 alt={memberRecipeProcessItem.imgId}
                                 src={
                                   memberRecipeProcessItem.memberRecipeImages
                                     ? `${process.env.REACT_APP_FILE_URL}${memberRecipeProcessItem.memberRecipeImages.webImgPath}/${memberRecipeProcessItem.memberRecipeImages.serverImgName}.${memberRecipeProcessItem.memberRecipeImages.extension}`
                                     : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                                 }
-                              ></RecepiImgBox>
-                            </RecepiImgBoxContainer>
+                              ></RecipeImgBox>
+                            </RecipeImgBoxContainer>
                           </Grid>
                           <Grid
                             className="recipe-description-grid-text-container"

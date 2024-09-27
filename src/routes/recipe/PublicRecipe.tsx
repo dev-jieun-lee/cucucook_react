@@ -16,11 +16,12 @@ import {
 } from "../../styles/CommonStyles";
 import {
   RecipeView,
-  RecepiImgBox,
-  RecepiImgBoxContainer,
+  RecipeImgBox,
+  RecipeImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
 } from "./RecipeStyle";
+import Swal from "sweetalert2";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -93,6 +94,16 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     (_, i) => `${String(i + 1).padStart(2, "0")}`
   );
 
+  const handleImageClick = (title: string, imgPath: string) => {
+    const imageUrl = imgPath;
+    Swal.fire({
+      imageAlt: title,
+      imageUrl: imageUrl,
+      showCloseButton: true,
+      showConfirmButton: false,
+    });
+  };
+
   return (
     <Wrapper>
       {
@@ -117,13 +128,19 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               <Box className="recipe-info-container" padding={"20px 0"}>
                 <Grid container spacing={2} sx={{}}>
                   <Grid item xs={12} md={6}>
-                    <RecepiImgBoxContainer className="recipe-info-img-container">
-                      <RecepiImgBox
+                    <RecipeImgBoxContainer className="recipe-info-img-container">
+                      <RecipeImgBox
+                        onClick={() =>
+                          handleImageClick(
+                            publicRecipe.data.rcpNm,
+                            publicRecipe.data.attFileNoMk
+                          )
+                        }
                         className="recipe-info-img"
                         alt={publicRecipe.data.rcpNm}
                         src={publicRecipe.data.attFileNoMk}
-                      ></RecepiImgBox>
-                    </RecepiImgBoxContainer>
+                      ></RecipeImgBox>
+                    </RecipeImgBoxContainer>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Box paddingBottom={1}>
@@ -262,13 +279,19 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           xs={12}
                           md={2}
                         >
-                          <RecepiImgBoxContainer>
-                            <RecepiImgBox
+                          <RecipeImgBoxContainer>
+                            <RecipeImgBox
                               className="recipe-info-img"
+                              onClick={() =>
+                                handleImageClick(
+                                  publicRecipe.data.rcpNm,
+                                  manualImage
+                                )
+                              }
                               alt={publicRecipe.data.rcpNm}
                               src={manualImage}
-                            ></RecepiImgBox>
-                          </RecepiImgBoxContainer>
+                            ></RecipeImgBox>
+                          </RecipeImgBoxContainer>
                         </Grid>
                         <Grid
                           className="recipe-description-grid-text-container"
