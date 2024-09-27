@@ -251,6 +251,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     webImgPath: string,
     isImg: boolean
   ) => {
+    const img = new Image();
     const imageUrl = isImg
       ? process.env.REACT_APP_FILE_URL +
         webImgPath +
@@ -259,12 +260,30 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         "." +
         extension
       : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image";
-    Swal.fire({
-      imageAlt: title,
-      imageUrl: imageUrl,
-      showCloseButton: true,
-      showConfirmButton: false,
-    });
+    img.src = imageUrl;
+    img.onload = () => {
+      const windowHeight = window.innerHeight; // 브라우저 높이
+
+      if (img.width > img.height) {
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+        });
+      } else {
+        const maxImageHeight = windowHeight * 0.8;
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+          imageHeight: maxImageHeight,
+        });
+      }
+    };
   };
 
   const handleCommentScroll = () => {
@@ -396,7 +415,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                                 ? memberRecipe.data.memberRecipe
                                     .memberRecipeImages.webImgPath
                                 : "",
-
                               memberRecipe.data.memberRecipe.memberRecipeImages
                             )
                           }
