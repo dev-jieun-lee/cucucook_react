@@ -1,19 +1,19 @@
 # 1단계: Node.js 환경에서 React 애플리케이션 빌드
 FROM node:20-alpine AS build
 
-# npm 6으로 다운그레이드
-RUN npm install -g npm@6
+# pnpm 설치
+RUN npm install -g pnpm
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
 # package.json 및 package-lock.json 복사 및 의존성 설치
-COPY package*.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./ 
+RUN pnpm install --frozen-lockfile
 
 # 소스 코드 복사 및 애플리케이션 빌드
 COPY . .
-RUN NODE_OPTIONS="--max-old-space-size=2048" GENERATE_SOURCEMAP=false npm run build
+RUN NODE_OPTIONS="--max-old-space-size=2048" GENERATE_SOURCEMAP=false pnpm run build
 
 # gzip을 사용해 파일 압축
 #RUN find build -type f -exec gzip -9 {} \; -exec mv {}.gz {} \;
