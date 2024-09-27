@@ -4,7 +4,6 @@ import {
   Grid,
   IconButton,
   TextField,
-  Typography,
 } from "@mui/material";
 import styled from "styled-components";
 import media from "../../styles/MediaQuery";

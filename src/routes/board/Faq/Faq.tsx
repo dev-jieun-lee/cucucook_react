@@ -17,7 +17,6 @@ import {
   MenuItem,
   Pagination,
   Select,
-  Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -25,18 +24,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardCategoryList,
   getBoardList,
 } from "../api";
 import { useMutation, useQuery } from "react-query";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Loading from "../../../components/Loading";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
-import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";

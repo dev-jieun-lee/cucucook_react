@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { SideMenu } from "./SideMenuStyle";
-import { Divider, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { LinkItem } from "../MenuStyle";
+import { Divider, ListItem, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

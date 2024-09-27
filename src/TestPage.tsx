@@ -1,6 +1,5 @@
 import { Typography } from "@mui/material";
 import axios from "axios";
-import { error } from "console";
 import React, { useEffect, useState } from "react";
 const apiUrl = process.env.REACT_APP_API_URL;
 const TestPage = () => {
