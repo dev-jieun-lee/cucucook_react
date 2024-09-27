@@ -1,6 +1,6 @@
 import ReactQuill, { Quill } from "react-quill";
 import EditerModule from "./EditerModule";
-import { forwardRef, useMemo, useState } from "react";
+import { forwardRef, useMemo } from "react";
 import { ImageResize } from "quill-image-resize-module-ts";
 Quill.register("modules/ImageResize", ImageResize);
 

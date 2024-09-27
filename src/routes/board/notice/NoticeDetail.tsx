@@ -9,7 +9,6 @@ import {
   DetailContents,
   TitleArea,
 } from "../BoardStyle";
-import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";

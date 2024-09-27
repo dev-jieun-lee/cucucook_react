@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import {
   activityStyles,
-  myPageGridStyles,
   scrollButtonStyles,
 } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";

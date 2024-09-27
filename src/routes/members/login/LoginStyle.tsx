@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import media from "../../../styles/MediaQuery";
-import { Box, FormControlLabel, OutlinedInput } from "@mui/material";
+import { Box, FormControlLabel } from "@mui/material";
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";

@@ -18,7 +18,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Cookies from "js-cookie";
 import { useAuth } from "../../../auth/AuthContext";
 
 const MySwal = withReactContent(Swal);
