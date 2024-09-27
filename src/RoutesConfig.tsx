@@ -103,7 +103,7 @@ function RoutesConfig({ isDarkMode }: any) {
         }
       />
       <Route
-        path="/recipe/member_recipe_list"
+        path="/recipe/member_recipe_list/:order?"
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />

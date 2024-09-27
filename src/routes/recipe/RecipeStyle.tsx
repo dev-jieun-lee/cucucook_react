@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Grid, IconButton, TextField } from "@mui/material";
 import styled from "styled-components";
 import media from "../../styles/MediaQuery";
 export const RecipeWrapper = styled.div``;
@@ -23,6 +17,15 @@ export const ThumbnailBoxContainer = styled.div`
   position: relative;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
+
+  .recipe-like-btn {
+    padding: 5px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: ${(props) => props.theme.mainColor};
+  }
 `;
 
 export const ThumbnailBox = styled.img`
@@ -107,13 +110,14 @@ export const SearchTextField = styled(TextField)`
   }
 `;
 
-export const RecepiImgBoxContainer = styled.div`
+export const RecipeImgBoxContainer = styled.div`
   width: 100%;
   padding-top: 60%;
   position: relative;
   overflow: hidden;
 `;
-export const RecepiImgBox = styled.img`
+export const RecipeImgBox = styled.img`
+  cursor: pointer;
   position: absolute;
   top: 0;
   left: 0;
@@ -139,6 +143,7 @@ export const RecipeView = styled.div`
       position: relative;
     }
     .recipe-info-img {
+      cursor: pointer;
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -266,13 +271,16 @@ export const IngredientGrid = styled(Grid)`
   }
 
   div:first-child,
-  div:nth-child(2) {
+  div:nth-child(2),
+  div:nth-child(3),
+  div:nth-child(4) {
     div {
       border-top: 1px solid;
       border-color: ${(props) => props.theme.navBorderColor};
     }
   }
-  div:nth-child(2) {
+  div:nth-child(3),
+  div:nth-child(4) {
     div {
       ${media["extra-medium"]`
         border-top: none;
