@@ -1,6 +1,7 @@
 {
   "name": "cucucook_react",
   "version": "0.1.0",
+  "sideEffects": false,
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -32,15 +33,16 @@
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.6.13",
     "sweetalert2-react-content": "^5.0.7",
+    "webpack-dev-server": "^5.1.0",
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "react-scripts start --no-source-map",
-    "build": "react-scripts build",
+    "preinstall": "npx only-allow pnpm",
+    "start": "craco start",
+    "build": "craco build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:8080",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -54,6 +56,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@craco/craco": "^7.1.0",
     "@types/js-cookie": "^3.0.6",
     "typescript": "^4.9.5"
   }
