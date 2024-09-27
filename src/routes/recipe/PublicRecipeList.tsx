@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "styled-components";
 import { getPublicRecipeList } from "./recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";

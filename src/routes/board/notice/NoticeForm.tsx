@@ -15,7 +15,6 @@ import {
   TitleInputArea,
 } from "../BoardStyle";
 import {
-  AlertColor,
   Button,
   FormControl,
   FormHelperText,
@@ -30,9 +29,8 @@ import { useFormik } from "formik";
 import "react-quill/dist/quill.snow.css";
 import QuillEditer from "../QuillEditer";
 import * as Yup from "yup";
-import SnackbarCustom from "../../../components/SnackbarCustom";
 import { useAuth } from "../../../auth/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Swal from "sweetalert2";
 
 function NoticeForm() {

@@ -10,7 +10,6 @@ import {
   Box,
   Typography,
   Grid,
-  Link,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { findId } from "../api";
@@ -21,7 +20,6 @@ import {
   StyledAnchor,
   FindIdBox,
 } from "./LoginStyle";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
 

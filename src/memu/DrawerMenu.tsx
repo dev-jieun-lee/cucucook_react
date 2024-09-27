@@ -1,15 +1,9 @@
 import {
   Box,
   Divider,
-  Drawer,
-  List,
   ListItem,
-  ListItemAvatar,
   ListItemButton,
-  ListItemIcon,
-  ListItemText,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DrawerList } from "./MenuStyle";
 import { useNavigate } from "react-router-dom";

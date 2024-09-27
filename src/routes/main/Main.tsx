@@ -1,4 +1,4 @@
-import { Button, Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import React from "react";
 import {
   Banner,
@@ -15,7 +15,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { useTranslation } from "react-i18next";
 import { getBoardCategory, getBoardList } from "../board/api";
 import { useQuery } from "react-query";
-import { AnswerContainer, CustomCategory } from "../board/BoardStyle";
+import { CustomCategory } from "../board/BoardStyle";
 import moment from "moment";
 import CampaignIcon from '@mui/icons-material/Campaign';
 import { Wrapper } from "../../styles/CommonStyles";

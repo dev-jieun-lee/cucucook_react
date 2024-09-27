@@ -6,13 +6,12 @@ import {
   FormControl,
   Select,
   MenuItem,
-  FormHelperText,
   InputAdornment,
   Button,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
+import { LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
 import { register, idCheck } from "../api";

@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { recipeCommonStyles } from "./RecipeStyle";
 import RecipeImageUpload from "./RecipeImageUpload";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject } from "react";
 import { FocusableButton } from "./MemberRecipeWrite";
 
 interface Process {

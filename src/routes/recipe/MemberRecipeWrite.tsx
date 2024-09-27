@@ -35,7 +35,6 @@ import { MemberRecipeWirteForm, TitleBox } from "./RecipeStyle";
 import RecipeImageUpload from "./RecipeImageUpload";
 import RecipeProcessListInput from "./RecipeProcessListInput";
 import RecpieIngredientInputList from "./RecpieIngredientInputList";
-import LoadingNoMargin from "../../components/LoadingNoMargin";
 import Loading from "../../components/Loading";
 import { useAuth } from "../../auth/AuthContext";
 

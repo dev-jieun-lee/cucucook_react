@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardWithReplies,
   insertBoard,
@@ -16,12 +15,10 @@ import {
   BoardButtonArea,
   ContentsInputArea,
   CustomCategory,
-  DetailContents,
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
 } from "../BoardStyle";
-import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
@@ -29,7 +26,6 @@ import Swal from "sweetalert2";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAuth } from "../../../auth/AuthContext";
 import { useEffect, useRef, useState } from "react";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import QuillEditer from "../QuillEditer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
