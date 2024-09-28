@@ -111,27 +111,30 @@ function Menu() {
           ) : (
             <></>
           )}
-
-          <li
-            className="main-menu-item"
-            onMouseEnter={() => handleMouseEnter(3)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div>
-              <span
-                className={`menu-title ${activeMenu === 3 ? "active" : ""}`}
-              >
-                테스트
-              </span>
-            </div>
-            <SubMenu className="sub-menu">
-              <ul>
-                <li>
-                  <LinkItem to="/test">임시페이지</LinkItem>
-                </li>
-              </ul>
-            </SubMenu>
-          </li>
+          {user?.role === "1" ? (
+            <li
+              className="main-menu-item"
+              onMouseEnter={() => handleMouseEnter(3)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div>
+                <span
+                  className={`menu-title ${activeMenu === 3 ? "active" : ""}`}
+                >
+                  {t("menu.admin.original")}
+                </span>
+              </div>
+              <SubMenu className="sub-menu">
+                <ul>
+                  <li>
+                    <LinkItem to="/admin/members">{t("menu.admin.members")}</LinkItem>
+                  </li>
+                </ul>
+              </SubMenu>
+            </li>
+          ) : (
+            <></>
+          )}
         </Col>
       </ul>
     </MainMenu>
