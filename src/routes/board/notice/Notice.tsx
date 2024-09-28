@@ -47,8 +47,13 @@ function Notice() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //notice의 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
