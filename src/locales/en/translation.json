@@ -50,12 +50,30 @@
         "cancel": "Are you sure you want to cancel writing the post?"
       }
     },
+    "admin":{
+      "original": "Administrator",
+      "members": "Member Management",
+      "members_info": "Member Information",
+      "category": "Categories Management",
+      "category_board": "Board Categories Management",
+      "category_recipe": "Recipe Categories Management",
+      "board": "board Management",
+      "board_notice": "Notice Management",
+      "board_qna": "Q&A Management",
+      "board_faq": "FAQ Management"
+      },
     "mypage": {
       "profile": "Profile",
       "edit_info": "Edit Info"
     }
   },
   "text": {
+    "name" : "Name",
+    "super_admin" : "Super Admin",
+    "admin" : "Admin",
+    "member" : "Member",
+    "role" : "Role",
+    "user_id" : "User Id",
     "search": "Search",
     "mode": "Mode",
     "change_mode": "Change Mode",
@@ -72,6 +90,7 @@
     "create_date": "Creation Date",
     "update_date": "Update Date",
     "register_date": "Registration Date",
+    "subscription_date" : "Subscription Date",
     "email": "Email",
     "hit": "Hit",
     "select": "Select",
