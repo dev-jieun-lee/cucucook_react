@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getMemberList } from "../../members/api";
+import { getMemberList } from "../../../apis/memberApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { ContentsArea } from "../../board/BoardStyle";
 import moment from "moment";
+import { ContentsArea } from "../../../styles/BoardStyle";
 
 function MembersManage(){
   const { user } = useAuth(); //로그인 상태관리

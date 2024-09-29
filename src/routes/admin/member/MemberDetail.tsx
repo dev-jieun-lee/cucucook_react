@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper } from "../../members/login/LoginStyle";
+import { LoginWrapper } from "../../../styles/LoginStyle";
 import PersonIcon from "@mui/icons-material/Person";
 import { FormControl, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
-import { getMember } from "../../members/api";
+import { getMember } from "../../../apis/memberApi";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Loading from "../../../components/Loading";
-import { updateMember, updateUserInfo } from "../../myPage/api";
+import { updateMember, updateUserInfo } from "../../../apis/mypageApi";
 
 function MemberDetail(){
   const { t } = useTranslation();

@@ -22,7 +22,7 @@ import {
   fetchActivityStats,
   fetchMemberBoardList,
   fetchMyComments,
-} from "./api"; // 활동 정보 API 함수 가져오기
+} from "../../apis/mypageApi"; // 활동 정보 API 함수 가져오기
 
 type SectionProps = {
   title: string;

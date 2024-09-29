@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
+import { LoginSubmitButton, LoginWrapper } from "../../../styles/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
-import { register, idCheck } from "../api";
+import { register, idCheck } from "../../../apis/memberApi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 

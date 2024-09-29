@@ -15,7 +15,7 @@ import { useInView } from "react-intersection-observer";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "styled-components";
-import { getPublicRecipeList } from "../../api";
+import { getPublicRecipeList } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {

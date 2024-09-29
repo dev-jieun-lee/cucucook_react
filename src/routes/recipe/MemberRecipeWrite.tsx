@@ -25,7 +25,7 @@ import {
   getRecipeCategoryListForWrite,
   insertMemberRecipe,
   updateMemberRecipe,
-} from "../../api";
+} from "../../apis/recipeApi";
 import {
   PageTitleBasic,
   ScrollBtnFab,

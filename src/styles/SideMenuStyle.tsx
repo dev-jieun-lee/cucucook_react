@@ -1,6 +1,6 @@
 import { Card, List, Paper } from "@mui/material";
 import styled from "styled-components";
-import media from "../../styles/MediaQuery";
+import media from "./MediaQuery";
 
 
 

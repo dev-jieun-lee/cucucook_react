@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getMemberRecipeList, getPublicRecipeList } from "../../api";
+import { getMemberRecipeList, getPublicRecipeList } from "../../apis/recipeApi";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,

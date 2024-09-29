@@ -9,7 +9,7 @@ import {
   getBoardWithReplies,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import {
   AnswerButton,
   AnswerContainer,
@@ -20,7 +20,7 @@ import {
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";

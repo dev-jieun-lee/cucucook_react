@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { deleteBoardCategory, getBoardCategoryList } from "../../board/api";
+import { deleteBoardCategory, getBoardCategoryList } from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import {
@@ -29,14 +29,14 @@ import {
   Tooltip,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { ContentsArea, CustomCategory } from "../../board/BoardStyle";
 import dayjs from "dayjs";
 import moment from "moment";
-import { ColorDots, DeleteIconButton } from "../AdminStyle";
+import { ColorDots, DeleteIconButton } from "../../../styles/AdminStyle";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import BoardCategoryDialog from "./BoardCategoryDialog";
 import Swal from "sweetalert2";
+import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 
 function BoardCategoryManage() {
   const { user } = useAuth(); //로그인 상태관리

@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteBoard, getBoard, getBoardCategory } from "../api";
+import { deleteBoard, getBoard, getBoardCategory } from "../../../apis/boardApi";
 import {
   BoardButtonArea,
   CustomCategory,
   DetailContents,
   TitleArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, IconButton, Tooltip } from "@mui/material";

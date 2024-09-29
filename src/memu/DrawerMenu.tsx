@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DrawerList } from "./MenuStyle";
+import { DrawerList } from "../styles/MenuStyle";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 

@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "./auth/AuthContext";
 import { useMutation } from "react-query";
-import { logout } from "./routes/members/api";
+import { logout } from "./apis/memberApi";
 import { useNavigate } from "react-router-dom";
 
 function LoginUser() {
