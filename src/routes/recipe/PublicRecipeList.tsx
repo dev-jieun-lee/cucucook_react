@@ -32,6 +32,7 @@ import {
   TitleBox,
 } from "./RecipeStyle";
 import SearchIcon from "@mui/icons-material/Search";
+import ScrollTop from "../../components/ScrollTop";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -49,7 +50,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   //선택된 카테고리값
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const display = 20;
   const [message, setMessage] = useState("");
 
@@ -148,27 +148,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     setSelectedCategory(category);
     handleSearch();
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
@@ -295,11 +274,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };

@@ -22,6 +22,7 @@ import {
   TitleBox,
 } from "./RecipeStyle";
 import Swal from "sweetalert2";
+import ScrollTop from "../../components/ScrollTop";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -30,27 +31,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation(); //번역
   // 로딩 상태 관리
   const [loading, setLoading] = useState(true);
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const handleRecipeListClick = () => {
     navigate(-1);
@@ -360,11 +340,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           <Box padding={"20px 0"}></Box>
         </RecipeView>
       }
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };
