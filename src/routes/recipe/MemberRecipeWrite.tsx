@@ -32,7 +32,7 @@ import {
 import RecipeImageUpload from "./RecipeImageUpload";
 import RecipeProcessListInput from "./RecipeProcessListInput";
 import { MemberRecipeWirteForm, TitleBox } from "./RecipeStyle";
-import RecpieIngredientInputList from "./RecpieIngredientInputList";
+import RecipeIngredientInputList from "./RecipeIngredientInputList";
 
 export interface FocusableButton {
   focus: () => void;
@@ -51,8 +51,13 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   ]);
 
   const [recipeProgress] = useState<
-    { image: File | null; contents: string; imgId: string }[]
-  >([{ image: null, contents: "", imgId: "" }]);
+    {
+      image: File | null;
+      contents: string;
+      imgId: string;
+      isServerImgVisible: boolean;
+    }[]
+  >([{ image: null, contents: "", imgId: "", isServerImgVisible: false }]);
 
   const [isLoading, setIsLoading] = useState<boolean>(!!recipeId); // 로딩 상태 추가
 
@@ -103,8 +108,9 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     {
       enabled: !!recipeId,
       onSuccess: (data) => {
-        if (data.success && data.data.memberRecipe.memberRecipeImages)
+        if (data.success && data.data.memberRecipe.memberRecipeImages) {
           setServerThumbnail(data.data.memberRecipe.memberRecipeImages);
+        }
 
         setIsLoading(false);
       },
@@ -169,48 +175,59 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         calory: recipeId ? memberRecipe?.data?.memberRecipe?.calory || "" : "",
         tip: recipeId ? memberRecipe?.data?.memberRecipe?.tip || "" : "",
       },
-      thumbnail: recipeId
-        ? memberRecipe?.data?.memberRecipe?.memberRecipeImages ||
-          memberRecipe?.data?.memberRecipe?.memberRecipeImages
-        : null,
+      thumbnail: null,
       recipeIngredients: recipeId
         ? memberRecipe?.data?.memberRecipeIngredient || ingredients
         : ingredients,
+
       recipeProcessItems: recipeId
-        ? memberRecipe?.data?.memberRecipeProcessList || recipeProgress
+        ? memberRecipe?.data?.memberRecipeProcessList.map((item: any) => ({
+            ...item,
+            isServerImgVisible: true,
+          })) || recipeProgress
         : recipeProgress,
     },
-    // validationSchema: Yup.object({
-    //   recipeInfo: Yup.object({
-    //     title: Yup.string().required(),
-    //     recipeCategoryId: Yup.string().required(),
-    //     method: Yup.string().required(),
-    //     //thumbnail: Yup.mixed().required(),
-    //     serving: Yup.string().required(),
-    //     level: Yup.string().required(),
-    //     time: Yup.number().required(),
-    //     calory: Yup.number().required(),
-    //     tip: Yup.string().required(),
-    //   }),
-    //   recipeIngredients: Yup.array()
-    //     .of(
-    //       Yup.object({
-    //         name: Yup.string().required(),
-    //         amount: Yup.string().required(),
-    //       })
-    //     )
-    //     .min(1)
-    //     .required(),
-    //   recipeProcessItems: Yup.array()
-    //     .of(
-    //       Yup.object({
-    //         // image: Yup.mixed().required(),
-    //         processContents: Yup.string().required(),
-    //       })
-    //     )
-    //     .min(1)
-    //     .required(),
-    // }),
+    validationSchema: Yup.object({
+      recipeInfo: Yup.object({
+        title: Yup.string().required(),
+        recipeCategoryId: Yup.string().required(),
+        method: Yup.string().required(),
+        serving: Yup.string().required(),
+        level: Yup.string().required(),
+        time: Yup.number().required(),
+        calory: Yup.number().required(),
+        tip: Yup.string().required(),
+      }),
+      thumbnail: Yup.mixed()
+        .test(function (value) {
+          return this.parent.recipeInfo.imgId ? true : !!value;
+        })
+        .nullable(), // imgId가 있으면 null 허용
+      recipeIngredients: Yup.array()
+        .of(
+          Yup.object({
+            name: Yup.string().required(),
+            amount: Yup.string().required(),
+          })
+        )
+        .min(1)
+        .required(),
+      recipeProcessItems: Yup.array()
+        .of(
+          Yup.object({
+            image: Yup.mixed()
+              .test(function (value) {
+                const { imgId, isServerImgVisible } = this.parent;
+                if (imgId && isServerImgVisible) return true;
+                return value !== null && value !== undefined;
+              })
+              .nullable(), // imgId가 있으면 null 허용
+            contents: Yup.string().required(),
+          })
+        )
+        .min(1)
+        .required(),
+    }),
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values) => {
@@ -321,19 +338,25 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   const recipeIngredientsErrors = formik.errors.recipeIngredients as
     | Array<{ name?: string; amount?: string }>
     | undefined;
-  const recipeIngredientsTouched = formik.touched.recipeIngredients as
-    | Record<string, boolean>
-    | undefined;
+  const recipeIngredientsTouched =
+    (formik.touched.recipeIngredients as Array<{
+      name?: boolean;
+      amount?: boolean;
+    }>) || [];
 
   const recipeProcessErrors = formik.errors.recipeProcessItems as
     | Array<{
         image?: File;
         contents?: string;
+        imgId?: string;
       }>
     | undefined;
-  const recipeProcessTouched = formik.touched.recipeProcessItems as
-    | Record<string, boolean>
-    | undefined;
+  const recipeProcessTouched =
+    (formik.touched.recipeProcessItems as Array<{
+      image?: boolean;
+      contents?: boolean;
+      imgId?: boolean;
+    }>) || [];
 
   return (
     <Wrapper>
@@ -481,7 +504,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                   <Box maxWidth={"300px"}>
                     <RecipeImageUpload
                       id={"thumbnail"}
-                      name={"thumbnail"}
+                      name={"recipeInfo.imgId"}
                       ref={imageUploadRef}
                       image={formik.values.thumbnail}
                       serverImage={serverThumbnail}
@@ -647,7 +670,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <RecpieIngredientInputList
+                  <RecipeIngredientInputList
                     values={formik.values.recipeIngredients}
                     errors={recipeIngredientsErrors || []}
                     touched={recipeIngredientsTouched || {}}

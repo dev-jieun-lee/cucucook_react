@@ -26,8 +26,10 @@ interface RecipeIngredientInputListProps {
   errors: Array<{
     image?: File;
     contents?: string;
+    imgId?: string;
   }>;
-  touched: Record<string, boolean>;
+
+  touched: Array<{ image?: boolean; contents?: boolean; imgId?: boolean }>;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   imageRefs: RefObject<(FocusableButton | null)[]>; // 부모로부터 전달받은 ref 배열
   style?: React.CSSProperties; // 스타일 props 추가(이미지용)
@@ -89,9 +91,9 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
         const indexStr = index.toString();
         // errors와 touched 상태 가져오기
         const hasErrorImage = errors[index] && errors[index].image;
-        const isTouchedImage = touched[`${indexStr}.contents`];
+        const isTouchedImage = touched && touched[index]?.image;
         const hasErrorContents = errors[index] && errors[index].contents;
-        const isTouchedContetns = touched[`${indexStr}.contents`];
+        const isTouchedContetns = touched && touched[index]?.contents;
 
         return (
           <Grid
@@ -110,7 +112,7 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
             <Grid item xs={12} sm={3} marginBottom={"10px"}>
               <RecipeImageUpload
                 id={"recipe_process_image_" + index}
-                name={"recipe_process_image"}
+                name={`recipeProcessItems[${index}].image`}
                 image={input.image}
                 serverImage={input.memberRecipeImages}
                 onImageChange={(file) => handleImageChange(index, file)}

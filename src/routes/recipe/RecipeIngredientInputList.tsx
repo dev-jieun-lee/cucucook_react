@@ -21,7 +21,7 @@ interface Ingredient {
 interface RecipeIngredientInputListProps {
   values: Ingredient[]; // Formik에서 값을 직접 받아옴
   errors: Array<{ name?: string; amount?: string }>;
-  touched: Record<string, boolean>;
+  touched: Array<{ name?: boolean; amount?: boolean }>;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
@@ -54,9 +54,9 @@ const RecpieIngredientInputList: React.FC<RecipeIngredientInputListProps> = ({
         const indexStr = index.toString();
         // errors와 touched 상태 가져오기
         const hasErrorName = errors[index] && errors[index].name;
-        const isTouchedName = touched[`${indexStr}.name`];
+        const isTouchedName = touched && touched[index]?.name;
         const hasErrorAmount = errors[index] && errors[index].amount;
-        const isTouchedAmount = touched[`${indexStr}.amount`];
+        const isTouchedAmount = touched && touched[index]?.amount;
         return (
           <React.Fragment key={index}>
             <Grid
