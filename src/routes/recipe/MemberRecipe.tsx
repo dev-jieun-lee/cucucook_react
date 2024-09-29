@@ -46,6 +46,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
 import { useAuth } from "../../auth/AuthContext";
 import { title } from "process";
+import ScrollTop from "../../components/ScrollTop";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -71,8 +72,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { recipeId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState<any[]>([]);
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
@@ -302,26 +301,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       setIsLoading(false);
     }
   }, [memberRecipeLoading, isLoading]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
@@ -849,11 +828,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           </Box>
         )}
       </RecipeView>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };

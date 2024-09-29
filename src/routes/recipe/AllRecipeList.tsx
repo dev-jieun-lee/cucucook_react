@@ -30,6 +30,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
 import { useAuth } from "../../auth/AuthContext";
 import { string } from "yup";
+import ScrollTop from "../../components/ScrollTop";
 
 const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -51,27 +52,6 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const handlViewDetailClick = (path: string, params: string) => {
     const pullPath = `${path}/` + params;
     navigate(pullPath);
-  };
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // 공공상세 레시피 가져오기
@@ -442,11 +422,8 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+
+      <ScrollTop />
     </Wrapper>
   );
 };
