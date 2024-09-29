@@ -13,7 +13,7 @@ import {
   Link,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { findId } from "../api";
+import { findId } from "../membersApi";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
   LoginWrapper,

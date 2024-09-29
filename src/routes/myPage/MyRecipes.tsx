@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import { fetchMyRecipeList } from "./api";
+import { fetchMyRecipeList } from "./mypageApi";
 import { Wrapper, PageTitleBasic } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";

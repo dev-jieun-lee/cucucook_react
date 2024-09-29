@@ -16,7 +16,7 @@ import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyWrites } from "./api";
+import { fetchMyWrites } from "./mypageApi";
 import { getBoardCategoryList } from "../board/api";
 import { useAuth } from "../../auth/AuthContext";
 
