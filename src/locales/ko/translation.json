@@ -363,6 +363,14 @@
     "E_RECIPE_COMMENT_UPDATE": "댓글 수정에 실패했습니다.",
     "S_RECIPE_COMMENT_UPDATE": "댓글 수정에 성공했습니다.",
     "E_RECIPE_COMMENT_DELETE": "댓글 삭제에 실패했습니다.",
-    "S_RECIPE_COMMENT_DELETE": "댓글 삭제에 성공했습니다."
+    "S_RECIPE_COMMENT_DELETE": "댓글 삭제에 성공했습니다.",
+    "E_IS_FILE_NAME": "파일 이름이 유효하지 않습니다.",
+    "E_SAVE_FILE": "파일 저장에 실패 하였습니다.",
+    "E_DEL_FILE": "파일 삭제에 실패 하였습니다.",
+    "E_DEL_FOLDER": "폴더 삭제에 실패 하였습니다.",
+    "E_SUPPORTED_FILE_EXT": "지원하지 않는 파일 형식입니다.",
+    "E_IS_THUMBNAIL": "썸네일이 존재하지 않습니다.",
+    "E_IS_RECIPE_IMG": "레시피 이미지가 존재하지 않습니다.",
+    "E_ADD_IMG_DATA": "이미지 DB저장에 실패하였습니다."
   }
 }

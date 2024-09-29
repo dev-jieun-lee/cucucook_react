@@ -360,6 +360,14 @@
     "E_RECIPE_COMMENT_UPDATE": "Failed to update comment.",
     "S_RECIPE_COMMENT_UPDATE": "Comment updated successfully.",
     "E_RECIPE_COMMENT_DELETE": "Failed to delete comment.",
-    "S_RECIPE_COMMENT_DELETE": "Comment deleted successfully."
+    "S_RECIPE_COMMENT_DELETE": "Comment deleted successfully.",
+    "E_IS_FILE_NAME": "The file name is not valid.",
+    "E_SAVE_FILE": "Failed to save the file.",
+    "E_DEL_FILE": "Failed to delete the file.",
+    "E_DEL_FOLDER": "Failed to delete the folder.",
+    "E_SUPPORTED_FILE_EXT": "Unsupported file format.",
+    "E_IS_THUMBNAIL": "Thumbnail does not exist.",
+    "E_IS_RECIPE_IMG": "Recipe image does not exist.",
+    "E_ADD_IMG_DATA": "Failed to save image data in the database."
   }
 }
