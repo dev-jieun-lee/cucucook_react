@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import media from "../styles/MediaQuery";
+import media from "./MediaQuery";
 import { List, ListItemText } from "@mui/material";
 
 //**헤더, 메뉴 스타일 */

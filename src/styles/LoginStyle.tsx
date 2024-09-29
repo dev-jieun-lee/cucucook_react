@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import media from "../../../styles/MediaQuery";
+import media from "./MediaQuery";
 import { Box, FormControlLabel, OutlinedInput } from "@mui/material";
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";

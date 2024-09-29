@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getMemberRecipeList,
   getRecipeCategoryListWithMemberRecipeCount,
-} from "../../api";
+} from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {

@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Col, LinkItem, MainMenu, SubMenu } from "./MenuStyle";
+import { Col, LinkItem, MainMenu, SubMenu } from "../styles/MenuStyle";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../auth/AuthContext";
 

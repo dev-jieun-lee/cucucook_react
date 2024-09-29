@@ -20,7 +20,7 @@ import {
   getMemberRecipe,
   getRecipeCommentList,
   insertMemberRecipeLike,
-} from "../../api";
+} from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import {
   PageSubTitleBasic,

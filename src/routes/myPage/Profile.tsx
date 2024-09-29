@@ -12,12 +12,12 @@ import { useNavigate } from "react-router-dom";
 import { TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { verifyPassword } from "./api"; // api.tsx에서 가져옴
+import { verifyPassword } from "../../apis/mypageApi"; // api.tsx에서 가져옴
 import { useAuth } from "../../auth/AuthContext"; // useAuth를 가져옴
 import axios from "axios";
 import Swal from "sweetalert2"; // SweetAlert2 import
-import { LoginWrapper } from "../members/login/LoginStyle";
-import { PwButtonArea, PwInputArea, SubTitle } from "./MypageStyle";
+import { LoginWrapper } from "../../styles/LoginStyle";
+import { PwButtonArea, PwInputArea, SubTitle } from "../../styles/MypageStyle";
 import SnackbarCustom from "../../components/SnackbarCustom";
 
 const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {

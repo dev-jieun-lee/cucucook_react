@@ -5,7 +5,7 @@ import {
   TitleCenter,
   Wrapper,
 } from "../../../styles/CommonStyles";
-import { AccordionTitle, ContentsArea, CustomCategory } from "../BoardStyle";
+import { AccordionTitle, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
   Accordion,
   AccordionDetails,
@@ -29,7 +29,7 @@ import {
   getBoardCategory,
   getBoardCategoryList,
   getBoardList,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Loading from "../../../components/Loading";

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../../auth/AuthContext";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getBoard, getBoardCategory, getBoardCategoryList, insertBoard, updateBoard } from "../api";
+import { getBoard, getBoardCategory, getBoardCategoryList, insertBoard, updateBoard } from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import Loading from "../../../components/Loading";
 import { Button, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
 import * as Yup from "yup";
-import { BoardButtonArea, ContentsInputArea, QuestionArea, TitleInputArea } from "../BoardStyle";
+import { BoardButtonArea, ContentsInputArea, QuestionArea, TitleInputArea } from "../../../styles/BoardStyle";
 import QuillEditer from "../QuillEditer";
 import dompurify from "dompurify";
 

@@ -13,14 +13,14 @@ import {
   Link,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { findId } from "../api";
+import { findId } from "../../../apis/memberApi";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
   LoginWrapper,
   ButtonArea,
   StyledAnchor,
   FindIdBox,
-} from "./LoginStyle";
+} from "../../../styles/LoginStyle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
