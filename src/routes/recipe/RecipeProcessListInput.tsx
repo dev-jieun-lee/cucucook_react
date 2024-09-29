@@ -16,16 +16,16 @@ import { FocusableButton } from "./MemberRecipeWrite";
 
 interface Process {
   image: File | null;
-  serverImage: any;
-  processContents: string;
+  contents: string;
   isServerImgVisible: boolean;
+  memberRecipeImages: any;
 }
 
 interface RecipeIngredientInputListProps {
   values: Process[]; // Formik에서 값을 직접 받아옴
   errors: Array<{
     image?: File;
-    processContents?: string;
+    contents?: string;
   }>;
   touched: Record<string, boolean>;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
@@ -47,7 +47,7 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
   const handleAddInputs = () => {
     setFieldValue("recipeProcessItems", [
       ...values,
-      { image: null, processContents: "", isServerImgVisible: false },
+      { image: null, contents: "", isServerImgVisible: false },
     ]);
   };
 
@@ -89,9 +89,9 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
         const indexStr = index.toString();
         // errors와 touched 상태 가져오기
         const hasErrorImage = errors[index] && errors[index].image;
-        const isTouchedImage = touched[`${indexStr}.processContents`];
-        const hasErrorContents = errors[index] && errors[index].processContents;
-        const isTouchedContetns = touched[`${indexStr}.processContents`];
+        const isTouchedImage = touched[`${indexStr}.contents`];
+        const hasErrorContents = errors[index] && errors[index].contents;
+        const isTouchedContetns = touched[`${indexStr}.contents`];
 
         return (
           <Grid
@@ -112,10 +112,16 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
                 id={"recipe_process_image_" + index}
                 name={"recipe_process_image"}
                 image={input.image}
-                serverImage={input.serverImage}
+                serverImage={input.memberRecipeImages}
                 onImageChange={(file) => handleImageChange(index, file)}
                 onRemoveImage={() => handleRemoveImage(index)}
-                isServerImgVisible={input.isServerImgVisible}
+                isServerImgVisible={
+                  input.isServerImgVisible
+                    ? input.isServerImgVisible
+                    : input.memberRecipeImages
+                    ? true
+                    : false
+                }
                 ref={(el) => {
                   imageRefs.current && (imageRefs.current[index] = el);
                 }} // 이미지 입력 필드를 부모에서 참조할 수 있도록 설정
@@ -144,21 +150,21 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
                     </InputLabel>
                     <OutlinedInput
                       id={`recipe_process_contents_${index}`}
-                      name={`recipeProcessItems[${index}].processContents`}
+                      name={`recipeProcessItems[${index}].contents`}
                       label={t("text.recipe_process_contents")}
                       multiline
                       rows={5}
-                      value={input.processContents}
+                      value={input.contents}
                       onChange={(e) =>
                         setFieldValue(
-                          `recipeProcessItems[${index}].processContents`,
+                          `recipeProcessItems[${index}].contents`,
                           e.target.value
                         )
                       }
                     />
                     {hasErrorContents && isTouchedContetns && (
                       <FormHelperText error>
-                        {t("recipe.error.processContents")}
+                        {t("recipe.error.contents")}
                       </FormHelperText>
                     )}
                   </FormControl>
