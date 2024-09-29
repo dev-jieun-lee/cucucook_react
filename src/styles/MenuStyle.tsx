@@ -112,7 +112,7 @@ export const MainMenu = styled.div`
   .menu-title {
     display: block;
     z-index: 9999;
-    width: 120px !important;
+    width: 140px !important;
     display: 'flex';
     height: 100%;
     font-size: 18px;
@@ -165,7 +165,7 @@ export const SubMenu = styled.div`
   border-color: ${(props) => props.theme.mainColor};
   /* box-shadow: 1px 1px 0px 0px #050404; */
   z-index: 1000;
-  width: 120px;
+  width: 140px;
   ul{
     padding-left: 0;
   }
