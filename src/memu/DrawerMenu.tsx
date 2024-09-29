@@ -35,7 +35,12 @@ function DrawerMenu({ toggleDrawer }: any) {
 
   const MypageMenuItems = [
     { label: t("menu.mypage.profile"), path: "/mypage/profile" },
-    { label: t("menu.mypage.activity"), path: "/mypage/activity" },
+    { label: t("mypage.activity"), path: "/mypage/activity" },
+  ];
+
+  const AdminMenuItems = [
+    { label: t('menu.admin.members'), path: "/admin/members" },
+    { label: t('menu.admin.category_board'), path: "/admin/category/board" },
   ];
 
   // 페이지 이동 함수
@@ -77,6 +82,17 @@ function DrawerMenu({ toggleDrawer }: any) {
             <span className="list-text">{t("mypage.original")}</span>
           </ListItem>
           {renderMenuItems(MypageMenuItems)}
+        </DrawerList>
+      ) : (
+        <></>
+      )}
+      <Divider />
+      {user?.role === "1" ? (
+        <DrawerList>
+          <ListItem className="list-item">
+            <span className="list-text">{t("menu.admin.original")}</span>
+          </ListItem>
+          {renderMenuItems(AdminMenuItems)}
         </DrawerList>
       ) : (
         <></>
