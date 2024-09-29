@@ -301,7 +301,7 @@
       "ingredientName": "재료명을 넣어주세요.",
       "ingredientAmount": "재료량을 넣어주세요.",
       "processImage": "진행과정 이미지를 넣어주세요.",
-      "processContents": "진행과정을 입력해주세요.",
+      "contents": "요리 과정을 입력해주세요.",
       "comment_no_member": "로그인 후 댓글을 작성하실 수 있습니다."
     }
   },
