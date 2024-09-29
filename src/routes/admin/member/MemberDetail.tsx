@@ -10,9 +10,11 @@ import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Loading from "../../../components/Loading";
+import { updateMember, updateUserInfo } from "../../myPage/api";
 
 function MemberDetail(){
   const { t } = useTranslation();
+  // const navigate = useNavigate();
   const { memberId } = useParams();
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,7 @@ function MemberDetail(){
     setLoading(true); // 로딩 상태 시작
 
     // 인위적인 지연 시간 추가 
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const memberData = await getMember(memberId!); // 데이터 불러오기
     setLoading(false); 
@@ -53,7 +55,24 @@ function MemberDetail(){
   );
 
   console.log(memberData);
-  
+
+  // const mutation = useMutation(updateMember(memberId, values),
+  //   {
+  //     onSuccess: (data) => {
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: t("text.save"),
+  //         text: t("menu.board.alert.save"),
+  //         showConfirmButton: true,
+  //         confirmButtonText: t("text.check"),
+  //       });
+  //       navigate(-1);
+  //     },
+  //     onError: (error) => {
+  //       // 에러 처리
+  //     },
+  //   }
+  // );
   
   const formik = useFormik({
     enableReinitialize: true,

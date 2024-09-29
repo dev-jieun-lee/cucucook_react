@@ -16,14 +16,11 @@ function AdminSideMenu(){
     if (location.pathname.startsWith('/admin/members')) {
       setSelectedIndex(0);
       setActiveButton("/admin/members");
-    } else if (location.pathname.startsWith('/admin/board')) {
-      setSelectedIndex(1);
-      setActiveButton("/admin/board");
     } 
-    // else if (location.pathname.startsWith('/admin/category')) {
-    //   setSelectedIndex(2);
-    //   setActiveButton("/admin/category");
-    // } 
+    else if (location.pathname.startsWith('/admin/category/board')) {
+      setSelectedIndex(1);
+      setActiveButton("/admin/category/board");
+    } 
     else {
       setSelectedIndex(null);
       setActiveButton("");
@@ -55,22 +52,13 @@ function AdminSideMenu(){
       </ListItem>
       <ListItem disablePadding className="list-item">
         <ListItemButton
-          className={`list-button ${activeButton === "/admin/board" ? "active" : ""}`}
+          className={`list-button ${activeButton === "/admin/category/board" ? "active" : ""}`}
           selected={selectedIndex === 1}
-          onClick={() => handleListItemClick(0, '/admin/board', "/admin/board")}
+          onClick={() => handleListItemClick(0, '/admin/category/board', "/admin/category/board")}
         >
-          {t('menu.admin.board')}
+          {t('menu.admin.category_board')}
         </ListItemButton>
       </ListItem>
-      {/* <ListItem disablePadding className="list-item">
-        <ListItemButton
-          className={`list-button ${activeButton === "/admin/category" ? "active" : ""}`}
-          selected={selectedIndex === 2}
-          onClick={() => handleListItemClick(0, '//admin/category', "/admin/category")}
-        >
-          {t('menu.admin.category')}
-        </ListItemButton>
-      </ListItem> */}
     </SideMenu>
   );
 }
