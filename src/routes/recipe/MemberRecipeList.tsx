@@ -43,13 +43,13 @@ import {
 } from "./RecipeStyle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useAuth } from "../../auth/AuthContext";
+import ScrollTop from "../../components/ScrollTop";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   // 파라미터 받아오기
   const { order } = useParams();
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const navigate = useNavigate();
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setcategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -282,26 +282,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     } else {
       deleteMemberRecipeLikeMutation(recipeId);
     }
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -615,11 +595,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };
