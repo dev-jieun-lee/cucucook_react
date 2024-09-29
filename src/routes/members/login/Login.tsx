@@ -13,10 +13,10 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper, ButtonArea, StyledAnchor } from "./LoginStyle";
-import { login } from "../api";
+import { login } from "../membersApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Cookies from "js-cookie";
 import { useAuth } from "../../../auth/AuthContext";
@@ -44,8 +44,22 @@ function Login({ isDarkMode }: LoginProps) {
   const location = useLocation();
   const initialRender = useRef(true);
   const [idError, setIdError] = useState<string | null>(null); // idError 상태 변수 정의
+  interface LoginValues {
+    userId: string;
+    password: string;
+  }
 
-  const formik = useFormik({
+  interface ErrorResponse {
+    response: {
+      data: {
+        failedAttempts?: number;
+        lockoutTime?: number;
+        message?: string;
+      };
+      status: number;
+    };
+  }
+  const formik = useFormik<LoginValues>({
     initialValues: {
       userId: localStorage.getItem("userId") || "",
       password: "",
@@ -53,9 +67,11 @@ function Login({ isDarkMode }: LoginProps) {
     onSubmit: async (values) => {
       try {
         const response = await login(values);
-
         if (response.token) {
-          handleSaveId(values.userId, saveId);
+          handleSaveId(
+            values.userId,
+            localStorage.getItem("saveId") === "true"
+          );
           setUser({
             userId: response.userId,
             name: response.name,
@@ -63,76 +79,41 @@ function Login({ isDarkMode }: LoginProps) {
             memberId: response.memberId,
           });
           setLoggedIn(true);
-          const from = location.state?.from || "/";
-          navigate(from);
-          setLoginError(null);
+          navigate(location.state?.from || "/");
         }
-      } catch (error: any) {
-        // 서버 응답의 구조를 로그로 확인
-        console.log("서버 응답 데이터:", error);
-        console.log("서버 응답 데이터:", error.response?.data);
+      } catch (error: unknown) {
+        const e = error as ErrorResponse;
+        console.log("서버 응답 데이터:", e.response?.data);
 
-        const failedAttempts = error.response?.data?.failedAttempts ?? 0;
-        const remainingTime = error.response?.data?.remainingTime ?? 0;
+        const failedAttempts = e.response?.data?.failedAttempts ?? 0;
+        const remainingTime = e.response?.data?.lockoutTime ?? 0;
+        const errorMessage =
+          e.response?.data?.message ||
+          "세 번 연속 로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
 
-        console.error("로그인 에러 발생:", error); // 에러 발생 시 콘솔에 상세 정보 로그 출력
-        console.log("현재 실패 횟수: ", failedAttempts); // 디버깅용
+        const swalOptions = {
+          title: "로그인 실패",
+          text: errorMessage,
+          icon: "warning" as SweetAlertIcon, // 'warning', 'error', 'success', 'info', 'question'
+          confirmButtonText: "확인",
+        };
 
-        if (error.response && error.response.status === 403) {
-          // 계정 잠김 상태 처리
-          setLockoutTimer(remainingTime);
-          MySwal.fire({
-            title: t("members.login_failed"),
-            text: `${t("alert.locked")} ${remainingTime}초 남았습니다.`,
-            icon: "warning",
-            confirmButtonText: t("alert.ok"),
-          });
-        } else if (error.response && error.response.status === 401) {
-          // 비밀번호 오류 처리
+        if (e.response?.status === 403) {
+          swalOptions.title = "계정 잠김";
+          swalOptions.text = `계정이 잠겼습니다. ${remainingTime}초 후에 다시 시도해주세요.`;
+        } else if (e.response?.status === 401) {
           if (failedAttempts === 3) {
-            MySwal.fire({
-              title: t("members.login_failed"),
-              text: t("attempt_3"),
-              icon: "warning",
-              confirmButtonText: t("alert.ok"),
-            });
+            swalOptions.text = errorMessage; // 특정 실패 횟수에 따라 메시지 조정
           } else if (failedAttempts === 4) {
-            MySwal.fire({
-              title: t("members.login_failed"),
-              text: t("attempt_4"),
-              icon: "warning",
-              confirmButtonText: t("alert.ok"),
-            });
+            swalOptions.text = "네 번 연속 로그인에 실패했습니다.";
           } else if (failedAttempts >= 5) {
-            MySwal.fire({
-              title: t("members.login_failed"),
-              text: t("locked"),
-              icon: "error",
-              confirmButtonText: t("alert.ok"),
-            });
-          } else {
-            MySwal.fire({
-              title: t("members.login_failed"),
-              text: t("attempt"),
-              icon: "warning",
-              confirmButtonText: t("alert.ok"),
-            });
+            swalOptions.icon = "error";
+            swalOptions.text =
+              "로그인 시도가 너무 많습니다. 계정이 잠겼습니다.";
           }
-
-          if (remainingTime) {
-            setLockoutTimer(remainingTime); // 남은 잠금 시간이 있으면 타이머 설정
-          }
-        } else {
-          MySwal.fire({
-            title: t("error.server_error"),
-            text: error.message || t("error.unknown_error"),
-            icon: "error",
-            confirmButtonText: t("alert.ok"),
-          });
-          setLoginError(
-            error.response?.data?.message || t("error.server_error")
-          );
         }
+
+        Swal.fire(swalOptions);
       }
     },
   });
@@ -260,6 +241,9 @@ function Login({ isDarkMode }: LoginProps) {
           <span />
           <StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
         </ButtonArea>
+        <button onClick={() => (window.location.href = "/auth/kakao")}>
+          카카오로 로그인
+        </button>
       </LoginWrapper>
     </Wrapper>
   );

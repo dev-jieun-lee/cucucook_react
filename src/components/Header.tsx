@@ -24,7 +24,7 @@ import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
 import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
-import { logout } from "../routes/members/api";
+import { logout } from "../routes/members/membersApi";
 import LoginUser from "../LoginUser";
 import { useAuth } from "../auth/AuthContext";
 

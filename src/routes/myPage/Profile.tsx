@@ -15,7 +15,7 @@ import { Wrapper } from "../../styles/CommonStyles";
 import { activityProfileStyles } from "./myPageStyles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { verifyPassword } from "./api"; // api.tsx에서 가져옴
+import { verifyPassword } from "./mypageApi"; // api.tsx에서 가져옴
 import { useAuth } from "../../auth/AuthContext"; // useAuth를 가져옴
 import axios from "axios";
 import Swal from "sweetalert2"; // SweetAlert2 import
