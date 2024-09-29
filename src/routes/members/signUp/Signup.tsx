@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
-import { register, idCheck } from "../api";
+import { register, idCheck } from "../membersApi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 

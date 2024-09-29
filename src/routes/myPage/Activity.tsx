@@ -21,7 +21,7 @@ import {
   fetchMyComments,
   fetchMyRecipeList,
   fetchLikedRecipes,
-} from "./api";
+} from "./mypageApi";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 
 type StatButtonProps = {
