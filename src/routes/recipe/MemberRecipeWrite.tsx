@@ -37,6 +37,7 @@ import RecipeProcessListInput from "./RecipeProcessListInput";
 import RecpieIngredientInputList from "./RecpieIngredientInputList";
 import Loading from "../../components/Loading";
 import { useAuth } from "../../auth/AuthContext";
+import ScrollTop from "../../components/ScrollTop";
 
 export interface FocusableButton {
   focus: () => void;
@@ -45,7 +46,6 @@ export interface FocusableButton {
 function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const { recipeId } = useParams(); //레시피 아이디 파라미터 받아오기
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
@@ -528,22 +528,6 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     | Record<string, boolean>
     | undefined;
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollButton(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
@@ -951,11 +935,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
           </>
         )}
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 }

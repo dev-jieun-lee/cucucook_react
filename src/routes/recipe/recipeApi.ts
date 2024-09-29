@@ -14,20 +14,12 @@ const BASE_URL = apiUrl + "/api/recipe";
 // CHNG_DT 변경일자 (20170101 정수)
 // RCP_PAT2 요리종류 (반찬, 국, 후식 등)
 
+/* 공공레시피 */
 // 공공 레시피 목록조회
 export async function getPublicRecipeList(params: any) {
   const response = await axios.get(`${BASE_URL}/getPublicRecipeList`, {
     params: params,
   });
-  return response;
-}
-
-// 회원 레시피 목록조회
-export async function getMemberRecipeList(params: any) {
-  const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
-    params: params,
-  });
-
   return response;
 }
 
@@ -39,81 +31,21 @@ export async function getPublicRecipe(params: any) {
   return response;
 }
 
+/* 회원 레시피*/
+// 회원 레시피 목록조회
+export async function getMemberRecipeList(params: any) {
+  const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
+    params: params,
+  });
+
+  return response;
+}
+
 // 회원 레시피 상세조회
 export async function getMemberRecipe(params: any) {
   const response = await axios.get(`${BASE_URL}/getMemberRecipe`, {
     params: params,
   });
-  return response;
-}
-
-// 회원 레시피 카테고리목록조회
-export async function getRecipeCategoryListWithMemberRecipeCount(params: any) {
-  const response = await axios.get(
-    `${BASE_URL}/getRecipeCategoryListWithMemberRecipeCount`,
-    {
-      params: params,
-    }
-  );
-  return response;
-}
-
-// 회원 레시피 별 댓글 조회
-export async function getRecipeCommentList(params: any) {
-  const response = await axios.get(`${BASE_URL}/getRecipeCommentList`, {
-    params: params,
-  });
-  return response;
-}
-
-// 회원 레시피 댓글 상세조회
-export async function getRecipeComment(params: any) {
-  const response = await axios.get(`${BASE_URL}/getRecipeComment`, {
-    params: params,
-  });
-  return response;
-}
-
-//회원 레시피 댓글 등록
-export async function insertRecipeComment(form: any) {
-  const response = await axios.post(`${BASE_URL}/insertRecipeComment`, form);
-  return response.data;
-}
-
-//회원 레시피 댓글 수정
-export async function updateRecipeComment(form: any) {
-  const response = await axios.put(`${BASE_URL}/updateRecipeComment`, form);
-  return response.data;
-}
-
-//회원 레시피 댓글 삭제
-export async function deleteRecipeComment(params: any) {
-  const response = await axios.delete(`${BASE_URL}/deleteRecipeComment`, {
-    params: params,
-  });
-  return response.data;
-}
-
-//회원 레시피 댓글 삭제(댓글에 대댓글이 있는경우)
-export async function deleteRecipeCommentHasChild(params: any) {
-  const response = await axios.put(
-    `${BASE_URL}/deleteRecipeCommentHasChild`,
-    {}, // 본문 내용이 없으므로 빈 객체를 전달
-    {
-      params: params,
-    }
-  );
-  return response.data;
-}
-
-//회원 레시피용 카테고리 가져오기
-export async function getRecipeCategoryListForWrite(params: any) {
-  const response = await axios.get(
-    `${BASE_URL}/getRecipeCategoryListForWrite`,
-    {
-      params: params,
-    }
-  );
   return response;
 }
 
@@ -219,6 +151,81 @@ export async function deleteMemberRecipe(params: any) {
   });
   return response.data;
 }
+
+/* 댓글 */
+// 회원 레시피 별 댓글 조회
+export async function getRecipeCommentList(params: any) {
+  const response = await axios.get(`${BASE_URL}/getRecipeCommentList`, {
+    params: params,
+  });
+  return response;
+}
+
+// 회원 레시피 댓글 상세조회
+export async function getRecipeComment(params: any) {
+  const response = await axios.get(`${BASE_URL}/getRecipeComment`, {
+    params: params,
+  });
+  return response;
+}
+
+//회원 레시피 댓글 등록
+export async function insertRecipeComment(form: any) {
+  const response = await axios.post(`${BASE_URL}/insertRecipeComment`, form);
+  return response.data;
+}
+
+//회원 레시피 댓글 수정
+export async function updateRecipeComment(form: any) {
+  const response = await axios.put(`${BASE_URL}/updateRecipeComment`, form);
+  return response.data;
+}
+
+//회원 레시피 댓글 삭제
+export async function deleteRecipeComment(params: any) {
+  const response = await axios.delete(`${BASE_URL}/deleteRecipeComment`, {
+    params: params,
+  });
+  return response.data;
+}
+
+//회원 레시피 댓글 삭제(댓글에 대댓글이 있는경우)
+export async function deleteRecipeCommentHasChild(params: any) {
+  const response = await axios.put(
+    `${BASE_URL}/deleteRecipeCommentHasChild`,
+    {}, // 본문 내용이 없으므로 빈 객체를 전달
+    {
+      params: params,
+    }
+  );
+  return response.data;
+}
+
+/* 카테고리 */
+
+// 회원 레시피 카테고리목록조회
+export async function getRecipeCategoryListWithMemberRecipeCount(params: any) {
+  const response = await axios.get(
+    `${BASE_URL}/getRecipeCategoryListWithMemberRecipeCount`,
+    {
+      params: params,
+    }
+  );
+  return response;
+}
+
+//회원 레시피용 카테고리 가져오기
+export async function getRecipeCategoryListForWrite(params: any) {
+  const response = await axios.get(
+    `${BASE_URL}/getRecipeCategoryListForWrite`,
+    {
+      params: params,
+    }
+  );
+  return response;
+}
+
+/* 좋아요 */
 
 //회원 레시피 좋아요
 export async function insertMemberRecipeLike(form: any) {
