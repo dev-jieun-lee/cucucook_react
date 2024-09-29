@@ -24,7 +24,35 @@ import {
 } from "./api";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 
-// Section 컴포넌트 정의 추가
+type StatButtonProps = {
+  onClickPath: string;
+  iconSrc: string;
+  altText: string;
+  count: number;
+};
+
+const StatButton: React.FC<StatButtonProps> = ({
+  onClickPath,
+  iconSrc,
+  altText,
+  count,
+}) => {
+  const navigate = useNavigate();
+  return (
+    <Button
+      onClick={() => navigate(onClickPath)}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Avatar src={iconSrc} alt={altText} sx={activityStyles.statIcon} />
+      <Typography sx={{ color: "black" }}>{count}개</Typography>
+    </Button>
+  );
+};
+
 type SectionProps = {
   title: string;
   linkTo: string;
@@ -64,57 +92,49 @@ const Activity: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const [latestReplies, setLatestReplies] = useState<any[]>([]);
   const [latestRecipes, setLatestRecipes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollButton(window.scrollY > 300);
-    };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const fetchAllData = async () => {
-    if (isFetching) return;
-    setIsFetching(true);
+  const handleScroll = () => {
+    setShowScrollButton(window.scrollY > 300);
+  };
 
-    const memberId = user?.memberId;
-    if (!memberId) {
-      console.error("memberId is undefined");
-      setIsFetching(false);
-      return;
+  useEffect(() => {
+    if (user?.memberId) {
+      fetchAllData(user.memberId);
     }
+  }, [user?.memberId]);
 
+  const fetchAllData = async (memberId: number) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const stats = await fetchActivityStats(memberId);
+      const [stats, likedRecipes, posts, recipes, replies] = await Promise.all([
+        fetchActivityStats(memberId),
+        fetchLikedRecipes(memberId),
+        fetchMemberBoardList(memberId, 5),
+        fetchMyRecipeList(memberId, 5),
+        fetchMyComments(memberId, 1, 5),
+      ]);
+      console.log("Liked Recipes:", likedRecipes); // 데이터 로그 출력
+      console.log("Posts:", posts);
+      console.log("Recipes:", recipes);
+      console.log("Replies:", replies);
       setLikeCount(stats.likeCount);
       setWriteCount(stats.writeCount);
       setReplyCount(stats.replyCount);
-
-      const likedrecipes = await fetchLikedRecipes(memberId);
-      setLikedRecipes(likedrecipes);
-
-      const posts = await fetchMemberBoardList(memberId, 5);
+      setLikedRecipes(likedRecipes);
       setLatestPosts(posts);
-
-      const recipes = await fetchMyRecipeList(memberId, 5);
       setLatestRecipes(recipes);
-
-      const replies = await fetchMyComments(memberId, 1, 5);
       setLatestReplies(replies);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
       setIsLoading(false);
-      setIsFetching(false);
     }
   };
-
-  useEffect(() => {
-    fetchAllData();
-  }, [user]);
 
   if (isLoading) {
     return (
@@ -134,85 +154,53 @@ const Activity: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         </Box>
 
         <Box sx={activityStyles.statsBox}>
-          <Box sx={activityStyles.statItem}>
-            <Button
-              onClick={() => navigate("/myPage/LikeLists")}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                src="/public/image/cucucook_like.png"
-                alt="찜 아이콘"
-                sx={activityStyles.statIcon}
-              />
-              <Typography sx={{ color: "black" }}>{likeCount}개</Typography>
-            </Button>
-          </Box>
-
-          <Box sx={activityStyles.statItem}>
-            <Button
-              onClick={() => navigate("/myPage/MyWrites")}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                src="/public/image/cucucook_write.png"
-                alt="게시글 아이콘"
-                sx={activityStyles.statIcon}
-              />
-              <Typography sx={{ color: "black" }}>{writeCount}개</Typography>
-            </Button>
-          </Box>
-
-          <Box sx={activityStyles.statItem}>
-            <Button
-              onClick={() => navigate("/myPage/MyReplys")}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                src="/public/image/cucucook_reply.png"
-                alt="댓글 아이콘"
-                sx={activityStyles.statIcon}
-              />
-              <Typography sx={{ color: "black" }}>{replyCount}개</Typography>
-            </Button>
-          </Box>
+          <StatButton
+            onClickPath="/myPage/LikeLists"
+            iconSrc="/public/image/cucucook_like.png"
+            altText="찜 아이콘"
+            count={likeCount}
+          />
+          <StatButton
+            onClickPath="/myPage/MyWrites"
+            iconSrc="/public/image/cucucook_write.png"
+            altText="게시글 아이콘"
+            count={writeCount}
+          />
+          <StatButton
+            onClickPath="/myPage/MyReplys"
+            iconSrc="/public/image/cucucook_reply.png"
+            altText="댓글 아이콘"
+            count={replyCount}
+          />
         </Box>
 
-        {/* 레시피 찜목록 섹션 */}
         <Section title="레시피 찜목록" linkTo="/myPage/LikeLists">
           <List>
-            {likedRecipes.map((likedRecipe) => (
-              <ListItem
-                key={likedRecipe.recipeId} // 고유한 key prop 추가
-                sx={{ borderBottom: "1px solid #ddd" }}
-                button
-                onClick={() =>
-                  navigate(`/recipe/member_recipe/${likedRecipe.recipeId}`)
-                }
-              >
-                <ListItemText primary={likedRecipe.title} />
-              </ListItem>
-            ))}
+            {likedRecipes.map((recipe) => {
+              console.log(
+                `Rendering liked recipe with key: ${recipe.recipeId}`
+              );
+              return (
+                <ListItem
+                  key={recipe.recipeId}
+                  sx={{ borderBottom: "1px solid #ddd" }}
+                  button
+                  onClick={() =>
+                    navigate(`/recipe/member_recipe/${recipe.recipeId}`)
+                  }
+                >
+                  <ListItemText primary={recipe.title} />
+                </ListItem>
+              );
+            })}
           </List>
         </Section>
 
-        {/* 내가 쓴 게시글 섹션 */}
         <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
           <List>
             {latestPosts.map((post) => (
               <ListItem
-                key={post.id}
+                key={`post-${post.boardId}`} // 'post-' 접두어와 id 결합
                 sx={{ borderBottom: "1px solid #ddd" }}
                 button
                 onClick={() => navigate(`/notice/${post.boardId}`)}
@@ -223,12 +211,11 @@ const Activity: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
           </List>
         </Section>
 
-        {/* 나의 DIY 레시피 섹션 */}
         <Section title="나의 DIY 레시피" linkTo="/myPage/MyRecipes">
           <List>
             {latestRecipes.map((recipe) => (
               <ListItem
-                key={recipe.recipeId}
+                key={`diy-recipe-${recipe.method}`} // 'diy-recipe-' 접두어와 id 결합
                 sx={{ borderBottom: "1px solid #ddd" }}
                 button
                 onClick={() =>
@@ -241,12 +228,11 @@ const Activity: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
           </List>
         </Section>
 
-        {/* 내가 쓴 댓글 섹션 */}
         <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
           <List>
             {latestReplies.map((reply) => (
               <ListItem
-                key={reply.commentId}
+                key={`reply-${reply.commentId}`} // 'reply-' 접두어와 id 결합
                 sx={{ borderBottom: "1px solid #ddd" }}
                 button
                 onClick={() =>
