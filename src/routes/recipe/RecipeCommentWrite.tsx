@@ -18,7 +18,7 @@ import {
   getRecipeComment,
   insertRecipeComment,
   updateRecipeComment,
-} from "../../api";
+} from "../../apis/recipeApi";
 import {
   RecipeCommentWrite,
   recipeCommonStyles,

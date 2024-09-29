@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "styled-components";
-import { getPublicRecipe } from "../../api";
+import { getPublicRecipe } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import {
   PageSubTitleBasic,

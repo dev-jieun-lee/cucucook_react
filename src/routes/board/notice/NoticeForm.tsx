@@ -7,13 +7,13 @@ import {
   getBoardCategoryList,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import {
   BoardButtonArea,
   ContentsInputArea,
   TitleInputArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import {
   AlertColor,
   Button,

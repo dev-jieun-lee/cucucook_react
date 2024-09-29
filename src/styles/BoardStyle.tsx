@@ -1,6 +1,5 @@
 import { Button, Stack } from "@mui/material";
 import styled from "styled-components";
-import media from "../../styles/MediaQuery";
 
 export const ContentsArea = styled.div`
   margin: 20px auto;
