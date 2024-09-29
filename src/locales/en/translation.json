@@ -301,7 +301,7 @@
       "ingredientName": "Please enter the ingredient name.",
       "ingredientAmount": "Please enter the ingredient amount.",
       "processImage": "Please upload an image of the cooking process.",
-      "processContents": "Please enter the cooking process.",
+      "contents": "Please enter the cooking process.",
       "comment_no_member": "You can write a comment after logging in."
     }
   },

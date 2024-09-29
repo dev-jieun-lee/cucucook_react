@@ -119,6 +119,7 @@ const RecipeImageUpload = forwardRef<
             >
               <Add fontSize="large" />
               <input
+                name={`${name}`}
                 type="file"
                 accept="image/*"
                 hidden
