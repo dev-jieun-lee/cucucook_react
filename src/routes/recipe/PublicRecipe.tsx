@@ -20,7 +20,7 @@ import {
   RecipeImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import Swal from "sweetalert2";
 import ScrollTop from "../../components/ScrollTop";
 

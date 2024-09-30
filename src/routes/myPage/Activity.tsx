@@ -15,7 +15,9 @@ import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useAuth } from "../../auth/AuthContext";
 import {
+  fecthMyRecipeList,
   fetchActivityStats,
+  fetchLikedRecipes,
   fetchMemberBoardList,
   fetchMyComments,
 } from "../../apis/mypageApi"; // 활동 정보 API 함수 가져오기

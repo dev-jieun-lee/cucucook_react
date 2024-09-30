@@ -31,7 +31,7 @@ import {
   ThumbnailBoxContainer,
   ThumbnailButton,
   TitleBox,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import SearchIcon from "@mui/icons-material/Search";
 import ScrollTop from "../../components/ScrollTop";
 
