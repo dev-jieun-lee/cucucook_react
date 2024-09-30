@@ -19,6 +19,8 @@ import {
   insertRecipeComment,
   updateRecipeComment,
 } from "../../apis/recipeApi";
+
+import { useAuth } from "../../auth/AuthContext";
 import {
   RecipeCommentWrite,
   recipeCommonStyles,
