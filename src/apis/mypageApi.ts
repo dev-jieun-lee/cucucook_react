@@ -16,6 +16,8 @@ const api = axios.create({
 function handleApiError(error: unknown) {
   if (axios.isAxiosError(error)) {
     console.error("Axios 에러 발생:", error.response?.data || error.message);
+    console.error("응답 상태 코드:", error.response?.status);
+    console.error("응답 데이터:", error.response?.data);
     throw new Error(error.response?.data?.message || "API 요청 실패");
   } else if (error instanceof Error) {
     console.error("일반 에러 발생:", error.message);
@@ -30,7 +32,7 @@ function handleApiError(error: unknown) {
 export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
-    console.log("로그인 응답데이터", response.data);
+    console.log("mypage로그인 응답데이터", response.data);
     // 로그인 성공 시 JWT 토큰을 쿠키에 저장
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
@@ -184,11 +186,11 @@ export const fetchMyReplies = async (
 //댓글 삭제
 export const deleteReply = async (memberId: string, commentId: string) => {
   try {
-    console.log("api.ts 진입");
+    //console.log("api.ts 진입");
     const response = await axios.delete(`${BASE_URL}/delete`, {
       params: { memberId, commentId },
     });
-    console.log("api.ts 들어갔다 나옴");
+    // console.log("api.ts 들어갔다 나옴");
     return response.data;
   } catch (error) {
     console.error("Failed to delete reply:", error);
@@ -218,7 +220,7 @@ export const searchReplies = async (
         sortDirection,
       },
     });
-    console.log("검색한데이터", response.data);
+    //console.log("검색한데이터", response.data);
     return response.data;
   } catch (error) {
     console.error("검색 실패:", error);
@@ -249,7 +251,7 @@ export const fetchMyWrites = async (
 ) => {
   try {
     // 여기서 boardDivision을 로깅합니다.
-    console.log("Fetching writes with boardDivision:", boardDivision);
+    //console.log("Fetching writes with boardDivision:", boardDivision);
 
     const response = await axios.get(`${BASE_URL}/getMyBoards`, {
       params: {
@@ -321,7 +323,7 @@ export const fetchActivityStats = async (memberId: number) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching activity stats:", error);
+    //  console.error("Error fetching activity stats:", error);
     throw error;
   }
 };
@@ -338,8 +340,7 @@ export const fetchMemberBoardList = async (memberId: number, limit: number) => {
         limit, // 가져올 게시글 수 (최신순으로 5개)
       },
     });
-
-    //console.log("최신게시글esponse from API:", response.data);
+    //  console.log("최신게시글esponse from API:", response.data);
 
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
@@ -373,7 +374,7 @@ export const fetchMyComments = async (
   pageSize: number
 ) => {
   try {
-    console.log(" 최신 댓글5개 Params:", { memberId, page, pageSize });
+    // console.log(" 최신 댓글5개 Params:", { memberId, page, pageSize });
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
       params: {
         memberId,
@@ -381,8 +382,7 @@ export const fetchMyComments = async (
         pageSize: 5,
       },
     });
-    console.log("최신 댓글Response from API:", response.data);
-    console.log("최신 댓글Response from API:", response);
+    // console.log("최신 댓글Response from API:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching comments:", error);
@@ -390,19 +390,20 @@ export const fetchMyComments = async (
   }
 };
 
-// 최신 레시피 5개 가져오는 함수
-export const fecthMyRecipeList = async (memberId: number, limit: number) => {
+// 모든 레시피를 가져오는 함수
+export const fetchMyRecipeList = async (memberId: number, limit?: number) => {
   try {
-    //console.log(" 최신 레시피 5개 Params:", { memberId, limit });
+    // console.log("레시피 Params:", { memberId, limit });
 
     // 백엔드 API 호출
     const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
       params: {
         memberId,
-        limit, // 가져올 게시글 수 (최신순으로 5개)
+        ...(limit !== undefined && { limit }), // limit이 undefined가 아닐 경우에만 포함
       },
     });
-    // console.log(" 최신 레시피 5개 Response from API:", response.data);
+
+    console.log("레시피 Response from API:", response.data);
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
   } catch (err) {
@@ -434,10 +435,36 @@ export const fetchLikedRecipes = async (memberId: number) => {
     const response = await axios.get(`${BASE_URL}/getLikedRecipes`, {
       params: { memberId },
     });
-    console.log("찜한 레시피 목록 로드 성공:", response.data);
+    // console.log("찜한 레시피 목록 로드 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("찜한 레시피 목록 로드 실패:", error);
+    throw error;
+  }
+};
+
+//찜 진입시 정보가져오기
+export const getRecipeLikeListOtherInfo = async (
+  memberId: number,
+  recipeCategoryId: string,
+  orderby: string,
+  display: number,
+  start: number
+) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getRecipeLikeListOtherInfo`, {
+      params: {
+        memberId,
+        recipeCategoryId,
+        orderby,
+        display,
+        start,
+      },
+    });
+    console.log("찜한 레시피 목록 로드 성공:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("API 호출 오류:", error);
     throw error;
   }
 };

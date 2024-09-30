@@ -17,7 +17,7 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import { getRecipeLikeListOtherInfo } from "./mypageApi";
+import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
 
 const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();

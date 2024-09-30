@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { kakaoLogin } from "../membersApi";
+import { kakaoLogin } from "../../../apis/memberApi";
 
 const KakaoRedirectHandler = () => {
   const navigate = useNavigate();
