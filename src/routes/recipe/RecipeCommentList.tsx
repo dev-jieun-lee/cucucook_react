@@ -16,7 +16,7 @@ import {
   CommentIconButton,
   RecipeCommentList,
   recipeCommonStyles,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 import { useAuth } from "../../auth/AuthContext";
 
