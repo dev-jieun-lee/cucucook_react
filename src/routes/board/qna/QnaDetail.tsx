@@ -8,7 +8,7 @@ import {
   getBoardWithReplies,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import {
   AnswerButton,
   AnswerContainer,
@@ -18,7 +18,8 @@ import {
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
+import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
@@ -89,11 +90,11 @@ function QnaDetail() {
   const getBoardWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 

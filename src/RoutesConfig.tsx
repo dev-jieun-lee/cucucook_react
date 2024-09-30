@@ -6,7 +6,7 @@ import styled from "styled-components";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
-
+import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
 //메인
 const Main = lazy(() => import("./routes/main/Main"));
 //로그인
@@ -41,6 +41,10 @@ const Activity = lazy(() => import("./routes/myPage/Activity"));
 const LikeLists = lazy(() => import("./routes/myPage/LikeLists"));
 const MyWrites = lazy(() => import("./routes/myPage/MyWrites"));
 const MyReplys = lazy(() => import("./routes/myPage/MyReplys"));
+//관리자
+const MembersManage = lazy(() => import("./routes/admin/member/MembersManage"));
+const MemberDetail = lazy(() => import("./routes/admin/member/MemberDetail"));
+const BoardCategoryManage = lazy(() => import("./routes/admin/category/BoardCategoryManage"));
 
 function RoutesConfig({ isDarkMode }: any) {
   return (
@@ -292,6 +296,35 @@ function RoutesConfig({ isDarkMode }: any) {
           <RouteBox>
             <MypageSideMenu isDarkMode={isDarkMode} />
             <MyReplys isDarkMode={false} />
+          </RouteBox>
+        }
+      />
+
+      {/* 관리자 */}
+      <Route
+        path="/admin/members"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <MembersManage />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/admin/members/:memberId"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <MemberDetail />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/admin/category/board"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <BoardCategoryManage />
           </RouteBox>
         }
       />

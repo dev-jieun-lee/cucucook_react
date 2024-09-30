@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyReplies, deleteReply, searchReplies } from "./api";
+import { fetchMyReplies, deleteReply, searchReplies } from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 
 const MySwal = withReactContent(Swal);
 

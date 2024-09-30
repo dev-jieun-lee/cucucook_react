@@ -2,6 +2,7 @@ import styled from "styled-components";
 import media from "./MediaQuery";
 import { Fab, Stack } from "@mui/material";
 
+
 export const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -88,6 +89,7 @@ export const ScrollBtnFab = styled(Fab)`
   `};
 `;
 
+//검색 스타일
 export const SearchArea = styled.div`
   /* margin: 30px ; */
   margin-top: 40px;
@@ -99,7 +101,7 @@ export const SearchArea = styled.div`
   `};
 
   .select-category {
-    width: 130px;
+    width: 150px;
     margin-right: 50px;
     ${media.small`
     margin : 0 auto;
@@ -116,6 +118,7 @@ export const SearchArea = styled.div`
   }
 `;
 
+//페이지네이션 스타일
 export const CustomPagination = styled(Stack)`
   margin: 15px;
   .pagination-btn {

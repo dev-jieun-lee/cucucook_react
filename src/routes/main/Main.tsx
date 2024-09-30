@@ -8,6 +8,17 @@ import {
   TableRow,
 } from "@mui/material";
 import React from "react";
+
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { useTranslation } from "react-i18next";
+import { getBoardCategory, getBoardList } from "../../apis/boardApi";
+import { useQuery } from "react-query";
+import moment from "moment";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import { Wrapper } from "../../styles/CommonStyles";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
 import {
   Banner,
   BannerButton,
@@ -18,18 +29,8 @@ import {
   NoticeTable,
   Slogan,
   SloganButton,
-} from "./MainStyle";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { useTranslation } from "react-i18next";
-import { getBoardCategory, getBoardList } from "../board/api";
-import { useQuery } from "react-query";
-import { CustomCategory } from "../board/BoardStyle";
-import moment from "moment";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import { Wrapper } from "../../styles/CommonStyles";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
-import Loading from "../../components/Loading";
+} from "../../styles/MainStyle";
+import { CustomCategory } from "../../styles/BoardStyle";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();

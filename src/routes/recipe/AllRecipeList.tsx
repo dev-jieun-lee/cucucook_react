@@ -4,12 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import {
-  deleteMemberRecipeLike,
-  getMemberRecipeList,
-  getPublicRecipeList,
-  insertMemberRecipeLike,
-} from "./recipeApi";
+import { getMemberRecipeList, getPublicRecipeList } from "../../apis/recipeApi";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
