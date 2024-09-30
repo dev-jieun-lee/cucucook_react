@@ -2,16 +2,35 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getMemberList } from "../../../apis/memberApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
-import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
+import {
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../../styles/CommonStyles";
+import {
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Pagination,
+  Paper,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import moment from "moment";
 import { ContentsArea } from "../../../styles/BoardStyle";
+import { getMemberRecipeList } from "../../../apis/recipeApi";
 
-function MembersManage(){
+function MembersManage() {
   const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,9 +52,7 @@ function MembersManage(){
       currentPage: currentPage.toString(),
     });
   }, [search, searchType, currentPage, setSearchParams]);
-  
-  
-  
+
   // 데이터를 불러오는 API 호출 함수
   const getMemberListApi = async () => {
     const params = {
@@ -44,7 +61,7 @@ function MembersManage(){
       currentPage: currentPage, // 페이지 번호
       display: display, //페이지당 표시할 갯수
     };
-    const response = await getMemberList(params);
+    const response = await getMemberRecipeList(params);
     setTotalCount(response.data.length);
     return response;
   };
@@ -53,24 +70,24 @@ function MembersManage(){
   const getMemberListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     const memberList = await getMemberListApi(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return memberList.data;
   };
 
-  const { data: memberList,isLoading: memberListLoading, refetch } = useQuery(
-    "memberList",
-    getMemberListWithDelay,
-    {
-      enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
-      keepPreviousData: false,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    }
-  );
+  const {
+    data: memberList,
+    isLoading: memberListLoading,
+    refetch,
+  } = useQuery("memberList", getMemberListWithDelay, {
+    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -99,7 +116,6 @@ function MembersManage(){
     setSearchType(e.target.value);
   };
 
-
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
     console.log(page);
@@ -113,18 +129,15 @@ function MembersManage(){
   const onClickDetail = (memberId: string) => {
     navigate(`/admin/members/${memberId}`);
   };
-  
+
   //로딩
-  if (loading || memberListLoading ) {
+  if (loading || memberListLoading) {
     return <Loading />;
   }
-  
 
-  return(
+  return (
     <Wrapper>
-      <TitleCenter>
-        {t("menu.admin.members")}
-      </TitleCenter>
+      <TitleCenter>{t("menu.admin.members")}</TitleCenter>
       <SearchArea>
         <Select
           className="select-category"
@@ -172,7 +185,7 @@ function MembersManage(){
                 <TableCell className="no-cell">No.</TableCell>
                 <TableCell className="id-cell">{t("text.user_id")}</TableCell>
                 <TableCell className="name-cell">{t("text.name")}</TableCell>
-                <TableCell >{t("text.subscription_data")}</TableCell>
+                <TableCell>{t("text.subscription_data")}</TableCell>
                 <TableCell>{t("text.role")}</TableCell>
               </TableRow>
             </TableHead>

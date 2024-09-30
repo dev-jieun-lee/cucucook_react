@@ -22,7 +22,7 @@ import {
   fetchMemberBoardList,
   fetchMyComments,
   fetchMyRecipeList,
-} from "./mypageApi";
+} from "../../apis/mypageApi";
 
 type StatButtonProps = {
   onClickPath: string;

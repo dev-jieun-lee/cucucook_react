@@ -7,6 +7,7 @@ import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
+import KakaoRedirectHandler from "./routes/members/login/KakaoRedirectHandler";
 //메인
 const Main = lazy(() => import("./routes/main/Main"));
 //로그인
@@ -312,6 +313,34 @@ function RoutesConfig({ isDarkMode }: any) {
           <RouteBox>
             <MypageSideMenu isDarkMode={isDarkMode} />
             <MyRecipes isDarkMode={false} />
+          </RouteBox>
+        }
+      />
+      {/* 관리자 */}
+      <Route
+        path="/admin/members"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <MembersManage />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/admin/members/:memberId"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <MemberDetail />
+          </RouteBox>
+        }
+      />
+      <Route
+        path="/admin/category/board"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <BoardCategoryManage />
           </RouteBox>
         }
       />
