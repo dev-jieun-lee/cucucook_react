@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import { fetchMyRecipeList } from "./mypageApi";
 import { Wrapper, PageTitleBasic } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -18,6 +17,7 @@ import {
 } from "../../styles/RecipeStyle";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
+import { fetchMyRecipeList } from "../../apis/mypageApi";
 
 const MyRecipes = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
