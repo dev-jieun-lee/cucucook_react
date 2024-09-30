@@ -34,7 +34,7 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       console.log(values);
-      
+
       if (!user?.userId) {
         setErrors({ password: t("mypage.User ID not found") });
         setSubmitting(false);
@@ -55,15 +55,15 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
 
           // 모달이 닫힌 후 SweetAlert2로 성공 알림 띄우기
           // setTimeout(() => {
-            // Swal.fire({
-            //   title: t("mypage.Success"),
-            //   text: t("mypage.Password verification successful"),
-            //   icon: "success",
-            //   confirmButtonText: t("mypage.OK"),
-            // }).then(() => {
-            //   // 확인 버튼을 누르면 페이지 이동
-              navigate("/mypage/UserInfo");
-            // });
+          // Swal.fire({
+          //   title: t("mypage.Success"),
+          //   text: t("mypage.Password verification successful"),
+          //   icon: "success",
+          //   confirmButtonText: t("mypage.OK"),
+          // }).then(() => {
+          //   // 확인 버튼을 누르면 페이지 이동
+          navigate("/mypage/UserInfo");
+          // });
           // }, 300); // 모달 닫힘을 기다리기 위해 약간의 딜레이 추가
         } else {
           console.log("비밀번호 검증 실패 또는 알 수 없는 오류");
@@ -85,7 +85,6 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
       }
     },
   });
-
 
   return (
     <LoginWrapper>
