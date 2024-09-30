@@ -181,7 +181,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         Swal.fire({
           icon: "success",
           title: t("text.delete"),
-          text: t("recipe.alert.delete_recipe_confirm_sucecss"),
+          text: t("recipe.alert.delete_recipe_sucecss"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
           timer: 1000,
@@ -193,7 +193,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         Swal.fire({
           icon: "error",
           title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          text: t("recipe.alert.delete_comment_sucecss"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });

@@ -30,6 +30,7 @@ function DrawerMenu({ toggleDrawer }: any) {
   const AdminMenuItems = [
     { label: t("menu.admin.members"), path: "/admin/members" },
     { label: t("menu.admin.category_board"), path: "/admin/category/board" },
+    { label: t("menu.admin.category_recipe"), path: "/admin/category/recipe" },
   ];
 
   // 페이지 이동 함수
