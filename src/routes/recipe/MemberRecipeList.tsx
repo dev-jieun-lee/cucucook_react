@@ -23,6 +23,7 @@ import {
   deleteMemberRecipeLike,
   getMemberRecipeList,
   getRecipeCategoryListWithMemberRecipeCount,
+  insertMemberRecipeLike,
 } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
@@ -39,7 +40,7 @@ import {
   ThumbnailBoxContainer,
   ThumbnailButton,
   TitleBox,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useAuth } from "../../auth/AuthContext";
 import ScrollTop from "../../components/ScrollTop";

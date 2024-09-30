@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getMemberRecipeList, getPublicRecipeList } from "../../apis/recipeApi";
+import {
+  deleteMemberRecipeLike,
+  getMemberRecipeList,
+  getPublicRecipeList,
+  insertMemberRecipeLike,
+} from "../../apis/recipeApi";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
@@ -17,7 +22,7 @@ import {
   ThumbnailButton,
   TitleBox,
   recipeCommonStyles,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import StarIcon from "@mui/icons-material/Star";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";

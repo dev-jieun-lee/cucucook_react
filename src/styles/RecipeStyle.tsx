@@ -1,6 +1,6 @@
 import { Box, Button, Grid, IconButton, TextField } from "@mui/material";
 import styled from "styled-components";
-import media from "../../styles/MediaQuery";
+import media from "./MediaQuery";
 export const RecipeWrapper = styled.div``;
 export const TitleBox = styled(Box)`
   display: grid;

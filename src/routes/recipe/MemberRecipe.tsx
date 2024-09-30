@@ -35,7 +35,7 @@ import {
   RecipeImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
-} from "./RecipeStyle";
+} from "../../styles/RecipeStyle";
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 import Swal from "sweetalert2";
