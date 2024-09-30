@@ -193,7 +193,9 @@
     "Password verification successful": "비밀번호 확인에 성공했습니다",
     "OK": "확인",
     "mycommnet": "내가 쓴 댓글",
-    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?"
+    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
+    "liked_recipes": "레시피 찜 목록",
+    "my_recipes": "나의 DIY 레시피"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -259,7 +261,7 @@
     "Notifiction": "알림",
     "duplication_chk": "중복확인",
     "temp_password_issued": "등록한 메일로 임시비밀번호를 발급하였습니다.로그인 후 반드시 비밀번호를 변경해 주세요.",
-    "email_invalid": "유효한 이메일 주소를 입력해주세요.",
+    "email_invalid": "한글은 입력이 불가합니다.",
     "verification_code_sent": "인증 코드가 발송되었습니다.",
     "verification_code_error": "인증 코드 발송에 실패했습니다.",
     "verification_code_expired": "인증 코드가 만료되었습니다.",
@@ -345,12 +347,15 @@
     "confirmed": "확인",
     "ok": "확인",
     "attempt": "로그인에 실패했습니다. 계속 실패할경우 계정이 잠길 수 있습니다.",
+    "attempt_1": "비밀번호가 일치하지 않습니다. 다시 시도해주세요.",
+    "attempt_2": "비밀번호가 또 틀렸습니다. 다시 확인해주세요.",
     "attempt_3": "경고: 세 번 연속 로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.",
     "attempt_4": "경고: 네 번 연속 로그인에 실패했습니다. 한 번 더 실패 시 계정이 잠깁니다.",
     "locked": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다. ",
     "locked_time": "로그인 시도 횟수 초과로 인해 계정이 잠겼습니다.",
     "try_again": "  {{minutes}} 분 {{seconds}} 초 ,후 다시 시도해주세요.",
-    "contact_admin": "관리자에게 문의하세요",
+    "contact_admin": "계정이 잠겼습니다. 관리자에게 문의하세요.",
+    "login_success": "로그인 성공! 환영합니다.",
     "yes": "네",
     "no": "아니오"
   },
