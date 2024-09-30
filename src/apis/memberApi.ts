@@ -244,3 +244,11 @@ export const deleteAccount = async (memberId: string) => {
     throw error;
   }
 };
+
+//회원 목록 조회
+export async function getMemberList(params: any) {
+  const response = await axios.get(`${BASE_URL}/getMemberList`, {
+    params: params,
+  });
+  return response.data;
+}

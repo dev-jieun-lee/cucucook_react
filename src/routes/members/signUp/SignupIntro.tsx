@@ -20,7 +20,7 @@ import {
   LeftAlignedFormControlLabel,
   CheckBoxContainer,
   SignupIntroWrapper,
-} from "../login/LoginStyle";
+} from "../../../styles/LoginStyle";
 import { useEmailVerification } from "../../../hooks/useEmailVerification";
 import PersonIcon from '@mui/icons-material/Person';
 

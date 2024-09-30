@@ -11,19 +11,14 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { KeyboardArrowUp } from "@mui/icons-material";
-import {
-  activityStyles,
-  scrollButtonStyles,
-} from "./myPageStyles";
+import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useAuth } from "../../auth/AuthContext";
 import {
   fetchActivityStats,
   fetchMemberBoardList,
   fetchMyComments,
-  fecthMyRecipeList,
-  fetchLikedRecipes,
-} from "./api"; // 활동 정보 API 함수 가져오기
+} from "../../apis/mypageApi"; // 활동 정보 API 함수 가져오기
 
 type SectionProps = {
   title: string;

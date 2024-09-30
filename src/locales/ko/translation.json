@@ -13,6 +13,7 @@
     },
     "board": {
       "original": "게시판",
+      "division": "게시판 구분",
       "notice": "공지사항",
       "notice_detail": "공지사항 상세",
       "notice_create": "공지사항 등록",
@@ -90,10 +91,9 @@
     "member_recipe": "D.I.Y 레시피",
     "more_view": "더보기",
     "recent_order": "최신순",
-    "count_order": "조회수 높은 순",
-    "comment_order": "댓글 많은 순",
-    "rate_order": "평점 높은 순",
-    "like_order": "찜 많은 순",
+    "count_order": "조회수순",
+    "comment_order": "댓글순",
+    "rate_order": "평점순",
     "write": "글쓰기",
     "recipe_write": "레시피 작성",
     "detail_more": "상세보기",
@@ -301,8 +301,7 @@
       "ingredientName": "재료명을 넣어주세요.",
       "ingredientAmount": "재료량을 넣어주세요.",
       "processImage": "진행과정 이미지를 넣어주세요.",
-      "contents": "요리 과정을 입력해주세요.",
-      "comment_no_member": "로그인 후 댓글을 작성하실 수 있습니다."
+      "processContents": "진행과정을 입력해주세요."
     }
   },
   "Footer": {
@@ -363,14 +362,6 @@
     "E_RECIPE_COMMENT_UPDATE": "댓글 수정에 실패했습니다.",
     "S_RECIPE_COMMENT_UPDATE": "댓글 수정에 성공했습니다.",
     "E_RECIPE_COMMENT_DELETE": "댓글 삭제에 실패했습니다.",
-    "S_RECIPE_COMMENT_DELETE": "댓글 삭제에 성공했습니다.",
-    "E_IS_FILE_NAME": "파일 이름이 유효하지 않습니다.",
-    "E_SAVE_FILE": "파일 저장에 실패 하였습니다.",
-    "E_DEL_FILE": "파일 삭제에 실패 하였습니다.",
-    "E_DEL_FOLDER": "폴더 삭제에 실패 하였습니다.",
-    "E_SUPPORTED_FILE_EXT": "지원하지 않는 파일 형식입니다.",
-    "E_IS_THUMBNAIL": "썸네일이 존재하지 않습니다.",
-    "E_IS_RECIPE_IMG": "레시피 이미지가 존재하지 않습니다.",
-    "E_ADD_IMG_DATA": "이미지 DB저장에 실패하였습니다."
+    "S_RECIPE_COMMENT_DELETE": "댓글 삭제에 성공했습니다."
   }
 }

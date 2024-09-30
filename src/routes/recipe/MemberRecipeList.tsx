@@ -23,8 +23,7 @@ import {
   deleteMemberRecipeLike,
   getMemberRecipeList,
   getRecipeCategoryListWithMemberRecipeCount,
-  insertMemberRecipeLike,
-} from "./recipeApi";
+} from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {

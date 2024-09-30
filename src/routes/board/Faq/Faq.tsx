@@ -5,7 +5,7 @@ import {
   TitleCenter,
   Wrapper,
 } from "../../../styles/CommonStyles";
-import { AccordionTitle, ContentsArea, CustomCategory } from "../BoardStyle";
+import { AccordionTitle, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
   Accordion,
   AccordionDetails,
@@ -27,7 +27,7 @@ import {
   getBoardCategory,
   getBoardCategoryList,
   getBoardList,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -63,9 +63,14 @@ function Faq() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
-
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
+  
   //FAQ 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
@@ -74,12 +79,19 @@ function Faq() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-    return response.data.filter((category: any) => category.division === "FAQ");
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "FAQ"
+        );
+      }
+
+      return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
+
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {

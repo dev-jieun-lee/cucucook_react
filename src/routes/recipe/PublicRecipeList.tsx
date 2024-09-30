@@ -14,7 +14,8 @@ import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { getPublicRecipeList } from "./recipeApi";
+import { useTheme } from "styled-components";
+import { getPublicRecipeList } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
@@ -64,6 +65,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleViewDetailClick = (path: string, params: string) => {
+    console.log(params);
+
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };

@@ -4,9 +4,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { AnswerContainer, ContentsArea, CustomCategory } from "../BoardStyle";
+import { AnswerContainer, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import React, { useEffect, useState } from "react";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
+import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
@@ -30,8 +30,13 @@ function Qna() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
@@ -41,14 +46,19 @@ function Qna() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-    return response.data.filter(
-      (category: any) => category.division === "QNA"
-    );
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "QNA"
+        );
+      }
+
+      return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
+
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
