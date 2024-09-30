@@ -1,11 +1,6 @@
 import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
-import {
-  Col,
-  Logo,
-  Nav,
-  DrawerTop,
-} from "../memu/MenuStyle"; // 스타일 컴포넌트
+import { Col, Logo, Nav, DrawerTop } from "../styles/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
 import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아이콘
 // 검색 아이콘
@@ -19,7 +14,9 @@ import { useTranslation } from "react-i18next"; // 다국어 지원 훅
 import MenuIcon from "@mui/icons-material/Menu"; // 드로어 메뉴 아이콘
 import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
 import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
-// HTTP 요청 라이브러리
+import axios from "axios"; // HTTP 요청 라이브러리
+import { useMutation } from "react-query";
+import { logout } from "../apis/memberApi";
 import LoginUser from "../LoginUser";
 import { useAuth } from "../auth/AuthContext";
 

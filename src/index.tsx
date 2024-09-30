@@ -29,6 +29,9 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Pretendard-Regular' !important;
   }
+  .swal2-container {
+    z-index: 10000 !important; 
+  }
 `;
 
 const root = ReactDOM.createRoot(

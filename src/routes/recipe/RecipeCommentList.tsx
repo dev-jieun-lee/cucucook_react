@@ -8,7 +8,10 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
 import { useTheme } from "styled-components";
 import Swal from "sweetalert2";
-import { deleteRecipeComment, deleteRecipeCommentHasChild } from "./recipeApi";
+import {
+  deleteRecipeComment,
+  deleteRecipeCommentHasChild,
+} from "../../apis/recipeApi";
 import {
   CommentIconButton,
   RecipeCommentList,

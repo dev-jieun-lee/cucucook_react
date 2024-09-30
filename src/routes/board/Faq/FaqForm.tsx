@@ -7,13 +7,13 @@ import {
   getBoardCategoryList,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import {
   BoardButtonArea,
   ContentsInputArea,
   TitleInputArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import {
   Button,
   FormControl,
@@ -42,24 +42,26 @@ function FaqForm() {
 
   
   //QNA 카테고리 데이터 받아오기
-  const getBoardCategoryListApi = () => {
+  const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
       start: "",
       display: "",
     };
-    return getBoardCategoryList(params);
+    const response = await getBoardCategoryList(params);
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "FAQ"
+        );
+      }
+
+      return [];
   };
-  
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
-    getBoardCategoryListApi,
-    {
-      select: (data) => data.data.filter((item : any) => item.division === "QNA"),
-    }
+    getBoardCategoryListApi
   );
 
-  console.log(boardCategoryList);
   
 
 
@@ -118,7 +120,7 @@ function FaqForm() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      memberId: "1",
+      memberId: user?.memberId,
       title: boardId ? boardWithCategory?.data?.title || "" : "",
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -144,7 +146,7 @@ function FaqForm() {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
-        memberId: "1",
+        memberId: user?.memberId,
         title: "",
         boardCategoryId: "",
         contents: "",

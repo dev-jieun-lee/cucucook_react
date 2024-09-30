@@ -2,7 +2,7 @@ import { Divider, ListItem, ListItemButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { SideMenu } from "./SideMenuStyle";
+import { SideMenu } from "../../styles/SideMenuStyle";
 
 function RecipeSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
   const [activeButton, setActiveButton] = useState(""); // 활성 버튼을 관리하는 상태
