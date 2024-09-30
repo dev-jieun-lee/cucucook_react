@@ -135,6 +135,11 @@ function Menu() {
                       {t("menu.admin.category_board")}
                     </LinkItem>
                   </li>
+                  <li>
+                    <LinkItem to="/admin/category/recipe">
+                      {t("menu.admin.category_recipe")}
+                    </LinkItem>
+                  </li>
                 </ul>
               </SubMenu>
             </li>

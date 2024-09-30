@@ -50,13 +50,15 @@ const MemberDetail = lazy(() => import("./routes/admin/member/MemberDetail"));
 const BoardCategoryManage = lazy(
   () => import("./routes/admin/category/BoardCategoryManage")
 );
+const RecipeCategoryManage = lazy(
+  () => import("./routes/admin/category/RecipeCategoryManage")
+);
 
 function RoutesConfig({ isDarkMode }: any) {
   return (
     <Routes>
       {/* 메인 */}
       <Route path="/*" element={<Main isDarkMode={isDarkMode} />} />
-
       {/* 로그인. 회원가입 */}
       <Route
         path="/login"
@@ -90,10 +92,8 @@ function RoutesConfig({ isDarkMode }: any) {
         path="/login/FindPw"
         element={<FindPw isDarkMode={isDarkMode} />}
       />
-
       {/* 카카오 리디렉션 핸들러 라우트 추가 */}
       <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
-
       {/* 레시피 */}
       <Route
         path="/recipe/all_recipe_list"
@@ -104,7 +104,6 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-
       <Route
         path="/recipe/public_recipe_list"
         element={
@@ -150,7 +149,6 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-
       {/* 보드 */}
       <Route
         path="/notice"
@@ -251,7 +249,6 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-
       {/* 마이페이지 */}
       <Route
         path="/mypage/profile"
@@ -341,6 +338,15 @@ function RoutesConfig({ isDarkMode }: any) {
           <RouteBox>
             <AdminSideMenu />
             <BoardCategoryManage />
+          </RouteBox>
+        }
+      />{" "}
+      <Route
+        path="/admin/category/recipe"
+        element={
+          <RouteBox>
+            <AdminSideMenu />
+            <RecipeCategoryManage />
           </RouteBox>
         }
       />

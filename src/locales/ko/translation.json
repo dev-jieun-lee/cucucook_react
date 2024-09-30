@@ -9,7 +9,11 @@
       "all": "전체 레시피",
       "public": "레시피",
       "member": "D.I.Y.레시피",
-      "popularity": "인기 레시피"
+      "popularity": "인기 레시피",
+      "category": "카테고리",
+      "category_name": "카테고리명",
+      "category_name_en": "카테고리명(영문)",
+      "division": "구분"
     },
     "board": {
       "original": "게시판",
@@ -119,9 +123,10 @@
     "member_recipe": "D.I.Y 레시피",
     "more_view": "더보기",
     "recent_order": "최신순",
-    "count_order": "조회수순",
-    "comment_order": "댓글순",
-    "rate_order": "평점순",
+    "count_order": "조회수 높은 순",
+    "comment_order": "댓글 많은 순",
+    "rate_order": "평점 높은 순",
+    "like_order": "찜 많은 순",
     "write": "글쓰기",
     "recipe_write": "레시피 작성",
     "detail_more": "상세보기",
@@ -298,16 +303,19 @@
   "recipe": {
     "alert": {
       "delete_recipe_confirm": "레시피를 삭제하시겠습니까?",
-      "delete_recipe_confirm_sucecss": "레시피를 삭제했습니다.",
-      "delete_recipe_confirm_error": "레시피를 삭제하지 못했습니다.",
+      "delete_recipe_sucecss": "레시피를 삭제했습니다.",
+      "delete_recipe_error": "레시피를 삭제하지 못했습니다.",
       "delete_comment_confirm": "댓글을 삭제하시겠습니까?",
-      "delete_comment_confirm_sucecss": "댓글을 삭제했습니다.",
-      "delete_comment_confirm_error": "댓글을 삭제하지 못했습니다.",
+      "delete_comment_sucecss": "댓글을 삭제했습니다.",
+      "delete_comment_error": "댓글을 삭제하지 못했습니다.",
       "empty_rate": "평점은 최소 1점 이상이어야 합니다.",
       "empty_comment": "내용을 입력해 주세요.",
       "save": "저장이 완료되었습니다.",
       "update": "수정이 완료되었습니다.",
-      "cancel": "게시글 작성을 정말 취소하시겠습니까?"
+      "cancel": "게시글 작성을 정말 취소하시겠습니까?",
+      "delete_recipe_category_confirm": "레시피 카테고리를 삭제하시겠습니까?",
+      "delete_recipe_category_sucecss": "레시피 카테고리를 삭제했습니다.",
+      "delete_recipe_category_error": "레시피 카테고리를 삭제하지 못했습니다."
     },
     "sentence": {
       "delete_comment": "삭제된 댓글입니다."
@@ -332,7 +340,13 @@
       "ingredientName": "재료명을 넣어주세요.",
       "ingredientAmount": "재료량을 넣어주세요.",
       "processImage": "진행과정 이미지를 넣어주세요.",
-      "processContents": "진행과정을 입력해주세요."
+      "processContents": "진행과정을 입력해주세요.",
+      "contents": "요리 과정을 입력해주세요.",
+      "comment_no_member": "로그인 후 댓글을 작성하실 수 있습니다.",
+      "required": "{{value}}은(는) 필수 입력 항목입니다.",
+      "max_length": "{{value}}은(는) {{length}}자 이하여야 합니다.",
+      "ERR_CG_01": "해당 카테고리를 사용하는 레시피가 있어 삭제할 수 없습니다.",
+      "ERR_CG_02": "삭제중 알 수 없는 오류가 발생했습니다."
     }
   },
   "Footer": {
