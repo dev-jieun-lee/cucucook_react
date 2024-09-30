@@ -301,7 +301,6 @@ function RecipeCategoryManage() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    // color="primary"
                     aria-label="toggle password visibility"
                     onClick={handleSearchClick}
                     edge="end"

@@ -23,6 +23,7 @@ import {
 } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import {
+  CustomPagination,
   PageSubTitleBasic,
   PageTitleBasic,
   ScrollBtnFab,
@@ -815,7 +816,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               <Typography padding={"20px 0"}>{t("CODE.E_IS_DATA")}</Typography> // 데이터가 없을 때 메시지
             )}
             {totalCount > 0 && (
-              <Stack className="pagination" spacing={2}>
+              <CustomPagination className="pagination" spacing={2}>
                 <Pagination
                   className="pagination-btn"
                   count={Math.ceil(totalCount / display)}
@@ -823,7 +824,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                   onChange={handlePageChange}
                   color="primary"
                 />
-              </Stack>
+              </CustomPagination>
             )}
           </Box>
         )}
