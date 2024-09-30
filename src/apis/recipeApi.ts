@@ -159,3 +159,5 @@ export async function deleteMemberRecipeLike(params: any) {
   });
   return response.data;
 }
+
+/* 관리자 */

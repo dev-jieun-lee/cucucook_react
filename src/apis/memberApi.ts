@@ -248,6 +248,14 @@ export const deleteAccount = async (memberId: string) => {
   }
 };
 
+//회원 목록 조회
+export async function getMemberList(params: any) {
+  const response = await axios.get(`${BASE_URL}/getMemberList`, {
+    params: params,
+  });
+  return response.data;
+}
+
 // 카카오 토큰 요청
 export const kakaoLogin = async (code: string) => {
   try {

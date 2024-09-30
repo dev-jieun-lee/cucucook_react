@@ -28,7 +28,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import moment from "moment";
 import { ContentsArea } from "../../../styles/BoardStyle";
-import { getMemberRecipeList } from "../../../apis/recipeApi";
+import { getMemberList } from "../../../apis/memberApi";
 
 function MembersManage() {
   const { user } = useAuth(); //로그인 상태관리
@@ -61,7 +61,7 @@ function MembersManage() {
       currentPage: currentPage, // 페이지 번호
       display: display, //페이지당 표시할 갯수
     };
-    const response = await getMemberRecipeList(params);
+    const response = await getMemberList(params);
     setTotalCount(response.data.length);
     return response;
   };

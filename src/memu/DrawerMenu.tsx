@@ -1,9 +1,4 @@
-import {
-  Box,
-  Divider,
-  ListItem,
-  ListItemButton,
-} from "@mui/material";
+import { Box, Divider, ListItem, ListItemButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DrawerList } from "../styles/MenuStyle";
 import { useNavigate } from "react-router-dom";
@@ -33,8 +28,8 @@ function DrawerMenu({ toggleDrawer }: any) {
   ];
 
   const AdminMenuItems = [
-    { label: t('menu.admin.members'), path: "/admin/members" },
-    { label: t('menu.admin.category_board'), path: "/admin/category/board" },
+    { label: t("menu.admin.members"), path: "/admin/members" },
+    { label: t("menu.admin.category_board"), path: "/admin/category/board" },
   ];
 
   // 페이지 이동 함수
