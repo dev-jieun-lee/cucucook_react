@@ -15,7 +15,11 @@ import {
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyReplies, deleteReply, searchReplies } from "../../apis/mypageApi";
+import {
+  fetchMyReplies,
+  deleteReply,
+  searchReplies,
+} from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -34,7 +38,7 @@ interface Reply {
   comment?: string;
   regDt?: string;
   commentId?: string;
-  pcommentId?: string;
+  hasChildComment?: string;
 }
 
 interface MyReplysProps {
@@ -174,9 +178,9 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
   const handleDelete = async (
     memberId: string,
     commentId: string,
-    pcommentId: string | undefined
+    hasChildComment: string | undefined
   ) => {
-    if (!pcommentId) {
+    if (!hasChildComment) {
       try {
         const success = await deleteReply(memberId, commentId);
 
@@ -393,7 +397,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                       variant="contained"
                       color="primary"
                       onClick={() =>
-                        navigate(`/getMemberRecipe/${reply.recipeId}`)
+                        navigate(`/recipe/member_recipe/${reply.recipeId}`)
                       }
                     >
                       레시피 보기
@@ -410,7 +414,7 @@ const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
                           handleDelete(
                             reply.memberId,
                             reply.commentId, // commentId가 있을 경우에만 실행
-                            reply.pcommentId
+                            reply.hasChildComment
                           );
                         }
                       }}

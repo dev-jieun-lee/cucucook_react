@@ -15,6 +15,7 @@ const SignupIntro = lazy(() => import("./routes/members/signUp/SignupIntro"));
 const Signup = lazy(() => import("./routes/members/signUp/Signup"));
 const FindId = lazy(() => import("./routes/members/login/FindId"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
+
 //레시피
 const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
 const MemberRecipe = lazy(() => import("./routes/recipe/MemberRecipe"));
@@ -41,10 +42,13 @@ const Activity = lazy(() => import("./routes/myPage/Activity"));
 const LikeLists = lazy(() => import("./routes/myPage/LikeLists"));
 const MyWrites = lazy(() => import("./routes/myPage/MyWrites"));
 const MyReplys = lazy(() => import("./routes/myPage/MyReplys"));
+const MyRecipes = lazy(() => import("./routes/myPage/MyRecipes"));
 //관리자
 const MembersManage = lazy(() => import("./routes/admin/member/MembersManage"));
 const MemberDetail = lazy(() => import("./routes/admin/member/MemberDetail"));
-const BoardCategoryManage = lazy(() => import("./routes/admin/category/BoardCategoryManage"));
+const BoardCategoryManage = lazy(
+  () => import("./routes/admin/category/BoardCategoryManage")
+);
 
 function RoutesConfig({ isDarkMode }: any) {
   return (
@@ -85,6 +89,9 @@ function RoutesConfig({ isDarkMode }: any) {
         path="/login/FindPw"
         element={<FindPw isDarkMode={isDarkMode} />}
       />
+
+      {/* 카카오 리디렉션 핸들러 라우트 추가 */}
+      <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
 
       {/* 레시피 */}
       <Route
@@ -299,32 +306,12 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-
-      {/* 관리자 */}
       <Route
-        path="/admin/members"
+        path="/mypage/MyRecipes"
         element={
           <RouteBox>
-            <AdminSideMenu />
-            <MembersManage />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/admin/members/:memberId"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <MemberDetail />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/admin/category/board"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <BoardCategoryManage />
+            <MypageSideMenu isDarkMode={isDarkMode} />
+            <MyRecipes isDarkMode={false} />
           </RouteBox>
         }
       />

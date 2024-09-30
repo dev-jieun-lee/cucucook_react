@@ -1,12 +1,11 @@
+import React, { useState, useEffect } from "react";
 import { Box, Divider, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
-import Loading from "../../components/Loading";
-import LoadingNoMargin from "../../components/LoadingNoMargin";
-import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
+import { fetchMyRecipeList } from "./mypageApi";
+import { Wrapper, PageTitleBasic } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -17,46 +16,37 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import { getRecipeLikeListOtherInfo } from "./mypageApi";
+import Loading from "../../components/Loading";
+import LoadingNoMargin from "../../components/LoadingNoMargin";
 
-const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const MyRecipes = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const memberId = user?.memberId;
 
   const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
-  const [start, setStart] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
-
-  const display = 10;
   const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
 
+  const display = 10;
+
   const fetchData = async () => {
-    if (loading || isFetching || !hasMore) return; // 중복 호출 방지 조건
+    if (loading || !hasMore) return; // 중복 호출 방지 조건
     setLoading(true);
-    setIsFetching(true);
 
     if (!memberId) {
       console.error("memberId is undefined");
       setLoading(false);
-      setIsFetching(false);
       return;
     }
 
     try {
-      const response = await getRecipeLikeListOtherInfo(
-        memberId,
-        "all",
-        "reg_dt",
-        display,
-        start
-      );
+      const response = await fetchMyRecipeList(memberId, undefined); // 모든 레시피를 가져오도록 null 전달
 
       if (response && response.length > 0) {
-        setLikedRecipes((prevRecipes) => [...prevRecipes, ...response]);
+        setLikedRecipes(response); // 모든 레시피로 업데이트
       } else {
         setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
       }
@@ -64,21 +54,14 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
       console.error(error);
     } finally {
       setLoading(false); // 로딩 종료
-      setIsFetching(false); // 호출 완료 상태로 변경
     }
   };
 
   useEffect(() => {
     if (memberId) {
-      fetchData(); // memberId가 유효할 때만 fetchData 호출
+      fetchData(); // 페이지 진입 시 한 번 호출
     }
-  }, [memberId, start]); // memberId 또는 start가 변경될 때만 호출
-
-  useEffect(() => {
-    if (inView && hasMore && !loading && !isFetching) {
-      setStart((prevStart) => prevStart + display); // 다음 데이터 요청
-    }
-  }, [inView, hasMore, loading, isFetching]); // 추가적인 상태 추가
+  }, [memberId]); // memberId가 변경될 때만 호출
 
   const handleViewDetailClick = (path: string, params: string) => {
     const pullPath = `${path}/` + params;
@@ -88,7 +71,7 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
         <TitleBox>
-          <PageTitleBasic>{t("mypage.liked_recipes")}</PageTitleBasic>
+          <PageTitleBasic>{t("mypage.my_recipes")}</PageTitleBasic>
         </TitleBox>
 
         <Box component="section" sx={{ width: "100%" }}>
@@ -239,4 +222,4 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
   );
 };
 
-export default LikeLists;
+export default MyRecipes;
