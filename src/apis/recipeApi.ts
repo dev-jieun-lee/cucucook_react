@@ -161,3 +161,40 @@ export async function deleteMemberRecipeLike(params: any) {
 }
 
 /* 관리자 */
+//레시피카테고리 관리용 카테고리목록 가져오기
+export async function getRecipeCategoryListForAdmin(params: any) {
+  const response = await axios.get(`${BASE_URL}/getRecipeCategoryList`, {
+    params: params,
+  });
+  return response;
+}
+
+//레시피 카테고리 가져오기
+export async function getRecipeCategory(params: any) {
+  const response = await axios.get(`${BASE_URL}/getRecipeCategory`, {
+    params: params,
+  });
+  return response;
+}
+
+//레시피카테고리 추가
+export async function insertRecipeCategory(form: any) {
+  const response = await axios.post(`${BASE_URL}/insertRecipeCategory`, form);
+  return response.data;
+}
+
+//레시피카테고리 수정
+export async function updateRecipeCategory(params: any, form: any) {
+  const response = await axios.put(`${BASE_URL}/updateRecipeCategory`, form, {
+    params: params,
+  });
+  return response.data;
+}
+
+//레시피카테고리 삭제
+export async function deleteRecipeCategory(params: any) {
+  const response = await axios.delete(`${BASE_URL}/deleteRecipeCategory`, {
+    params: params,
+  });
+  return response.data;
+}
