@@ -62,56 +62,6 @@ export async function updateMemberRecipe(recipeId: string, form: any) {
   return response.data;
 }
 
-//회원 레시피 수정
-export async function updateMemberRecipe2(recipeId: string, form: any) {
-  const formData = new FormData();
-
-  // 레시피 정보 추가 (JSON 형태로)
-  formData.append("recipeInfo", JSON.stringify(form.recipeInfo));
-
-  // 레시피 재료 정보 추가 (JSON 형태로)
-  formData.append("recipeIngredients", JSON.stringify(form.recipeIngredients));
-
-  //기존 가지고 있던 이미지id
-  formData.append("thumbnailServerImgId", form.thumbnailServerImgId);
-
-  // 레시피 썸네일 추가 (파일 객체)
-  if (form.recipeInfo.thumbnail) {
-    formData.append("thumbnail", form.recipeInfo.thumbnail);
-  } else {
-    formData.append("thumbnail", new Blob(), "");
-  }
-
-  //과정 설명
-  const processContentsList = form.recipeProcessItems.map(
-    (item: any) => item.processContents
-  );
-  formData.append(
-    "recipeProcessContents",
-    new Blob([JSON.stringify(processContentsList)], {
-      type: "application/json",
-    })
-  );
-  //과정 이미지
-  form.recipeProcessItems.forEach((item: any, index: number) => {
-    if (item.image) {
-      formData.append("recipeProcessImages", item.image);
-    } else {
-      // 빈 파일을 전송 (빈 Blob)
-      formData.append("recipeProcessImages", new Blob(), "");
-    }
-  });
-
-  const response = await axios.post(
-    `${BASE_URL}/updateMemberRecipe`,
-    formData,
-    {
-      params: { recipeId: recipeId },
-    }
-  );
-  return response.data;
-}
-
 //회원 레시피 삭제
 export async function deleteMemberRecipe(params: any) {
   const response = await axios.delete(`${BASE_URL}/deleteMemberRecipe`, {
