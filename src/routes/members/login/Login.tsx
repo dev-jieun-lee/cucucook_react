@@ -67,7 +67,9 @@ function Login({ isDarkMode }: LoginProps) {
     onSubmit: async (values) => {
       try {
         const response = await login(values);
+
         if (response.token) {
+          // 로그인 성공 시 처리
           handleSaveId(
             values.userId,
             localStorage.getItem("saveId") === "true"
@@ -80,8 +82,35 @@ function Login({ isDarkMode }: LoginProps) {
           });
           setLoggedIn(true);
           navigate(location.state?.from || "/");
+        } else {
+          // 로그인 실패 시 처리 (서버가 실패 정보 반환 시)
+          console.log("로그인 실패 응답 데이터:", response);
+
+          const failedAttempts = response.failedAttempts || 0;
+          const lockoutTime = response.lockoutTime || 0;
+          const errorMessage = response.message || "로그인에 실패했습니다.";
+
+          const swalOptions = {
+            title: "로그인 실패",
+            text: errorMessage,
+            icon: "warning" as SweetAlertIcon, // 'warning', 'error', 'success', 'info', 'question'
+            confirmButtonText: "확인",
+          };
+
+          if (failedAttempts === 3) {
+            swalOptions.text = "세 번 연속 로그인에 실패했습니다. 주의하세요!";
+          } else if (failedAttempts === 4) {
+            swalOptions.text = "네 번 연속 로그인에 실패했습니다. 조심하세요!";
+          } else if (failedAttempts >= 5) {
+            swalOptions.title = "계정 잠김";
+            swalOptions.icon = "error";
+            swalOptions.text = `계정이 잠겼습니다. ${lockoutTime}초 후에 다시 시도해주세요.`;
+          }
+
+          Swal.fire(swalOptions);
         }
       } catch (error: unknown) {
+        // 예외 처리 (API 호출 실패, 네트워크 오류 등)
         const e = error as ErrorResponse;
         console.log("서버 응답 데이터:", e.response?.data);
 
@@ -89,12 +118,12 @@ function Login({ isDarkMode }: LoginProps) {
         const remainingTime = e.response?.data?.lockoutTime ?? 0;
         const errorMessage =
           e.response?.data?.message ||
-          "세 번 연속 로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
+          "로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
 
         const swalOptions = {
           title: "로그인 실패",
           text: errorMessage,
-          icon: "warning" as SweetAlertIcon, // 'warning', 'error', 'success', 'info', 'question'
+          icon: "warning" as SweetAlertIcon,
           confirmButtonText: "확인",
         };
 

@@ -53,11 +53,23 @@ export async function login(form: { userId: string; password: string }) {
       // 실패 횟수와 잠금 시간을 출력
       console.log("실패 횟수:", error.response.data.failedAttempts || 0);
       console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
+
+      // 실패 관련 정보를 반환
+      return {
+        success: false,
+        message: error.response.data.message || "로그인 실패",
+        failedAttempts: error.response.data.failedAttempts || 0,
+        lockoutTime: error.response.data.lockoutTime || null,
+      };
     } else {
       console.error("알 수 없는 오류 발생:", error);
-    }
 
-    handleApiError(error);
+      // 예외 발생 시 기본 오류 메시지 반환
+      return {
+        success: false,
+        message: "알 수 없는 오류가 발생했습니다.",
+      };
+    }
   }
 }
 
