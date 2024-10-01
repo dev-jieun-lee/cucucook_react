@@ -152,7 +152,8 @@
     "recipe_process": "Cooking Process",
     "recipe_process_contents": "Content",
     "thumbnail": "Thumbnail",
-    "recipe_info": "Recipe Info"
+    "recipe_info": "Recipe Info",
+    "error": "Error"
   },
   "mypage": {
     "original": "My Page",
@@ -409,6 +410,9 @@
     "E_SUPPORTED_FILE_EXT": "Unsupported file format.",
     "E_IS_THUMBNAIL": "Thumbnail does not exist.",
     "E_IS_RECIPE_IMG": "Recipe image does not exist.",
-    "E_ADD_IMG_DATA": "Failed to save image data in the database."
+    "E_ADD_IMG_DATA": "Failed to save image data in the database.",
+    "E_SERVER_CODE": "An error occurred. Please contact the administrator. code : {{status}}",
+    "E_AUTH": "Login is required. Please log in.",
+    "E_ROLE": "You do not have permission to access."
   }
 }

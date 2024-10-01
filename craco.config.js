@@ -2,7 +2,7 @@ module.exports = {
   webpack: {
     configure: (webpackConfig) => {
       // development 환경에서만 소스 맵 비활성화
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === "DEVELOPMENT") {
         webpackConfig.devtool = false;
       }
       return webpackConfig;

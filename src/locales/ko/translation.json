@@ -152,7 +152,8 @@
     "recipe_process": "요리 과정",
     "recipe_process_contents": "내용",
     "thumbnail": "썸네일",
-    "recipe_info": "요리정보"
+    "recipe_info": "요리정보",
+    "error": "오류"
   },
   "mypage": {
     "original": "마이페이지",
@@ -418,6 +419,9 @@
     "E_SUPPORTED_FILE_EXT": "지원하지 않는 파일 형식입니다.",
     "E_IS_THUMBNAIL": "썸네일이 존재하지 않습니다.",
     "E_IS_RECIPE_IMG": "레시피 이미지가 존재하지 않습니다.",
-    "E_ADD_IMG_DATA": "이미지 DB저장에 실패하였습니다."
+    "E_ADD_IMG_DATA": "이미지 DB저장에 실패하였습니다.",
+    "E_SERVER_CODE": "오류가 발생했습니다. 관리자에게 문의하세요. 코드 : {{status}}",
+    "E_AUTH": "로그인이 필요합니다. 로그인 해주세요.",
+    "E_ROLE": "접근 권한이 없습니다."
   }
 }

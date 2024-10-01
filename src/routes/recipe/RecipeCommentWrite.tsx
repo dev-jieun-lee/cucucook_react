@@ -11,7 +11,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 import {
@@ -25,6 +25,7 @@ import {
   RecipeCommentWrite,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const customStyles = recipeCommonStyles();
 
@@ -41,6 +42,7 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   activeCommentId,
   onCancel,
 }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { recipeId } = useParams();
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -69,7 +71,6 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
       const recipeComment = await getRecipeComment(params);
       return recipeComment.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -86,21 +87,32 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
       commentId ? updateRecipeComment(values) : insertRecipeComment(values),
     {
       onSuccess: (data) => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.save"),
-          text: t("menu.board.alert.save"),
-          confirmButtonText: t("text.check"),
-          timer: 1000,
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
+        console.log(data);
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.save"),
+            text: t(`CODE.${data.message}`),
+            confirmButtonText: t("text.check"),
+            timer: 1000,
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
 
-        formik.resetForm();
-        onCommentSubmit();
+          formik.resetForm();
+          onCommentSubmit();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.save"),
+            text: t(`CODE.${data.message}`),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        // 에러 처리
+        handleApiError(error, navigate, t);
       },
     }
   );
