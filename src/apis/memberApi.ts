@@ -38,9 +38,9 @@ export async function login(form: { userId: string; password: string }) {
 
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7,
-        secure: true,
-        sameSite: "Strict",
+        expires: 7, // 토큰 유효기간 7일
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
       });
     }
 

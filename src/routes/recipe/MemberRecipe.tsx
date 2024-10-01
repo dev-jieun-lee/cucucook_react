@@ -48,6 +48,7 @@ import TextsmsIcon from "@mui/icons-material/Textsms";
 import { useAuth } from "../../auth/AuthContext";
 import { title } from "process";
 import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
@@ -98,7 +99,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         deleteMemberRecipeMutation(params);
       }
     } catch (error) {
-      console.error("Error", error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -110,7 +110,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const memberRecipe = await getMemberRecipe(params);
       return memberRecipe.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -125,13 +124,11 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       if (data.success) {
         setIsLike(data?.data.memberRecipe.memberRecipeLike);
         setLikeCount(data?.data.memberRecipe.likeCount);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     },
-    onError: (err) => {
-      console.error(err);
-      alert(err);
-      setIsLoading(false);
+    onError: (error) => {
+      handleApiError(error, navigate, t);
     },
     keepPreviousData: true,
   });
@@ -150,7 +147,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const recipeCommentList = await getRecipeCommentList(params);
       return recipeCommentList.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -161,14 +157,15 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setComments(data.data);
-        setTotalCount(data.addData.totalCnt);
-        setIsLoading(false);
+        if (data.success) {
+          setComments(data.data);
+          setTotalCount(data.addData.totalCnt);
+          setIsLoading(false);
+        }
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setIsLoading(false);
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true,
     }
@@ -178,26 +175,30 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { mutate: deleteMemberRecipeMutation } = useMutation(
     (params: { recipeId: string }) => deleteMemberRecipe(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_recipe_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-          timer: 1000,
-          timerProgressBar: true,
-        });
-        navigate("/recipe/member_recipe_list");
+      onSuccess: (data) => {
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_recipe_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+            timer: 1000,
+            timerProgressBar: true,
+          });
+          navigate("/recipe/member_recipe_list");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -215,7 +216,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           setLikeCount(data.data);
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 
@@ -232,7 +235,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           setLikeCount(data.data);
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 
@@ -318,7 +323,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </PageTitleBasic>
             <Box>
               {user?.memberId &&
-                (user?.role === "1" ||
+                (user?.role === "0" ||
+                  user?.role === "2" ||
                   user?.memberId ===
                     memberRecipe?.data.memberRecipe.member.memberId) && (
                   <>

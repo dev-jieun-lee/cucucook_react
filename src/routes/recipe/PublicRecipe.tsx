@@ -23,6 +23,7 @@ import {
 } from "../../styles/RecipeStyle";
 import Swal from "sweetalert2";
 import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -46,7 +47,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const publicRecipe = await getPublicRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -55,14 +55,13 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     fetchPublicRecipe,
     {
       refetchOnWindowFocus: false,
-      onSuccess: () => {
+      onSuccess: (data) => {
         // 데이터가 성공적으로 로드되면 로딩 상태를 false로 설정
-        setLoading(false);
+        if (data.success) setLoading(false);
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setLoading(false);
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true, // 페이지를 이동할 때 이전 데이터 유지
     }
