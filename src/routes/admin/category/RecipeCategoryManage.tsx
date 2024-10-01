@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   deleteRecipeCategory,
@@ -39,8 +39,10 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import RecipeCategoryDialog from "./RecipeCategoryDialog";
+import { handleApiError } from "../../../hooks/errorHandler";
 
 function RecipeCategoryManage() {
+  const navigate = useNavigate();
   const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -190,18 +192,8 @@ function RecipeCategoryManage() {
           });
         }
       },
-      onError: (error: any) => {
-        const errorCode = error.response?.data.errorCode;
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text:
-            errorCode === "ERR_CG_01"
-              ? t("recipe.error.ERR_CG_01")
-              : t("recipe.alert.delete_recipe_category_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
     }
   );

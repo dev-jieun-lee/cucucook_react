@@ -34,6 +34,8 @@ import RecipeProcessListInput from "./RecipeProcessListInput";
 import RecipeIngredientInputList from "./RecipeIngredientInputList";
 import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
 import { MemberRecipeWirteForm, TitleBox } from "../../styles/RecipeStyle";
+import axios from "axios";
+import { handleApiError } from "../../hooks/errorHandler";
 
 export interface FocusableButton {
   focus: () => void;
@@ -72,7 +74,6 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const getRecipeCategoryList = await getRecipeCategoryListForWrite(params);
       return getRecipeCategoryList.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -83,8 +84,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     {
       refetchOnWindowFocus: false,
 
-      onError: (err) => {
-        console.error(err);
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true,
     }
@@ -97,7 +98,6 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const publicRecipe = await getMemberRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -111,12 +111,12 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       onSuccess: (data) => {
         if (data.success && data.data.memberRecipe.memberRecipeImages) {
           setServerThumbnail(data.data.memberRecipe.memberRecipeImages);
+          setIsLoading(false);
         }
-
-        setIsLoading(false);
       },
-      onError: () => {
+      onError: (error) => {
         setIsLoading(false);
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -148,7 +148,9 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
           });
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 

@@ -44,6 +44,7 @@ import {
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useAuth } from "../../auth/AuthContext";
 import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   // 파라미터 받아오기
   const { order } = useParams();
@@ -110,7 +111,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         await getRecipeCategoryListWithMemberRecipeCount(params);
       return recipeCategoryList.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -121,11 +121,10 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setcategories(data.data);
+        if (data.success) setcategories(data.data);
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -146,7 +145,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
       return memberRecipeList.data;
     } catch (error) {
-      console.error(error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -157,21 +155,22 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setLoading(false);
-        setHasMore(data?.addData?.hasMore ?? false);
+        if (data.success) {
+          setLoading(false);
+          setHasMore(data?.addData?.hasMore ?? false);
 
-        const finalData = (data?.data ?? []).map((recipeItem: any) => ({
-          ...recipeItem,
-          isLike: recipeItem.memberRecipeLike || false,
-        }));
+          const finalData = (data?.data ?? []).map((recipeItem: any) => ({
+            ...recipeItem,
+            isLike: recipeItem.memberRecipeLike || false,
+          }));
 
-        setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
-        setMessage(data.message);
+          setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
+          setMessage(data.message);
+        }
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setLoading(false);
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -246,7 +245,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           );
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 
@@ -272,7 +273,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           );
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 

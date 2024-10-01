@@ -19,6 +19,8 @@ import {
 } from "../../styles/RecipeStyle";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 import { useAuth } from "../../auth/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const customStyles = recipeCommonStyles();
 
@@ -28,6 +30,7 @@ const RecipeCommentListBox: React.FC<{
   recipeId: string;
 }> = ({ onCommentListChange, commentList, recipeId }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
@@ -64,7 +67,6 @@ const RecipeCommentListBox: React.FC<{
         }
       }
     } catch (error) {
-      console.error("Error", error);
       return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
@@ -77,24 +79,28 @@ const RecipeCommentListBox: React.FC<{
       hasChildComment: boolean;
     }) => deleteRecipeCommentHasChild(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
-        onCommentListChange();
+      onSuccess: (data) => {
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+          onCommentListChange();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("CODE." + data.message),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_error"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -106,24 +112,28 @@ const RecipeCommentListBox: React.FC<{
       hasChildComment: boolean;
     }) => deleteRecipeComment(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
-        onCommentListChange();
+      onSuccess: (data) => {
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+          onCommentListChange();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("CODE." + data.message),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_error"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -252,7 +262,8 @@ const RecipeCommentListBox: React.FC<{
                             )}
 
                             {(user?.memberId === comment.member.memberId ||
-                              user?.role === "1") && (
+                              user?.role === "0" ||
+                              user?.role === "2") && (
                               <>
                                 {user?.memberId === comment.member.memberId && (
                                   <CommentIconButton

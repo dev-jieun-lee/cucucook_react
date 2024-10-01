@@ -26,6 +26,8 @@ import {
 } from "../../../apis/recipeApi";
 import { DialogForm, DialogTitleArea } from "../../../styles/AdminStyle";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
+import { handleApiError } from "../../../hooks/errorHandler";
+import { useNavigate } from "react-router-dom";
 
 interface RecipeCategoryDialogProps {
   open: boolean;
@@ -46,6 +48,7 @@ function RecipeCategoryDialog({
   onClose,
   categoryId,
 }: RecipeCategoryDialogProps) {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [color, setColor] = useState("#000000");
   const [showPicker, setShowPicker] = useState(false); //
@@ -111,7 +114,7 @@ function RecipeCategoryDialog({
         }
       },
       onError: (error) => {
-        // 에러 처리
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -243,18 +246,8 @@ function RecipeCategoryDialog({
           });
         }
       },
-      onError: (error: any) => {
-        const errorCode = error.response?.data.errorCode;
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text:
-            errorCode === "ERR_CG_01"
-              ? t("recipe.error.ERR_CG_01")
-              : t("recipe.alert.delete_recipe_category_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
     }
   );
