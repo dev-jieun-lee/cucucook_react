@@ -8,6 +8,9 @@ import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
 import KakaoRedirectHandler from "./routes/members/login/KakaoRedirectHandler";
+import { ProtectAuthRouter } from "./auth/ProtectAuthRouter";
+import { ProtectRoleRouter } from "./auth/ProtectRoleRouter";
+
 //메인
 const Main = lazy(() => import("./routes/main/Main"));
 //로그인
@@ -140,15 +143,17 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-      <Route
-        path="/recipe/member_recipe_write/:recipeId?"
-        element={
-          <RouteBox>
-            <RecipeSideMenu isDarkMode={isDarkMode} />
-            <MemberRecipeWrite isDarkMode={isDarkMode} />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectAuthRouter />}>
+        <Route
+          path="/recipe/member_recipe_write/:recipeId?"
+          element={
+            <RouteBox>
+              <RecipeSideMenu isDarkMode={isDarkMode} />
+              <MemberRecipeWrite isDarkMode={isDarkMode} />
+            </RouteBox>
+          }
+        />
+      </Route>
       {/* 보드 */}
       <Route
         path="/notice"
@@ -168,24 +173,26 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-      <Route
-        path="/notice/form"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <NoticeForm />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/notice/form/:boardId"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <NoticeForm />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectAuthRouter />}>
+        <Route
+          path="/notice/form"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <NoticeForm />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/notice/form/:boardId"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <NoticeForm />
+            </RouteBox>
+          }
+        />
+      </Route>
       <Route
         path="/faq"
         element={
@@ -195,24 +202,26 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-      <Route
-        path="/faq/form"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <FaqForm />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/faq/form/:boardId"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <FaqForm />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectAuthRouter />}>
+        <Route
+          path="/faq/form"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <FaqForm />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/faq/form/:boardId"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <FaqForm />
+            </RouteBox>
+          }
+        />
+      </Route>
       <Route
         path="/qna"
         element={
@@ -231,125 +240,131 @@ function RoutesConfig({ isDarkMode }: any) {
           </RouteBox>
         }
       />
-      <Route
-        path="/qna/form"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <QnaForm />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/qna/form/:boardId"
-        element={
-          <RouteBox>
-            <BoardSideMenu isDarkMode={isDarkMode} />
-            <QnaForm />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectAuthRouter />}>
+        <Route
+          path="/qna/form"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <QnaForm />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/qna/form/:boardId"
+          element={
+            <RouteBox>
+              <BoardSideMenu isDarkMode={isDarkMode} />
+              <QnaForm />
+            </RouteBox>
+          }
+        />
+      </Route>
       {/* 마이페이지 */}
-      <Route
-        path="/mypage/profile"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Profile isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/UserInfo"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <UserInfo isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/activity"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Activity isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/LikeLists"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <LikeLists isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyWrites"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyWrites isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyReplys"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyReplys isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyRecipes"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyRecipes isDarkMode={false} />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectAuthRouter />}>
+        <Route
+          path="/mypage/profile"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <Profile isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/UserInfo"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <UserInfo isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/activity"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <Activity isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/LikeLists"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <LikeLists isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/MyWrites"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <MyWrites isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/MyReplys"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <MyReplys isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/MyRecipes"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <MyRecipes isDarkMode={false} />
+            </RouteBox>
+          }
+        />
+      </Route>
       {/* 관리자 */}
-      <Route
-        path="/admin/members"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <MembersManage />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/admin/members/:memberId"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <MemberDetail />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/admin/category/board"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <BoardCategoryManage />
-          </RouteBox>
-        }
-      />{" "}
-      <Route
-        path="/admin/category/recipe"
-        element={
-          <RouteBox>
-            <AdminSideMenu />
-            <RecipeCategoryManage />
-          </RouteBox>
-        }
-      />
+      <Route element={<ProtectRoleRouter />}>
+        <Route
+          path="/admin/members"
+          element={
+            <RouteBox>
+              <AdminSideMenu />
+              <MembersManage />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/admin/members/:memberId"
+          element={
+            <RouteBox>
+              <AdminSideMenu />
+              <MemberDetail />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/admin/category/board"
+          element={
+            <RouteBox>
+              <AdminSideMenu />
+              <BoardCategoryManage />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/admin/category/recipe"
+          element={
+            <RouteBox>
+              <AdminSideMenu />
+              <RecipeCategoryManage />
+            </RouteBox>
+          }
+        />
+      </Route>
     </Routes>
   );
 }
