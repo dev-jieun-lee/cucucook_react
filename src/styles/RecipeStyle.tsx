@@ -174,6 +174,15 @@ export const RecipeView = styled.div`
       padding: 10px;
       color: ${(props) => props.theme.textColor};
       border-bottom: 1px solid ${(props) => props.theme.contrastColor};
+      h6 {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      ${media["extra-medium"]`
+        border-left: 1px solid ${(props: any) => props.theme.mainColor};
+        border-bottom: none;
+      `};
     }
     .recipe-info-grid div.recipe-info-grid-title:nth-of-type(1) {
       border-top: 1px solid ${(props) => props.theme.mainColor};
@@ -188,6 +197,15 @@ export const RecipeView = styled.div`
       color: ${(props) => props.theme.textColor};
       border-bottom: 1px solid ${(props) => props.theme.mainColor};
       border-right: 1px solid ${(props) => props.theme.mainColor};
+      h6 {
+        font-size: 1rem;
+      }
+      text-align: center;
+
+      ${media["extra-medium"]`
+        border-left: 1px solid ${(props: any) => props.theme.mainColor};
+        
+      `};
     }
     .recipe-info-grid div.recipe-info-grid-text:nth-of-type(2) {
       border-top: 1px solid ${(props) => props.theme.mainColor};
