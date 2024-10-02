@@ -50,8 +50,6 @@ function RecipeCategoryDialog({
 }: RecipeCategoryDialogProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [color, setColor] = useState("#000000");
-  const [showPicker, setShowPicker] = useState(false); //
   const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
 
   const recipeDivision = [
@@ -59,11 +57,6 @@ function RecipeCategoryDialog({
     { value: "M", label: t("text.cooking-method") },
     { value: "L", label: t("text.difficulty-level") },
   ];
-  // 색상 선택 함수
-  const handleColorChange = (newColor: string) => {
-    setColor(newColor);
-    // setShowPicker(false);
-  };
 
   useEffect(() => {
     if (open && categoryId) {
@@ -177,35 +170,9 @@ function RecipeCategoryDialog({
     }
   }, [categoryId]);
 
-  useEffect(() => {
-    if (open) {
-      setShowPicker(false); // 다이얼로그 열릴 때 color picker 닫기
-    }
-  }, [open]);
-
-  // color picker 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        showPicker &&
-        event.target instanceof HTMLElement &&
-        !event.target.closest(".color-picker-container")
-      ) {
-        setShowPicker(false); // 외부 클릭 시 color picker 닫기
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showPicker]);
-
   // 다이얼로그 닫기 처리 및 상태 초기화
   const handleClose = () => {
     onClose();
-    setColor("");
-    setShowPicker(false); // Picker 닫기
   };
 
   // // 카테고리 선택시 값 업데이트

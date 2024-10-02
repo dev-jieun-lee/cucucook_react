@@ -78,13 +78,13 @@ function RecipeCategoryManage() {
   // 데이터를 불러오는 API 호출 함수
   const getCategoryListApi = async () => {
     const params = {
-      search: search,
-      searchType: searchType,
-      currentPage: currentPage, // 페이지 번호
-      display: display, //페이지당 표시할 갯수
+      search,
+      searchType,
+      display,
+      start: (currentPage - 1) * display,
     };
     const response = await getRecipeCategoryListForAdmin(params);
-    setTotalCount(response.data.data.length);
+    setTotalCount(response.data.addData.totalCnt);
     return response.data;
   };
 
@@ -103,7 +103,7 @@ function RecipeCategoryManage() {
     data: recipeCategoryList,
     isLoading: recipeCategoryListLoading,
     refetch,
-  } = useQuery("recipeCategoryList", getCategoryListWithDelay, {
+  } = useQuery(["recipeCategoryList", currentPage], getCategoryListWithDelay, {
     enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
     keepPreviousData: false,
     refetchOnWindowFocus: false,
@@ -331,66 +331,60 @@ function RecipeCategoryManage() {
             </TableHead>
             <TableBody>
               {recipeCategoryList && recipeCategoryList.length > 0 ? (
-                recipeCategoryList
-                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                  .map((categoryItem: any, index: number) => (
-                    <TableRow
-                      className="row"
-                      key={index}
-                      onClick={() =>
-                        onClickDialog(categoryItem.recipeCategoryId)
-                      }
-                    >
-                      <TableCell component="th" scope="row">
-                        {(currentPage - 1) * display + index + 1}
-                      </TableCell>
-                      <TableCell>
-                        {categoryItem.division === "C" ? (
-                          t("text.category")
-                        ) : categoryItem.division === "M" ? (
-                          t("text.cooking-method")
-                        ) : categoryItem.division === "L" ? (
-                          t("text.difficulty-level")
-                        ) : (
-                          <></>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <CustomCategory className="category">
-                          {categoryItem.name}
-                        </CustomCategory>
-                      </TableCell>
-                      <TableCell>
-                        <CustomCategory className="category">
-                          {categoryItem.nameEn}
-                        </CustomCategory>
-                      </TableCell>
-                      <TableCell>
-                        {dayjs(categoryItem.regDt).format("YYYY-MM-DD HH:mm")}
-                      </TableCell>
-                      <TableCell>
-                        {categoryItem.uptDt === null
-                          ? ""
-                          : dayjs(categoryItem.uptDt).format(
-                              "YYYY-MM-DD HH:mm"
-                            )}
-                      </TableCell>
-                      <TableCell>
-                        <DeleteIconButton
-                          className="icon-btn"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onClickDelete(categoryItem.recipeCategoryId);
-                          }}
-                        >
-                          <DeleteForeverIcon
-                            color="error"
-                            className="delete-icon"
-                          />
-                        </DeleteIconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                recipeCategoryList.map((categoryItem: any, index: number) => (
+                  <TableRow
+                    className="row"
+                    key={index}
+                    onClick={() => onClickDialog(categoryItem.recipeCategoryId)}
+                  >
+                    <TableCell component="th" scope="row">
+                      {(currentPage - 1) * display + index + 1}
+                    </TableCell>
+                    <TableCell>
+                      {categoryItem.division === "C" ? (
+                        t("text.category")
+                      ) : categoryItem.division === "M" ? (
+                        t("text.cooking-method")
+                      ) : categoryItem.division === "L" ? (
+                        t("text.difficulty-level")
+                      ) : (
+                        <></>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <CustomCategory className="category">
+                        {categoryItem.name}
+                      </CustomCategory>
+                    </TableCell>
+                    <TableCell>
+                      <CustomCategory className="category">
+                        {categoryItem.nameEn}
+                      </CustomCategory>
+                    </TableCell>
+                    <TableCell>
+                      {dayjs(categoryItem.regDt).format("YYYY-MM-DD HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      {categoryItem.uptDt === null
+                        ? ""
+                        : dayjs(categoryItem.uptDt).format("YYYY-MM-DD HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      <DeleteIconButton
+                        className="icon-btn"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onClickDelete(categoryItem.recipeCategoryId);
+                        }}
+                      >
+                        <DeleteForeverIcon
+                          color="error"
+                          className="delete-icon"
+                        />
+                      </DeleteIconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
