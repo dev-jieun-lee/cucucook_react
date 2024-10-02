@@ -95,7 +95,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
       return publicRecipeList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 

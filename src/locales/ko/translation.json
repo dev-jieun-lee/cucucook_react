@@ -153,7 +153,8 @@
     "recipe_process_contents": "내용",
     "thumbnail": "썸네일",
     "recipe_info": "요리정보",
-    "error": "오류"
+    "error": "오류",
+    "login_expired": "로그인 만료"
   },
   "mypage": {
     "original": "마이페이지",
@@ -422,6 +423,7 @@
     "E_ADD_IMG_DATA": "이미지 DB저장에 실패하였습니다.",
     "E_SERVER_CODE": "오류가 발생했습니다. 관리자에게 문의하세요. 코드 : {{status}}",
     "E_AUTH": "로그인이 필요합니다. 로그인 해주세요.",
-    "E_ROLE": "접근 권한이 없습니다."
+    "E_ROLE": "접근 권한이 없습니다.",
+    "E_LOGIN_EXPIRED": "로그인이 만료되었습니다. 다시 로그인 해주세요."
   }
 }

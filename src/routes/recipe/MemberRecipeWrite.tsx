@@ -74,7 +74,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const getRecipeCategoryList = await getRecipeCategoryListForWrite(params);
       return getRecipeCategoryList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -98,7 +99,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const publicRecipe = await getMemberRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 

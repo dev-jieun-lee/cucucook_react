@@ -74,7 +74,8 @@ function RecipeCategoryDialog({
           const data = await getRecipeCategory(params);
           setCategoryData(data.data.data);
         } catch (error) {
-          console.error("Failed to fetch category data:", error);
+          handleApiError(error, navigate, t);
+          //          console.error("Failed to fetch category data:", error);
         }
       };
 

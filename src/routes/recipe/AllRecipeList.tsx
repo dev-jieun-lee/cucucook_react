@@ -68,7 +68,8 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
       return allPublicRecipeList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
   const { data: allPublicRecipeList } = useQuery(
@@ -108,7 +109,8 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
       return allPublicRecipeList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //      return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
   const { data: allMemberRecipeList } = useQuery(
