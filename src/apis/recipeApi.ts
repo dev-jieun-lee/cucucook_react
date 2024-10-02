@@ -14,7 +14,6 @@ api.interceptors.request.use(
   (config) => {
     // JWT 토큰을 쿠키에서 가져옴
     const token = Cookies.get("auth_token");
-
     // 토큰이 존재할 경우 Authorization 헤더 추가
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -71,10 +70,6 @@ export async function getMemberRecipe(params: any) {
   console.log(token);
   const response = await api.get(`/getMemberRecipe`, {
     params: params,
-    headers: {
-      Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
-    },
-    withCredentials: true, // 쿠키 포함 설정
   });
   console.log(response);
   return response;

@@ -99,7 +99,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         deleteMemberRecipeMutation(params);
       }
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -110,7 +111,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const memberRecipe = await getMemberRecipe(params);
       return memberRecipe.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -147,7 +149,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const recipeCommentList = await getRecipeCommentList(params);
       return recipeCommentList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 

@@ -1,7 +1,6 @@
-import Swal from "sweetalert2";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { NavigateFunction } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import Swal from "sweetalert2";
 
 // 에러 처리 유틸리티 함수
 export const handleApiError = (
