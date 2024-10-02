@@ -2,7 +2,9 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useMutation } from "react-query";
 
-const BASE_URL = "http://localhost:8080/api/mypage";
+const apiUrl = process.env.REACT_APP_API_URL;
+const BASE_URL = apiUrl + "/api/mypage";
+const TOKEN_EXPIRED_DAY: number = Number(process.env.TOKEN_EXPIRED_DAY);
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -36,7 +38,7 @@ export async function login(form: { userId: string; password: string }) {
     // 로그인 성공 시 JWT 토큰을 쿠키에 저장
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7, // 토큰 유효기간 7일
+        expires: TOKEN_EXPIRED_DAY,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
       });
