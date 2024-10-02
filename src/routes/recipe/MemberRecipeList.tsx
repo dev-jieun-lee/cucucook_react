@@ -111,7 +111,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         await getRecipeCategoryListWithMemberRecipeCount(params);
       return recipeCategoryList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -142,10 +143,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
     try {
       const memberRecipeList = await getMemberRecipeList(params);
-
       return memberRecipeList.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
     }
   };
 

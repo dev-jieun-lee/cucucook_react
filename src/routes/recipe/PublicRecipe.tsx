@@ -47,7 +47,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const publicRecipe = await getPublicRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
   const { data: publicRecipe, isLoading: publicRecipeLoading } = useQuery(
