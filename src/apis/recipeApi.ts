@@ -67,11 +67,9 @@ export async function getMemberRecipeList(params: any) {
 
 // 회원 레시피 상세조회
 export async function getMemberRecipe(params: any) {
-  console.log(token);
   const response = await api.get(`/getMemberRecipe`, {
     params: params,
   });
-  console.log(response);
   return response;
 }
 

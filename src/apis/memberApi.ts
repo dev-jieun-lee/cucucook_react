@@ -4,9 +4,10 @@ import { useMutation } from "react-query";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
+const TOKEN_EXPIRED_DAY: number = Number(process.env.TOKEN_EXPIRED_DAY);
 // REST API 키 설정
-const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
-const REDIRECT_URI = "https://cucucook.site";
+const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID;
+const REDIRECT_URI = process.env.KAKAO_REDIRECT_URL;
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -38,7 +39,7 @@ export async function login(form: { userId: string; password: string }) {
 
     if (response.data.token) {
       Cookies.set("auth_token", response.data.token, {
-        expires: 7, // 토큰 유효기간 7일
+        expires: TOKEN_EXPIRED_DAY,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
       });
