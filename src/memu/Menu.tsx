@@ -110,7 +110,7 @@ function Menu() {
           ) : (
             <></>
           )}
-          {user?.role === "1" ? (
+          {user?.role === "0" || user?.role === "2" ? (
             <li
               className="main-menu-item"
               onMouseEnter={() => handleMouseEnter(3)}
