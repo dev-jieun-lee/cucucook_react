@@ -20,7 +20,7 @@ import { LoginWrapper } from "../../styles/LoginStyle";
 import { PwButtonArea, PwInputArea, SubTitle } from "../../styles/MypageStyle";
 import SnackbarCustom from "../../components/SnackbarCustom";
 
-const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+const Profile: React.FC<{}> = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기

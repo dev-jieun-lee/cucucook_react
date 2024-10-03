@@ -74,6 +74,8 @@
     }
   },
   "text": {
+    "like" : "Like",
+    "writing" : "Writing",
     "phone": "Phone Number",
     "color" : "Color",
     "name" : "Name",
@@ -109,7 +111,6 @@
     "no": "No",
     "content": "Content",
     "go_back": "Go Back",
-    "writing": "Writing",
     "answer": "Answer",
     "question": "Question",
     "all_recipe": "All Recipes",
@@ -191,8 +192,12 @@
     "Success": "Success",
     "Password verification successful": "Password verification successful.",
     "OK": "OK",
-    "mycommnet": "My Comments",
-    "confirm_delete_account": "Are you sure you want to delete your account?"
+    "myCommnet": "What I wrote in the comments",
+    "myWriting": "what I wrote",
+    "myLikes": "the one I picked up,",
+    "myRecipe": "my D.I.Y. recipe",
+    "confirm_delete_account": "Are you sure you want to delete your account?",
+    "greetings" : "{{name}}, Hello! :)"
   },
   "sentence": {
     "no_data": "No data exists.",
