@@ -69,3 +69,94 @@ export const UserInfoForm = styled.form`
   }
   
 `;
+
+export const MyPageTitle = styled.div`
+  width: 100%;
+  text-align: left;
+  color: ${(props) => props.theme.mainColor};
+  font-weight: bold;
+  font-size: 1.6rem;
+  span{
+  }
+`;
+
+export const SummaryCountArea = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 200px;
+  margin-top: 50px;
+  /* gap: 20px; */
+  .grid{
+    &:nth-child(2){
+      border-right: 1px solid;
+      border-left: 1px solid;
+    }
+  }
+  .icon{
+    transform: scale(2);
+    margin-top: 25px;
+    color: ${(props) => props.theme.textColor};
+  }
+  .kind{
+    font-size: 1.2rem;
+    color: ${(props) => props.theme.textColor};
+  }
+  .count{
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: ${(props) => props.theme.mainColor};
+  }
+`;
+
+export const SummaryDataArea = styled.div`
+  width: 100%;
+  margin: 50px 0 50px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 330px);
+  gap: 10px;
+  .grid{
+    border: 1px solid;
+    border-color: ${(props) => props.theme.navBorderColor};
+    border-radius: 5px;
+  }
+  .title{
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 20px;
+    color: ${(props) => props.theme.textColor};
+    span{
+      font-size: 18px;
+      font-weight: bold;
+      align-items: center;
+      .icon{
+        transform: scale(1);
+        padding-top: 10px;
+      }
+    }
+  }
+  .table-container{
+    background : none;
+    border: 0;
+    box-shadow: none;
+    width: 95%;
+    margin: -10px auto;
+    text-align: center;
+    .more-icon{
+      transform: scale(0.7);
+      color: #898787d3;
+      margin-top: 5px;
+    }
+    .row {
+        &:hover {
+          
+          cursor: pointer;
+          .cell{
+            font-weight: bold !important;
+          }
+        }
+      }
+  }
+
+`;
