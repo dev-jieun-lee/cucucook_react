@@ -17,7 +17,7 @@ import { useFetchPassword } from "../../../apis/memberApi"; // 비밀번호 찾�
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper } from "../../../styles/LoginStyle";
 import { useSearchParams, Link } from "react-router-dom";
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // 인증 관련 훅 가져오기
 
 function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
@@ -135,41 +135,41 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
           </FormControl>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <FormControl
-                sx={{ flex: 8, m: 1 }}
-                className="input-form"
-                variant="outlined"
-                error={!!formik.errors.email}
-              >
-                <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
-                <OutlinedInput
-                  className="email-input"
-                  id="email"
-                  name="email"
-                  label={t("members.email")}
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                />
-                {formik.errors.email && (
-                  <FormHelperText error>{formik.errors.email}</FormHelperText>
-                )}
-              </FormControl>
-              <Button
-                sx={{ flex: 2 , m : 0}} 
-                className="email-btn"
-                color="secondary"
-                variant="outlined"
-                onClick={() => handleSendCode(formik.values.email)}
-                fullWidth
-                disabled={
-                  !formik.values.name ||
-                  !formik.values.email ||
-                  !formik.values.userId ||
-                  isCodeSent
-                } // 이름, 이메일, ID가 모두 입력되지 않으면 버튼 비활성화
-              >
-                {t("members.send_code")}
-              </Button>
+            <FormControl
+              sx={{ flex: 8, m: 1 }}
+              className="input-form"
+              variant="outlined"
+              error={!!formik.errors.email}
+            >
+              <InputLabel htmlFor="email">{t("members.email")}</InputLabel>
+              <OutlinedInput
+                className="email-input"
+                id="email"
+                name="email"
+                label={t("members.email")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+              />
+              {formik.errors.email && (
+                <FormHelperText error>{formik.errors.email}</FormHelperText>
+              )}
+            </FormControl>
+            <Button
+              sx={{ flex: 2, m: 0 }}
+              className="email-btn"
+              color="secondary"
+              variant="outlined"
+              onClick={() => handleSendCode(formik.values.email)}
+              fullWidth
+              disabled={
+                !formik.values.name ||
+                !formik.values.email ||
+                !formik.values.userId ||
+                isCodeSent
+              } // 이름, 이메일, ID가 모두 입력되지 않으면 버튼 비활성화
+            >
+              {t("members.send_code")}
+            </Button>
           </Box>
 
           {isCodeSent && (
@@ -216,7 +216,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
                   className="email-btn"
                   color="secondary"
                   variant="outlined"
-                  sx={{ flex: 2 , m : 0}} 
+                  sx={{ flex: 2, m: 0 }}
                   onClick={() =>
                     handleVerifyCode(formik.values.email, verificationCode)
                   }
