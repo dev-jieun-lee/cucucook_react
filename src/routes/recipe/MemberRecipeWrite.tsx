@@ -1,4 +1,3 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -20,23 +19,23 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
+import ScrollTop from "../../components/ScrollTop";
 import {
   getMemberRecipe,
   getRecipeCategoryListForWrite,
   insertMemberRecipe,
   updateMemberRecipe,
 } from "../../apis/recipeApi";
-import {
-  PageTitleBasic,
-  ScrollBtnFab,
-  Wrapper,
-} from "../../styles/CommonStyles";
-import { MemberRecipeWirteForm, TitleBox } from "../../styles/RecipeStyle";
+
 import RecipeImageUpload from "./RecipeImageUpload";
 import RecipeProcessListInput from "./RecipeProcessListInput";
-import RecpieIngredientInputList from "./RecpieIngredientInputList";
-import LoadingNoMargin from "../../components/LoadingNoMargin";
-import Loading from "../../components/Loading";
+import RecipeIngredientInputList from "./RecipeIngredientInputList";
+import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
+import { MemberRecipeWirteForm, TitleBox } from "../../styles/RecipeStyle";
+import axios from "axios";
+import { handleApiError } from "../../hooks/errorHandler";
 
 export interface FocusableButton {
   focus: () => void;
@@ -45,8 +44,8 @@ export interface FocusableButton {
 function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const { recipeId } = useParams(); //레시피 아이디 파라미터 받아오기
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
   const [touchedChanged, setTouchedChanged] = useState(false);
   const [style, setStyle] = useState<React.CSSProperties>({});
@@ -54,10 +53,16 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     { name: "", amount: "" },
   ]);
 
+  const [recipeProgress] = useState<
+    {
+      image: File | null;
+      contents: string;
+      imgId: string;
+      isServerImgVisible: boolean;
+    }[]
+  >([{ image: null, contents: "", imgId: "", isServerImgVisible: false }]);
+
   const [isLoading, setIsLoading] = useState<boolean>(!!recipeId); // 로딩 상태 추가
-  const [processItems] = useState<
-    { image: File | null; serverImage: any; processContents: string }[]
-  >([{ image: null, serverImage: "", processContents: "" }]);
 
   const imageUploadRef = useRef<FocusableButton | null>(null); //썸네일용
   const imageRefs = useRef<(FocusableButton | null)[]>([]); // FocusableButton 타입의 배열로 설정
@@ -69,8 +74,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const getRecipeCategoryList = await getRecipeCategoryListForWrite(params);
       return getRecipeCategoryList.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -80,8 +85,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     {
       refetchOnWindowFocus: false,
 
-      onError: (err) => {
-        console.error(err);
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true,
     }
@@ -94,8 +99,8 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       const publicRecipe = await getMemberRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -106,13 +111,14 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     {
       enabled: !!recipeId,
       onSuccess: (data) => {
-        if (data.success && data.data.memberRecipeImages)
-          setServerThumbnail(data.data.memberRecipeImages);
-
-        setIsLoading(false);
+        if (data.success && data.data.memberRecipe.memberRecipeImages) {
+          setServerThumbnail(data.data.memberRecipe.memberRecipeImages);
+          setIsLoading(false);
+        }
       },
-      onError: () => {
+      onError: (error) => {
         setIsLoading(false);
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -145,7 +151,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         }
       },
       onError: (error) => {
-        // 에러 처리
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -155,7 +161,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     initialValues: {
       recipeInfo: {
         recipeId: recipeId ? recipeId || null : null,
-        memberId: 1,
+        memberId: user?.memberId,
         title: recipeId ? memberRecipe?.data?.memberRecipe?.title || "" : "",
         recipeCategoryId: recipeId
           ? memberRecipe?.data?.memberRecipe?.recipeCategoryId || ""
@@ -163,8 +169,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         method: recipeId
           ? memberRecipe?.data?.memberRecipe?.recipeMethodId || ""
           : "",
-        //thumbnail: memberRecipe?.data?.memberRecipe?.memberRecipeImages,
-        thumbnail: null,
+        imgId: recipeId ? memberRecipe?.data?.memberRecipe?.imgId || "" : "",
         serving: recipeId
           ? memberRecipe?.data?.memberRecipe?.serving || ""
           : "",
@@ -175,25 +180,34 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         calory: recipeId ? memberRecipe?.data?.memberRecipe?.calory || "" : "",
         tip: recipeId ? memberRecipe?.data?.memberRecipe?.tip || "" : "",
       },
+      thumbnail: null,
       recipeIngredients: recipeId
         ? memberRecipe?.data?.memberRecipeIngredient || ingredients
         : ingredients,
+
       recipeProcessItems: recipeId
-        ? memberRecipe?.data?.memberRecipeProcessListForUpdate || processItems
-        : processItems,
+        ? memberRecipe?.data?.memberRecipeProcessList.map((item: any) => ({
+            ...item,
+            isServerImgVisible: true,
+          })) || recipeProgress
+        : recipeProgress,
     },
     validationSchema: Yup.object({
       recipeInfo: Yup.object({
         title: Yup.string().required(),
         recipeCategoryId: Yup.string().required(),
         method: Yup.string().required(),
-        //thumbnail: Yup.mixed().required(),
         serving: Yup.string().required(),
         level: Yup.string().required(),
         time: Yup.number().required(),
         calory: Yup.number().required(),
         tip: Yup.string().required(),
       }),
+      thumbnail: Yup.mixed()
+        .test(function (value) {
+          return this.parent.recipeInfo.imgId ? true : !!value;
+        })
+        .nullable(), // imgId가 있으면 null 허용
       recipeIngredients: Yup.array()
         .of(
           Yup.object({
@@ -206,8 +220,14 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       recipeProcessItems: Yup.array()
         .of(
           Yup.object({
-            // image: Yup.mixed().required(),
-            processContents: Yup.string().required(),
+            image: Yup.mixed()
+              .test(function (value) {
+                const { imgId, isServerImgVisible } = this.parent;
+                if (imgId && isServerImgVisible) return true;
+                return value !== null && value !== undefined;
+              })
+              .nullable(), // imgId가 있으면 null 허용
+            contents: Yup.string().required(),
           })
         )
         .min(1)
@@ -216,248 +236,57 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: async (values) => {
-      const thumbnailElement = document.getElementsByName(
-        "thumbnail_server_img_id"
-      )[0] as HTMLInputElement;
-      const thumbnailServerImgId = thumbnailElement.value;
+      const formData = new FormData();
+      formData.append(
+        "recipeInfo",
+        new Blob([JSON.stringify(values.recipeInfo)], {
+          type: "application/json",
+        })
+      );
+      if (values.thumbnail) {
+        formData.append("thumbnailImage", values.thumbnail);
+      }
 
-      const dataToSubmit = {
-        ...values, // 기존 formik의 values
-        thumbnailServerImgId,
-      };
+      formData.append(
+        "recipeIngredients",
+        new Blob([JSON.stringify(values.recipeIngredients)], {
+          type: "application/json",
+        })
+      );
+      formData.append(
+        "recipeProcessItems",
+        new Blob([JSON.stringify(values.recipeProcessItems.content)], {
+          type: "application/json",
+        })
+      );
+
+      values.recipeProcessItems.forEach(
+        (recipeProcessItem: any, index: number) => {
+          const file =
+            recipeProcessItem.image ||
+            new Blob([], { type: "application/octet-stream" });
+
+          formData.append(`recipeProcessItems.image`, file);
+          formData.append(
+            "recipeProcessItems.contents",
+            recipeProcessItem.contents || ""
+          );
+          formData.append(
+            "recipeProcessItems.imgId",
+            recipeProcessItem.imgId || ""
+          );
+        }
+      );
 
       // mutation 호출 시 추가 데이터 포함
-      mutation.mutate(dataToSubmit as any);
+      mutation.mutate(formData as any);
     },
   });
-
-  // 오류가 있는 필드에 포커스하는 함수 정의
-  const focusFirstErrorField = () => {
-    if (formik.errors) {
-      // recipeInfo 필드의 오류 처리
-      const recipeInfoErrorFields = Object.keys(formik.errors.recipeInfo || {});
-      const recipeInfoErrorFieldsToTouch = recipeInfoErrorFields.reduce(
-        (acc, field) => {
-          acc[field] = true;
-          return acc;
-        },
-        {} as any
-      );
-
-      // recipeIngredients 필드의 오류 처리
-      const recipeIngredientsErrors =
-        (formik.errors.recipeIngredients as Array<{
-          name?: string;
-          amount?: string;
-        }>) || [];
-
-      // 각 오류 항목을 touched 상태로 설정
-      const recipeIngredientsErrorFieldsToTouch =
-        recipeIngredientsErrors.reduce((acc, _, index) => {
-          acc[`${index}.name`] = true;
-          acc[`${index}.amount`] = true;
-          return acc;
-        }, {} as Record<string, boolean>);
-
-      // recipeProcessItems 필드의 오류 처리
-      const recipeProcessItemsErrors =
-        (formik.errors.recipeProcessItems as Array<{
-          image?: File;
-          processContents?: string;
-        }>) || [];
-
-      // 각 오류 항목을 touched 상태로 설정
-      const recipeProcessItemsErrorFieldsToTouch =
-        recipeProcessItemsErrors.reduce((acc, _, index) => {
-          acc[`${index}.image`] = true;
-          acc[`${index}.processContents`] = true;
-          return acc;
-        }, {} as Record<string, boolean>);
-
-      // touched 상태 업데이트
-      formik.setTouched({
-        ...formik.touched,
-        recipeInfo: {
-          ...formik.touched.recipeInfo,
-          ...recipeInfoErrorFieldsToTouch,
-        },
-        recipeIngredients: {
-          ...((formik.touched.recipeIngredients as Record<string, boolean>) ||
-            {}),
-          ...recipeIngredientsErrorFieldsToTouch,
-        },
-        recipeProcessItems: {
-          ...((formik.touched.recipeProcessItems as Record<string, boolean>) ||
-            {}),
-          ...recipeProcessItemsErrorFieldsToTouch,
-        },
-      });
-
-      setTouchedChanged(true);
-    }
-  };
-
-  // touched 상태가 업데이트된 후에 포커스를 이동시키는 useEffect
-  useEffect(() => {
-    if (touchedChanged) {
-      // recipeInfo 필드의 오류와 touched 필드를 처리
-      const recipeInfoErrorFields = Object.keys(formik.errors.recipeInfo || {});
-      const recipeInfoTouchedFields = Object.keys(
-        formik.touched.recipeInfo || {}
-      );
-      const recipeInfoErrorFieldsWithTouch = recipeInfoErrorFields.filter(
-        (field) => recipeInfoTouchedFields.includes(field)
-      );
-
-      // recipeIngredients 필드의 오류와 touched 필드를 처리
-      const recipeIngredientsErrors =
-        (formik.errors.recipeIngredients as Array<{
-          name?: string;
-          amount?: string;
-        }>) || [];
-      const ingredientsTouchedFields = formik.touched
-        .recipeIngredients as Record<
-        string,
-        { name?: boolean; amount?: boolean }
-      >;
-
-      // recipeProcessItems 필드의 오류와 touched 필드를 처리
-      const recipeProcessItemsErrors =
-        (formik.errors.recipeProcessItems as Array<{
-          image?: File;
-          processContents?: string;
-        }>) || [];
-
-      const processTouchedFields = formik.touched.recipeProcessItems as Record<
-        string,
-        { image?: File; processContents?: string }
-      >;
-
-      // 최초의 포커스 할 오류 필드 저장
-      let focusElementId: string | null = null;
-
-      if (recipeInfoErrorFieldsWithTouch.length > 0) {
-        const firstErrorField = recipeInfoErrorFieldsWithTouch[0];
-        if (firstErrorField === "thumbnail" && imageUploadRef.current) {
-          setStyle({
-            ...style,
-            borderColor: "warning.dark", // 변경할 스타일 속성
-          });
-          imageUploadRef.current.focus();
-        } else {
-          const inputElement = document.getElementById(
-            firstErrorField as string
-          );
-          if (inputElement) {
-            setTimeout(() => {
-              if (inputElement instanceof HTMLInputElement) {
-                inputElement.focus();
-              } else if (inputElement instanceof HTMLElement) {
-                inputElement.focus();
-              }
-            }, 100);
-          }
-        }
-      } else if (recipeIngredientsErrors.length > 0) {
-        recipeIngredientsErrors.some((errors, index) => {
-          const indexStr = index.toString();
-
-          if (!errors) {
-            return false; // null이면 처리하지 않고 다음 요소로 넘어감
-          }
-          // name 오류 체크
-          if (errors.name && ingredientsTouchedFields[`${indexStr}.name`]) {
-            focusElementId = `ingredient_name_${index}`;
-            return true; // 오류 필드에 포커스 후 반복 종료
-          }
-
-          // amount 오류 체크
-          if (errors.amount && ingredientsTouchedFields[`${indexStr}.amount`]) {
-            focusElementId = `ingredient_amount_${index}`;
-            return true; // 오류 필드에 포커스 후 반복 종료
-          }
-
-          return false;
-        });
-      } else {
-        recipeProcessItemsErrors.some((errors, index) => {
-          const indexStr = index.toString();
-
-          if (!errors) {
-            return false; // null이면 처리하지 않고 다음 요소로 넘어감
-          }
-
-          if (errors.image && processTouchedFields[`${indexStr}.image`]) {
-            focusElementId = `recipe_process_image_${index}`;
-
-            // 이미지가 비어있으면 해당 이미지 입력 필드에 포커스 설정
-            if (imageRefs.current && imageRefs.current[index]) {
-              setStyle({
-                ...style,
-                borderColor: "warning.dark", // 변경할 스타일 속성
-              });
-
-              imageRefs.current[index]?.focus();
-            }
-
-            return true; // 오류 필드에 포커스 후 반복 종료
-          }
-
-          // 내용 오류 체크
-          if (
-            errors.processContents &&
-            processTouchedFields[`${indexStr}.processContents`]
-          ) {
-            focusElementId = `recipe_process_contents_${index}`;
-            return true; // 오류 필드에 포커스 후 반복 종료
-          }
-
-          return false;
-        });
-      }
-
-      // 포커스 할 요소가 있는 경우
-      if (focusElementId) {
-        const inputElement = document.getElementById(focusElementId);
-
-        if (inputElement) {
-          setTimeout(() => {
-            if (inputElement instanceof HTMLInputElement) {
-              inputElement.focus();
-            } else if (inputElement instanceof HTMLElement) {
-              inputElement.focus();
-            }
-          }, 100);
-        }
-      }
-      setTouchedChanged(false);
-    }
-  }, [formik.touched, formik.errors, touchedChanged]);
 
   // 수동으로 폼 제출 처리
   const handleManualSubmit = async () => {
     const errors = await formik.validateForm();
-
-    // recipeInfo 필드의 유효성 검사
-    const recipeInfoErrors = Object.keys(errors.recipeInfo || {}).length > 0;
-
-    // recipeIngredients 필드의 유효성 검사
-    const recipeIngredientsErrors =
-      Object.keys(errors.recipeIngredients || {}).length > 0;
-
-    // recipeProcessItems 필드의 유효성 검사
-    const recipeProcessItemsErrors =
-      Object.keys(errors.recipeProcessItems || {}).length > 0;
-
-    if (
-      recipeInfoErrors ||
-      recipeIngredientsErrors ||
-      recipeProcessItemsErrors
-    ) {
-      focusFirstErrorField();
-    } else {
-      formik.handleSubmit();
-    }
+    formik.handleSubmit();
   };
 
   // 내용 초기화
@@ -468,29 +297,30 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
       formik.setValues({
         recipeInfo: {
           recipeId: "",
-          memberId: 1,
+          memberId: user?.memberId,
           title: "",
           recipeCategoryId: "",
           method: "",
-          thumbnail: null,
+          imgId: "",
           serving: "",
           level: "",
           time: "",
           calory: "",
           tip: "",
         },
+        thumbnail: null,
         recipeIngredients: ingredients,
-        recipeProcessItems: processItems,
+        recipeProcessItems: recipeProgress,
       });
     }
   }, [recipeId]); // recipeId가 없을 때 폼 값을 초기화
 
   const handleImageChange = (file: File | null) => {
-    formik.setFieldValue("recipeInfo.thumbnail", file);
+    formik.setFieldValue("thumbnail", file);
   };
 
   const handleRemoveImage = () => {
-    formik.setFieldValue("recipeInfo.thumbnail", null);
+    formik.setFieldValue("thumbnail", null);
   };
 
   //글 작성 취소
@@ -513,35 +343,25 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
   const recipeIngredientsErrors = formik.errors.recipeIngredients as
     | Array<{ name?: string; amount?: string }>
     | undefined;
-  const recipeIngredientsTouched = formik.touched.recipeIngredients as
-    | Record<string, boolean>
-    | undefined;
+  const recipeIngredientsTouched =
+    (formik.touched.recipeIngredients as Array<{
+      name?: boolean;
+      amount?: boolean;
+    }>) || [];
 
   const recipeProcessErrors = formik.errors.recipeProcessItems as
     | Array<{
         image?: File;
-        processContents?: string;
+        contents?: string;
+        imgId?: string;
       }>
     | undefined;
-  const recipeProcessTouched = formik.touched.recipeProcessItems as
-    | Record<string, boolean>
-    | undefined;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollButton(window.scrollY > 300);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const recipeProcessTouched =
+    (formik.touched.recipeProcessItems as Array<{
+      image?: boolean;
+      contents?: boolean;
+      imgId?: boolean;
+    }>) || [];
 
   return (
     <Wrapper>
@@ -689,9 +509,9 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                   <Box maxWidth={"300px"}>
                     <RecipeImageUpload
                       id={"thumbnail"}
-                      name={"thumbnail"}
+                      name={"recipeInfo.imgId"}
                       ref={imageUploadRef}
-                      image={formik.values.recipeInfo.thumbnail}
+                      image={formik.values.thumbnail}
                       serverImage={serverThumbnail}
                       onImageChange={(file) => handleImageChange(file)}
                       onRemoveImage={() => handleRemoveImage()}
@@ -699,12 +519,11 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                       style={style}
                     />
 
-                    {formik.touched.recipeInfo?.thumbnail &&
-                      formik.errors.recipeInfo?.thumbnail && (
-                        <FormHelperText error>
-                          {t("recipe.error.thumbnail")}
-                        </FormHelperText>
-                      )}
+                    {formik.touched?.thumbnail && formik.errors?.thumbnail && (
+                      <FormHelperText error>
+                        {t("recipe.error.thumbnail")}
+                      </FormHelperText>
+                    )}
                   </Box>
                 </Grid>
                 <Grid item xs={12}>
@@ -762,6 +581,10 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                       }
                       onBlur={formik.handleBlur}
                       value={formik.values.recipeInfo.level}
+                      error={
+                        formik.touched.recipeInfo?.level &&
+                        Boolean(formik.errors.recipeInfo?.level)
+                      }
                     >
                       {(getRecipeCategoryList?.data.levelList || []).map(
                         (category: any) => (
@@ -779,7 +602,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                     {formik.touched.recipeInfo?.level &&
                       formik.errors.recipeInfo?.level && (
                         <FormHelperText error>
-                          {t("recipe.error.level")}
+                          {t("recipe.error.recipeLevelId")}
                         </FormHelperText>
                       )}
                   </FormControl>
@@ -852,7 +675,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <RecpieIngredientInputList
+                  <RecipeIngredientInputList
                     values={formik.values.recipeIngredients}
                     errors={recipeIngredientsErrors || []}
                     touched={recipeIngredientsTouched || {}}
@@ -946,11 +769,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
           </>
         )}
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 }

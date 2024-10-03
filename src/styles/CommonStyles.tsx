@@ -17,7 +17,6 @@ export const Wrapper = styled.div`
     width: 100%;
   `};
 
-
   .add-btn {
     margin-top: -4px;
     margin-left: 15px;
@@ -25,7 +24,6 @@ export const Wrapper = styled.div`
     z-index: 1;
     box-shadow: none;
   }
-
 
   .form {
     width: 100%;
@@ -65,9 +63,10 @@ export const TitleBasic = styled.div`
 `;
 
 export const PageTitleBasic = styled.div`
-  font-weight: 500;
-  font-size: 25px;
   text-align: left;
+  font-size: 25px;
+  font-weight: 600;
+  color: ${(props) => props.theme.mainColor};
 `;
 
 export const PageSubTitleBasic = styled.div`

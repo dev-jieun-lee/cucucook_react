@@ -1,26 +1,49 @@
-# 1. Node.js 20 버전의 경량화된 alpine 이미지를 사용
-FROM node:20-alpine
+# 1단계: Node.js 환경에서 React 애플리케이션 빌드
+FROM node:20-alpine AS build
 
-# 2. 애플리케이션의 루트 디렉토리 설정
+# pnpm 설치
+RUN npm install -g pnpm
+
+# 작업 디렉토리 설정
 WORKDIR /app
 
-# 3. package.json 및 package-lock.json 복사 (캐시 활용)
-COPY package*.json ./
+# package.json 및 package-lock.json 복사 및 의존성 설치
+COPY package.json pnpm-lock.yaml ./ 
+RUN pnpm install --frozen-lockfile
 
-# 4. 모든 npm 의존성 설치 (npm ci 사용)
-RUN npm ci
-
-# 5. 소스 코드 전체를 복사
+# 소스 코드 복사 및 애플리케이션 빌드
 COPY . .
+RUN NODE_OPTIONS="--max-old-space-size=2048" GENERATE_SOURCEMAP=false pnpm run build
 
-# 6. 애플리케이션 빌드
-RUN npm run build
+# gzip을 사용해 파일 압축
+#RUN find build -type f -exec gzip -9 {} \; -exec mv {}.gz {} \;
 
-# 7. 필요한 포트 개방
-EXPOSE 3000
+# 2단계: Nginx로 정적 파일 서빙
+FROM nginx:alpine
 
-# 8. 환경 변수 설정 (메모리 최적화 - 1024MB로 조정)
-ENV NODE_OPTIONS="--max-old-space-size=1024"
+# 로케일 및 타임존 설정 (옵션)
+RUN apk add --no-cache tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
+    && echo "Asia/Seoul" > /etc/timezone \
+    && apk add --no-cache bash curl nano
 
-# 9. 애플리케이션 시작 명령어
-CMD [ "npm", "start" ]
+# 환경 변수 설정 (UTF-8 인코딩 설정)
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# Nginx 기본 경로의 기존 파일 삭제
+RUN rm -rf /usr/share/nginx/html/*
+
+# 1단계에서 빌드된 파일을 Nginx로 복사
+COPY --from=build /app/build /usr/share/nginx/html
+
+# 커스텀 Nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+# 80 포트 개방
+EXPOSE 80
+
+# Nginx 실행
+CMD ["nginx", "-g", "daemon off;"]

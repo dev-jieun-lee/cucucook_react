@@ -2,7 +2,13 @@ import { useTranslation } from "react-i18next";
 import { Wrapper } from "../../../styles/CommonStyles";
 import { LoginWrapper } from "../../../styles/LoginStyle";
 import PersonIcon from "@mui/icons-material/Person";
-import { FormControl, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
+import {
+  FormControl,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import { getMember } from "../../../apis/memberApi";
 import { useEffect, useState } from "react";
@@ -12,7 +18,7 @@ import * as Yup from "yup";
 import Loading from "../../../components/Loading";
 import { updateMember, updateUserInfo } from "../../../apis/mypageApi";
 
-function MemberDetail(){
+function MemberDetail() {
   const { t } = useTranslation();
   // const navigate = useNavigate();
   const { memberId } = useParams();
@@ -29,7 +35,8 @@ function MemberDetail(){
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/\D/g, ""); // 숫자만 추출
     if (cleaned.length <= 3) return cleaned;
-    if (cleaned.length <= 7) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    if (cleaned.length <= 7)
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
     return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(
       7,
       11
@@ -40,11 +47,11 @@ function MemberDetail(){
   const getMemberWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const memberData = await getMember(memberId!); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return memberData;
   };
 
@@ -73,12 +80,12 @@ function MemberDetail(){
   //     },
   //   }
   // );
-  
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       memberId: memberId,
-      userId : memberData?.userId,
+      userId: memberData?.userId,
       name: memberData?.name,
       phone: memberData?.phone,
       email: memberData?.email,
@@ -100,51 +107,50 @@ function MemberDetail(){
     return <Loading />;
   }
 
-
-  return(
+  return (
     <Wrapper>
       <LoginWrapper>
         <div className="title">
           <PersonIcon className="title-icon" />
           <span>{t("menu.admin.members_info")}</span>
         </div>
-        <form >
+        <form>
           <FormControl className="input-form">
-              <TextField
-                id="userId"
-                name="userId"
-                label={t("text.user_id")}
-                disabled
-                value={formik.values.userId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.userId && Boolean(formik.errors.userId)}
-                // helperText={formik.touched.userId && formik.errors.userId}
-              />
+            <TextField
+              id="userId"
+              name="userId"
+              label={t("text.user_id")}
+              disabled
+              value={formik.values.userId}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.userId && Boolean(formik.errors.userId)}
+              // helperText={formik.touched.userId && formik.errors.userId}
+            />
           </FormControl>
           <FormControl className="input-form">
-              <TextField
-                id="userName"
-                name="userName"
-                label={t("text.name")}
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                // helperText={formik.touched.password && formik.errors.password}
-              />
+            <TextField
+              id="userName"
+              name="userName"
+              label={t("text.name")}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.name && Boolean(formik.errors.name)}
+              // helperText={formik.touched.password && formik.errors.password}
+            />
           </FormControl>
           <FormControl className="input-form">
-              <TextField
-                id="phone"
-                name="phone"
-                label={t("mypage.phone_number")}
-                value={formik.values.phone}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.phone && Boolean(formik.errors.phone)}
-                // helperText={formik.touched.password && formik.errors.password}
-              />
+            <TextField
+              id="phone"
+              name="phone"
+              label={t("mypage.phone_number")}
+              value={formik.values.phone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              // helperText={formik.touched.password && formik.errors.password}
+            />
           </FormControl>
           <FormControl className="input-form">
             <div className="input-email">

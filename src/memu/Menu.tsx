@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Col, LinkItem, MainMenu, SubMenu } from "../styles/MenuStyle";
@@ -111,7 +110,7 @@ function Menu() {
           ) : (
             <></>
           )}
-          {user?.role === "1" ? (
+          {user?.role === "0" || user?.role === "2" ? (
             <li
               className="main-menu-item"
               onMouseEnter={() => handleMouseEnter(3)}
@@ -127,10 +126,19 @@ function Menu() {
               <SubMenu className="sub-menu">
                 <ul>
                   <li>
-                    <LinkItem to="/admin/members">{t("menu.admin.members")}</LinkItem>
+                    <LinkItem to="/admin/members">
+                      {t("menu.admin.members")}
+                    </LinkItem>
                   </li>
                   <li>
-                    <LinkItem to="/admin/category/board">{t("menu.admin.category_board")}</LinkItem>
+                    <LinkItem to="/admin/category/board">
+                      {t("menu.admin.category_board")}
+                    </LinkItem>
+                  </li>
+                  <li>
+                    <LinkItem to="/admin/category/recipe">
+                      {t("menu.admin.category_recipe")}
+                    </LinkItem>
                   </li>
                 </ul>
               </SubMenu>
