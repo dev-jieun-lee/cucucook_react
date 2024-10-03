@@ -30,10 +30,11 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  ThumbnailTypography,
   TitleBox,
 } from "../../styles/RecipeStyle";
 import SearchIcon from "@mui/icons-material/Search";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
@@ -51,7 +52,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [recipes, setRecipes] = useState<any[]>([]);
   //선택된 카테고리값
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const display = 20;
   const [message, setMessage] = useState("");
 
@@ -66,8 +66,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleViewDetailClick = (path: string, params: string) => {
-    console.log(params);
-    
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };
@@ -97,8 +95,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
       return publicRecipeList.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -110,7 +108,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
         setLoading(false);
-        if (data) {
+        if (data.success) {
           setHasMore(data.addData?.hasMore ?? false);
           if (data.data != null) {
             setRecipes((prevRecipes) => [...prevRecipes, ...data.data]);
@@ -118,10 +116,9 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           updateMessage(data);
         }
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setLoading(false);
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true, // 페이지를 이동할 때 이전 데이터 유지
     }
@@ -152,27 +149,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     setSelectedCategory(category);
     handleSearch();
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
@@ -262,7 +238,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     onClick={() =>
                       handleViewDetailClick(
                         "/recipe/public_recipe",
-                        encodeURIComponent(publicRecipeItem.rcpNm) + "/1/1"
+                        encodeURIComponent(publicRecipeItem.rcpNm)
                       )
                     }
                   >
@@ -299,11 +275,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };

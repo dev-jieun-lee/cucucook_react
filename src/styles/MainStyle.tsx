@@ -1,4 +1,4 @@
-import { Button, Card } from "@mui/material";
+import { Button } from "@mui/material";
 import styled from "styled-components";
 import media from "./MediaQuery";
 

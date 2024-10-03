@@ -1,15 +1,4 @@
-import {
-  Box,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Divider, ListItem, ListItemButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DrawerList } from "../styles/MenuStyle";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +11,9 @@ function DrawerMenu({ toggleDrawer }: any) {
 
   // 메뉴 항목 정의
   const RecipeMenuItems = [
-    { label: t("menu.recipe.all"), path: "/all_recipe" },
-    { label: t("menu.recipe.public"), path: "/public_recipe" },
-    { label: t("menu.recipe.member"), path: "/member_recipe" },
+    { label: t("menu.recipe.all"), path: "/recipe/all_recipe_list" },
+    { label: t("menu.recipe.public"), path: "/recipe/public_recipe_list" },
+    { label: t("menu.recipe.member"), path: "/recipe/member_recipe_list" },
   ];
 
   const BoardMenuItems = [
@@ -39,8 +28,9 @@ function DrawerMenu({ toggleDrawer }: any) {
   ];
 
   const AdminMenuItems = [
-    { label: t('menu.admin.members'), path: "/admin/members" },
-    { label: t('menu.admin.category_board'), path: "/admin/category/board" },
+    { label: t("menu.admin.members"), path: "/admin/members" },
+    { label: t("menu.admin.category_board"), path: "/admin/category/board" },
+    { label: t("menu.admin.category_recipe"), path: "/admin/category/recipe" },
   ];
 
   // 페이지 이동 함수
@@ -87,7 +77,7 @@ function DrawerMenu({ toggleDrawer }: any) {
         <></>
       )}
       <Divider />
-      {user?.role === "1" ? (
+      {user?.role === "0" ? (
         <DrawerList>
           <ListItem className="list-item">
             <span className="list-text">{t("menu.admin.original")}</span>

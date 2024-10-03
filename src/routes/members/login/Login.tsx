@@ -12,13 +12,16 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper, ButtonArea, StyledAnchor } from "../../../styles/LoginStyle";
+import {
+  LoginWrapper,
+  ButtonArea,
+  StyledAnchor,
+} from "../../../styles/LoginStyle";
 import { login } from "../../../apis/memberApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Cookies from "js-cookie";
 import { useAuth } from "../../../auth/AuthContext";
 
 const MySwal = withReactContent(Swal);

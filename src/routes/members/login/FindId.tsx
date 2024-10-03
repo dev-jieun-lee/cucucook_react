@@ -10,7 +10,6 @@ import {
   Box,
   Typography,
   Grid,
-  Link,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { findId } from "../../../apis/memberApi";

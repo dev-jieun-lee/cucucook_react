@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
+import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import { AnswerContainer, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
@@ -11,7 +11,6 @@ import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 function Qna() {

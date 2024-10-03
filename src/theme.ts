@@ -16,8 +16,8 @@ import { DefaultTheme } from "styled-components";
 export const styledLightTheme: DefaultTheme = {
   bgColor: "#F4F3EF",
   textColor: "#364C63",
-  textColorWhite: "#fff",
   mainColor: "#F3B340",
+  contrastColor: "#fff",
   footerColor: "#f3f0e2",
   navBorderColor: "#ccc",
   searchBorderColor: "#ccc",
@@ -34,10 +34,11 @@ export const styledLightTheme: DefaultTheme = {
 export const styledDarkTheme: DefaultTheme = {
   bgColor: "#3D3737",
   textColor: "#FDA47E",
-  textColorWhite: "#fff",
   mainColor: "#F2EFDB",
+  contrastColor: "#000",
   footerColor: "#363131",
   navBorderColor: "#878585c1",
+  searchBorderColor: "#878585c1",
 
   scrollbarBackColor: "#76757539",
   scrollbarColor: "#88888878",
