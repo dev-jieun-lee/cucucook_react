@@ -43,8 +43,6 @@
         "category": "Please select a category.",
         "title": "Please enter a title.",
         "contents": "Please enter content.",
-        "required": "{{value}} is a required entry,",
-        "name_max_length": "Name must be no more than 10 characters",
         "ERR_CG_01": "There are posts using that category and cannot be deleted.",
         "ERR_CG_02": "An unknown error occurred while deleting."
       },
@@ -76,6 +74,7 @@
     }
   },
   "text": {
+    "phone": "Phone Number",
     "color" : "Color",
     "name" : "Name",
     "name_en" : "Name(English)",
@@ -389,5 +388,10 @@
     "S_RECIPE_COMMENT_UPDATE": "Comment updated successfully.",
     "E_RECIPE_COMMENT_DELETE": "Failed to delete comment.",
     "S_RECIPE_COMMENT_DELETE": "Comment deleted successfully."
+  },
+  "error" : {
+    "required": "{{value}} is a required entry,",
+    "max_length": "{{value}} must be no more than {{length}} characters",
+    "format": "The {{value}} format is invalid."
   }
 }

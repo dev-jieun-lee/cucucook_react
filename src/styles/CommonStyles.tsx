@@ -127,3 +127,28 @@ export const CustomPagination = styled(Stack)`
   }
 `;
 
+//dialog 스타일
+export const DialogTitleArea = styled.div`
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  .title{
+    color: ${(props) => props.theme.mainColor};
+    font-weight: 600;
+  }
+  .close-btn{
+    height: 40px;
+    margin: 15px;
+  }
+`;
+
+export const DialogForm = styled.form`
+  position: relative;
+  .input-form{
+    display: block;
+    margin-bottom: 20px;
+    &:first-child{
+      margin-top: 15px;
+    }
+  }
+`;

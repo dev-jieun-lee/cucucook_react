@@ -8,21 +8,44 @@ import {
   ListItem,
   ListItemText,
   Fab,
+  CircularProgress,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { KeyboardArrowUp } from "@mui/icons-material";
-import {
-  activityStyles,
-  myPageGridStyles,
-  scrollButtonStyles,
-} from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useAuth } from "../../auth/AuthContext";
-import {
-  fetchActivityStats,
-  fetchMemberBoardList,
-  fetchMyComments,
-} from "../../apis/mypageApi"; // 활동 정보 API 함수 가져오기
+import { useNavigate } from "react-router-dom";
+import { activityStyles, scrollButtonStyles } from "./myPageStyles";
+import { fetchActivityStats, fetchLikedRecipes, fetchMemberBoardList, fetchMyComments, fetchMyRecipeList } from "../../apis/mypageApi";
+
+type StatButtonProps = {
+  onClickPath: string;
+  iconSrc: string;
+  altText: string;
+  count: number;
+};
+
+const StatButton: React.FC<StatButtonProps> = ({
+  onClickPath,
+  iconSrc,
+  altText,
+  count,
+}) => {
+  const navigate = useNavigate();
+  return (
+    <Button
+      onClick={() => navigate(onClickPath)}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Avatar src={iconSrc} alt={altText} sx={activityStyles.statIcon} />
+      <Typography sx={{ color: "black" }}>{count}개</Typography>
+    </Button>
+  );
+};
 
 type SectionProps = {
   title: string;
@@ -46,194 +69,187 @@ const Section: React.FC<SectionProps> = ({ title, linkTo, children }) => {
           더보기
         </Button>
       </Box>
-      <Box>{children}</Box>
+      {children}
     </Box>
   );
 };
 
-interface ActivityProps {
-  isDarkMode: boolean;
-}
-
-const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
+const Activity: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [likeCount, setLikeCount] = useState(0); // likeCount 상태
-  const [writeCount, setWriteCount] = useState(0); // writeCount 상태
-  const [replyCount, setReplyCount] = useState(0); // replyCount 상태
-  const [latestPosts, setLatestPosts] = useState([]); // 최신 게시글 상태
-  const [latestReplies, setLatestReplies] = useState([]); // 최신 댓글 상태
-
-  const username = user?.name || "회원";
-
-  const likedRecipes = [
-    "레시피 A",
-    "레시피 B",
-    "레시피 C",
-    "레시피 D",
-    "레시피 E",
-  ];
+  const [likeCount, setLikeCount] = useState(0);
+  const [writeCount, setWriteCount] = useState(0);
+  const [replyCount, setReplyCount] = useState(0);
+  const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
+  const [latestPosts, setLatestPosts] = useState<any[]>([]);
+  const [latestReplies, setLatestReplies] = useState<any[]>([]);
+  const [latestRecipes, setLatestRecipes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleScroll = () => {
+    setShowScrollButton(window.scrollY > 300);
   };
 
-  // 활동 통계 정보 가져오는 함수
-  const loadActivityStats = async () => {
-    if (user?.memberId) {
-      try {
-        const stats = await fetchActivityStats(user.memberId);
-        setLikeCount(stats.likeCount);
-        setWriteCount(stats.writeCount);
-        setReplyCount(stats.replyCount);
-      } catch (error) {
-        console.error("Error loading activity stats:", error);
-      }
-    }
-  };
-
-  // 최신 게시글 목록 불러오는 함수
-  const loadLatestPosts = async () => {
-    if (user?.memberId) {
-      try {
-        const posts = await fetchMemberBoardList(user.memberId, 5); // 최신 5개의 게시글
-        setLatestPosts(posts);
-      } catch (error) {
-        console.error("Error loading latest posts:", error);
-      }
-    }
-  };
-
-  // 최신 댓글 5개
-  const loadLatestReplies = async () => {
-    if (user?.memberId) {
-      try {
-        const replies = await fetchMyComments(user.memberId, 5, 0); // 최신 5개의 댓글
-        setLatestReplies(replies);
-      } catch (error) {
-        console.error("Error loading latest replies:", error);
-      }
-    }
-  };
-
-  // 컴포넌트가 마운트될 때 댓글 정보도 불러오기
   useEffect(() => {
-    loadActivityStats();
-    loadLatestPosts(); // 최신 게시글 정보 로드
-    loadLatestReplies(); // 최신 댓글 정보 로드
-  }, [user]);
+    if (user?.memberId) {
+      fetchAllData(user.memberId);
+    }
+  }, [user?.memberId]);
+
+  const fetchAllData = async (memberId: number) => {
+    setIsLoading(true);
+    try {
+      const [stats, likedRecipes, posts, recipes, replies] = await Promise.all([
+        fetchActivityStats(memberId),
+        fetchLikedRecipes(memberId),
+        fetchMemberBoardList(memberId, 5),
+        fetchMyRecipeList(memberId, 5),
+        fetchMyComments(memberId, 1, 5),
+      ]);
+      console.log("Liked Recipes:", likedRecipes); // 데이터 로그 출력
+      console.log("Posts:", posts);
+      console.log("Recipes:", recipes);
+      console.log("Replies:", replies);
+      setLikeCount(stats.likeCount);
+      setWriteCount(stats.writeCount);
+      setReplyCount(stats.replyCount);
+      setLikedRecipes(likedRecipes);
+      setLatestPosts(posts);
+      setLatestRecipes(recipes);
+      setLatestReplies(replies);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <CircularProgress />
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper>
-      <Box
-        sx={{
-          ...activityStyles.content,
-          minHeight: "calc(100vh - 200px)",
-        }}
-      >
+      <Box sx={{ ...activityStyles.content, minHeight: "calc(100vh - 200px)" }}>
         <Box sx={activityStyles.welcomeBox}>
-          <Typography variant="h5">{username}님 안녕하세요!</Typography>
+          <Typography variant="h5">
+            {user?.name || "회원"}님 안녕하세요!
+          </Typography>
         </Box>
 
         <Box sx={activityStyles.statsBox}>
-          <Box sx={activityStyles.statItem}>
-            <Avatar
-              src="/public/image/cucucook_like.png"
-              alt="찜 아이콘"
-              sx={activityStyles.statIcon}
-            />
-            <Typography>{likeCount}개</Typography>
-          </Box>
-          <Box sx={activityStyles.statItem}>
-            <Avatar
-              src="/public/image/cucucook_write.png"
-              alt="게시글 아이콘"
-              sx={activityStyles.statIcon}
-            />
-            <Typography>{writeCount}개</Typography>
-          </Box>
-          <Box sx={activityStyles.statItem}>
-            <Avatar
-              src="/public/image/cucucook_reply.png"
-              alt="댓글 아이콘"
-              sx={activityStyles.statIcon}
-            />
-            <Typography>{replyCount}개</Typography>
-          </Box>
+          <StatButton
+            onClickPath="/myPage/LikeLists"
+            iconSrc="/public/image/cucucook_like.png"
+            altText="찜 아이콘"
+            count={likeCount}
+          />
+          <StatButton
+            onClickPath="/myPage/MyWrites"
+            iconSrc="/public/image/cucucook_write.png"
+            altText="게시글 아이콘"
+            count={writeCount}
+          />
+          <StatButton
+            onClickPath="/myPage/MyReplys"
+            iconSrc="/public/image/cucucook_reply.png"
+            altText="댓글 아이콘"
+            count={replyCount}
+          />
         </Box>
 
         <Section title="레시피 찜목록" linkTo="/myPage/LikeLists">
-          <Box sx={myPageGridStyles.gridContainer}>
-            {likedRecipes.map((recipe, index) => (
-              <Box key={index} sx={myPageGridStyles.itemBox}>
-                <Typography>{recipe}</Typography>
-              </Box>
-            ))}
-          </Box>
+          <List>
+            {likedRecipes.map((recipe) => {
+              console.log(
+                `Rendering liked recipe with key: ${recipe.recipeId}`
+              );
+              return (
+                <ListItem
+                  key={recipe.recipeId}
+                  sx={{ borderBottom: "1px solid #ddd" }}
+                  button
+                  onClick={() =>
+                    navigate(`/recipe/member_recipe/${recipe.recipeId}`)
+                  }
+                >
+                  <ListItemText primary={recipe.title} />
+                </ListItem>
+              );
+            })}
+          </List>
         </Section>
 
         <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
           <List>
-            {latestPosts.length > 0 ? (
-              latestPosts.map((post: any, index: number) => (
-                <ListItem key={post.id} sx={{ borderBottom: "1px solid #ddd" }}>
-                  <ListItemText primary={post.title} />
-                </ListItem>
-              ))
-            ) : (
-              <Typography variant="body2" sx={{ padding: 2 }}>
-                게시물이 없습니다.
-              </Typography>
-            )}
+            {latestPosts.map((post) => (
+              <ListItem
+                key={`post-${post.boardId}`} // 'post-' 접두어와 id 결합
+                sx={{ borderBottom: "1px solid #ddd" }}
+                button
+                onClick={() => navigate(`/notice/${post.boardId}`)}
+              >
+                <ListItemText primary={post.title} />
+              </ListItem>
+            ))}
+          </List>
+        </Section>
+
+        <Section title="나의 DIY 레시피" linkTo="/myPage/MyRecipes">
+          <List>
+            {latestRecipes.map((recipe) => (
+              <ListItem
+                key={`diy-recipe-${recipe.method}`} // 'diy-recipe-' 접두어와 id 결합
+                sx={{ borderBottom: "1px solid #ddd" }}
+                button
+                onClick={() =>
+                  navigate(`/recipe/member_recipe/${recipe.recipeId}`)
+                }
+              >
+                <ListItemText primary={recipe.title} />
+              </ListItem>
+            ))}
           </List>
         </Section>
 
         <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
           <List>
-            {latestReplies.length > 0 ? (
-              latestReplies.map((reply: any, index: number) => (
-                <ListItem
-                  key={reply.commentId}
-                  sx={{ borderBottom: "1px solid #ddd" }}
-                >
-                  <ListItemText primary={reply.comment} />
-                </ListItem>
-              ))
-            ) : (
-              <Typography variant="body2" sx={{ padding: 2 }}>
-                댓글이 없습니다.
-              </Typography>
-            )}
+            {latestReplies.map((reply) => (
+              <ListItem
+                key={`reply-${reply.commentId}`} // 'reply-' 접두어와 id 결합
+                sx={{ borderBottom: "1px solid #ddd" }}
+                button
+                onClick={() =>
+                  navigate(`/recipe/member_recipe/${reply.recipeId}`)
+                }
+              >
+                <ListItemText primary={reply.comment} />
+              </ListItem>
+            ))}
           </List>
         </Section>
-      </Box>
 
-      {showScrollButton && (
-        <Fab
-          color="primary"
-          size="small"
-          sx={scrollButtonStyles}
-          onClick={scrollToTop}
-        >
-          <KeyboardArrowUp />
-        </Fab>
-      )}
+        {showScrollButton && (
+          <Fab
+            color="primary"
+            size="small"
+            sx={scrollButtonStyles}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <KeyboardArrowUp />
+          </Fab>
+        )}
+      </Box>
     </Wrapper>
   );
 };
