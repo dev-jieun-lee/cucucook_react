@@ -60,6 +60,7 @@ function Notice() {
     const params = {
       search: "",
       start: "",
+      searchType : "",
       display: "",
     };
     const response = await getBoardCategoryList(params);
@@ -209,7 +210,7 @@ function Notice() {
       <TitleCenter>
         {t("menu.board.notice")}
         {user?.role === "1" ? (
-          <Tooltip title={t("text.writing")}>
+          <Tooltip title={t("text.add")}>
             <Fab
               className="add-btn"
               size="small"

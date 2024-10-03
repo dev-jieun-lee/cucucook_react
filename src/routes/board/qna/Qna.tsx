@@ -43,6 +43,7 @@ function Qna() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType : "",
       start: "",
       display: "",
     };
