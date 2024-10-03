@@ -94,12 +94,12 @@ function BoardCategoryDialog({ open, onClose, categoryId }: BoardCategoryDialogP
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .required(t("menu.board.error.required", { value: t("menu.board.category_name") })) 
-        .max(10, t("menu.board.error.max_length", { value: t("menu.board.category_name"), length : 10 })),
+        .required(t("error.required", { value: t("menu.board.category_name") })) 
+        .max(10, t("error.max_length", { value: t("menu.board.category_name"), length : 10 })),
         nameEn: Yup.string()
-        .required(t("menu.board.error.required", { value: t("menu.board.category_name_en") })) 
-        .max(15, t("menu.board.error.max_length", { value: t("menu.board.category_name_en"), length : 15 })),
-      division: Yup.string().required(t("menu.board.error.division_required"))
+        .required(t("error.required", { value: t("menu.board.category_name_en") })) 
+        .max(30, t("error.max_length", { value: t("menu.board.category_name_en"), length : 30 })),
+      division: Yup.string().required(t("error.required", { value: t("menu.board.division") })) 
     }),
     validateOnChange: true,
     validateOnBlur: true,

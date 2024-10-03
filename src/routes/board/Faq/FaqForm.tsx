@@ -47,6 +47,7 @@ function FaqForm() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType: "",
       start: "",
       display: "",
     };
@@ -64,6 +65,7 @@ function FaqForm() {
     getBoardCategoryListApi
   );
 
+  console.log(boardCategoryList);
   
 
 
@@ -145,8 +147,8 @@ function FaqForm() {
   
   // 내용 초기화
   useEffect(() => {
-    if (!boardId) {
-      // 새로운 게시글 작성 모드일 경우 폼 초기화
+    if (!boardId && boardCategoryList) {
+      // 새로운 게시글 작성 모드일 경우 카테고리 리스트 로드 후 폼 초기화
       formik.setValues({
         memberId: user?.memberId,
         title: "",
@@ -156,7 +158,7 @@ function FaqForm() {
         boardDivision: "FAQ",
       });
     }
-  }, [boardId]); // boardId가 없을 때 폼 값을 초기화
+  }, [boardId, boardCategoryList]);
 
   // // 카테고리 선택시 값 업데이트
   const handleCategoryChange = (event: SelectChangeEvent<string>) => {
