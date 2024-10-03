@@ -15,12 +15,15 @@ import {
   Wrapper,
 } from "../../styles/CommonStyles";
 import {
-  PublicRecipeView,
-  RecepiImgBox,
-  RecepiImgBoxContainer,
+  RecipeView,
+  RecipeImgBox,
+  RecipeImgBoxContainer,
   recipeCommonStyles,
   TitleBox,
 } from "../../styles/RecipeStyle";
+import Swal from "sweetalert2";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -29,27 +32,6 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation(); //번역
   // 로딩 상태 관리
   const [loading, setLoading] = useState(true);
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   const handleRecipeListClick = () => {
     navigate(-1);
@@ -65,8 +47,8 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const publicRecipe = await getPublicRecipe(params);
       return publicRecipe.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
   const { data: publicRecipe, isLoading: publicRecipeLoading } = useQuery(
@@ -74,14 +56,13 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     fetchPublicRecipe,
     {
       refetchOnWindowFocus: false,
-      onSuccess: () => {
+      onSuccess: (data) => {
         // 데이터가 성공적으로 로드되면 로딩 상태를 false로 설정
-        setLoading(false);
+        if (data.success) setLoading(false);
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setLoading(false);
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true, // 페이지를 이동할 때 이전 데이터 유지
     }
@@ -93,10 +74,44 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     (_, i) => `${String(i + 1).padStart(2, "0")}`
   );
 
+  const handleImageClick = (title: string, imgPath: string) => {
+    const img = new Image();
+    const imageUrl = imgPath;
+    Swal.fire({
+      imageAlt: title,
+      imageUrl: imageUrl,
+      showCloseButton: true,
+      showConfirmButton: false,
+    });
+    img.src = imageUrl;
+    img.onload = () => {
+      const windowHeight = window.innerHeight; // 브라우저 높이
+      if (img.width > img.height) {
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+        });
+      } else {
+        const maxImageHeight = windowHeight * 0.8;
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+          imageHeight: maxImageHeight,
+        });
+      }
+    };
+  };
+
   return (
     <Wrapper>
       {
-        <PublicRecipeView>
+        <RecipeView>
           <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
             <TitleBox margin={"20px 0"}>
               <PageTitleBasic>
@@ -117,13 +132,19 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               <Box className="recipe-info-container" padding={"20px 0"}>
                 <Grid container spacing={2} sx={{}}>
                   <Grid item xs={12} md={6}>
-                    <RecepiImgBoxContainer className="recipe-info-img-container">
-                      <RecepiImgBox
+                    <RecipeImgBoxContainer className="recipe-info-img-container">
+                      <RecipeImgBox
+                        onClick={() =>
+                          handleImageClick(
+                            publicRecipe.data.rcpNm,
+                            publicRecipe.data.attFileNoMk
+                          )
+                        }
                         className="recipe-info-img"
                         alt={publicRecipe.data.rcpNm}
                         src={publicRecipe.data.attFileNoMk}
-                      ></RecepiImgBox>
-                    </RecepiImgBoxContainer>
+                      ></RecipeImgBox>
+                    </RecipeImgBoxContainer>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Box paddingBottom={1}>
@@ -262,13 +283,19 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           xs={12}
                           md={2}
                         >
-                          <RecepiImgBoxContainer>
-                            <RecepiImgBox
+                          <RecipeImgBoxContainer>
+                            <RecipeImgBox
                               className="recipe-info-img"
+                              onClick={() =>
+                                handleImageClick(
+                                  publicRecipe.data.rcpNm,
+                                  manualImage
+                                )
+                              }
                               alt={publicRecipe.data.rcpNm}
                               src={manualImage}
-                            ></RecepiImgBox>
-                          </RecepiImgBoxContainer>
+                            ></RecipeImgBox>
+                          </RecipeImgBoxContainer>
                         </Grid>
                         <Grid
                           className="recipe-description-grid-text-container"
@@ -311,13 +338,9 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             </Grid>
           )}
           <Box padding={"20px 0"}></Box>
-        </PublicRecipeView>
+        </RecipeView>
       }
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };

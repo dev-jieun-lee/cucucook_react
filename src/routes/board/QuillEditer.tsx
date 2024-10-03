@@ -29,7 +29,7 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     () => ({
       toolbar: {
         container: "#toolBar",
-      }
+      },
     }),
     []
   );

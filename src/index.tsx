@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createGlobalStyle } from "styled-components";
 import "./locales/i18n";

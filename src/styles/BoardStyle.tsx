@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button } from "@mui/material";
 import styled from "styled-components";
 
 export const ContentsArea = styled.div`

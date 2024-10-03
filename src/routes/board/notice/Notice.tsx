@@ -8,7 +8,6 @@ import {
   Pagination,
   Paper,
   Select,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -24,7 +23,7 @@ import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
@@ -209,7 +208,7 @@ function Notice() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.notice")}
-        {user?.role === "1" ? (
+        {user?.role === "0" ? (
           <Tooltip title={t("text.add")}>
             <Fab
               className="add-btn"

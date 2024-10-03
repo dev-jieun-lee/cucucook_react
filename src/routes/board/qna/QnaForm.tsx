@@ -2,15 +2,35 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../../auth/AuthContext";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getBoard, getBoardCategory, getBoardCategoryList, insertBoard, updateBoard } from "../../../apis/boardApi";
+import {
+  getBoard,
+  getBoardCategory,
+  getBoardCategoryList,
+  insertBoard,
+  updateBoard,
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
 import { useFormik } from "formik";
 import Loading from "../../../components/Loading";
-import { Button, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import * as Yup from "yup";
-import { BoardButtonArea, ContentsInputArea, QuestionArea, TitleInputArea } from "../../../styles/BoardStyle";
+import {
+  BoardButtonArea,
+  ContentsInputArea,
+  QuestionArea,
+  TitleInputArea,
+} from "../../../styles/BoardStyle";
 import QuillEditer from "../QuillEditer";
 import dompurify from "dompurify";
 
@@ -21,7 +41,6 @@ function QnaForm() {
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
 
-
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
@@ -31,20 +50,18 @@ function QnaForm() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-      if (response && response.data) {
-        return response.data.filter(
-          (category: any) => category.division === "QNA"
-        );
-      }
+    if (response && response.data) {
+      return response.data.filter(
+        (category: any) => category.division === "QNA"
+      );
+    }
 
-      return [];
+    return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
-
-
 
   //수정일 경우 카테고리 포함 보드 데이터 가져오기
   const getBoardWithCategory = async () => {
@@ -79,18 +96,17 @@ function QnaForm() {
 
   //boardId가 있을경우 수정, 없을경우 생성
   const mutation = useMutation(
-    (values) => boardId ? updateBoard(boardId, values) : insertBoard(values),
+    (values) => (boardId ? updateBoard(boardId, values) : insertBoard(values)),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.save"),
           text: t("menu.board.alert.save"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
-        navigate(-1); 
-        
+        navigate(-1);
       },
       onError: (error) => {
         // 에러 처리
@@ -98,13 +114,11 @@ function QnaForm() {
     }
   );
 
-  
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       memberId: user?.memberId,
-      userName : user?.name,
+      userName: user?.name,
       title: `${t("menu.board.question")}`,
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -124,14 +138,14 @@ function QnaForm() {
       mutation.mutate(values as any); // mutation 실행
     },
   });
-  
+
   // 내용 초기화
   useEffect(() => {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
         memberId: user?.memberId,
-        userName : user?.name,
+        userName: user?.name,
         // title: `"${user?.name}"님의 ${t("menu.board.question")}`,
         title: `${t("menu.board.question")}`,
         boardCategoryId: "",
@@ -149,30 +163,29 @@ function QnaForm() {
     formik.validateForm(); // 유효성 검사 트리거
   };
 
-    //글 작성 취소
-    const onClickCancel = () => {
-      Swal.fire({
-        icon: 'warning',
-        title: t("text.cancel"),
-        text: t("menu.board.alert.cancel"),
-        showCancelButton: true,
-        showConfirmButton: true,
-        confirmButtonText: t("text.yes"),
-        cancelButtonText: t("text.no"),
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate(-1);
-        }
-      });
-    };
-  
-  
-    //로딩
-    if (boardLoading || boardCategoryLoading) {
-      return <Loading />;
-    }
+  //글 작성 취소
+  const onClickCancel = () => {
+    Swal.fire({
+      icon: "warning",
+      title: t("text.cancel"),
+      text: t("menu.board.alert.cancel"),
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: t("text.yes"),
+      cancelButtonText: t("text.no"),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate(-1);
+      }
+    });
+  };
 
-  return(
+  //로딩
+  if (boardLoading || boardCategoryLoading) {
+    return <Loading />;
+  }
+
+  return (
     <Wrapper>
       <TitleCenter>
         {boardId ? (
@@ -223,7 +236,9 @@ function QnaForm() {
                 error={formik.touched.title && Boolean(formik.errors.title)}
               />
               {formik.touched.title && formik.errors.title && (
-                <FormHelperText error>{t("menu.board.error.title")}</FormHelperText>
+                <FormHelperText error>
+                  {t("menu.board.error.title")}
+                </FormHelperText>
               )}
             </FormControl>
           </div>
@@ -231,11 +246,13 @@ function QnaForm() {
         <ContentsInputArea>
           <QuillEditer
             value={formik.values.contents}
-            onChange={(text: any) => formik.setFieldValue('contents', text)}
+            onChange={(text: any) => formik.setFieldValue("contents", text)}
             error={formik.touched.contents && Boolean(formik.errors.contents)}
           />
           {formik.touched.contents && formik.errors.contents && (
-            <FormHelperText error>{t("menu.board.error.contents")}</FormHelperText>
+            <FormHelperText error>
+              {t("menu.board.error.contents")}
+            </FormHelperText>
           )}
         </ContentsInputArea>
         <BoardButtonArea>
@@ -248,13 +265,13 @@ function QnaForm() {
           >
             {t("text.cancel")}
           </Button>
-          <Button className="save-btn" type="submit" variant="contained" >
+          <Button className="save-btn" type="submit" variant="contained">
             {t("text.save")}
           </Button>
         </BoardButtonArea>
       </form>
     </Wrapper>
-  )
+  );
 }
 
 export default QnaForm;

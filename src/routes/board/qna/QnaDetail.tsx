@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardWithReplies,
   insertBoard,
@@ -16,7 +15,6 @@ import {
   BoardButtonArea,
   ContentsInputArea,
   CustomCategory,
-  DetailContents,
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
@@ -29,7 +27,6 @@ import Swal from "sweetalert2";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAuth } from "../../../auth/AuthContext";
 import { useEffect, useRef, useState } from "react";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import QuillEditer from "../QuillEditer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -93,11 +90,11 @@ function QnaDetail() {
   const getBoardWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 
@@ -314,7 +311,7 @@ function QnaDetail() {
             </AnswerContainer>
           </div>
           <div className="board-info">
-            {user?.role === "1" && !isReply && !isEditing ? (
+            {user?.role === "0" && !isReply && !isEditing ? (
               <AnswerButton
                 onClick={() => setIsEditing(true)}
                 variant="contained"
@@ -344,7 +341,7 @@ function QnaDetail() {
                       __html: sanitizer(`${reBoardData[0]?.contents}`),
                     }}
                   ></div>
-                  {user?.role === "1" ? (
+                  {user?.role === "0" ? (
                     <div className="btn-area">
                       <Button
                         className="update-btn"

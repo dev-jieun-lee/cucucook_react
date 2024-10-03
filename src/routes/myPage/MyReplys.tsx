@@ -15,7 +15,11 @@ import {
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyReplies, deleteReply, searchReplies } from "../../apis/mypageApi";
+import {
+  fetchMyReplies,
+  deleteReply,
+  searchReplies,
+} from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";

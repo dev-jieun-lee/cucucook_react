@@ -67,7 +67,6 @@ const Profile: React.FC<{}> = () => {
     },
   });
 
-
   return (
     <LoginWrapper>
       <TitleCenter>{t("mypage.profile")}</TitleCenter>
