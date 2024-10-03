@@ -259,7 +259,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <MypageSideMenu isDarkMode={isDarkMode} />
-            <Profile isDarkMode={false} />
+            <Profile/>
           </RouteBox>
         }
       />
@@ -286,7 +286,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <MypageSideMenu isDarkMode={isDarkMode} />
-            <Activity isDarkMode={false} />
+            <Activity/>
           </RouteBox>
         }
       />
