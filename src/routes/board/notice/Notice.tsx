@@ -20,13 +20,13 @@ import {
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
-import moment from "moment";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
+import dayjs from "dayjs";
 
 function Notice() {
   const { user } = useAuth(); //로그인 상태관리
@@ -296,6 +296,7 @@ function Notice() {
                 <TableCell className="title-cell">{t("text.title")}</TableCell>
                 <TableCell>{t("text.writer")}</TableCell>
                 <TableCell>{t("text.register_date")}</TableCell>
+                <TableCell>{t("text.update_date")}</TableCell>
                 <TableCell>{t("text.view_count")}</TableCell>
               </TableRow>
             </TableHead>
@@ -323,7 +324,10 @@ function Notice() {
                       <TableCell>{boardItem.title}</TableCell>
                       <TableCell>{boardItem.userName}</TableCell>
                       <TableCell>
-                        {moment(boardItem.udtDt).format("YYYY-MM-DD")}
+                        {dayjs(boardItem.regDt).format("YYYY-MM-DD HH:mm")}
+                      </TableCell>
+                      <TableCell>
+                        {dayjs(boardItem.udtDt).format("YYYY-MM-DD HH:mm")}
                       </TableCell>
                       <TableCell>{boardItem.viewCount}</TableCell>
                     </TableRow>

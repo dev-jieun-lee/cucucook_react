@@ -31,6 +31,7 @@ import QuillEditer from "../QuillEditer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import dayjs from "dayjs";
 
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
@@ -250,8 +251,14 @@ function QnaDetail() {
               <span className="title">{pBoardData[0]?.title}</span>
             </div>
             <div className="board-info">
+              <span className="hit">{t("text.register_date")}</span>
               <span className="date">
-                {moment(pBoardData[0]?.udtDt).format("YYYY-MM-DD")}
+                {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
+              </span>
+              <span className="border"></span>
+              <span className="hit">{t("text.update_date")}</span>
+              <span className="date">
+                {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
               </span>
               <span className="border"></span>
               <span className="member">{pBoardData[0]?.userName}</span>

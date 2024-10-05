@@ -12,6 +12,7 @@ import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import dayjs from "dayjs";
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
@@ -293,6 +294,7 @@ function Qna() {
               <TableCell>{t("menu.board.answer_chk")}</TableCell> {/* 답글 여부 컬럼 */}
               <TableCell>{t("text.writer")}</TableCell>
               <TableCell>{t("text.register_date")}</TableCell>
+              <TableCell>{t("text.update_date")}</TableCell>
               <TableCell>{t("text.view_count")}</TableCell>
             </TableRow>
           </TableHead>
@@ -334,8 +336,11 @@ function Qna() {
 
                     <TableCell>{boardItem.userName}</TableCell>
                     <TableCell>
-                      {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                    </TableCell>
+                        {dayjs(boardItem.regDt).format("YYYY-MM-DD HH:mm")}
+                      </TableCell>
+                      <TableCell>
+                        {dayjs(boardItem.udtDt).format("YYYY-MM-DD HH:mm")}
+                      </TableCell>
                     <TableCell>{boardItem.viewCount}</TableCell>
 
                   </TableRow>
