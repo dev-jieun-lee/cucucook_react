@@ -275,7 +275,8 @@ export async function updateMember(
   memberId: string,
   name: string,
   email: string,
-  phone: string
+  phone: string,
+  role?: string
 ) {
   try {
     const response = await axios.put(`${BASE_URL}/updateMember`, {
@@ -283,6 +284,7 @@ export async function updateMember(
       name,
       email,
       phone,
+      role
     });
     return response.data;
   } catch (error) {
