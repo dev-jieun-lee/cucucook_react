@@ -62,6 +62,12 @@ export const TitleBasic = styled.div`
   color: ${(props) => props.theme.mainColor};
 `;
 
+export const TitleBox = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 export const PageTitleBasic = styled.div`
   text-align: left;
   font-size: 25px;

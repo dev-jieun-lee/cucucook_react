@@ -94,16 +94,16 @@ function Activity() {
   const onMoreData = (kind: string) => {
     switch (kind) {
       case "like":
-        navigate(`/myPage/LikeLists`);
+        navigate(`/mypage/activity/LikeLists`);
         break;
       case "writing":
-        navigate(`/myPage/MyWrites`);
+        navigate(`/mypage/activity/MyWrites`);
         break;
       case "recipe":
-        navigate(`/myPage/MyRecipes`);
+        navigate(`/mypage/activity/MyRecipes`);
         break;
       case "comment":
-        navigate(`/myPage/MyReplys`);
+        navigate(`/mypage/activity/MyReplys`);
         break;
       default:
         break;

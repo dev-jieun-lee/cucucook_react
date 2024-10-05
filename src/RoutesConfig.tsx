@@ -262,6 +262,7 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
       </Route>
+
       {/* 마이페이지 */}
       <Route element={<ProtectAuthRouter />}>
       <Route
@@ -301,7 +302,7 @@ function RoutesConfig({ isDarkMode }: any) {
         }
       />
         <Route
-          path="/mypage/LikeLists"
+          path="/mypage/activity/LikeLists"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
@@ -310,7 +311,7 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
         <Route
-          path="/mypage/MyWrites"
+          path="/mypage/activity/MyWrites"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
@@ -319,16 +320,16 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
         <Route
-          path="/mypage/MyReplys"
+          path="/mypage/activity/MyReplys"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyReplys isDarkMode={false} />
+              <MyReplys />
             </RouteBox>
           }
         />
         <Route
-          path="/mypage/MyRecipes"
+          path="/mypage/activity/MyRecipes"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
@@ -337,78 +338,6 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
       </Route>
-      <Route
-        path="/mypage/profile"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Profile/>
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/profile/userInfo"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <UserInfo  />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/profile/userInfo/passwordChange/:memberId"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <PwChange  />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/activity"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Activity/>
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/LikeLists"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <LikeLists isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyWrites"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyWrites isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyReplys"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyReplys isDarkMode={false} />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/MyRecipes"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <MyRecipes isDarkMode={false} />
-          </RouteBox>
-        }
-      />
 
       {/* 관리자 */}
       <Route element={<ProtectRoleRouter />}>
