@@ -4,9 +4,6 @@ import { useMutation } from "react-query";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
-// REST API 키 설정
-const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
-const REDIRECT_URI = "https://cucucook.site";
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -36,9 +33,18 @@ export async function login(form: { userId: string; password: string }) {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
 
-    if (response.data.token) {
-      Cookies.set("auth_token", response.data.token, {
-        expires: 7,
+    // accessToken과 refreshToken을 각각의 쿠키에 저장
+    if (response.data.accessToken && response.data.refreshToken) {
+      // Access Token: 만료 시간 1시간 (1/24일)
+      Cookies.set("access_token", response.data.accessToken, {
+        expires: 1 / 24, // 하루를 기준으로 1시간 (1/24)
+        secure: true,
+        sameSite: "Strict",
+      });
+
+      // Refresh Token: 만료 시간 7일
+      Cookies.set("refresh_token", response.data.refreshToken, {
+        expires: 7, // 7일
         secure: true,
         sameSite: "Strict",
       });
@@ -47,14 +53,8 @@ export async function login(form: { userId: string; password: string }) {
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
-      // 서버에서 전달된 전체 응답 데이터 출력
       console.log("서버 응답 데이터:", error.response.data);
 
-      // 실패 횟수와 잠금 시간을 출력
-      console.log("실패 횟수:", error.response.data.failedAttempts || 0);
-      console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
-
-      // 실패 관련 정보를 반환
       return {
         success: false,
         message: error.response.data.message || "로그인 실패",
@@ -64,7 +64,6 @@ export async function login(form: { userId: string; password: string }) {
     } else {
       console.error("알 수 없는 오류 발생:", error);
 
-      // 예외 발생 시 기본 오류 메시지 반환
       return {
         success: false,
         message: "알 수 없는 오류가 발생했습니다.",
@@ -256,32 +255,6 @@ export const deleteAccount = async (memberId: string) => {
     return response.data;
   } catch (error) {
     console.error("회원 탈퇴 실패:", error);
-    throw error;
-  }
-};
-
-// 카카오 토큰 요청
-export const kakaoLogin = async (code: string) => {
-  try {
-    const response = await axios.post(
-      `https://kauth.kakao.com/oauth/token`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-        params: {
-          grant_type: "authorization_code",
-          client_id: KAKAO_CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
-          code: code,
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Kakao login failed", error);
     throw error;
   }
 };

@@ -6,7 +6,7 @@ import styled from "styled-components";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
-import KakaoRedirectHandler from "./routes/members/login/KakaoRedirectHandler";
+import KakaoCallback from "./routes/members/login/KakaoRedirection";
 
 //메인
 const Main = lazy(() => import("./routes/main/Main"));
@@ -16,6 +16,7 @@ const SignupIntro = lazy(() => import("./routes/members/signUp/SignupIntro"));
 const Signup = lazy(() => import("./routes/members/signUp/Signup"));
 const FindId = lazy(() => import("./routes/members/login/FindId"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
+//const Redirection = lazy(() => import("./routes/members/login/Redirection"));
 
 //레시피
 const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
@@ -86,7 +87,7 @@ function RoutesConfig({ isDarkMode }: any) {
       />
 
       {/* 카카오 리디렉션 핸들러 라우트 추가 */}
-      <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
+      <Route path="/kakao/callback" element={<KakaoCallback />} />
 
       {/* 레시피 */}
       <Route
