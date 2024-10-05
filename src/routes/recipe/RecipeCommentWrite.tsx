@@ -23,7 +23,7 @@ import {
   RecipeCommentWrite,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-
+import { useAuth } from "../../auth/AuthContext";
 const customStyles = recipeCommonStyles();
 
 interface RecipeCommentWriteBoxProps {
@@ -43,7 +43,7 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   const { recipeId } = useParams();
   const [commentId, setCommentId] = useState<string | null>(null);
   const [pCommentId, setPCommentId] = useState<string | null>(null);
-
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   useEffect(() => {
     if (activeBoxStatus === "edit" && activeCommentId)
       setCommentId(activeCommentId);
@@ -105,7 +105,7 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      memberId: "1",
+      memberId: user?.memberId,
       recipeId: recipeId,
       commentId: commentId,
       comment: commentId ? recipeComment?.data.comment || "" : "",
