@@ -68,6 +68,9 @@ export const UserInfoForm = styled.form`
   .input-email{
     margin-top: 0px;
   }
+  .form-select{
+    text-align: left;
+  }
   
 `;
 

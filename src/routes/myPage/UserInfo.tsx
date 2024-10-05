@@ -156,11 +156,11 @@ const UserInfo = () => {
     }
   }, [memberData]);
 
-  // 입력된 이름을 한글로 변환하는 함수
-  const convertToHangul = (input: string) => {
-    const hangulRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
-    return input.match(hangulRegex)?.join("") || "";
-  };
+  // // 입력된 이름을 한글로 변환하는 함수
+  // const convertToHangul = (input: string) => {
+  //   const hangulRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+  //   return input.match(hangulRegex)?.join("") || "";
+  // };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -173,8 +173,8 @@ const UserInfo = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const hangulValue = convertToHangul(value); // 한글로 변환
-    formik.setFieldValue("name", hangulValue); // 한글 외의 문자는 자동으로 제거됨
+    // const hangulValue = convertToHangul(value); // 한글로 변환
+    // formik.setFieldValue("name", hangulValue); // 한글 외의 문자는 자동으로 제거됨
   };
 
   // 이름, 전화번호, 이메일 중 하나라도 변경되었는지 확인
