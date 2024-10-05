@@ -14,10 +14,9 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.104",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "axios": "^1.7.4",
+    "axios": "^1.7.7",
     "cucucook_react": "file:",
     "dayjs": "^1.11.13",
     "dompurify": "^3.1.6",
@@ -40,7 +39,7 @@
     "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^6.25.1",
+    "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1",
     "react-sweetalert2": "^0.6.0",
     "session-file-store": "^1.5.0",
@@ -79,6 +78,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
+    "@types/node": "^16.18.108",
     "@types/react-modal": "^3.16.3",
     "cross-env": "^7.0.3"
   }
