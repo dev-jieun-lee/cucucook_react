@@ -78,12 +78,19 @@ function Faq() {
       display: "",
     };
     const response = await getBoardCategoryList(params);
-    return response.data.filter((category: any) => category.division === "FAQ");
+      if (response && response.data) {
+        return response.data.filter(
+          (category: any) => category.division === "FAQ"
+        );
+      }
+
+      return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
+
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
