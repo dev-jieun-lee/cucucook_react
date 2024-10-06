@@ -1,4 +1,7 @@
 import {
+  Box,
+  List,
+  ListItem,
   Paper,
   Table,
   TableBody,
@@ -6,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import React from "react";
 
@@ -26,11 +30,13 @@ import {
   BannerRight,
   GreetingsWrapper,
   MainCard,
+  MainNoticeTable,
   NoticeTable,
   Slogan,
   SloganButton,
 } from "../../styles/MainStyle";
 import { CustomCategory } from "../../styles/BoardStyle";
+import dayjs from "dayjs";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -189,7 +195,49 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </span>
             </div>
             <div className="notice-table">
-              <TableContainer className="table-container" component={Paper}>
+              <MainNoticeTable>
+                <List>
+                  <ListItem className="list-item header">
+                    <Box className="item-category">
+                      <span>{t("text.category")}</span>
+                    </Box>
+                    <Box className="item-title">
+                      <span>{t("text.title")}</span>
+                    </Box>
+                    <Box className="item-date">
+                      <span>{t("text.register_date")}</span>
+                    </Box>
+                  </ListItem>
+                  {boardListWithCategory && boardListWithCategory.length > 0 ? (
+                    boardListWithCategory?.map((item, index) => (
+                      <ListItem
+                        className="list-item"
+                        key={item.boardId}
+                        onClick={() => onClickNotice(item.boardId)}
+                      >
+                        <Box className="contents">
+                          <Box className="item-category-row">
+                            <span style={{ color: item.category.color }}>
+                              [ {item.category.name} ]
+                            </span>
+                          </Box>
+                          <Box className="item-title-row">
+                            <span>{item.title}</span>
+                          </Box>
+                        </Box>
+                        <Box className="item-date-row">
+                          <span>
+                            {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                          </span>
+                        </Box>
+                      </ListItem>
+                    ))
+                  ) : (
+                    <Typography>{t("sentence.no_data")}</Typography>
+                  )}
+                </List>
+              </MainNoticeTable>
+              {/* <TableContainer className="table-container" component={Paper}>
                 <Table
                   className="table"
                   sx={{ minWidth: 650 }}
@@ -242,7 +290,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                     )}
                   </TableBody>
                 </Table>
-              </TableContainer>
+              </TableContainer> */}
             </div>
           </NoticeTable>
           <div className="slogan-main">
