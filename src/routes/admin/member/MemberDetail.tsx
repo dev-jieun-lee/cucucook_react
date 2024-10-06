@@ -6,12 +6,14 @@ import {
   Button,
   FormControl,
   FormHelperText,
+  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import { deleteAccount, getMember } from "../../../apis/memberApi";
@@ -26,6 +28,7 @@ import { BoardButtonArea } from "../../../styles/BoardStyle";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import MemberPwChange from "./MemberPwChange";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 function MemberDetail() {
   const { t } = useTranslation();
@@ -256,7 +259,19 @@ function MemberDetail() {
         onClose={handleDialogClose}
         memberId={selectedMemberId}
       />
-      <TitleCenter>{t("menu.admin.members_info")}</TitleCenter>
+      <TitleCenter>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("menu.admin.members_info")}
+      </TitleCenter>
       <LoginWrapper>
         <UserInfoForm onSubmit={formik.handleSubmit}>
           <FormControl className="input-form">
@@ -265,7 +280,7 @@ function MemberDetail() {
               name="userId"
               label={t("text.user_id")}
               disabled
-              value={formik.values.userId}
+              value={formik.values.userId || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.userId && Boolean(formik.errors.userId)}
@@ -281,7 +296,7 @@ function MemberDetail() {
               id="name"
               name="name"
               label={t("text.name")}
-              value={formik.values.name}
+              value={formik.values.name || ""}
               onChange={formik.handleChange}
               // onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
               onBlur={formik.handleBlur}
@@ -298,7 +313,7 @@ function MemberDetail() {
               id="phone"
               name="phone"
               label={t("mypage.phone_number")}
-              value={formik.values.phone}
+              value={formik.values.phone || ""}
               onChange={handlePhoneChange}
               onBlur={formik.handleBlur}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -317,7 +332,7 @@ function MemberDetail() {
               fullWidth
               variant="outlined"
               className="category-select"
-              value={formik.values.role}
+              value={formik.values.role || ""}
               label={t("text.role")}
               onChange={handleRoleChange}
               error={formik.touched.role && Boolean(formik.errors.role)}
@@ -339,7 +354,7 @@ function MemberDetail() {
                 id="email"
                 name="email"
                 label={t("text.email")}
-                value={formik.values.email}
+                value={formik.values.email || ""}
                 onChange={handleEmailChange} // 이메일에 문자 제한 추가
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}

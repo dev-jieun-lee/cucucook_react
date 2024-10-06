@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button, ListItem } from "@mui/material";
 import styled from "styled-components";
 import media from "./MediaQuery";
 
@@ -158,32 +158,265 @@ export const SummaryDataArea = styled.div`
       }
     }
   }
-  .table-container{
-    background : none;
-    border: 0;
-    box-shadow: none;
-    width: 95%;
-    margin: -10px auto;
-    text-align: center;
-    .more-icon{
-      transform: scale(0.7);
-      color: #898787d3;
-      margin-top: 10px;
-    }
-    .row {
-        &:hover {
-          
-          cursor: pointer;
-          .cell{
-            font-weight: bold !important;
-          }
-        }
-      }
+  .more-icon{
+    transform: scale(0.7);
+    color: #898787d3;
+    margin-top: 4px;
   }
-
 `;
 
 
 export const MypageContentArea = styled.div`
   width: 100%;
+
+`;
+
+export const MypageHeaderListItem = styled(ListItem)`
+  .no{
+    flex: 1;
+    text-align: center;
+  }
+  .division{
+    flex: 1;
+    text-align: center;
+    ${media.small`
+      display : none;
+    `};
+  }
+  .title{
+    flex: 5;
+    text-align: center;
+    ${media.small`
+      flex: 6;
+    `};
+  }
+  .recipe{
+    flex : 2;
+    ${media.small`
+      display : none;
+    `};
+  }
+  .comment{
+    flex : 3;
+    text-align: center;
+    ${media.small`
+      flex : 6;
+    `};
+  }
+  .date{
+    flex: 2;
+    text-align: center;
+
+  }
+  .delete{
+    flex: 1;
+    text-align: center;
+    /* ${media.small`
+      flex: 1;
+    `}; */
+  }
+  ${media.small`
+    font-size: 13px;
+  `};
+  
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+  height: 55px;
+  border-color: ${(props) =>  props.theme.navBorderColor};
+
+`;
+
+export const MypageRowListItem = styled(ListItem)`
+  .no{
+    flex: 1;
+    text-align: center;
+    ${media.small`
+      /* flex: 1; */
+      /* margin-left : -10px; */
+      font-size: 12px;
+    `};
+  }
+  .division{
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;   
+    ${media.small`
+      font-size: 13px;
+      color: ${(props : any) =>  props.theme.navBorderColor};
+    `};
+  }
+  .content {
+    display: flex;
+    flex: 6;
+    align-items: center;
+    ${media.small`
+      /* flex: 6; */
+      margin-left : 20px;
+      flex-direction: column;
+      text-align : left;
+      align-items: flex-start;
+      white-space: nowrap;         
+      overflow: hidden;            
+      text-overflow: ellipsis;   
+    `};
+  }
+  .recipe{
+    flex : 2;
+    ${media.small`
+      font-size : 12px;
+      color : ${(props : any) =>  props.theme.navBorderColor};
+    `};
+  }
+  .comment{
+    width : 95%;
+    flex : 3;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;   
+  }
+  .title{
+    flex: 4;
+    width : 95%;
+    margin-left: 50px;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;     
+    ${media.small`
+      /* flex: 4; */
+      margin-left: 0px;
+      margin-bottom : 3px;
+      font-size: 15px; 
+      
+    `};
+
+  }
+  .date{
+    flex: 2;
+    font-size: 14px;
+    text-align: center;
+    ${media.small`
+      /* flex: 2; */
+      font-size: 10px;
+      color : ${(props : any) =>  props.theme.navBorderColor};
+    `};
+  }
+  .delete{
+    flex: 1;
+    text-align: center;
+    /* ${media.small`
+      flex: 1;
+    `}; */
+  }
+
+  ${media.small`
+    height: 60px;
+  `};
+  border-bottom: 1px solid;
+  height: 55px;
+  border-color: ${(props) =>  props.theme.tableBorderColor};
+  &:last-child{
+    border-color: ${(props) =>  props.theme.navBorderColor};
+  }
+  &:hover{
+    cursor: pointer;
+    background-color : ${(props) =>  props.theme.tableHoverColor};
+  }
+`;
+
+export const ActivityHeaderListItem = styled(ListItem)`
+  width: 90%;
+  margin: 0 auto;
+  border-bottom: 1px solid;
+  /* border-top: 1px solid; */
+  height: 50px;
+  border-color: ${(props) =>  props.theme.navBorderColor};
+  font-size: 14px;
+  .activity-no{
+    flex: 1;
+    text-align: center;
+  }
+  .activity-title{
+    flex: 4;
+    text-align: center;
+    ${media.small`
+      flex: 8;
+    `};
+  }
+  /* .activity-comment{
+    flex : 4;
+    text-align: center;
+    ${media.small`
+      display : none;
+    `};
+  }  */
+  .date{
+    flex: 2;
+    text-align: center;
+  }
+
+`;
+
+export const ActivityRowListItem = styled(ListItem)`
+  width: 90%;
+  margin: 0 auto;
+  border-bottom: 1px solid;
+  /* border-top: 1px solid; */
+  height: 50px;
+  border-color: ${(props) =>  props.theme.navBorderColor};
+  font-size: 15px;
+  .activity-no{
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+  }
+  .activity-title{
+    flex: 4;
+    width : 90%;
+    margin-left : 10px;
+    margin-right : 5px;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;    
+  }
+  .activity-comment{
+    margin-left : 10px;
+    flex : 4;
+    width : 90%;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;
+  } 
+  .date{
+    flex: 2;
+    text-align: center;
+    font-size: 12px;
+    ${media.small`
+      font-size: 12px;
+      color : ${(props : any) =>  props.theme.navBorderColor};
+    `};
+  }
+  .contents {
+    display: flex;
+    flex: 4;
+    align-items: center;
+    margin-left : 20px;
+    flex-direction: column;
+    text-align : left;
+    align-items: flex-start;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;   
+    .activity-title{
+      font-size: 13px;
+      color : ${(props : any) =>  props.theme.navBorderColor};
+    }
+  }
+  &:hover{
+    cursor: pointer;
+    font-weight : bold;
+  }
+
 `;
