@@ -315,7 +315,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyWrites isDarkMode={false} />
+              <MyWrites />
             </RouteBox>
           }
         />
@@ -333,7 +333,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyRecipes isDarkMode={false} />
+              <MyRecipes/>
             </RouteBox>
           }
         />

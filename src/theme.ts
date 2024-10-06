@@ -20,6 +20,8 @@ export const styledLightTheme: DefaultTheme = {
   contrastColor: "#fff",
   footerColor: "#f3f0e2",
   navBorderColor: "#ccc",
+  tableBorderColor: "#cccccc7f",
+  tableHoverColor: "#e7e7e645",
   searchBorderColor: "#ccc",
 
   scrollbarBackColor: "#d5d2d25d",
@@ -38,6 +40,8 @@ export const styledDarkTheme: DefaultTheme = {
   contrastColor: "#000",
   footerColor: "#363131",
   navBorderColor: "#878585c1",
+  tableBorderColor: "#7a797950",
+  tableHoverColor: "#4b464646",
   searchBorderColor: "#878585c1",
 
   scrollbarBackColor: "#76757539",

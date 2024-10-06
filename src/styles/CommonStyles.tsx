@@ -104,6 +104,7 @@ export const SearchArea = styled.div`
   justify-content: center;
   ${media.small`
     display: block;
+    /* margin-left : 50px; */
   `};
 
   .select-category {
@@ -112,12 +113,14 @@ export const SearchArea = styled.div`
     ${media.small`
     margin : 0 auto;
     margin-bottom : 10px;
+    margin-right : 20px;
+    /* margin-left : 50px; */
   `};
   }
 
   .select-category-item {
-    width: 180px;
-    margin-right: 50px;
+    width: 200px;
+    /* margin-right: 50px; */
   }
   .search-input {
     width: 350px;

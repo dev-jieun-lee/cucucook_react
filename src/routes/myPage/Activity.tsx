@@ -2,6 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { Wrapper } from "../../styles/CommonStyles";
 import {
+  ActivityHeaderListItem,
+  ActivityRowListItem,
+  MypageHeaderListItem,
+  MypageRowListItem,
   MyPageTitle,
   SummaryCountArea,
   SummaryDataArea,
@@ -18,7 +22,9 @@ import {
   fetchMyRecipeList,
 } from "../../apis/mypageApi";
 import {
+  Box,
   Button,
+  List,
   Paper,
   Table,
   TableBody,
@@ -27,6 +33,7 @@ import {
   TableHead,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -87,7 +94,15 @@ function Activity() {
   const onDetail = (kind: string, id: string) => {
     if (kind === "like" || kind === "recipe" || kind === "comment") {
       navigate(`/recipe/member_recipe/${id}`);
-    } else if (kind === "writing") {
+    } 
+    else if (kind === "NOTICE") {
+      navigate(`/notice/${id}`);
+    }
+    else if (kind === "FAQ") {
+      navigate(`/faq/${id}`);
+    }
+    else if (kind === "QNA") {
+      navigate(`/qna/${id}`);
     }
   };
 
@@ -153,55 +168,45 @@ function Activity() {
             </Button>
           </div>
           <div className="content">
-            <TableContainer className="table-container" component={Paper}>
-              <Table className="table">
-                <TableHead className="head">
-                  <TableRow>
-                    <TableCell className="no-cell">No.</TableCell>
-                    <TableCell className="title-cell">
-                      {t("text.title")}
-                    </TableCell>
-                    <TableCell>{t("text.register_date")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {likedRecipes && likedRecipes.length > 0 ? (
-                    likedRecipes
-                      ?.slice(0, 3)
-                      .map((item: any, index: number) => (
-                        <TableRow
-                          className="row"
-                          key={index}
-                          onClick={() => onDetail("like", item.recipeId)}
-                        >
-                          <TableCell
-                            component="th"
-                            scope="row"
-                            className="cell"
-                          >
-                            {index + 1}
-                          </TableCell>
-                          <TableCell className="cell">{item.title}</TableCell>
-                          <TableCell className="cell">
-                            {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        {t("sentence.no_data")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
               {likedRecipes && likedRecipes.length > 0 ? (
-                <MoreVertIcon className="more-icon" />
+                likedRecipes?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.recipeId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="activity-title">
+                      <span>{item.title}</span>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
               ) : (
-                <></>
+                <Typography>{t("sentence.no_data")}</Typography>
               )}
-            </TableContainer>
+            </List>
+            {likedRecipes && likedRecipes.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="recipe grid">
@@ -219,49 +224,45 @@ function Activity() {
             </Button>
           </div>
           <div className="content">
-            <TableContainer className="table-container" component={Paper}>
-              <Table className="table">
-                <TableHead className="head">
-                  <TableRow>
-                    <TableCell className="no-cell">No.</TableCell>
-                    <TableCell className="title-cell">
-                      {t("text.title")}
-                    </TableCell>
-                    <TableCell>{t("text.register_date")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {latestRecipes && latestRecipes.length > 0 ? (
-                    latestRecipes.map((item: any, index: number) => (
-                      <TableRow
-                        className="row"
-                        key={index}
-                        onClick={() => onDetail("recipe", item.recipeId)}
-                      >
-                        <TableCell component="th" scope="row" className="cell">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell className="cell">{item.title}</TableCell>
-                        <TableCell className="cell">
-                          {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        {t("sentence.no_data")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
               {latestRecipes && latestRecipes.length > 0 ? (
-                <MoreVertIcon className="more-icon" />
+                latestRecipes?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.recipeId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="activity-title">
+                      <span>{item.title}</span>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
               ) : (
-                <></>
+                <Typography>{t("sentence.no_data")}</Typography>
               )}
-            </TableContainer>
+            </List>
+            {latestRecipes && latestRecipes.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="writing grid">
@@ -279,49 +280,60 @@ function Activity() {
             </Button>
           </div>
           <div className="content">
-            <TableContainer className="table-container" component={Paper}>
-              <Table className="table">
-                <TableHead className="head">
-                  <TableRow>
-                    <TableCell className="no-cell">No.</TableCell>
-                    <TableCell className="title-cell">
-                      {t("text.title")}
-                    </TableCell>
-                    <TableCell>{t("text.register_date")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {latestPosts && latestPosts.length > 0 ? (
-                    latestPosts.map((item: any, index: number) => (
-                      <TableRow
-                        className="row"
-                        key={index}
-                        onClick={() => onDetail("writing", item.boardId)}
-                      >
-                        <TableCell component="th" scope="row" className="cell">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell className="cell">{item.title}</TableCell>
-                        <TableCell className="cell">
-                          {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        {t("sentence.no_data")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
               {latestPosts && latestPosts.length > 0 ? (
-                <MoreVertIcon className="more-icon" />
+                latestPosts?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.boardId}
+                    onClick={() => onDetail(item.boardDivision, item.boardId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="contents">
+                      <Box className="activity-title">
+                        <span>
+                        {item.boardDivision === "NOTICE" ? (
+                          t("menu.board.notice")
+                        ) : item.boardDivision === "FAQ" ? (
+                          t("menu.board.FAQ")
+                        ) : item.boardDivision === "QNA" ? (
+                          t("menu.board.QNA")
+                        ) : (
+                          <></>
+                        )}
+                        </span>
+                      </Box>
+                      <Box className="activity-comment">
+                        <span>{item.title}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
               ) : (
-                <></>
+                <Typography>{t("sentence.no_data")}</Typography>
               )}
-            </TableContainer>
+            </List>
+            {latestPosts && latestPosts.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="comment grid">
@@ -339,59 +351,50 @@ function Activity() {
             </Button>
           </div>
           <div className="content">
-            <TableContainer className="table-container" component={Paper}>
-              <Table className="table">
-                <TableHead className="head">
-                  <TableRow>
-                    <TableCell className="no-cell">No.</TableCell>
-                    <TableCell className="title-cell">
-                      {t("text.title")}
-                    </TableCell>
-                    <TableCell className="title-cell">
-                      {t("text.comment")}
-                    </TableCell>
-                    <TableCell>{t("text.register_date")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {latestReplies && latestReplies.length > 0 ? (
-                    latestReplies
-                      .slice(0, 3)
-                      .map((item: any, index: number) => (
-                        <TableRow
-                          className="row"
-                          key={index}
-                          onClick={() => onDetail("comment", item.recipeId)}
-                        >
-                          <TableCell
-                            component="th"
-                            scope="row"
-                            className="cell"
-                          >
-                            {index + 1}
-                          </TableCell>
-                          <TableCell className="cell">{item.title}</TableCell>
-                          <TableCell className="cell">{item.comment}</TableCell>
-                          <TableCell className="cell">
-                            {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        {t("sentence.no_data")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
               {latestReplies && latestReplies.length > 0 ? (
-                <MoreVertIcon className="more-icon" />
+                latestReplies?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.commentId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className = "contents">
+                      <Box className="activity-title">
+                        <span>{item.title}</span>
+                      </Box>
+                      <Box className="activity-comment">
+                        <span>{item.comment}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
               ) : (
-                <></>
+                <Typography>{t("sentence.no_data")}</Typography>
               )}
-            </TableContainer>
+            </List>
+            {latestReplies && latestReplies.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </SummaryDataArea>

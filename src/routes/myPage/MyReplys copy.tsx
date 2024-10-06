@@ -109,11 +109,13 @@ const MyReplys: React.FC<{}> = () => {
 
     try {
       const newReplies = await fetchMyReplies(
-        memberId,
-        Math.max(page, 0), // 페이지 번호가 음수일 경우 0으로 처리,
-        pageSize,
-        sortOption,
-        sortDirection
+        memberId!,
+      1,
+      1,
+      sortOption,
+      sortDirection,
+      // "",
+      // searchType
       );
       if (page === 0) {
         setMyReplies(newReplies); // 처음 로드 시에는 새로 불러온 데이터로 초기화
