@@ -24,10 +24,10 @@ import {
   insertRecipeCategory,
   updateRecipeCategory,
 } from "../../../apis/recipeApi";
-import { DialogForm, DialogTitleArea } from "../../../styles/AdminStyle";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
 import { handleApiError } from "../../../hooks/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
 
 interface RecipeCategoryDialogProps {
   open: boolean;

@@ -96,6 +96,7 @@ function BoardCategoryManage() {
     return categoryList.data;
   };
 
+
   const {
     data: boardCategoryList,
     isLoading: boardCategoryListLoading,
@@ -153,11 +154,12 @@ function BoardCategoryManage() {
     if (e.target.value === "division") {
       setSearch("all"); 
       setDivision("all");
-    } else {
+    } 
+    else {
       setSearch(""); 
     }
   
-    setTriggerSearch(true); 
+    // setTriggerSearch(true); 
   };
   
 
@@ -251,7 +253,7 @@ function BoardCategoryManage() {
           onChange={handleSearchTypeChange}
         >
           <MenuItem value="name">{t("menu.board.category_name")}</MenuItem>
-          <MenuItem value="name_en">
+          <MenuItem value="nameEn">
             {t("menu.board.category_name_en")}
           </MenuItem>
           <MenuItem value="division">{t("menu.board.division")}</MenuItem>
@@ -360,7 +362,7 @@ function BoardCategoryManage() {
                           style={{ color: `${categoryItem.color}` }}
                           className="category"
                         >
-                          {categoryItem.name_en}
+                          {categoryItem.nameEn}
                         </CustomCategory>
                       </TableCell>
                       <TableCell>

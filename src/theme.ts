@@ -62,6 +62,9 @@ export const muiLightTheme = createTheme({
     secondary: {
       main: "#364C63",
     },
+    info: {
+      main: "#d28c6f",
+    },
     background: {
       default: "#F4F3EF", // 라이트 모드 배경 색상
       paper: "#f5f5f5", // 카드, 모달 등 배경 색상

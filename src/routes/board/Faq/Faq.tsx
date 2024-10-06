@@ -75,6 +75,7 @@ function Faq() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType : "",
       start: "",
       display: "",
     };
@@ -257,8 +258,8 @@ function Faq() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.FAQ")}
-        {user?.role === "1" ? (
-          <Tooltip title={t("text.writing")}>
+        {user?.role === "0" ? (
+          <Tooltip title={t("text.add")}>
             <Fab
               className="add-btn"
               size="small"

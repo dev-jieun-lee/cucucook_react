@@ -275,22 +275,19 @@ export async function updateMember(
   memberId: string,
   name: string,
   email: string,
-  phone: string
+  phone: string,
+  role?: string
 ) {
-  console.log(
-    `회원 정보 업데이트 요청: memberId=${memberId}, name=${name}, email=${email}, phone=${phone}`
-  );
   try {
     const response = await axios.put(`${BASE_URL}/updateMember`, {
       memberId,
       name,
       email,
       phone,
+      role
     });
-    console.log("회원 정보 업데이트 성공:", response.data);
     return response.data;
   } catch (error) {
-    console.error("회원 정보 업데이트 실패:", error);
     throw error;
   }
 }
