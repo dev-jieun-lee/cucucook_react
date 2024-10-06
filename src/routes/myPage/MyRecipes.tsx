@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Divider, Grid } from "@mui/material";
+import { Box, Divider, Grid, IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import { Wrapper, PageTitleBasic } from "../../styles/CommonStyles";
+import { Wrapper, PageTitleBasic, TitleCenter } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -18,8 +18,9 @@ import {
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import { fetchMyRecipeList } from "../../apis/mypageApi";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
-const MyRecipes = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const MyRecipes = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -70,9 +71,19 @@ const MyRecipes = ({ isDarkMode }: { isDarkMode: boolean }) => {
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
-        <TitleBox>
-          <PageTitleBasic>{t("mypage.my_recipes")}</PageTitleBasic>
-        </TitleBox>
+      <TitleCenter style={{ marginBottom: "30px" }}>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate("/mypage/activity")}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("mypage.myRecipe")}
+      </TitleCenter>
 
         <Box component="section" sx={{ width: "100%" }}>
           <Grid container spacing={2}>

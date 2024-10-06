@@ -175,15 +175,15 @@ export const fetchMyReplies = async (
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: { page, pageSize, memberId, sortOption, sortDirection },
+      params: {memberId, page, pageSize,  sortOption, sortDirection },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch replies:", error);
     throw error;
   }
 };
+
 
 //댓글 삭제
 export const deleteReply = async (memberId: string, commentId: string) => {
@@ -249,7 +249,9 @@ export const fetchMyWrites = async (
   memberId: string,
   page: number,
   pageSize: number,
-  boardDivision: string
+  boardDivision: string,
+  search : string,
+  searchType : string
 ) => {
   try {
     // 여기서 boardDivision을 로깅합니다.
@@ -261,6 +263,8 @@ export const fetchMyWrites = async (
         page,
         pageSize,
         boardDivision,
+        search,
+        searchType
       },
     });
     return response.data;
