@@ -7,15 +7,14 @@ import {
   getBoardCategoryList,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import {
   BoardButtonArea,
   ContentsInputArea,
   TitleInputArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import {
-  AlertColor,
   Button,
   FormControl,
   FormHelperText,
@@ -29,9 +28,8 @@ import { useFormik } from "formik";
 import "react-quill/dist/quill.snow.css";
 import QuillEditer from "../QuillEditer";
 import * as Yup from "yup";
-import SnackbarCustom from "../../../components/SnackbarCustom";
 import { useAuth } from "../../../auth/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Swal from "sweetalert2";
 import Loading from "../../../components/Loading";
 
@@ -122,7 +120,7 @@ function FaqForm() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      memberId: "1",
+      memberId: user?.memberId,
       title: boardId ? boardWithCategory?.data?.title || "" : "",
       boardCategoryId: boardId
         ? boardWithCategory?.category?.boardCategoryId || ""
@@ -148,7 +146,7 @@ function FaqForm() {
     if (!boardId) {
       // 새로운 게시글 작성 모드일 경우 폼 초기화
       formik.setValues({
-        memberId: "1",
+        memberId: user?.memberId,
         title: "",
         boardCategoryId: "",
         contents: "",

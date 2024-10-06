@@ -1,5 +1,5 @@
-import { SxProps, Theme } from "@mui/material/styles";
-import { CSSProperties } from "react";
+import { SxProps, Theme } from "@mui/material";
+import styled, { CSSProperties } from "styled-components";
 
 // 모달 스타일
 export const activityModalStyles: {

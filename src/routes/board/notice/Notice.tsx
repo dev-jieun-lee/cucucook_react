@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { ContentsArea, CustomCategory } from "../BoardStyle";
 import {
   Fab,
   IconButton,
@@ -9,7 +8,6 @@ import {
   Pagination,
   Paper,
   Select,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -19,15 +17,16 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
+import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
+import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 
 function Notice() {
   const { user } = useAuth(); //로그인 상태관리
@@ -47,8 +46,13 @@ function Notice() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //notice의 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {

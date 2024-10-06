@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import media from "../../../styles/MediaQuery";
+import media from "./MediaQuery";
 import { Box, FormControlLabel, OutlinedInput } from "@mui/material";
 import { Button } from "@mui/material";
 import { Typography } from "@mui/material";
@@ -81,16 +81,16 @@ export const LoginWrapper = styled.div`
     width: 90%;
   `};
 
-  .email-btn{
-    height : 53px;
+  .email-btn {
+    height: 53px;
     margin-top: -3px;
-    font-size : 15px;
+    font-size: 15px;
     margin-right: -5px;
   }
-  .submit-btn{
+  .submit-btn {
     margin-top: 50px;
-    height : 53px;
-    font-size : 15px;
+    height: 53px;
+    font-size: 15px;
   }
 `;
 
@@ -124,15 +124,15 @@ export const SignupIntroWrapper = styled.div`
       margin-bottom: 20px;
     `};
   }
-  .email-btn{
-    height : 53px;
+  .email-btn {
+    height: 53px;
     margin-top: -3px;
-    font-size : 15px;
+    font-size: 15px;
   }
-  .submit-btn{
+  .submit-btn {
     margin-top: 50px;
-    height : 53px;
-    font-size : 15px;
+    height: 53px;
+    font-size: 15px;
   }
 `;
 
@@ -152,7 +152,6 @@ export const ButtonArea = styled.div`
     color: ${(props) => props.theme.mainColor};
   }
 `;
-
 
 export const ResultBox = styled.div`
   padding: 16px;
@@ -174,7 +173,7 @@ export const ResultBox = styled.div`
 export const LoginSubmitButton = styled(Button)`
   margin: 20px 0;
   height: 40px;
-  .intro-btn{
+  .intro-btn {
     margin-top: 10px;
   }
 `;
@@ -207,20 +206,20 @@ export const CheckBoxContainer = styled.div`
 export const StyledAnchor = styled(Link)`
   font-size: 1rem;
   color: ${(props) => props.theme.mainColor};
-  text-decoration: none; 
+  text-decoration: none;
   &:hover {
     text-decoration: underline; // 호버 시 밑줄 추가
-    cursor: pointer; 
+    cursor: pointer;
   }
 `;
 
 export const FindIdBox = styled(Box)`
-  .find-btn{
+  .find-btn {
     height: 53px;
     margin-top: 6px;
     font-size: 16px;
   }
-  .submit{
+  .submit {
     height: 53px;
     font-size: 16px;
   }

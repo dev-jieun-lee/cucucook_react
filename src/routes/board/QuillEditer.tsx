@@ -1,8 +1,6 @@
 import ReactQuill, { Quill } from "react-quill";
 import EditerModule from "./EditerModule";
 import { forwardRef, useMemo, useState } from "react";
-import { ImageResize } from "quill-image-resize-module-ts";
-Quill.register("modules/ImageResize", ImageResize);
 
 const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
   const formats: string[] = [
@@ -31,10 +29,6 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     () => ({
       toolbar: {
         container: "#toolBar",
-      },
-      ImageResize: {
-        parchment: Quill.import("parchment"),
-        modules: ["Resize", "DisplaySize"],
       },
     }),
     []

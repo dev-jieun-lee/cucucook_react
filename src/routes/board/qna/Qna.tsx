@@ -1,17 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
+import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { AnswerContainer, ContentsArea, CustomCategory } from "../BoardStyle";
+import { AnswerContainer, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import React, { useEffect, useState } from "react";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
+import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 function Qna() {
@@ -31,8 +30,13 @@ function Qna() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {

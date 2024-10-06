@@ -1,5 +1,4 @@
 
-import CircularProgress from '@mui/material/CircularProgress';
 import styled, { keyframes } from 'styled-components';
 
 const CenteredWrapper = styled.div`

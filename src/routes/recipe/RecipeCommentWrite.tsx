@@ -11,19 +11,22 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 import {
   getRecipeComment,
   insertRecipeComment,
   updateRecipeComment,
-} from "../../api";
+} from "../../apis/recipeApi";
+
+import { useAuth } from "../../auth/AuthContext";
 import {
   RecipeCommentWrite,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-import { useAuth } from "../../auth/AuthContext";
+import { handleApiError } from "../../hooks/errorHandler";
+
 const customStyles = recipeCommonStyles();
 
 interface RecipeCommentWriteBoxProps {
@@ -39,8 +42,10 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   activeCommentId,
   onCancel,
 }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { recipeId } = useParams();
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const [commentId, setCommentId] = useState<string | null>(null);
   const [pCommentId, setPCommentId] = useState<string | null>(null);
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -66,8 +71,8 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
       const recipeComment = await getRecipeComment(params);
       return recipeComment.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -83,21 +88,32 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
       commentId ? updateRecipeComment(values) : insertRecipeComment(values),
     {
       onSuccess: (data) => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.save"),
-          text: t("menu.board.alert.save"),
-          confirmButtonText: t("text.check"),
-          timer: 1000,
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
+        console.log(data);
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.save"),
+            text: t(`CODE.${data.message}`),
+            confirmButtonText: t("text.check"),
+            timer: 1000,
+            showConfirmButton: false,
+            timerProgressBar: true,
+          });
 
-        formik.resetForm();
-        onCommentSubmit();
+          formik.resetForm();
+          onCommentSubmit();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.save"),
+            text: t(`CODE.${data.message}`),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        // 에러 처리
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -184,11 +200,14 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                   >
                     <span>
                       <Rating
-                        name="simple-controlled"
+                        name={
+                          !user?.memberId ? "simple-controlled" : "read-only"
+                        }
                         value={formik.values.rate || 0}
                         onChange={(event, newValue) => {
                           formik.setFieldValue("rate", newValue);
                         }}
+                        readOnly={!user?.memberId}
                       />
                     </span>
                   </Tooltip>
@@ -212,7 +231,12 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                 <Grid sx={{ textAlign: "center" }}>{t("text.comment")}</Grid>
                 <Grid>
                   <TextField
-                    label={t("text.comment")}
+                    disabled={!user?.memberId}
+                    label={
+                      !user?.memberId
+                        ? t("recipe.error.comment_no_member")
+                        : t("text.comment")
+                    }
                     multiline
                     rows={3}
                     variant="outlined"
@@ -232,7 +256,11 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                   />
                 </Grid>
               </Grid>
-              {renderButtons()}
+              {user?.memberId ? (
+                renderButtons()
+              ) : (
+                <Box marginTop="10px" textAlign="right"></Box>
+              )}
             </Box>
           </>
         ) : (
@@ -263,11 +291,14 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                     >
                       <span>
                         <Rating
-                          name="simple-controlled"
+                          name={
+                            !user?.memberId ? "simple-controlled" : "read-only"
+                          }
                           value={formik.values.rate || 0}
                           onChange={(event, newValue) => {
                             formik.setFieldValue("rate", newValue);
                           }}
+                          readOnly={!user?.memberId}
                         />
                       </span>
                     </Tooltip>
@@ -303,8 +334,11 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                   </Grid>
                 </Box>
               </Grid>
-
-              {renderButtons()}
+              {user?.memberId ? (
+                renderButtons()
+              ) : (
+                <Box marginTop="10px" textAlign="right"></Box>
+              )}
             </Box>
           </>
         )}

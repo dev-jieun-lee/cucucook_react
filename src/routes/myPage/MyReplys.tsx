@@ -14,9 +14,12 @@ import {
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyReplies, deleteReply, searchReplies } from "./mypageApi";
+import {
+  fetchMyReplies,
+  deleteReply,
+  searchReplies,
+} from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -25,6 +28,7 @@ import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { deleteRecipeComment, deleteRecipeCommentHasChild } from "../../api";
 import { useMutation } from "react-query";
 import { string } from "yup";
+import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 
 const MySwal = withReactContent(Swal);
 
