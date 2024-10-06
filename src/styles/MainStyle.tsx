@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, ListItem } from "@mui/material";
 import styled from "styled-components";
 import media from "./MediaQuery";
 
@@ -243,33 +243,6 @@ export const NoticeTable = styled.div`
   .notice-table {
     width: 85%;
     margin: 20px auto;
-
-    .table-container {
-      background: none;
-      box-shadow: none;
-
-      .MuiTableCell-root {
-        border-bottom: 1px solid;
-        border-color: ${(props) => {
-          const rgbaColor = `rgba(${parseInt(props.theme.textColor.slice(1, 3), 16)},
-                                ${parseInt(props.theme.textColor.slice(3, 5), 16)},
-                                ${parseInt(props.theme.textColor.slice(5, 7), 16)},
-                                0.5)`; // 0.5는 50% 투명도
-          return rgbaColor;
-        }};
-      }
-
-      .row {
-        height: 20px;
-        &:hover {
-          
-          cursor: pointer;
-          .cell{
-            font-weight: bold !important;
-          }
-        }
-      }
-    }
   }
 `;
 
@@ -295,6 +268,101 @@ export const GreetingsWrapper = styled.div`
     }
     100% {
       transform: translateX(-100%); /* 텍스트 전체가 이동 */
+    }
+  }
+`;
+
+export const MainNoticeTable = styled.div`
+  width: 100%;
+  .header{
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+    height: 55px;
+    border-color: ${(props) =>  props.theme.navBorderColor};
+    font-size: 14px;
+    text-align: center;
+
+    .item-category{
+      flex: 3;
+      ${media.small`
+        display : none;
+      `};
+    }
+    .item-title{
+      flex: 10;
+      ${media.small`
+        flex: 13;
+      `};
+    }
+    .item-date{
+      flex: 3;
+      ${media.small`
+        flex: 5;
+      `};
+    }
+  }
+  .list-item{
+    font-size : 15px;
+    border-bottom: 1px solid;
+    height: 50px;
+    border-color: ${(props) =>  props.theme.navBorderColor};
+    ${media.small`
+      height: 55px;
+    `};
+    .item-category-row{
+      flex: 3;
+      text-align: center;
+      ${media.small`
+        margin-bottom : 2px;
+        font-size : 12px;
+      `}; 
+
+    }
+    .item-title-row{
+      margin-left: 20px;
+      flex: 10;
+      width: 95%;
+      align-items: flex-start;
+      white-space: nowrap;         
+      overflow: hidden;            
+      text-overflow: ellipsis;  
+      ${media.small`
+        margin-left: 0px;
+      `}; 
+    }
+    .item-date-row{
+      flex: 3;
+      ${media.medium`
+        font-size: 14px;
+        color : ${(props : any) =>  props.theme.navBorderColor};
+      `};
+      ${media.small`
+        flex: 5;
+        font-size: 12px;
+        color : ${(props : any) =>  props.theme.navBorderColor};
+      `};
+    }
+    .contents{
+      width: 95%;
+      flex: 13;
+      display: flex;
+      text-align : left;
+      align-items: flex-start;
+      white-space: nowrap;         
+      overflow: hidden;            
+      text-overflow: ellipsis;   
+      ${media.small`
+        flex: 11;
+        /* flex: 4; */
+        /* margin-left : 20px; */
+        flex-direction: column;
+        text-align : left;
+        align-items: flex-start;
+      `};
+    }
+    &:hover{
+      cursor: pointer;
+      font-weight : bold;
     }
   }
 `;
