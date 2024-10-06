@@ -12,17 +12,17 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { KeyboardArrowUp } from "@mui/icons-material";
+import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   fetchActivityStats,
+  fetchLikedRecipes,
   fetchMemberBoardList,
   fetchMyComments,
   fetchMyRecipeList,
-  fetchLikedRecipes,
-} from "./mypageApi";
-import { activityStyles, scrollButtonStyles } from "./myPageStyles";
+} from "../../apis/mypageApi";
 
 type StatButtonProps = {
   onClickPath: string;

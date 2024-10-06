@@ -1,11 +1,10 @@
 import React, {
   forwardRef,
-  Ref,
   useEffect,
   useImperativeHandle,
   useRef,
 } from "react";
-import { Add, BorderClear, BorderColor, Close } from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
 import { Box, Button, IconButton } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
 import { useState } from "react";
@@ -120,6 +119,7 @@ const RecipeImageUpload = forwardRef<
             >
               <Add fontSize="large" />
               <input
+                name={`${name}`}
                 type="file"
                 accept="image/*"
                 hidden

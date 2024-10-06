@@ -1,4 +1,9 @@
-import { Girl, KeyboardArrowUp } from "@mui/icons-material";
+import { KeyboardArrowUp } from "@mui/icons-material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import SearchIcon from "@mui/icons-material/Search";
+import StarIcon from "@mui/icons-material/Star";
+import TextsmsIcon from "@mui/icons-material/Textsms";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
@@ -12,19 +17,21 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import {
+  deleteMemberRecipeLike,
   getMemberRecipeList,
   getRecipeCategoryListWithMemberRecipeCount,
-} from "../../api";
+  insertMemberRecipeLike,
+} from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import {
   PageTitleBasic,
   ScrollBtnFab,
-  Wrapper,
   SearchArea,
+  Wrapper,
 } from "../../styles/CommonStyles";
 import {
   SearchBox,
@@ -32,26 +39,25 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  ThumbnailTypography,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import StarIcon from "@mui/icons-material/Star";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import TextsmsIcon from "@mui/icons-material/Textsms";
-import SearchIcon from "@mui/icons-material/Search";
+import { useAuth } from "../../auth/AuthContext";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+  // 파라미터 받아오기
+  const { order } = useParams();
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const navigate = useNavigate();
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setcategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedCategoryKey, setSelectedCategoryKey] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(t("text.recent_order"));
   const [selectedOrderKey, setSelectedOrderKey] = useState("reg_dt");
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   // 로딩 상태 관리
   const [loading, setLoading] = useState(true);
   // 무한 스크롤 시작값
@@ -69,7 +75,15 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     view_count: t("text.count_order"),
     comment_count: t("text.comment_order"),
     comment_rate: t("text.rate_order"),
+    like_count: t("text.like_order"),
   };
+
+  useEffect(() => {
+    if (order) {
+      setSelectedOrder(orderMap[order]);
+      setSelectedOrderKey(order);
+    }
+  }, []);
 
   //마지막 항목이 화면에 보일때 마다 새로운 페이지 데이터 로드
   const { ref: lastItemRef, inView } = useInView({
@@ -97,8 +111,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         await getRecipeCategoryListWithMemberRecipeCount(params);
       return recipeCategoryList.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -108,11 +122,10 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setcategories(data.data);
+        if (data.success) setcategories(data.data);
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -125,15 +138,14 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       display: display,
       recipeCategoryId: selectedCategoryKey,
       orderby: selectedOrderKey,
+      memberId: user?.memberId,
     };
 
     try {
       const memberRecipeList = await getMemberRecipeList(params);
-
       return memberRecipeList.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
     }
   };
 
@@ -143,15 +155,22 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setLoading(false);
-        setHasMore(data?.addData?.hasMore ?? false);
-        setRecipes((prevRecipes) => [...prevRecipes, ...(data.data ?? [])]);
-        setMessage(data.message);
+        if (data.success) {
+          setLoading(false);
+          setHasMore(data?.addData?.hasMore ?? false);
+
+          const finalData = (data?.data ?? []).map((recipeItem: any) => ({
+            ...recipeItem,
+            isLike: recipeItem.memberRecipeLike || false,
+          }));
+
+          setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
+          setMessage(data.message);
+        }
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setLoading(false);
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -200,28 +219,72 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     await refetch();
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const handleRecipeWriteClick = () => {
     navigate("/recipe/member_recipe_write");
+  };
+
+  //좋아요등록
+  const { mutate: insertMemberRecipeLikeMutation } = useMutation(
+    (recipeId: string) => {
+      const params = { recipeId, memberId: user?.memberId };
+      return insertMemberRecipeLike(params);
+    },
+    {
+      onSuccess: (data, recipeId) => {
+        if (data.success) {
+          setRecipes((prevRecipes) =>
+            prevRecipes.map((recipeItem) =>
+              recipeItem.recipeId === recipeId
+                ? {
+                    ...recipeItem,
+                    isLike: true,
+                    likeCount: data.data,
+                  }
+                : recipeItem
+            )
+          );
+        }
+      },
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
+    }
+  );
+
+  //좋아요삭제
+  const { mutate: deleteMemberRecipeLikeMutation } = useMutation(
+    (recipeId: string) => {
+      const params = { recipeId, memberId: user?.memberId };
+      return deleteMemberRecipeLike(params);
+    },
+    {
+      onSuccess: (data, recipeId) => {
+        if (data.success) {
+          setRecipes((prevRecipes) =>
+            prevRecipes.map((recipeItem) =>
+              recipeItem.recipeId === recipeId
+                ? {
+                    ...recipeItem,
+                    isLike: false,
+                    likeCount: data.data,
+                  }
+                : recipeItem
+            )
+          );
+        }
+      },
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
+    }
+  );
+
+  const handleLikeClick = (recipeId: string, isLike: boolean) => {
+    if (!isLike) {
+      insertMemberRecipeLikeMutation(recipeId);
+    } else {
+      deleteMemberRecipeLikeMutation(recipeId);
+    }
   };
 
   return (
@@ -246,7 +309,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                   <InputAdornment position="end">
                     <IconButton
                       // color="primary"
-                      aria-label="toggle password visibility"
+                      aria-label={t("sentence.searching")}
                       onClick={handleSearch}
                       edge="end"
                     >
@@ -283,7 +346,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     color:
                       selectedCategory === category.name
                         ? "primary.main"
-                        : "text.primary",
+                        : "secondary.main",
                     "&:hover": {
                       backgroundColor: "none",
                       color: "primary.main",
@@ -326,7 +389,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 sx={{
                   backgroundColor: "transparent",
                   color:
-                    selectedOrder === value ? "primary.main" : "text.primary",
+                    selectedOrder === value ? "primary.main" : "secondary.main",
                   "&:hover": {
                     backgroundColor: "none",
                     color: "primary.main",
@@ -345,17 +408,21 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     height: "3px",
                     borderRadius: "50%",
                     backgroundColor:
-                      selectedOrder === value ? "primary.main" : "text.primary",
-                    marginRight: "8px", // Spacing between dot and text,
+                      selectedOrder === value
+                        ? "primary.main"
+                        : "secondary.main",
+                    marginRight: "8px",
                   }}
                 />
                 {value}
               </Button>
             ))}
           </Stack>
-          <Button variant="contained" onClick={handleRecipeWriteClick}>
-            {t("text.recipe_write")}
-          </Button>
+          {user?.memberId && (
+            <Button variant="contained" onClick={handleRecipeWriteClick}>
+              {t("text.recipe_write")}
+            </Button>
+          )}
         </TitleBox>
       </Box>
       <Box component="section" sx={{ width: "100%" }}>
@@ -364,132 +431,161 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
             <Loading />
           ) : recipes.length > 0 ? (
             <>
-              {recipes.map((recipeItem) => (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  key={recipeItem.recipeId}
-                  sx={{ flexDirection: "column" }}
-                >
-                  <ThumbnailButton
-                    onClick={() =>
-                      handleViewDetailClick(
-                        "/recipe/member_recipe",
-                        encodeURIComponent(recipeItem.recipeId)
-                      )
-                    }
+              {recipes.map((recipeItem) => {
+                return (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    key={recipeItem.recipeId}
+                    sx={{ flexDirection: "column" }}
                   >
-                    <Box className="thumbnail-box-wrap">
-                      <ThumbnailBoxContainer>
-                        <ThumbnailBox
-                          src={
-                            recipeItem.memberRecipeImages
-                              ? `${process.env.REACT_APP_API_URL}${recipeItem.memberRecipeImages.webImgPath}/${recipeItem.memberRecipeImages.serverImgName}.${recipeItem.memberRecipeImages.extension}`
-                              : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
-                          }
-                          alt={recipeItem.title}
-                        ></ThumbnailBox>
-                      </ThumbnailBoxContainer>
-                      <Box className="thumbnail-info-box-wrap">
-                        <Box margin={"20px"}>
-                          <Box className="thumbnail-info-title-box">
-                            {recipeItem.title}
-                          </Box>
-                          <Box>
-                            <Grid
-                              container
-                              className="thumbnail-info-default-box"
+                    <ThumbnailButton
+                      onClick={() =>
+                        handleViewDetailClick(
+                          "/recipe/member_recipe",
+                          encodeURIComponent(recipeItem.recipeId)
+                        )
+                      }
+                    >
+                      <Box className="thumbnail-box-wrap">
+                        <ThumbnailBoxContainer>
+                          <ThumbnailBox
+                            src={
+                              recipeItem.memberRecipeImages
+                                ? `${process.env.REACT_APP_FILE_URL}${recipeItem.memberRecipeImages.webImgPath}/${recipeItem.memberRecipeImages.serverImgName}.${recipeItem.memberRecipeImages.extension}`
+                                : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
+                            }
+                            alt={recipeItem.title}
+                          ></ThumbnailBox>
+                          {user?.memberId && (
+                            <IconButton
+                              sx={{}}
+                              className={`recipe-like-btn`}
+                              component="div"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleLikeClick(
+                                  recipeItem.recipeId,
+                                  recipeItem.isLike
+                                );
+                              }}
                             >
-                              <Grid item>{recipeItem.member.name}</Grid>
-                              <Grid item>
-                                <Grid container spacing={1}>
-                                  <Grid item>
-                                    <Box display="flex" alignItems="center">
-                                      <VisibilityIcon
-                                        style={{
-                                          verticalAlign: "middle",
-                                          fontSize: "0.9rem",
-                                        }}
-                                      />
+                              {recipeItem.isLike ? (
+                                <FavoriteIcon
+                                  fontSize="large"
+                                  style={{ verticalAlign: "middle" }}
+                                />
+                              ) : (
+                                <FavoriteBorderIcon
+                                  fontSize="large"
+                                  style={{ verticalAlign: "middle" }}
+                                />
+                              )}
+                            </IconButton>
+                          )}
+                        </ThumbnailBoxContainer>
+                        <Box className="thumbnail-info-box-wrap">
+                          <Box margin={"20px"}>
+                            <Box className="thumbnail-info-title-box">
+                              {recipeItem.title}
+                            </Box>
+                            <Box>
+                              <Grid
+                                container
+                                className="thumbnail-info-default-box"
+                              >
+                                <Grid item>{recipeItem.member.name}</Grid>
+                                <Grid item>
+                                  <Grid container spacing={1}>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <VisibilityIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
 
-                                      <Box component="span" ml={0.5}>
-                                        {recipeItem.viewCount}
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.viewCount}
+                                        </Box>
                                       </Box>
-                                    </Box>
-                                  </Grid>
-                                  <Grid item>
-                                    <Divider
-                                      className="recipe-eval-info"
-                                      orientation="vertical"
-                                      sx={{ height: "20px" }}
-                                    />
-                                  </Grid>
-                                  <Grid item>
-                                    <Box display="flex" alignItems="center">
-                                      <TextsmsIcon
-                                        style={{
-                                          verticalAlign: "middle",
-                                          fontSize: "0.9rem",
-                                        }}
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
                                       />
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <TextsmsIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
 
-                                      <Box component="span" ml={0.5}>
-                                        {recipeItem.commentCount}
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.commentCount}
+                                        </Box>
                                       </Box>
-                                    </Box>
-                                  </Grid>
-                                  <Grid item>
-                                    <Divider
-                                      className="recipe-eval-info"
-                                      orientation="vertical"
-                                      sx={{ height: "20px" }}
-                                    />
-                                  </Grid>
-                                  <Grid item>
-                                    <Box display="flex" alignItems="center">
-                                      <StarIcon
-                                        style={{
-                                          verticalAlign: "middle",
-                                          fontSize: "0.9rem",
-                                        }}
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
                                       />
-                                      <Box component="span" ml={0.5}>
-                                        {recipeItem.commentRate}
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <StarIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.commentRate}
+                                        </Box>
                                       </Box>
-                                    </Box>
-                                  </Grid>
-                                  <Grid item>
-                                    <Divider
-                                      className="recipe-eval-info"
-                                      orientation="vertical"
-                                      sx={{ height: "20px" }}
-                                    />
-                                  </Grid>
-                                  <Grid item>
-                                    <Box display="flex" alignItems="center">
-                                      <FavoriteIcon
-                                        style={{
-                                          verticalAlign: "middle",
-                                          fontSize: "0.9rem",
-                                        }}
+                                    </Grid>
+                                    <Grid item>
+                                      <Divider
+                                        className="recipe-eval-info"
+                                        orientation="vertical"
+                                        sx={{ height: "20px" }}
                                       />
-                                      <Box component="span" ml={0.5}>
-                                        {recipeItem.likeCount}
+                                    </Grid>
+                                    <Grid item>
+                                      <Box display="flex" alignItems="center">
+                                        <FavoriteIcon
+                                          style={{
+                                            verticalAlign: "middle",
+                                            fontSize: "0.9rem",
+                                          }}
+                                        />
+                                        <Box component="span" ml={0.5}>
+                                          {recipeItem.likeCount}
+                                        </Box>
                                       </Box>
-                                    </Box>
+                                    </Grid>
                                   </Grid>
                                 </Grid>
                               </Grid>
-                            </Grid>
+                            </Box>
                           </Box>
                         </Box>
                       </Box>
-                    </Box>
-                  </ThumbnailButton>
-                </Grid>
-              ))}
+                    </ThumbnailButton>
+                  </Grid>
+                );
+              })}
               <Grid item xs={12} sm={12} md={12}>
                 {hasMore && <LoadingNoMargin />}
               </Grid>
@@ -502,11 +598,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
           )}
         </Grid>
       </Box>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      <ScrollTop />
     </Wrapper>
   );
 };

@@ -16,13 +16,11 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
-  LoginWrapper,
-  LoginSubmitButton,
   StyledSubtitle,
   LeftAlignedFormControlLabel,
   CheckBoxContainer,
   SignupIntroWrapper,
-} from "../login/LoginStyle";
+} from "../../../styles/LoginStyle";
 import { useEmailVerification } from "../../../hooks/useEmailVerification";
 import PersonIcon from "@mui/icons-material/Person";
 

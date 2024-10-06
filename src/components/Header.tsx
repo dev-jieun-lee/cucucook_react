@@ -1,20 +1,12 @@
-import { AlertColor, Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
+import { Drawer, IconButton, Tooltip } from "@mui/material"; // MUI 컴포넌트 임포트
 import Menu from "../memu/Menu"; // 메뉴 컴포넌트
-import {
-  Col,
-  Logo,
-  MotionInput,
-  MotionSearch,
-  Nav,
-  MotionIconButton,
-  DrawerTop,
-} from "../memu/MenuStyle"; // 스타일 컴포넌트
+import { Col, Logo, Nav, DrawerTop } from "../styles/MenuStyle"; // 스타일 컴포넌트
 import LightModeIcon from "@mui/icons-material/LightMode"; // 밝은 모드 아이콘
 import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아이콘
-import SearchIcon from "@mui/icons-material/Search"; // 검색 아이콘
+// 검색 아이콘
 import LoginIcon from "@mui/icons-material/Login"; // 로그인 아이콘
-import LogoutIcon from "@mui/icons-material/Logout"; // 로그아웃 아이콘
-import { motion, useAnimation } from "framer-motion"; // 애니메이션 라이브러리
+// 로그아웃 아이콘
+import { useAnimation } from "framer-motion"; // 애니메이션 라이브러리
 import { useEffect, useState } from "react"; // React 훅
 import { useNavigate } from "react-router-dom"; // 페이지 이동 훅
 import { useForm } from "react-hook-form"; // 폼 관리 훅
@@ -24,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close"; // 드로어 닫기 아이콘
 import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
-import { logout } from "../routes/members/membersApi";
+import { logout } from "../apis/memberApi";
 import LoginUser from "../LoginUser";
 import { useAuth } from "../auth/AuthContext";
 
