@@ -7,12 +7,12 @@ import React, {
 } from "react";
 
 interface AuthContextType {
-  user: { userId: string; name: string; role: string; memberId: number } | null;
+  user: { userId?: string; name: string; role?: string; memberId: number } | null;
   setUser: (
     user: {
-      userId: string;
+      userId?: string;
       name: string;
-      role: string;
+      role?: string;
       memberId: number;
     } | null
   ) => void;
@@ -26,9 +26,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<{
-    userId: string;
+    userId?: string;
     name: string;
-    role: string;
+    role?: string;
     memberId: number;
   } | null>(null);
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);

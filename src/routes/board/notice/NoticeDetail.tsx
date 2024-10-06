@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAuth } from "../../../auth/AuthContext";
 import { useState } from "react";
+import dayjs from "dayjs";
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
@@ -149,8 +150,14 @@ function NoticeDetail() {
           <span className="title">{boardWithCategory?.data.title}</span>
         </div>
         <div className="board-info">
+        <span className="hit">{t("text.register_date")}</span>
           <span className="date">
-            {moment(boardWithCategory?.data.udtDt).format("YYYY-MM-DD")}
+            {dayjs(boardWithCategory?.data.regDt).format("YYYY-MM-DD HH:mm")}
+          </span>
+          <span className="border"></span>
+          <span className="hit">{t("text.update_date")}</span>
+          <span className="date">
+            {dayjs(boardWithCategory?.data.udtDt).format("YYYY-MM-DD HH:mm")}
           </span>
           <span className="border"></span>
           <span className="member">{boardWithCategory?.data.userName}</span>
@@ -167,7 +174,7 @@ function NoticeDetail() {
           }}
         ></div>
       </DetailContents>
-      {user?.role === "1" ? (
+      {user?.role === "0" ? (
         <BoardButtonArea>
           <Button
             className="delete-btn"

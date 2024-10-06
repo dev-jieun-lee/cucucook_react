@@ -62,6 +62,12 @@ export const TitleBasic = styled.div`
   color: ${(props) => props.theme.mainColor};
 `;
 
+export const TitleBox = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 export const PageTitleBasic = styled.div`
   text-align: left;
   font-size: 25px;
@@ -123,5 +129,31 @@ export const CustomPagination = styled(Stack)`
   margin: 15px;
   .pagination-btn {
     margin: 0 auto;
+  }
+`;
+
+//dialog 스타일
+export const DialogTitleArea = styled.div`
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  .title{
+    color: ${(props) => props.theme.mainColor};
+    font-weight: 600;
+  }
+  .close-btn{
+    height: 40px;
+    margin: 15px;
+  }
+`;
+
+export const DialogForm = styled.form`
+  position: relative;
+  .input-form{
+    display: block;
+    margin-bottom: 20px;
+    &:first-child{
+      margin-top: 15px;
+    }
   }
 `;

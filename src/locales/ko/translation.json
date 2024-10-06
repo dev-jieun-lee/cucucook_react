@@ -80,6 +80,9 @@
     }
   },
   "text": {
+    "like" : "찜",
+    "writing" : "글",
+    "phone": "전화번호",
     "color": "색상",
     "name": "이름",
     "name_en": "이름(영문)",
@@ -114,7 +117,6 @@
     "no": "아니오",
     "content": "내용",
     "go_back": "뒤로가기",
-    "writing": "글쓰기",
     "answer": "답변",
     "question": "질문",
     "all_recipe": "전체 레시피",
@@ -202,7 +204,11 @@
     "mycommnet": "내가 쓴 댓글",
     "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
     "liked_recipes": "레시피 찜 목록",
-    "my_recipes": "나의 DIY 레시피"
+    "myCommnet": "내가 댓글 쓴 글",
+    "myWriting": "내가 쓴 글",
+    "myLikes": "내가 찜한 레시피",
+    "myRecipe": "나의 D.I.Y. 레시피",
+    "greetings" : "{{name}}님, 안녕하세요! :)"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -425,5 +431,10 @@
     "E_AUTH": "로그인이 필요합니다. 로그인 해주세요.",
     "E_ROLE": "접근 권한이 없습니다.",
     "E_LOGIN_EXPIRED": "로그인이 만료되었습니다. 다시 로그인 해주세요."
+  },
+  "error" : {
+    "required": "{{value}}은(는) 필수 입력 항목입니다.",
+    "max_length" : "{{value}}은(는) {{length}}자 이하여야 합니다.",
+    "format" : "{{value}} 형식이 올바르지 않습니다."
   }
 }
