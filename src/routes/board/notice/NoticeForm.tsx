@@ -43,6 +43,7 @@ function NoticeForm() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType: "",
       start: "",
       display: "",
     };
@@ -60,6 +61,8 @@ function NoticeForm() {
     getBoardCategoryListApi
   );
 
+  console.log(boardCategoryList);
+  
 
   //수정일 경우 카테고리 포함 보드 데이터 가져오기
   const getBoardWithCategory = async () => {

@@ -20,7 +20,7 @@ import { LoginWrapper } from "../../styles/LoginStyle";
 import { PwButtonArea, PwInputArea, SubTitle } from "../../styles/MypageStyle";
 import SnackbarCustom from "../../components/SnackbarCustom";
 
-const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
+const Profile: React.FC<{}> = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -33,8 +33,7 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
       password: Yup.string().required(t("mypage.Please enter your password")),
     }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      console.log(values);
-
+      
       if (!user?.userId) {
         setErrors({ password: t("mypage.User ID not found") });
         setSubmitting(false);
@@ -42,35 +41,17 @@ const Profile: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
       }
 
       try {
-        console.log("API 호출 시 전달되는 userId:", user.userId);
         const response = await verifyPassword(user.userId, values.password);
-
-        // 응답을 제대로 받았는지 확인하는 추가 콘솔 로그
-        console.log("API 응답 상태 코드:", response?.status);
-        console.log("API 응답 데이터:", response);
 
         // 성공 여부에 따라 처리
         if (response && response.success) {
           console.log("비밀번호 검증 성공");
-
-          // 모달이 닫힌 후 SweetAlert2로 성공 알림 띄우기
-          // setTimeout(() => {
-          // Swal.fire({
-          //   title: t("mypage.Success"),
-          //   text: t("mypage.Password verification successful"),
-          //   icon: "success",
-          //   confirmButtonText: t("mypage.OK"),
-          // }).then(() => {
-          //   // 확인 버튼을 누르면 페이지 이동
-          navigate("/mypage/UserInfo");
-          // });
-          // }, 300); // 모달 닫힘을 기다리기 위해 약간의 딜레이 추가
+            navigate("/mypage/profile/userInfo");
         } else {
           console.log("비밀번호 검증 실패 또는 알 수 없는 오류");
           setErrors({ password: t("mypage.Invalid password") });
         }
       } catch (error) {
-        console.error("API 요청 중 오류 발생:", error);
         if (axios.isAxiosError(error)) {
           if (error.response && error.response.status === 401) {
             setErrors({ password: t("mypage.Invalid password") });

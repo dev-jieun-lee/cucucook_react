@@ -8,6 +8,7 @@ const BASE_URL = apiUrl + "/api/members";
 const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
 const REDIRECT_URI = "https://cucucook.site";
 
+
 // 기본 axios 인스턴스 설정
 const api = axios.create({
   baseURL: BASE_URL,

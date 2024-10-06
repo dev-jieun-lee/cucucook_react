@@ -209,9 +209,9 @@ function MembersManage() {
                       </TableCell>
                       <TableCell>
                         {memberItem.role === "0" ? (
-                          t("text.member")
-                        ) : memberItem.role === "1" ? (
                           t("text.admin")
+                        ) : memberItem.role === "1" ? (
+                          t("text.member")
                         ) : memberItem.role === "2" ? (
                           t("text.super_admin")
                         ) : (
