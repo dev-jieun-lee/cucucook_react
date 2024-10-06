@@ -13,9 +13,9 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useFetchPassword } from "../membersApi"; // 비밀번호 찾기 API 훅 사용
+import { useFetchPassword } from "../../../apis/memberApi"; // 비밀번호 찾기 API 훅 사용
 import { Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper } from "./LoginStyle";
+import { LoginWrapper } from "../../../styles/LoginStyle";
 import { useSearchParams, Link } from "react-router-dom";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // 인증 관련 훅 가져오기

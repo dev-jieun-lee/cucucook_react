@@ -1,5 +1,4 @@
 import { Box, LinearProgress } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import React from 'react';
 import styled from 'styled-components';
 

@@ -5,7 +5,7 @@ import {
   TitleCenter,
   Wrapper,
 } from "../../../styles/CommonStyles";
-import { AccordionTitle, ContentsArea, CustomCategory } from "../BoardStyle";
+import { AccordionTitle, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
   Accordion,
   AccordionDetails,
@@ -17,7 +17,6 @@ import {
   MenuItem,
   Pagination,
   Select,
-  Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -25,18 +24,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardCategoryList,
   getBoardList,
-} from "../api";
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Loading from "../../../components/Loading";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
-import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
@@ -67,9 +63,14 @@ function Faq() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
-
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
+  
   //FAQ 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {

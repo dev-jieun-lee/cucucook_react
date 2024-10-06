@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   useSendEmailVerificationCode,
   useVerifyEmailCode,
-} from "../routes/members/membersApi";
+} from "../apis/memberApi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 

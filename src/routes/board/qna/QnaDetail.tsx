@@ -1,26 +1,24 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardWithReplies,
   insertBoard,
   updateBoard,
-} from "../api";
+} from "../../../apis/boardApi";
 import {
   AnswerButton,
   AnswerContainer,
   BoardButtonArea,
   ContentsInputArea,
   CustomCategory,
-  DetailContents,
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
 import moment from "moment";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
@@ -29,7 +27,6 @@ import Swal from "sweetalert2";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useAuth } from "../../../auth/AuthContext";
 import { useEffect, useRef, useState } from "react";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import QuillEditer from "../QuillEditer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -93,11 +90,11 @@ function QnaDetail() {
   const getBoardWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 

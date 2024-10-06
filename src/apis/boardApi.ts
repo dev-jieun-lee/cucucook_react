@@ -65,8 +65,34 @@ export async function getBoardCategoryList(params: any) {
 }
 
 //게시판 카테고리 상세 조회
-export async function getBoardCategory(id: string) {
+export async function getBoardCategory(id?: string) {
   const response = await axios.get(`${BASE_URL}/getBoardCategory`, {
+    params: {
+      boardCategoryId: id,
+    },
+  });
+  return response.data;
+}
+
+//게시판 카테고리 등록
+export async function insertBoardCategory(form: any) {
+  const response = await axios.post(`${BASE_URL}/insertBoardCategory`, form);
+  return response.data;
+}
+
+//게시판 카테고리 수정
+export async function updateBoardCategory(id: any, form: any) {
+  const response = await axios.put(`${BASE_URL}/updateBoardCategory`, form, {
+    params: {
+      boardCategoryId: id,
+    },
+  });
+  return response.data;
+}
+
+//게시판 카테고리 삭제
+export async function deleteBoardCategory(id: string) {
+  const response = await axios.delete(`${BASE_URL}/deleteBoardCategory`, {
     params: {
       boardCategoryId: id,
     },

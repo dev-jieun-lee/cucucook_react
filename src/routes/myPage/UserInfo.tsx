@@ -21,9 +21,9 @@ import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
 import { useQuery } from "react-query";
-import { getMember, deleteAccount } from "../members/membersApi";
+import { getMember, deleteAccount } from "../../apis/memberApi";
 import { useAuth } from "../../auth/AuthContext";
-import { changePasswordByUser, updateMember } from "./mypageApi";
+import { changePasswordByUser, updateMember } from "../../apis/mypageApi";
 import Cookies from "js-cookie"; // 쿠키를 삭제하기 위해 필요
 
 // 전화번호 포맷 함수
