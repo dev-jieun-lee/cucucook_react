@@ -248,23 +248,27 @@ function QnaDetail() {
               >
                 [ {boardWithCategory?.category.name} ]
               </CustomCategory>
-              <span className="title">{pBoardData[0]?.title}</span>
+              <p className="title">{pBoardData[0]?.title}</p>
             </div>
             <div className="board-info">
-              <span className="hit">{t("text.register_date")}</span>
-              <span className="date">
-                {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
-              </span>
-              <span className="border"></span>
-              <span className="hit">{t("text.update_date")}</span>
-              <span className="date">
-                {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
-              </span>
-              <span className="border"></span>
-              <span className="member">{pBoardData[0]?.userName}</span>
-              <span className="border"></span>
-              <span className="hit">{t("text.hit")}</span>
-              <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              <div className="date-area">
+                <span className="hit">{t("text.register_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+                <span className="border"></span>
+                <span className="hit">{t("text.update_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+              </div>
+              <div className="hit-area">
+                <span className="border m-border"></span>
+                <span className="member">{pBoardData[0]?.userName}</span>
+                <span className="border"></span>
+                <span className="hit">{t("text.hit")}</span>
+                <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              </div>
             </div>
           </TitleArea>
           <QnaContentsArea>
@@ -304,7 +308,7 @@ function QnaDetail() {
         <></>
       )}
       <div style={{ marginTop: "-50px", width: "100%" }}>
-        <TitleArea>
+        <TitleArea style={{ display : "flex", alignItems : "center" }}>
           <div className="board-title">
             <AnswerContainer className="answer-container">
               <SubdirectoryArrowRightIcon className="answer-icon" />

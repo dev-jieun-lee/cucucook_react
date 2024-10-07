@@ -147,23 +147,27 @@ function NoticeDetail() {
           >
             [ {boardWithCategory?.category.name} ]
           </CustomCategory>
-          <span className="title">{boardWithCategory?.data.title}</span>
+          <p className="title">{boardWithCategory?.data.title}</p>
         </div>
         <div className="board-info">
-        <span className="hit">{t("text.register_date")}</span>
-          <span className="date">
-            {dayjs(boardWithCategory?.data.regDt).format("YYYY-MM-DD HH:mm")}
-          </span>
-          <span className="border"></span>
-          <span className="hit">{t("text.update_date")}</span>
-          <span className="date">
-            {dayjs(boardWithCategory?.data.udtDt).format("YYYY-MM-DD HH:mm")}
-          </span>
-          <span className="border"></span>
-          <span className="member">{boardWithCategory?.data.userName}</span>
-          <span className="border"></span>
-          <span className="hit">{t("text.hit")}</span>
-          <span className="viewCount">{boardWithCategory?.data.viewCount}</span>
+          <div className="date-area">
+            <span className="hit">{t("text.register_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.regDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+            <span className="border"></span>
+            <span className="hit">{t("text.update_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.udtDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+          </div>
+          <div className="hit-area">
+            <span className="border m-border"></span>
+            <span className="member">{boardWithCategory?.data.userName}</span>
+            <span className="border"></span>
+            <span className="hit">{t("text.hit")}</span>
+            <span className="viewCount">{boardWithCategory?.data.viewCount}</span>
+          </div>
         </div>
       </TitleArea>
       <DetailContents>
