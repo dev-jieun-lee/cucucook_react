@@ -185,21 +185,6 @@ export const fetchMyReplies = async (
   }
 };
 
-//댓글 삭제
-export const deleteReply = async (memberId: string, commentId: string) => {
-  try {
-    //console.log("api.ts 진입");
-    const response = await axios.delete(`${BASE_URL}/delete`, {
-      params: { memberId, commentId },
-    });
-    // console.log("api.ts 들어갔다 나옴");
-    return response.data;
-  } catch (error) {
-    console.error("Failed to delete reply:", error);
-    throw error;
-  }
-};
-
 // 댓글 검색
 export const searchReplies = async (
   searchKeyword: string,
@@ -284,7 +269,7 @@ export async function updateMember(
       name,
       email,
       phone,
-      role
+      role,
     });
     return response.data;
   } catch (error) {

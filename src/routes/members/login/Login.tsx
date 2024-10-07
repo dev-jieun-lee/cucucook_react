@@ -18,12 +18,16 @@ import {
   StyledAnchor,
 } from "../../../styles/LoginStyle";
 import { login } from "../../../apis/memberApi";
-import { kakaoLoginHandler, naverLoginHandler } from "../socialLoginApi";
+import {
+  kakaoLoginHandler,
+  naverLoginHandler,
+} from "../../../apis/socialLoginApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useAuth } from "../../../auth/AuthContext";
+import Cookies from "js-cookie";
 
 const MySwal = withReactContent(Swal);
 

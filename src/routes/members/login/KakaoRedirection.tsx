@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { handleKakaoCallback } from "../socialLoginApi"; // 카카오 콜백 함수 임포트
+import { handleKakaoCallback } from "../../../apis/socialLoginApi"; // 카카오 콜백 함수 임포트
 
 const KakaoCallback = () => {
   const [isProcessing, setIsProcessing] = useState(false);
