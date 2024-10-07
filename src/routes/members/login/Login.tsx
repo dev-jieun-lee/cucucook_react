@@ -18,11 +18,13 @@ import {
   StyledAnchor,
 } from "../../../styles/LoginStyle";
 import { login } from "../../../apis/memberApi";
+import { kakaoLoginHandler, naverLoginHandler } from "../socialLoginApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { useAuth } from "../../../auth/AuthContext";
+import Cookies from "js-cookie";
 
 const MySwal = withReactContent(Swal);
 
@@ -47,6 +49,7 @@ function Login({ isDarkMode }: LoginProps) {
   const location = useLocation();
   const initialRender = useRef(true);
   const [idError, setIdError] = useState<string | null>(null); // idError 상태 변수 정의
+
   interface LoginValues {
     userId: string;
     password: string;
@@ -62,57 +65,81 @@ function Login({ isDarkMode }: LoginProps) {
       status: number;
     };
   }
+
   const formik = useFormik<LoginValues>({
     initialValues: {
       userId: localStorage.getItem("userId") || "",
       password: "",
     },
     onSubmit: async (values) => {
+      console.log("로그인 페이지 트라이케치 전");
       try {
         const response = await login(values);
-        if (response.token) {
-          handleSaveId(
-            values.userId,
-            localStorage.getItem("saveId") === "true"
-          );
+        console.log("로그인 성공 후 응답 확인:", response); // 응답 확인 로그
+
+        // 기존 response.token 대신 response.accessToken을 사용하여 조건 확인
+        if (response.accessToken && response.refreshToken) {
+          console.log("엑세스 토큰 및 리프레시 토큰 확인됨");
+          handleSaveId(values.userId, saveId);
+
           setUser({
             userId: response.userId,
             name: response.name,
             role: response.role,
             memberId: response.memberId,
           });
+
           setLoggedIn(true);
-          navigate(location.state?.from || "/");
+
+          // JWT 토큰을 쿠키에 저장
+          Cookies.set("access_token", response.accessToken, {
+            expires: 7, // 만료 기간 설정
+            secure: true,
+            sameSite: "Strict",
+          });
+
+          Cookies.set("refresh_token", response.refreshToken, {
+            expires: 7, // 만료 기간 설정
+            secure: true,
+            sameSite: "Strict",
+          });
+
+          // 로그인 성공 시 메인 페이지 또는 이전 페이지로 이동
+          navigate(location.state?.from || "/main"); // 기본적으로 "/main"으로 이동
+        } else {
+          console.warn("엑세스 토큰이나 리프레시 토큰이 없음");
         }
       } catch (error: unknown) {
         const e = error as ErrorResponse;
-        console.log("서버 응답 데이터:", e.response?.data);
+        console.log("로그인페이지 서버 응답 데이터:", e.response?.data);
 
         const failedAttempts = e.response?.data?.failedAttempts ?? 0;
         const remainingTime = e.response?.data?.lockoutTime ?? 0;
         const errorMessage =
           e.response?.data?.message ||
-          "세 번 연속 로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
+          "로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
 
         const swalOptions = {
           title: "로그인 실패",
           text: errorMessage,
-          icon: "warning" as SweetAlertIcon, // 'warning', 'error', 'success', 'info', 'question'
+          icon: "warning" as SweetAlertIcon,
           confirmButtonText: "확인",
         };
 
         if (e.response?.status === 403) {
           swalOptions.title = "계정 잠김";
           swalOptions.text = `계정이 잠겼습니다. ${remainingTime}초 후에 다시 시도해주세요.`;
+          setLockoutTimer(remainingTime); // 잠금 타이머 설정
         } else if (e.response?.status === 401) {
           if (failedAttempts === 3) {
-            swalOptions.text = errorMessage; // 특정 실패 횟수에 따라 메시지 조정
+            swalOptions.text = errorMessage;
           } else if (failedAttempts === 4) {
             swalOptions.text = "네 번 연속 로그인에 실패했습니다.";
           } else if (failedAttempts >= 5) {
             swalOptions.icon = "error";
             swalOptions.text =
               "로그인 시도가 너무 많습니다. 계정이 잠겼습니다.";
+            setLockoutTimer(remainingTime); // 잠금 타이머 설정
           }
         }
 
@@ -129,20 +156,22 @@ function Login({ isDarkMode }: LoginProps) {
   useEffect(() => {
     if (lockoutTimer && lockoutTimer > 0) {
       const interval = setInterval(() => {
-        setLockoutTimer((prev) =>
-          prev !== null && prev > 0 ? prev - 1 : null
-        );
-        remainingTimeRef.current = {
-          minutes: Math.floor(lockoutTimer! / 60),
-          seconds: lockoutTimer! % 60,
-        };
+        setLockoutTimer((prev) => {
+          if (prev !== null && prev > 0) {
+            remainingTimeRef.current = {
+              minutes: Math.floor((prev - 1) / 60),
+              seconds: (prev - 1) % 60,
+            };
+            return prev - 1;
+          }
+          return null;
+        });
       }, 1000);
 
       return () => clearInterval(interval);
     }
   }, [lockoutTimer]);
 
-  // 아이디 저장 상태 변경 처리
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -151,20 +180,18 @@ function Login({ isDarkMode }: LoginProps) {
     handleSaveId(formik.values.userId, saveId);
   }, [saveId, formik.values.userId]);
 
-  // 입력값 핸들링 함수
   const handleUserIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const alphanumericRegex = /^[a-zA-Z0-9!@#$%^&*()_+=-]*$/; // 허용할 문자 정의
+    const alphanumericRegex = /^[a-zA-Z0-9!@#$%^&*()_+=-]*$/;
 
     if (!alphanumericRegex.test(value)) {
-      setIdError(t("members.id_alphanumeric_only")); // 비알파벳 문자가 있을 경우 오류 메시지 설정
+      setIdError(t("members.id_alphanumeric_only"));
     } else {
-      setIdError(null); // 입력이 유효할 경우 오류 메시지 제거
+      setIdError(null);
     }
 
-    // 유효하지 않은 문자 제거
-    const sanitizedValue = value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-]/g, ""); // 허용된 문자만 남기기
-    formik.setFieldValue("userId", sanitizedValue); // sanitizedValue로 필드 값 업데이트
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-]/g, "");
+    formik.setFieldValue("userId", sanitizedValue);
   };
 
   return (
@@ -182,10 +209,9 @@ function Login({ isDarkMode }: LoginProps) {
               id="userId"
               label={t("members.id")}
               value={formik.values.userId}
-              onChange={handleUserIdChange} // 핸들링 함수 사용
+              onChange={handleUserIdChange}
             />
-            {idError && <div style={{ color: "red" }}>{idError}</div>}{" "}
-            {/* 오류 메시지 표시 */}
+            {idError && <div style={{ color: "red" }}>{idError}</div>}
           </FormControl>
 
           <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
@@ -198,7 +224,6 @@ function Login({ isDarkMode }: LoginProps) {
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                    aria-label="toggle password visibility"
                     onClick={() => setShowPassword(!showPassword)}
                     onMouseDown={(e) => e.preventDefault()}
                     edge="end"
@@ -208,21 +233,11 @@ function Login({ isDarkMode }: LoginProps) {
                 </InputAdornment>
               }
               label={t("members.password")}
+              disabled={!!lockoutTimer && lockoutTimer > 0} // 잠금 타이머가 있을 때 비활성화
             />
           </FormControl>
 
-          {lockoutTimer && (
-            <Typography color="error" sx={{ mb: 2 }}>
-              {t("alert.locked_time")}{" "}
-              {t("alert.try_again", {
-                minutes: remainingTimeRef.current.minutes,
-                seconds: formatSeconds(remainingTimeRef.current.seconds),
-              })}
-            </Typography>
-          )}
-
           <Button
-            className="submit-button"
             color="primary"
             variant="contained"
             type="submit"
@@ -231,6 +246,15 @@ function Login({ isDarkMode }: LoginProps) {
           >
             {t("members.login")}
           </Button>
+
+          {/* 로그인 버튼 아래에 남은 시간 표시 */}
+          {lockoutTimer !== null && lockoutTimer > 0 && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              남은 시간: {remainingTimeRef.current.minutes}분{" "}
+              {formatSeconds(remainingTimeRef.current.seconds)}초 후에 다시
+              시도해주세요.
+            </Typography>
+          )}
         </form>
 
         <ButtonArea>
@@ -244,9 +268,9 @@ function Login({ isDarkMode }: LoginProps) {
           <span />
           <StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
         </ButtonArea>
-        <button onClick={() => (window.location.href = "/auth/kakao")}>
-          카카오로 로그인
-        </button>
+        {/* 카카오와 네이버 로그인 버튼 */}
+        <button onClick={kakaoLoginHandler}>카카오로 로그인</button>
+        <button onClick={naverLoginHandler}>네이버로 로그인</button>
       </LoginWrapper>
     </Wrapper>
   );
@@ -262,7 +286,4 @@ function handleSaveId(userId: string, saveId: boolean) {
     localStorage.removeItem("userId");
     localStorage.removeItem("saveId");
   }
-}
-function setIdError(arg0: string) {
-  throw new Error("Function not implemented.");
 }

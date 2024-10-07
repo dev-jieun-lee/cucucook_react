@@ -6,7 +6,8 @@ import styled from "styled-components";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
-import KakaoRedirectHandler from "./routes/members/login/KakaoRedirectHandler";
+
+import KakaoCallback from "./routes/members/login/KakaoRedirection";
 import { ProtectAuthRouter } from "./auth/ProtectAuthRouter";
 import { ProtectRoleRouter } from "./auth/ProtectRoleRouter";
 import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
@@ -20,6 +21,7 @@ const SignupIntro = lazy(() => import("./routes/members/signUp/SignupIntro"));
 const Signup = lazy(() => import("./routes/members/signUp/Signup"));
 const FindId = lazy(() => import("./routes/members/login/FindId"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
+//const Redirection = lazy(() => import("./routes/members/login/Redirection"));
 
 //레시피
 const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
@@ -98,7 +100,8 @@ function RoutesConfig({ isDarkMode }: any) {
         element={<FindPw isDarkMode={isDarkMode} />}
       />
       {/* 카카오 리디렉션 핸들러 라우트 추가 */}
-      <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
+      <Route path="/kakao/callback" element={<KakaoCallback />} />
+
       {/* 레시피 */}
       <Route
         path="/recipe/all_recipe_list"
@@ -265,42 +268,42 @@ function RoutesConfig({ isDarkMode }: any) {
 
       {/* 마이페이지 */}
       <Route element={<ProtectAuthRouter />}>
-      <Route
-        path="/mypage/profile"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Profile/>
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/profile/userInfo"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <UserInfo  />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/profile/userInfo/passwordChange/:memberId"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <PwChange  />
-          </RouteBox>
-        }
-      />
-      <Route
-        path="/mypage/activity"
-        element={
-          <RouteBox>
-            <MypageSideMenu isDarkMode={isDarkMode} />
-            <Activity/>
-          </RouteBox>
-        }
-      />
+        <Route
+          path="/mypage/profile"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <Profile />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/profile/userInfo"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <UserInfo />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/profile/userInfo/passwordChange/:memberId"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <PwChange />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/activity"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <Activity />
+            </RouteBox>
+          }
+        />
         <Route
           path="/mypage/activity/LikeLists"
           element={
