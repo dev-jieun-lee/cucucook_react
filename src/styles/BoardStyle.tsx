@@ -56,6 +56,38 @@ export const ContentsArea = styled.div`
       }
     }
   }
+  .table-container {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    .head {
+      text-align: center;
+      /* .no-cell{
+        width: 20px;
+      }
+      .category-cell{
+        width: 150px;
+      }
+      .title-cell{
+        width: 50%;
+        text-align: center;
+        background-color: pink;
+      } */
+    }
+    .row {
+      text-align: center;
+      &:hover {
+        cursor: pointer;
+        background-color: #cccccc10;
+      }
+    }
+    .file-icon {
+      transform: scale(0.7);
+      color: ${(props) => props.theme.mainColor};
+    }
+  }
 
 `;
 
@@ -127,10 +159,17 @@ export const BoardRowListItem = styled(ListItem)`
   }
   .title{
     flex: 4;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;
   }
   .title-area{
     display : flex;
     flex: 6;
+    white-space: nowrap;         
+    overflow: hidden;            
+    text-overflow: ellipsis;
+    width : 90%;
     ${media.medium`
       flex: 4;
       display : block;
