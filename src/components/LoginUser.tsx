@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "./auth/AuthContext";
+import { useAuth } from "../auth/AuthContext";
 import { useMutation } from "react-query";
-import { logout } from "./apis/memberApi";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../apis/memberApi";
 
 function LoginUser() {
   const { t } = useTranslation(); // 번역 함수

@@ -1,7 +1,6 @@
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
-import moment from "moment";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
@@ -19,6 +18,8 @@ import {
   DetailContents,
   TitleArea,
 } from "../../../styles/BoardStyle";
+import Loading from "../../../components/Loading";
+import dayjs from "dayjs";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import BoardFilesList from "../BoardFilesList";
 
@@ -146,17 +147,29 @@ function NoticeDetail() {
           >
             [ {boardWithCategory?.category.name} ]
           </CustomCategory>
-          <span className="title">{boardWithCategory?.data.title}</span>
+          <p className="title">{boardWithCategory?.data.title}</p>
         </div>
         <div className="board-info">
-          <span className="date">
-            {moment(boardWithCategory?.data.udtDt).format("YYYY-MM-DD")}
-          </span>
-          <span className="border"></span>
-          <span className="member">{boardWithCategory?.data.userName}</span>
-          <span className="border"></span>
-          <span className="hit">{t("text.hit")}</span>
-          <span className="viewCount">{boardWithCategory?.data.viewCount}</span>
+          <div className="date-area">
+            <span className="hit">{t("text.register_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.regDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+            <span className="border"></span>
+            <span className="hit">{t("text.update_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.udtDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+          </div>
+          <div className="hit-area">
+            <span className="border m-border"></span>
+            <span className="member">{boardWithCategory?.data.userName}</span>
+            <span className="border"></span>
+            <span className="hit">{t("text.hit")}</span>
+            <span className="viewCount">
+              {boardWithCategory?.data.viewCount}
+            </span>
+          </div>
         </div>
       </TitleArea>
       <DetailContents>
@@ -168,7 +181,7 @@ function NoticeDetail() {
         ></div>
       </DetailContents>
       <BoardFilesList boardId={boardId || ""} />
-      {user?.role === "1" ? (
+      {user?.role === "0" ? (
         <BoardButtonArea>
           <Button
             className="delete-btn"

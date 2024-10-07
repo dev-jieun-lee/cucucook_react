@@ -17,7 +17,7 @@ import DrawerMenu from "../memu/DrawerMenu"; // 드로어 메뉴 컴포넌트
 import axios from "axios"; // HTTP 요청 라이브러리
 import { useMutation } from "react-query";
 import { logout } from "../apis/memberApi";
-import LoginUser from "../LoginUser";
+import LoginUser from "./LoginUser";
 import { useAuth } from "../auth/AuthContext";
 
 interface IForm {
@@ -146,7 +146,14 @@ function Header({ isDarkMode, onToggleTheme }: any) {
       </Col>
 
       {/* 드로어 컴포넌트 */}
-      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={() => toggleDrawer(false)}
+        ModalProps={{
+          disableAutoFocus: true,
+        }}
+      >
         <div style={{ width: "100%", padding: "0" }} role="presentation">
           {/* 드로어 상단 */}
           <DrawerTop>

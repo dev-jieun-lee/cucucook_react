@@ -95,12 +95,12 @@ function Menu() {
               <SubMenu className="sub-menu">
                 <ul>
                   <li>
-                    <LinkItem to="/myPage/Profile">
-                      {t("menu.mypage.profile")}
+                    <LinkItem to="/mypage/profile">
+                      {t("mypage.profile")}
                     </LinkItem>
                   </li>
                   <li>
-                    <LinkItem to="/myPage/Activity">
+                    <LinkItem to="/mypage/activity">
                       {t("mypage.activity")}
                     </LinkItem>
                   </li>

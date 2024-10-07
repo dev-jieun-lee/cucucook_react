@@ -1,5 +1,6 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, ListItem } from "@mui/material";
 import styled from "styled-components";
+import media from "./MediaQuery";
 
 export const ContentsArea = styled.div`
   margin: 20px auto;
@@ -45,6 +46,9 @@ export const ContentsArea = styled.div`
     background-color: ${(props) => props.theme.accordionColor};
     text-align: start;
     padding: 20px 60px;
+    ${media.medium`
+      padding: 20px 20px;
+    `};
     .btn-area {
       text-align: right;
       .update-btn {
@@ -52,7 +56,6 @@ export const ContentsArea = styled.div`
       }
     }
   }
-
   .table-container {
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -87,6 +90,124 @@ export const ContentsArea = styled.div`
   }
 `;
 
+export const BoardHeaderListItem = styled(ListItem)`
+  width: 100%;
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+  height: 55px;
+  text-align: center;
+  border-color: ${(props) => props.theme.navBorderColor};
+  .no {
+    flex: 1;
+  }
+  .category {
+    flex: 2;
+    text-align: center;
+    ${media.medium`
+      display : none;
+    `};
+  }
+  .title {
+    flex: 4;
+  }
+  .writer {
+    flex: 2;
+  }
+  .date {
+    flex: 2;
+    text-align: center;
+    ${media.medium`
+      display : none;
+    `};
+  }
+  .view {
+    flex: 1;
+  }
+  .answer {
+    flex: 3;
+    text-align: center;
+  }
+`;
+
+export const BoardRowListItem = styled(ListItem)`
+  width: 100%;
+  border-bottom: 1px solid;
+  height: 55px;
+  border-color: ${(props) => props.theme.tableBorderColor};
+  &:last-child {
+    border-color: ${(props) => props.theme.navBorderColor};
+  }
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props) => props.theme.tableHoverColor};
+  }
+  .no {
+    flex: 1;
+    text-align: center;
+    ${media.medium`
+      font-size : 13px;
+    `};
+  }
+  .category {
+    flex: 2;
+    text-align: center;
+    ${media.medium`
+      text-align: left;
+      font-size : 13px;
+    `};
+  }
+  .title {
+    flex: 4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .title-area {
+    display: flex;
+    flex: 6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    ${media.medium`
+      flex: 4;
+      display : block;
+    `};
+  }
+  .writer {
+    flex: 2;
+    text-align: center;
+    ${media.medium`
+      font-size : 13px;
+    `};
+  }
+  .date {
+    flex: 2;
+    text-align: center;
+    font-size: 13px;
+    ${media.medium`
+      display : none;
+    `};
+  }
+  .view {
+    flex: 1;
+    text-align: center;
+    ${media.medium`
+      font-size : 13px;
+    `};
+  }
+  .answer {
+    flex: 3;
+    text-align: center;
+    align-items: center;
+    .answer-icon {
+      transform: scale(0.6);
+      color: ${(props) => props.theme.mainColor};
+      margin-right: 4px;
+    }
+  }
+`;
+
 export const AnswerContainer = styled.div`
   display: flex;
   align-items: center;
@@ -100,18 +221,33 @@ export const AnswerContainer = styled.div`
 
 export const AccordionTitle = styled.div`
   flex-direction: row;
-
   .title-area {
+    display: flex;
     .category {
       display: inline-block;
       margin-right: 30px;
       width: 130px;
       text-align: center;
+      ${media.medium`
+        width: 100px;
+        order : 1;
+        text-align: left;
+      `};
     }
     .q {
       font-weight: bold;
       margin-right: 10px;
     }
+    .title {
+      ${media.medium`
+        order : 2;
+      `};
+    }
+    ${media.medium`
+      flex-direction: column;
+      text-align : left;
+      align-items: flex-start;
+    `};
   }
 `;
 
@@ -133,9 +269,38 @@ export const TitleArea = styled.div`
   padding: 0 15px 0;
   align-items: center;
   justify-content: space-between;
+  ${media.medium`
+    display: block;
+    min-height: 100px;
+    max-height: 100px;
+  `};
+  .board-title {
+    display: flex;
+    align-items: center;
+    ${media.medium`
+      display : block;
+      text-align: left;
+      line-height : 7px;
+      white-space: nowrap;         
+      overflow: hidden;    
+      text-overflow: ellipsis; 
+      padding-top : 15px;
+      /* margin-top : 19px;  */
+    `};
+  }
   .board-info {
+    display: flex;
     color: ${(props) => props.theme.navBorderColor};
     font-size: 14px;
+    ${media.medium`
+      display : block;
+      font-size : 12px;
+      text-align: left;
+      line-height : 15px;
+    `};
+    .m-border {
+      display: none;
+    }
     .border {
       border-right: 1px solid;
       margin: 0 10px;
@@ -148,6 +313,45 @@ export const TitleArea = styled.div`
     }
   }
 `;
+
+export const TitleAreaAnswer = styled.div`
+  display: flex;
+  margin: 50px auto 0;
+  width: 100%;
+  min-height: 60px;
+  max-height: 60px;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-color: ${(props) => props.theme.navBorderColor};
+  padding: 0 15px 0;
+  align-items: center;
+  justify-content: space-between;
+  .board-info {
+    display: flex;
+    color: ${(props) => props.theme.navBorderColor};
+    font-size: 14px;
+    ${media.medium`
+      display : block;
+      font-size : 12px;
+      text-align: left;
+      line-height : 15px;
+    `};
+    .m-border {
+      display: none;
+    }
+    .border {
+      border-right: 1px solid;
+      margin: 0 10px;
+    }
+    .view-icon {
+      transform: scale(0.7);
+    }
+    .hit {
+      margin-right: 5px;
+    }
+  }
+`;
+
 export const DetailContents = styled.div`
   width: 100%;
   /* flex-grow: 1;  */
