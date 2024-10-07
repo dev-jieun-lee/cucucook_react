@@ -361,7 +361,7 @@ function Activity() {
                   <span>No.</span>
                 </Box>
                 <Box className="activity-title">
-                  <span>{t("text.title")}</span>
+                  <span>{t("text.comment")}</span>
                 </Box>
                 <Box className="date">
                   <span>{t("text.register_date")}</span>
