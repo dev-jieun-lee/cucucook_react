@@ -18,6 +18,7 @@ import {
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
+  TitleAreaAnswer,
 } from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
@@ -307,7 +308,7 @@ function QnaDetail() {
         <></>
       )}
       <div style={{ marginTop: "-50px", width: "100%" }}>
-        <TitleArea style={{ display : "flex", alignItems : "center" }}>
+        <TitleAreaAnswer style={{ display : "flex", alignItems : "center"}}>
           <div className="board-title">
             <AnswerContainer className="answer-container">
               <SubdirectoryArrowRightIcon className="answer-icon" />
@@ -339,7 +340,7 @@ function QnaDetail() {
               </>
             )}
           </div>
-        </TitleArea>
+        </TitleAreaAnswer>
         <>
           {!isEditing ? (
             <QnaContentsArea>

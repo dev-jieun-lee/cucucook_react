@@ -179,7 +179,8 @@ width: 100%;
     text-align: center;
   }
   .division{
-    flex: 4;
+    flex: 2;
+    text-align: center;
     ${media.small`
       display : none;
     `};
@@ -239,7 +240,7 @@ width: 100%;
     `};
   }
   .division{
-    flex: 1;
+    flex: 2;
     text-align: center;
     font-size: 15px;
     white-space: nowrap;         
