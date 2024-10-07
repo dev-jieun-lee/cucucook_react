@@ -3,7 +3,6 @@ import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRig
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import { useFormik } from "formik";
-import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
@@ -27,10 +26,13 @@ import {
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
+  TitleAreaAnswer,
 } from "../../../styles/BoardStyle";
+import Loading from "../../../components/Loading";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import BoardFilesList from "../BoardFilesList";
 import QuillEditer from "../QuillEditer";
+import dayjs from "dayjs";
 
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
@@ -247,17 +249,27 @@ function QnaDetail() {
               >
                 [ {boardWithCategory?.category.name} ]
               </CustomCategory>
-              <span className="title">{pBoardData[0]?.title}</span>
+              <p className="title">{pBoardData[0]?.title}</p>
             </div>
             <div className="board-info">
-              <span className="date">
-                {moment(pBoardData[0]?.udtDt).format("YYYY-MM-DD")}
-              </span>
-              <span className="border"></span>
-              <span className="member">{pBoardData[0]?.userName}</span>
-              <span className="border"></span>
-              <span className="hit">{t("text.hit")}</span>
-              <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              <div className="date-area">
+                <span className="hit">{t("text.register_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+                <span className="border"></span>
+                <span className="hit">{t("text.update_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+              </div>
+              <div className="hit-area">
+                <span className="border m-border"></span>
+                <span className="member">{pBoardData[0]?.userName}</span>
+                <span className="border"></span>
+                <span className="hit">{t("text.hit")}</span>
+                <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              </div>
             </div>
           </TitleArea>
           <QnaContentsArea>
@@ -298,7 +310,7 @@ function QnaDetail() {
         <></>
       )}
       <div style={{ marginTop: "-50px", width: "100%" }}>
-        <TitleArea>
+        <TitleAreaAnswer style={{ display: "flex", alignItems: "center" }}>
           <div className="board-title">
             <AnswerContainer className="answer-container">
               <SubdirectoryArrowRightIcon className="answer-icon" />
@@ -312,7 +324,7 @@ function QnaDetail() {
             </AnswerContainer>
           </div>
           <div className="board-info">
-            {user?.role === "1" && !isReply && !isEditing ? (
+            {user?.role === "0" && !isReply && !isEditing ? (
               <AnswerButton
                 onClick={() => setIsEditing(true)}
                 variant="contained"
@@ -323,14 +335,14 @@ function QnaDetail() {
             ) : (
               <>
                 <span className="date">
-                  {moment(reBoardData[0]?.udtDt).format("YYYY-MM-DD")}
+                  {dayjs(reBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
                 </span>
                 <span className="border"></span>
                 <span className="member">{reBoardData[0]?.userName}</span>
               </>
             )}
           </div>
-        </TitleArea>
+        </TitleAreaAnswer>
         <>
           {!isEditing ? (
             <QnaContentsArea>
@@ -343,7 +355,7 @@ function QnaDetail() {
                     }}
                   ></div>
                   <BoardFilesList boardId={reBoardId || ""} />
-                  {user?.role === "1" ? (
+                  {user?.role === "0" ? (
                     <div className="btn-area">
                       <Button
                         className="update-btn"

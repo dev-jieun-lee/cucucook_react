@@ -53,6 +53,9 @@ export const TitleCenter = styled.div`
   font-size: 30px;
   font-weight: 600;
   color: ${(props) => props.theme.mainColor};
+  ${media.xsmall`
+    font-size: 27px;
+  `};
 `;
 
 export const TitleBasic = styled.div`
@@ -62,6 +65,12 @@ export const TitleBasic = styled.div`
   color: ${(props) => props.theme.mainColor};
 `;
 
+export const TitleBox = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 export const PageTitleBasic = styled.div`
   text-align: left;
   font-size: 25px;
@@ -98,6 +107,11 @@ export const SearchArea = styled.div`
   justify-content: center;
   ${media.small`
     display: block;
+    /* margin-left : 50px; */
+  `};
+  ${media.xsmall`
+    margin-left : 25px;
+    margin-right : 25px;
   `};
 
   .select-category {
@@ -106,12 +120,14 @@ export const SearchArea = styled.div`
     ${media.small`
     margin : 0 auto;
     margin-bottom : 10px;
+    margin-right : 20px;
+    /* margin-left : 50px; */
   `};
   }
 
   .select-category-item {
-    width: 180px;
-    margin-right: 50px;
+    width: 200px;
+    /* margin-right: 50px; */
   }
   .search-input {
     width: 350px;
@@ -123,5 +139,31 @@ export const CustomPagination = styled(Stack)`
   margin: 15px;
   .pagination-btn {
     margin: 0 auto;
+  }
+`;
+
+//dialog 스타일
+export const DialogTitleArea = styled.div`
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  .title{
+    color: ${(props) => props.theme.mainColor};
+    font-weight: 600;
+  }
+  .close-btn{
+    height: 40px;
+    margin: 15px;
+  }
+`;
+
+export const DialogForm = styled.form`
+  position: relative;
+  .input-form{
+    display: block;
+    margin-bottom: 20px;
+    &:first-child{
+      margin-top: 15px;
+    }
   }
 `;

@@ -158,7 +158,7 @@ function RecipeCategoryManage() {
       setSearch("");
     }
 
-    setTriggerSearch(true);
+    // setTriggerSearch(true);
   };
 
   //삭제
