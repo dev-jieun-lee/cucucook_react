@@ -64,7 +64,6 @@ function FaqForm() {
       searchType: "",
       start: "",
       display: "",
-      searchType: "FAQ",
     };
     const response = await getBoardCategoryList(params);
     if (response && response.data) {
