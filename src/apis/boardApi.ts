@@ -99,3 +99,13 @@ export async function deleteBoardCategory(id: string) {
   });
   return response.data;
 }
+
+//게시판 첨부파일 리스트 조회
+export async function getBoardFilesList(boardId: any) {
+  const response = await axios.get(`${BASE_URL}/getBoardFilesList`, {
+    params: {
+      boardId,
+    },
+  });
+  return response.data;
+}

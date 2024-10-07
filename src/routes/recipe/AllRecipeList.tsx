@@ -1,6 +1,11 @@
-import { Add, KeyboardArrowUp } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import StarIcon from "@mui/icons-material/Star";
+import TextsmsIcon from "@mui/icons-material/Textsms";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Box, Button, Divider, Grid, IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -10,28 +15,17 @@ import {
   getPublicRecipeList,
   insertMemberRecipeLike,
 } from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
-import {
-  PageTitleBasic,
-  ScrollBtnFab,
-  Wrapper,
-} from "../../styles/CommonStyles";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
+import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
 import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
   TitleBox,
-  recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-import StarIcon from "@mui/icons-material/Star";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import TextsmsIcon from "@mui/icons-material/Textsms";
-import { useAuth } from "../../auth/AuthContext";
-import { string } from "yup";
-import ScrollTop from "../../components/ScrollTop";
-import { handleApiError } from "../../hooks/errorHandler";
 
 const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -78,7 +72,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setPublicLoading(true);
           setPublicMessage(
             data.message
@@ -119,7 +113,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setMemberLoading(true);
           setMemberMessage(data.message);
           const finalData = (data?.data ?? []).map((recipeItem: any) => ({
@@ -144,7 +138,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data, recipeId) => {
-        if (data.success) {
+        if (data && data.success) {
           setRecipes((prevRecipes) =>
             prevRecipes.map((recipeItem) =>
               recipeItem.recipeId === recipeId
@@ -172,7 +166,7 @@ const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data, recipeId) => {
-        if (data.success) {
+        if (data && data.success) {
           setRecipes((prevRecipes) =>
             prevRecipes.map((recipeItem) =>
               recipeItem.recipeId === recipeId

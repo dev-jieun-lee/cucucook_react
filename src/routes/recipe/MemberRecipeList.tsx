@@ -1,5 +1,5 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import SearchIcon from "@mui/icons-material/Search";
 import StarIcon from "@mui/icons-material/Star";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -25,14 +25,12 @@ import {
   getRecipeCategoryListWithMemberRecipeCount,
   insertMemberRecipeLike,
 } from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
-import {
-  PageTitleBasic,
-  ScrollBtnFab,
-  SearchArea,
-  Wrapper,
-} from "../../styles/CommonStyles";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
+import { PageTitleBasic, SearchArea, Wrapper } from "../../styles/CommonStyles";
 import {
   SearchBox,
   SearchBoxContainer,
@@ -41,10 +39,6 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useAuth } from "../../auth/AuthContext";
-import ScrollTop from "../../components/ScrollTop";
-import { handleApiError } from "../../hooks/errorHandler";
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   // 파라미터 받아오기
   const { order } = useParams();
@@ -122,7 +116,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        if (data.success) setcategories(data.data);
+        if (data && data.success) setcategories(data.data);
       },
       onError: (error) => {
         handleApiError(error, navigate, t);
@@ -155,7 +149,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setLoading(false);
           setHasMore(data?.addData?.hasMore ?? false);
 
@@ -231,7 +225,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data, recipeId) => {
-        if (data.success) {
+        if (data && data.success) {
           setRecipes((prevRecipes) =>
             prevRecipes.map((recipeItem) =>
               recipeItem.recipeId === recipeId
@@ -259,7 +253,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data, recipeId) => {
-        if (data.success) {
+        if (data && data.success) {
           setRecipes((prevRecipes) =>
             prevRecipes.map((recipeItem) =>
               recipeItem.recipeId === recipeId
@@ -429,7 +423,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <Grid container spacing={2}>
           {loading && !hasMore ? (
             <Loading />
-          ) : recipes.length > 0 ? (
+          ) : recipes && recipes.length > 0 ? (
             <>
               {recipes.map((recipeItem) => {
                 return (

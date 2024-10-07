@@ -1,14 +1,15 @@
+import { Add, Close } from "@mui/icons-material";
+import { Box, Button, IconButton } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
-import { Add, Close } from "@mui/icons-material";
-import { Box, Button, IconButton } from "@mui/material";
-import { alpha, useTheme } from "@mui/material/styles";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { validateExtension } from "../utils/commonUtil";
 
 interface FocusableButton {
   focus: () => void;
@@ -48,16 +49,39 @@ const RecipeImageUpload = forwardRef<
     const [isServerImgVisible, setIsServerImgVisible] = useState<boolean>(
       initialServerImageVisible
     ); // 서버 이미지가 보여지는지 여부
-
+    //업로드 허용하는 확장자
+    const allowedExtensions = [
+      "jpg",
+      "jpeg",
+      "bmp",
+      "gif",
+      "png",
+      "png",
+      "jpg",
+      "jpeg",
+      "gif",
+      "gif",
+      "jpg",
+      "jpeg",
+      "png",
+    ];
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-
-        if (!file.type.startsWith("image/")) {
-          alert(t("recipe.error.is_not_img")); // 경고 메시지
+        //사용불가 확장자 있는지 체크
+        const unusableExtension = validateExtension(
+          e.target.files,
+          allowedExtensions
+        );
+        if (unusableExtension.length > 0) {
+          alert(
+            t("CODE.E_UNUSABLE_EXTENSION", {
+              extension: t(unusableExtension),
+            })
+          );
           return;
         }
 
+        const file = e.target.files[0];
         onImageChange(file);
         const imageUrl = URL.createObjectURL(file); // 파일에서 이미지 URL 생성
         setImagePreview(imageUrl); // 이미지 미리보기 URL 업데이트

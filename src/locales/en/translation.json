@@ -59,7 +59,9 @@
         "delete_error": "An error occurred while deleting.",
         "save": "Saved.",
         "modify": "Modified.",
-        "cancel": "Are you sure you want to cancel writing the post?"
+        "cancel": "Are you sure you want to cancel writing the post?",
+        "file_upload_info": "You can click or drag here to upload the file.",
+        "allowed_extensions": "Allowed file extensions"
       }
     },
     "admin": {
@@ -415,6 +417,7 @@
     "E_SERVER_CODE": "An error occurred. Please contact the administrator. code : {{status}}",
     "E_AUTH": "Login is required. Please log in.",
     "E_ROLE": "You do not have permission to access.",
-    "E_LOGIN_EXPIRED": "Your session has expired. Please log in again."
+    "E_LOGIN_EXPIRED": "Your session has expired. Please log in again.",
+    "E_UNUSABLE_EXTENSION": "This extension is not allowed. [{{extension}}]"
   }
 }
