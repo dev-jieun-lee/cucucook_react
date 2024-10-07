@@ -1,12 +1,15 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import StarIcon from "@mui/icons-material/Star";
+import TextsmsIcon from "@mui/icons-material/Textsms";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
   Divider,
   Grid,
   Pagination,
-  Stack,
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -14,42 +17,39 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "styled-components";
+import Swal from "sweetalert2";
 import {
   deleteMemberRecipe,
   deleteMemberRecipeLike,
   getMemberRecipe,
   getRecipeCommentList,
   insertMemberRecipeLike,
-} from "../../api";
+} from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
 import Loading from "../../components/Loading";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
+  CustomPagination,
   PageSubTitleBasic,
   PageTitleBasic,
-  ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
 import {
-  CommentIconButton,
   IngredientGrid,
-  MemberRecipeView,
-  RecepiImgBox,
-  RecepiImgBoxContainer,
   recipeCommonStyles,
+  RecipeImgBox,
+  RecipeImgBoxContainer,
+  RecipeView,
   TitleBox,
 } from "../../styles/RecipeStyle";
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
-import Swal from "sweetalert2";
-import StarIcon from "@mui/icons-material/Star";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import TextsmsIcon from "@mui/icons-material/Textsms";
 
 const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
-
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
   const handleRecipeListClick = () => {
     navigate("/recipe/member_recipe_list");
@@ -60,7 +60,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const [isLike, setIsLike] = useState(false); //좋아요 상태
-  const [likeCount, setLikeCount] = useState(false); //좋아요 갯수
+  const [likeCount, setLikeCount] = useState<number>(0); //좋아요 갯수
   const scrollCommentRef = useRef<HTMLDivElement | null>(null);
 
   const customStyles = recipeCommonStyles();
@@ -70,8 +70,6 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { recipeId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState<any[]>([]);
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
@@ -97,20 +95,20 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
         deleteMemberRecipeMutation(params);
       }
     } catch (error) {
-      console.error("Error", error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
   // 멤버 상세 레시피 가져오기
   const fetchMemberRecipe = async () => {
-    const params = { recipeId };
+    const params = { recipeId, memberId: user?.memberId };
     try {
-      const publicRecipe = await getMemberRecipe(params);
-      return publicRecipe.data;
+      const memberRecipe = await getMemberRecipe(params);
+      return memberRecipe.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -121,13 +119,14 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   } = useQuery("memberRecipe", fetchMemberRecipe, {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
-      setIsLoading(false);
-      setLikeCount(data.data.memberRecipe.likeCount);
+      if (data && data.success) {
+        setIsLike(data?.data.memberRecipe.memberRecipeLike);
+        setLikeCount(data?.data.memberRecipe.likeCount);
+        setIsLoading(false);
+      }
     },
-    onError: (err) => {
-      console.error(err);
-      alert(err);
-      setIsLoading(false);
+    onError: (error) => {
+      handleApiError(error, navigate, t);
     },
     keepPreviousData: true,
   });
@@ -146,8 +145,8 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       const recipeCommentList = await getRecipeCommentList(params);
       return recipeCommentList.data;
     } catch (error) {
-      console.error(error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -157,14 +156,15 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        setComments(data.data);
-        setTotalCount(data.addData.totalCnt);
-        setIsLoading(false);
+        if (data && data.success) {
+          setComments(data.data);
+          setTotalCount(data.addData.totalCnt);
+          setIsLoading(false);
+        }
       },
-      onError: (err) => {
-        console.error(err);
-        alert(err);
+      onError: (error) => {
         setIsLoading(false);
+        handleApiError(error, navigate, t);
       },
       keepPreviousData: true,
     }
@@ -174,26 +174,30 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { mutate: deleteMemberRecipeMutation } = useMutation(
     (params: { recipeId: string }) => deleteMemberRecipe(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_recipe_confirm_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-          timer: 1000,
-          timerProgressBar: true,
-        });
-        navigate("/recipe/member_recipe_list");
+      onSuccess: (data) => {
+        if (data && data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_recipe_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+            timer: 1000,
+            timerProgressBar: true,
+          });
+          navigate("/recipe/member_recipe_list");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -201,34 +205,38 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   //좋아요등록
   const { mutate: insertMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: 1 };
+      const params = { recipeId, memberId: user?.memberId };
       return insertMemberRecipeLike(params);
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setIsLike(!isLike);
           setLikeCount(data.data);
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 
   //좋아요삭제
   const { mutate: deleteMemberRecipeLikeMutation } = useMutation(
     () => {
-      const params = { recipeId: recipeId, memberId: 1 };
+      const params = { recipeId, memberId: user?.memberId };
       return deleteMemberRecipeLike(params);
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setIsLike(!isLike);
           setLikeCount(data.data);
         }
       },
-      onError: (error) => {},
+      onError: (error) => {
+        handleApiError(error, navigate, t);
+      },
     }
   );
 
@@ -238,6 +246,48 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     } else {
       deleteMemberRecipeLikeMutation();
     }
+  };
+
+  const handleImageClick = (
+    title: string,
+    serverImgName: string,
+    extension: string,
+    webImgPath: string,
+    isImg: boolean
+  ) => {
+    const img = new Image();
+    const imageUrl = isImg
+      ? process.env.REACT_APP_FILE_URL +
+        webImgPath +
+        "/" +
+        serverImgName +
+        "." +
+        extension
+      : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image";
+    img.src = imageUrl;
+    img.onload = () => {
+      const windowHeight = window.innerHeight; // 브라우저 높이
+
+      if (img.width > img.height) {
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+        });
+      } else {
+        const maxImageHeight = windowHeight * 0.8;
+        Swal.fire({
+          imageAlt: title,
+          imageUrl: imageUrl,
+          showCloseButton: true,
+          showConfirmButton: false,
+          width: "auto",
+          imageHeight: maxImageHeight,
+        });
+      }
+    };
   };
 
   const handleCommentScroll = () => {
@@ -257,33 +307,13 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   }, [memberRecipeLoading, isLoading]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
   };
 
   return (
     <Wrapper>
-      <MemberRecipeView>
+      <RecipeView>
         <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
@@ -291,29 +321,37 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               {t("text.detail_more")}
             </PageTitleBasic>
             <Box>
-              <Button
-                variant="contained"
-                onClick={() => handleRecipeWriteClick()}
-                sx={{
-                  marginRight: "10px",
-                  boxShadow: "none",
-                  "&:hover": {
-                    boxShadow: "none",
-                  },
-                }}
-              >
-                {t("text.update")}
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{ marginRight: "10px" }}
-                type="button"
-                color="warning"
-                aria-label="delete"
-                onClick={() => handleRecipeDeleteClick(recipeId || "")}
-              >
-                {t("text.delete")}
-              </Button>
+              {user?.memberId &&
+                (user?.role === "0" ||
+                  user?.role === "2" ||
+                  user?.memberId ===
+                    memberRecipe?.data.memberRecipe.member.memberId) && (
+                  <>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleRecipeWriteClick()}
+                      sx={{
+                        marginRight: "10px",
+                        boxShadow: "none",
+                        "&:hover": {
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      {t("text.update")}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{ marginRight: "10px" }}
+                      type="button"
+                      color="warning"
+                      aria-label="delete"
+                      onClick={() => handleRecipeDeleteClick(recipeId || "")}
+                    >
+                      {t("text.delete")}
+                    </Button>
+                  </>
+                )}
               <Button variant="outlined" onClick={handleRecipeListClick}>
                 {t("text.list")}
               </Button>
@@ -344,11 +382,32 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                       <Box className="recipe-info-img-container">
                         <Box
                           component="img"
+                          onClick={() =>
+                            handleImageClick(
+                              memberRecipe.data.memberRecipe.title,
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .serverImgName
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.serverImgName
+                                : "",
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .extension
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.extension
+                                : "",
+                              memberRecipe.data.memberRecipe?.memberRecipeImages
+                                .webImgPath
+                                ? memberRecipe.data.memberRecipe
+                                    .memberRecipeImages.webImgPath
+                                : "",
+                              memberRecipe.data.memberRecipe.memberRecipeImages
+                            )
+                          }
                           className="recipe-info-img"
                           alt={memberRecipe.data.memberRecipe.title}
                           src={
-                            memberRecipe.data.memberRecipeImages
-                              ? `${process.env.REACT_APP_API_URL}${memberRecipe.data.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipeImages.extension}`
+                            memberRecipe.data.memberRecipe.memberRecipeImages
+                              ? `${process.env.REACT_APP_FILE_URL}${memberRecipe.data.memberRecipe.memberRecipeImages.webImgPath}/${memberRecipe.data.memberRecipe.memberRecipeImages.serverImgName}.${memberRecipe.data.memberRecipe.memberRecipeImages.extension}`
                               : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                           }
                         ></Box>
@@ -433,24 +492,39 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                               sx={{ height: "20px" }}
                             />
                             <Box className="recipe-eval-info">
-                              <Button variant="text" onClick={handleLikeClick}>
+                              {user?.memberId ? (
+                                <Button
+                                  variant="text"
+                                  onClick={handleLikeClick}
+                                >
+                                  <Box display="flex" alignItems="center">
+                                    {isLike ? (
+                                      <FavoriteIcon
+                                        fontSize="small"
+                                        style={{ verticalAlign: "middle" }}
+                                      />
+                                    ) : (
+                                      <FavoriteBorderIcon
+                                        fontSize="small"
+                                        style={{ verticalAlign: "middle" }}
+                                      />
+                                    )}
+                                    <Box component="span" ml={0.5}>
+                                      {likeCount}
+                                    </Box>
+                                  </Box>
+                                </Button>
+                              ) : (
                                 <Box display="flex" alignItems="center">
-                                  {isLike ? (
-                                    <FavoriteIcon
-                                      fontSize="small"
-                                      style={{ verticalAlign: "middle" }}
-                                    />
-                                  ) : (
-                                    <FavoriteBorderIcon
-                                      fontSize="small"
-                                      style={{ verticalAlign: "middle" }}
-                                    />
-                                  )}
+                                  <FavoriteBorderIcon
+                                    fontSize="small"
+                                    style={{ verticalAlign: "middle" }}
+                                  />
                                   <Box component="span" ml={0.5}>
                                     {likeCount}
                                   </Box>
                                 </Box>
-                              </Button>
+                              )}
                             </Box>
                           </Grid>
                         </Grid>
@@ -617,11 +691,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                           >
                             <Grid item xs={6} md={3}>
                               <Typography variant="subtitle2">
-                                {memberRecipeIngredientItem.name}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                              <Typography variant="subtitle2">
+                                {memberRecipeIngredientItem.name}{" "}
                                 {memberRecipeIngredientItem.amount}
                               </Typography>
                             </Grid>
@@ -634,7 +704,9 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 <Divider />
                 <Box padding={"20px 0"}>
                   <Box paddingBottom={1}>
-                    <PageSubTitleBasic>{t("text.recipe")}</PageSubTitleBasic>
+                    <PageSubTitleBasic>
+                      {t("text.recipe_process")}
+                    </PageSubTitleBasic>
                   </Box>
                   <Box>
                     {memberRecipe.data.memberRecipeProcessList.map(
@@ -660,17 +732,38 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                             xs={12}
                             md={2}
                           >
-                            <RecepiImgBoxContainer>
-                              <RecepiImgBox
+                            <RecipeImgBoxContainer>
+                              <RecipeImgBox
                                 className="recipe-info-img"
+                                onClick={() =>
+                                  handleImageClick(
+                                    memberRecipe.data.memberRecipe.title,
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.serverImgName
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.serverImgName
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.extension
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.extension
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                      ?.webImgPath
+                                      ? memberRecipeProcessItem
+                                          .memberRecipeImages.webImgPath
+                                      : "",
+                                    memberRecipeProcessItem.memberRecipeImages
+                                  )
+                                }
                                 alt={memberRecipeProcessItem.imgId}
                                 src={
                                   memberRecipeProcessItem.memberRecipeImages
-                                    ? `${process.env.REACT_APP_API_URL}${memberRecipeProcessItem.memberRecipeImages.webImgPath}/${memberRecipeProcessItem.memberRecipeImages.serverImgName}.${memberRecipeProcessItem.memberRecipeImages.extension}`
+                                    ? `${process.env.REACT_APP_FILE_URL}${memberRecipeProcessItem.memberRecipeImages.webImgPath}/${memberRecipeProcessItem.memberRecipeImages.serverImgName}.${memberRecipeProcessItem.memberRecipeImages.extension}`
                                     : "https://via.placeholder.com/300/ffffff/F3B340?text=No+Image"
                                 }
-                              ></RecepiImgBox>
-                            </RecepiImgBoxContainer>
+                              ></RecipeImgBox>
+                            </RecipeImgBoxContainer>
                           </Grid>
                           <Grid
                             className="recipe-description-grid-text-container"
@@ -728,7 +821,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
               <Typography padding={"20px 0"}>{t("CODE.E_IS_DATA")}</Typography> // 데이터가 없을 때 메시지
             )}
             {totalCount > 0 && (
-              <Stack className="pagination" spacing={2}>
+              <CustomPagination className="pagination" spacing={2}>
                 <Pagination
                   className="pagination-btn"
                   count={Math.ceil(totalCount / display)}
@@ -736,16 +829,12 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
                   onChange={handlePageChange}
                   color="primary"
                 />
-              </Stack>
+              </CustomPagination>
             )}
           </Box>
         )}
-      </MemberRecipeView>
-      {showScrollButton && (
-        <ScrollBtnFab color="primary" size="small" onClick={scrollToTop}>
-          <KeyboardArrowUp />
-        </ScrollBtnFab>
-      )}
+      </RecipeView>
+      <ScrollTop />
     </Wrapper>
   );
 };

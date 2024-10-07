@@ -1,7 +1,6 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Col, LinkItem, MainMenu, SubMenu } from "./MenuStyle";
+import { Col, LinkItem, MainMenu, SubMenu } from "../styles/MenuStyle";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../auth/AuthContext";
 
@@ -96,12 +95,12 @@ function Menu() {
               <SubMenu className="sub-menu">
                 <ul>
                   <li>
-                    <LinkItem to="/myPage/Profile">
-                      {t("menu.mypage.profile")}
+                    <LinkItem to="/mypage/profile">
+                      {t("mypage.profile")}
                     </LinkItem>
                   </li>
                   <li>
-                    <LinkItem to="/myPage/Activity">
+                    <LinkItem to="/mypage/activity">
                       {t("mypage.activity")}
                     </LinkItem>
                   </li>
@@ -111,27 +110,42 @@ function Menu() {
           ) : (
             <></>
           )}
-
-          <li
-            className="main-menu-item"
-            onMouseEnter={() => handleMouseEnter(3)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div>
-              <span
-                className={`menu-title ${activeMenu === 3 ? "active" : ""}`}
-              >
-                테스트
-              </span>
-            </div>
-            <SubMenu className="sub-menu">
-              <ul>
-                <li>
-                  <LinkItem to="/test">임시페이지</LinkItem>
-                </li>
-              </ul>
-            </SubMenu>
-          </li>
+          {user?.role === "0" || user?.role === "2" ? (
+            <li
+              className="main-menu-item"
+              onMouseEnter={() => handleMouseEnter(3)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div>
+                <span
+                  className={`menu-title ${activeMenu === 3 ? "active" : ""}`}
+                >
+                  {t("menu.admin.original")}
+                </span>
+              </div>
+              <SubMenu className="sub-menu">
+                <ul>
+                  <li>
+                    <LinkItem to="/admin/members">
+                      {t("menu.admin.members")}
+                    </LinkItem>
+                  </li>
+                  <li>
+                    <LinkItem to="/admin/category/board">
+                      {t("menu.admin.category_board")}
+                    </LinkItem>
+                  </li>
+                  <li>
+                    <LinkItem to="/admin/category/recipe">
+                      {t("menu.admin.category_recipe")}
+                    </LinkItem>
+                  </li>
+                </ul>
+              </SubMenu>
+            </li>
+          ) : (
+            <></>
+          )}
         </Col>
       </ul>
     </MainMenu>

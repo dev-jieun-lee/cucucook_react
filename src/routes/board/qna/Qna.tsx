@@ -1,18 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Fab, IconButton, InputAdornment, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from "@mui/material";
+import { Box, Fab, IconButton, InputAdornment, List, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { AnswerContainer, ContentsArea, CustomCategory } from "../BoardStyle";
+import { BoardHeaderListItem, BoardRowListItem, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import React, { useEffect, useState } from "react";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../api";
+import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
-import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import dayjs from "dayjs";
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
@@ -31,13 +30,19 @@ function Qna() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category : category
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType : "",
       start: "",
       display: "",
     };
@@ -278,73 +283,83 @@ function Qna() {
         )}
       </SearchArea>
       <ContentsArea>
-      <TableContainer className="table-container" component={Paper}>
-        <Table className="table" sx={{ minWidth: 650 }} aria-label="board table">
-          <TableHead className="head">
-            <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>{t("text.category")}</TableCell>
-              <TableCell>{t("text.title")}</TableCell>
-              <TableCell>{t("menu.board.answer_chk")}</TableCell> {/* 답글 여부 컬럼 */}
-              <TableCell>{t("text.writer")}</TableCell>
-              <TableCell>{t("text.register_date")}</TableCell>
-              <TableCell>{t("text.view_count")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {boardListWithCategory && boardListWithCategory.length > 0 ? (
-              boardListWithCategory
-                ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                .map((boardItem: any, index: number) => (
-                  <TableRow
-                    className="row"
-                    key={index}
-                    onClick={() => onClickDetail(boardItem.boardId, boardItem.status)}
-                  >
-                    <TableCell component="th" scope="row">
-                      {(currentPage - 1) * display + index + 1}
-                    </TableCell>
-                    <TableCell className="category-cell">
-                      <CustomCategory
-                        style={{ color: `${boardItem.category.color}` }}
-                        className="category"
-                      >
-                        [ {boardItem.category.name} ]
-                      </CustomCategory>
-                    </TableCell>
-
-                    {/* 제목 */}
-                    <TableCell className="title-cell">{boardItem.title}</TableCell>
-                    {/* 답글 여부 표시 */}
-                    <TableCell>
-                      {boardItem.hasReply ? (
-                        <AnswerContainer className="answer-container">
-                          <QuestionAnswerIcon className="answer-icon" />
-                          <span className="answer_chk">{t("menu.board.answer_ok") }</span>
-                        </AnswerContainer>
-                      ) : (
-                        <span style={{color : '#817878d5'}} className="answer_chk">{t("menu.board.answer_no") }</span>
-                      )}
-                    </TableCell>
-
-                    <TableCell>{boardItem.userName}</TableCell>
-                    <TableCell>
-                      {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                    </TableCell>
-                    <TableCell>{boardItem.viewCount}</TableCell>
-
-                  </TableRow>
-                ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  {t("sentence.no_data")}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <List>
+          <BoardHeaderListItem className="list-item header">
+            <Box className="no">
+              <span>No.</span>
+            </Box>
+            <Box className="category">
+              <span>{t("text.category")}</span>
+            </Box>
+            <Box className="title">
+              <span>{t("text.title")}</span>
+            </Box>
+            <Box className="answer">
+              <span>{t("menu.board.answer_chk")}</span>
+            </Box>
+            <Box className="writer">
+              <span>{t("text.writer")}</span>
+            </Box>
+            <Box className="date">
+              <span>{t("text.register_date")}</span>
+            </Box>
+            <Box className="date">
+              <span>{t("text.update_date")}</span>
+            </Box>
+            <Box className="view">
+              <span>{t("text.view_count")}</span>
+            </Box>
+          </BoardHeaderListItem>
+          {boardListWithCategory && boardListWithCategory.length > 0 ? (
+            boardListWithCategory
+            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+            .map((item, index) => (
+              <BoardRowListItem
+                className="list-item"
+                key={item.boardId}
+                onClick={() => onClickDetail(item.boardId, item.status)}
+              >
+                <Box className="no">
+                  {(currentPage - 1) * display + index + 1}
+                </Box>
+                <Box className="title-area">
+                  <Box className="category">
+                    <CustomCategory
+                      style={{ color: `${item.category.color}` }}
+                      className="category"
+                    >
+                      [ {item.category.name} ]
+                    </CustomCategory>
+                  </Box>
+                  <Box className="title">
+                    <span>{item.title}</span>
+                  </Box>
+                </Box>
+                <Box className="answer">
+                  {item.hasReply ? (
+                    <span className="answer_ok"><QuestionAnswerIcon className="answer answer-icon" />{t("menu.board.answer_ok") }</span>
+                  ) : (
+                    <span style={{color : '#817878d5'}} className="answer_chk">{t("menu.board.answer_no") }</span>
+                  )}
+                </Box>
+                <Box className="writer">
+                  <span>{item.userName}</span>
+                </Box>
+                <Box className="date">
+                  <span>{dayjs(item.udtDt).format("YYYY-MM-DD HH:mm")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                </Box>
+                <Box className="view">
+                  <span>{item.viewCount}</span>
+                </Box>
+              </BoardRowListItem>
+            ))
+          ) : (
+            <Typography>{t("sentence.no_data")}</Typography>
+          )}
+        </List>
 
         <CustomPagination className="pagination" spacing={2}>
           <Pagination

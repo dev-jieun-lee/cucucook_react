@@ -1,8 +1,7 @@
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill-new";
 import EditerModule from "./EditerModule";
+import "react-quill-new/dist/quill.snow.css";
 import { forwardRef, useMemo, useState } from "react";
-import { ImageResize } from "quill-image-resize-module-ts";
-Quill.register("modules/ImageResize", ImageResize);
 
 const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
   const formats: string[] = [
@@ -15,7 +14,6 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     "strike",
     "blockquote",
     "list",
-    "bullet",
     "indent",
     "link",
     "image",
@@ -24,17 +22,12 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     "align",
     "script",
     "code-block",
-    "clean",
   ];
 
   const modules: {} = useMemo(
     () => ({
       toolbar: {
         container: "#toolBar",
-      },
-      ImageResize: {
-        parchment: Quill.import("parchment"),
-        modules: ["Resize", "DisplaySize"],
       },
     }),
     []

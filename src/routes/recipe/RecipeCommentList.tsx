@@ -6,9 +6,15 @@ import { Box, Divider, Grid, Rating, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "styled-components";
 import Swal from "sweetalert2";
-import { deleteRecipeComment, deleteRecipeCommentHasChild } from "../../api";
+import {
+  deleteRecipeComment,
+  deleteRecipeCommentHasChild,
+} from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   CommentIconButton,
   RecipeCommentList,
@@ -24,8 +30,9 @@ const RecipeCommentListBox: React.FC<{
   recipeId: string;
 }> = ({ onCommentListChange, commentList, recipeId }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
-
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
   const [commentBoxStatus, setCommentBoxStatus] = useState<string | null>(null); // 활성화된 댓글 ID 상태 추가
 
@@ -60,8 +67,8 @@ const RecipeCommentListBox: React.FC<{
         }
       }
     } catch (error) {
-      console.error("Error", error);
-      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+      handleApiError(error, navigate, t);
+      //return { message: "E_ADMIN", success: false, data: [], addData: {} };
     }
   };
 
@@ -73,24 +80,28 @@ const RecipeCommentListBox: React.FC<{
       hasChildComment: boolean;
     }) => deleteRecipeCommentHasChild(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
-        onCommentListChange();
+      onSuccess: (data) => {
+        if (data && data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+          onCommentListChange();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("CODE." + data.message),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_error"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -102,24 +113,28 @@ const RecipeCommentListBox: React.FC<{
       hasChildComment: boolean;
     }) => deleteRecipeComment(params),
     {
-      onSuccess: () => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
-        onCommentListChange();
+      onSuccess: (data) => {
+        if (data && data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.delete"),
+            text: t("recipe.alert.delete_comment_sucecss"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+          onCommentListChange();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.delete"),
+            text: t("CODE." + data.message),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
-        Swal.fire({
-          icon: "error",
-          title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_error"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
+        handleApiError(error, navigate, t);
       },
     }
   );
@@ -229,7 +244,7 @@ const RecipeCommentListBox: React.FC<{
                             className="comment-icons"
                             textAlign={"right"}
                           >
-                            {comment.status === "0" && (
+                            {comment.status === "0" && user?.memberId && (
                               <>
                                 <CommentIconButton
                                   aria-label="reply"
@@ -247,28 +262,36 @@ const RecipeCommentListBox: React.FC<{
                               </>
                             )}
 
-                            <CommentIconButton
-                              aria-label="edit"
-                              onClick={() =>
-                                handleReplyButtonClick(
-                                  comment.commentId,
-                                  "edit"
-                                )
-                              }
-                            >
-                              <EditIcon />
-                            </CommentIconButton>
-                            <CommentIconButton
-                              aria-label="delete"
-                              onClick={() =>
-                                handleDeleteCommentClick(
-                                  comment.commentId,
-                                  comment.hasChildComment
-                                )
-                              }
-                            >
-                              <ClearIcon />
-                            </CommentIconButton>
+                            {(user?.memberId === comment.member.memberId ||
+                              user?.role === "0" ||
+                              user?.role === "2") && (
+                              <>
+                                {user?.memberId === comment.member.memberId && (
+                                  <CommentIconButton
+                                    aria-label="edit"
+                                    onClick={() =>
+                                      handleReplyButtonClick(
+                                        comment.commentId,
+                                        "edit"
+                                      )
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </CommentIconButton>
+                                )}
+                                <CommentIconButton
+                                  aria-label="delete"
+                                  onClick={() =>
+                                    handleDeleteCommentClick(
+                                      comment.commentId,
+                                      comment.hasChildComment
+                                    )
+                                  }
+                                >
+                                  <ClearIcon />
+                                </CommentIconButton>
+                              </>
+                            )}
                           </Grid>
                         </>
                       )}

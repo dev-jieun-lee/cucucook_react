@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { SideMenu } from "./SideMenuStyle";
+import { SideMenu } from "../../styles/SideMenuStyle";
 import { Divider, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { LinkItem } from "../MenuStyle";
+import { LinkItem } from "../../styles/MenuStyle";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -14,18 +14,15 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
 
   // URL 경로에 따라 활성 버튼 설정
   useEffect(() => {
-    switch (location.pathname) {
-      case "/myPage/Profile":
-        setSelectedIndex(0);
-        setActiveButton("profile");
-        break;
-      case "/myPage/Activity":
-        setSelectedIndex(1);
-        setActiveButton("activity");
-        break;
-      default:
-        setSelectedIndex(null);
-        setActiveButton("");
+    if (location.pathname.startsWith('/mypage/profile')) {
+      setSelectedIndex(0);
+      setActiveButton("/mypage/profile");
+    } else if (location.pathname.startsWith('/mypage/activity')) {
+      setSelectedIndex(1);
+      setActiveButton("/mypage/activity");
+    } else {
+      setSelectedIndex(null);
+      setActiveButton("");
     }
   }, [location.pathname]);
 
@@ -49,10 +46,10 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
       <ListItem disablePadding className="list-item">
         <ListItemButton
           className={`list-button ${
-            activeButton === "profile" ? "active" : ""
+            activeButton === "/mypage/profile" ? "active" : ""
           }`}
           selected={selectedIndex === 0}
-          onClick={() => handleListItemClick(0, "/mypage/profile", "profile")}
+          onClick={() => handleListItemClick(0, "/mypage/profile", "mypage/profile")}
         >
           {t("mypage.profile")}
         </ListItemButton>
@@ -60,10 +57,10 @@ function MypageSideMenu({ isDarkMode }: { isDarkMode: boolean }) {
       <ListItem disablePadding className="list-item">
         <ListItemButton
           className={`list-button ${
-            activeButton === "activity" ? "active" : ""
+            activeButton === "/mypage/activity" ? "active" : ""
           }`}
           selected={selectedIndex === 1}
-          onClick={() => handleListItemClick(0, "/mypage/activity", "activity")}
+          onClick={() => handleListItemClick(0, "/mypage/activity", "/mypage/activity")}
         >
           {t("mypage.activity")}
         </ListItemButton>
