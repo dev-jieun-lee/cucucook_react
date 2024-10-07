@@ -65,7 +65,6 @@ function QnaForm() {
       searchType: "",
       start: "",
       display: "",
-      searchType: "QNA",
     };
     const response = await getBoardCategoryList(params);
     if (response && response.data) {
