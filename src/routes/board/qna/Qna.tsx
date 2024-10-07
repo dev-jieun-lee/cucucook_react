@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
-import moment from "moment";
 import { useAuth } from "../../../auth/AuthContext";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import dayjs from "dayjs";
