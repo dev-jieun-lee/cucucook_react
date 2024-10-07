@@ -47,8 +47,6 @@
         "category": "Please select a category.",
         "title": "Please enter a title.",
         "contents": "Please enter content.",
-        "required": "{{value}} is a required entry,",
-        "name_max_length": "Name must be no more than 10 characters",
         "ERR_CG_01": "There are posts using that category and cannot be deleted.",
         "ERR_CG_02": "An unknown error occurred while deleting."
       },
@@ -82,6 +80,9 @@
     }
   },
   "text": {
+    "like": "Like",
+    "writing": "Writing",
+    "phone": "Phone Number",
     "color": "Color",
     "name": "Name",
     "name_en": "Name(English)",
@@ -116,7 +117,6 @@
     "no": "No",
     "content": "Content",
     "go_back": "Go Back",
-    "writing": "Writing",
     "answer": "Answer",
     "question": "Question",
     "all_recipe": "All Recipes",
@@ -201,8 +201,12 @@
     "Success": "Success",
     "Password verification successful": "Password verification successful.",
     "OK": "OK",
-    "mycommnet": "My Comments",
-    "confirm_delete_account": "Are you sure you want to delete your account?"
+    "myCommnet": "What I wrote in the comments",
+    "myWriting": "what I wrote",
+    "myLikes": "the one I picked up,",
+    "myRecipe": "my D.I.Y. recipe",
+    "confirm_delete_account": "Are you sure you want to delete your account?",
+    "greetings": "{{name}}, Hello! :)"
   },
   "sentence": {
     "no_data": "No data exists.",
@@ -419,5 +423,10 @@
     "E_ROLE": "You do not have permission to access.",
     "E_LOGIN_EXPIRED": "Your session has expired. Please log in again.",
     "E_UNUSABLE_EXTENSION": "This extension is not allowed. [{{extension}}]"
+  },
+  "error": {
+    "required": "{{value}} is a required entry,",
+    "max_length": "{{value}} must be no more than {{length}} characters",
+    "format": "The {{value}} format is invalid."
   }
 }

@@ -1,4 +1,7 @@
 import {
+  Box,
+  List,
+  ListItem,
   Paper,
   Table,
   TableBody,
@@ -6,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import React from "react";
 
@@ -13,7 +17,6 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { useTranslation } from "react-i18next";
 import { getBoardCategory, getBoardList } from "../../apis/boardApi";
 import { useQuery } from "react-query";
-import moment from "moment";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useNavigate } from "react-router-dom";
@@ -26,11 +29,13 @@ import {
   BannerRight,
   GreetingsWrapper,
   MainCard,
+  MainNoticeTable,
   NoticeTable,
   Slogan,
   SloganButton,
 } from "../../styles/MainStyle";
 import { CustomCategory } from "../../styles/BoardStyle";
+import dayjs from "dayjs";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -189,60 +194,48 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
               </span>
             </div>
             <div className="notice-table">
-              <TableContainer className="table-container" component={Paper}>
-                <Table
-                  className="table"
-                  sx={{ minWidth: 650 }}
-                  aria-label="board table"
-                >
-                  <TableHead className="head">
-                    <TableRow>
-                      <TableCell className="category-cell">
-                        {t("text.category")}
-                      </TableCell>
-                      <TableCell className="title-cell">
-                        {t("text.title")}
-                      </TableCell>
-                      <TableCell>{t("text.register_date")}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {boardListWithCategory &&
-                    boardListWithCategory.length > 0 ? (
-                      boardListWithCategory.map(
-                        (boardItem: any, index: number) => (
-                          <TableRow
-                            className="row"
-                            key={index}
-                            onClick={() => onClickNotice(boardItem.boardId)}
-                          >
-                            <TableCell className="cell">
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell className="cell">
-                              {boardItem.title}
-                            </TableCell>
-                            <TableCell className="cell">
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                          </TableRow>
-                        )
-                      )
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} align="center">
-                          {t("sentence.no_data")}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <MainNoticeTable>
+                <List>
+                  <ListItem className="list-item header">
+                    <Box className="item-category">
+                      <span>{t("text.category")}</span>
+                    </Box>
+                    <Box className="item-title">
+                      <span>{t("text.title")}</span>
+                    </Box>
+                    <Box className="item-date">
+                      <span>{t("text.register_date")}</span>
+                    </Box>
+                  </ListItem>
+                  {boardListWithCategory && boardListWithCategory.length > 0 ? (
+                    boardListWithCategory?.map((item, index) => (
+                      <ListItem
+                        className="list-item"
+                        key={item.boardId}
+                        onClick={() => onClickNotice(item.boardId)}
+                      >
+                        <Box className="contents">
+                          <Box className="item-category-row">
+                            <span style={{ color: item.category.color }}>
+                              [ {item.category.name} ]
+                            </span>
+                          </Box>
+                          <Box className="item-title-row">
+                            <span>{item.title}</span>
+                          </Box>
+                        </Box>
+                        <Box className="item-date-row">
+                          <span>
+                            {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                          </span>
+                        </Box>
+                      </ListItem>
+                    ))
+                  ) : (
+                    <Typography>{t("sentence.no_data")}</Typography>
+                  )}
+                </List>
+              </MainNoticeTable>
             </div>
           </NoticeTable>
           <div className="slogan-main">

@@ -6,19 +6,22 @@ import styled from "styled-components";
 import RecipeSideMenu from "./memu/sideMenu/RecipeSideMenu";
 import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
-import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
-import KakaoRedirectHandler from "./routes/members/login/KakaoRedirectHandler";
+
+import KakaoCallback from "./routes/members/login/KakaoRedirection";
 import { ProtectAuthRouter } from "./auth/ProtectAuthRouter";
 import { ProtectRoleRouter } from "./auth/ProtectRoleRouter";
+import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
 
 //메인
 const Main = lazy(() => import("./routes/main/Main"));
+
 //로그인
 const Login = lazy(() => import("./routes/members/login/Login"));
 const SignupIntro = lazy(() => import("./routes/members/signUp/SignupIntro"));
 const Signup = lazy(() => import("./routes/members/signUp/Signup"));
 const FindId = lazy(() => import("./routes/members/login/FindId"));
 const FindPw = lazy(() => import("./routes/members/login/FindPw"));
+//const Redirection = lazy(() => import("./routes/members/login/Redirection"));
 
 //레시피
 const AllRecipeList = lazy(() => import("./routes/recipe/AllRecipeList"));
@@ -47,6 +50,7 @@ const LikeLists = lazy(() => import("./routes/myPage/LikeLists"));
 const MyWrites = lazy(() => import("./routes/myPage/MyWrites"));
 const MyReplys = lazy(() => import("./routes/myPage/MyReplys"));
 const MyRecipes = lazy(() => import("./routes/myPage/MyRecipes"));
+const PwChange = lazy(() => import("./routes/myPage/PwChange"));
 //관리자
 const MembersManage = lazy(() => import("./routes/admin/member/MembersManage"));
 const MemberDetail = lazy(() => import("./routes/admin/member/MemberDetail"));
@@ -96,7 +100,8 @@ function RoutesConfig({ isDarkMode }: any) {
         element={<FindPw isDarkMode={isDarkMode} />}
       />
       {/* 카카오 리디렉션 핸들러 라우트 추가 */}
-      <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
+      <Route path="/kakao/callback" element={<KakaoCallback />} />
+
       {/* 레시피 */}
       <Route
         path="/recipe/all_recipe_list"
@@ -260,6 +265,7 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
       </Route>
+
       {/* 마이페이지 */}
       <Route element={<ProtectAuthRouter />}>
         <Route
@@ -267,16 +273,25 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <Profile isDarkMode={false} />
+              <Profile />
             </RouteBox>
           }
         />
         <Route
-          path="/mypage/UserInfo"
+          path="/mypage/profile/userInfo"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <UserInfo isDarkMode={false} />
+              <UserInfo />
+            </RouteBox>
+          }
+        />
+        <Route
+          path="/mypage/profile/userInfo/passwordChange/:memberId"
+          element={
+            <RouteBox>
+              <MypageSideMenu isDarkMode={isDarkMode} />
+              <PwChange />
             </RouteBox>
           }
         />
@@ -285,12 +300,12 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <Activity isDarkMode={false} />
+              <Activity />
             </RouteBox>
           }
         />
         <Route
-          path="/mypage/LikeLists"
+          path="/mypage/activity/LikeLists"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
@@ -299,33 +314,34 @@ function RoutesConfig({ isDarkMode }: any) {
           }
         />
         <Route
-          path="/mypage/MyWrites"
+          path="/mypage/activity/MyWrites"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyWrites isDarkMode={false} />
+              <MyWrites />
             </RouteBox>
           }
         />
         <Route
-          path="/mypage/MyReplys"
+          path="/mypage/activity/MyReplys"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyReplys isDarkMode={false} />
+              <MyReplys />
             </RouteBox>
           }
         />
         <Route
-          path="/mypage/MyRecipes"
+          path="/mypage/activity/MyRecipes"
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyRecipes isDarkMode={false} />
+              <MyRecipes/>
             </RouteBox>
           }
         />
       </Route>
+
       {/* 관리자 */}
       <Route element={<ProtectRoleRouter />}>
         <Route

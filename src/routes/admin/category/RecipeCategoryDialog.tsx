@@ -26,7 +26,7 @@ import {
   updateRecipeCategory,
 } from "../../../apis/recipeApi";
 import { handleApiError } from "../../../hooks/errorHandler";
-import { DialogForm, DialogTitleArea } from "../../../styles/AdminStyle";
+import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
 
 interface RecipeCategoryDialogProps {

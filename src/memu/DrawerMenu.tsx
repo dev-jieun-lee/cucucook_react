@@ -53,7 +53,7 @@ function DrawerMenu({ toggleDrawer }: any) {
     <Box sx={{ width: 300 }} role="presentation" onClick={toggleDrawer(false)}>
       <Divider />
       <DrawerList>
-        <ListItem className="list-item">
+        <ListItem className="list-item" >
           <span className="list-text">{t("menu.recipe.original")}</span>
         </ListItem>
         {renderMenuItems(RecipeMenuItems)}
@@ -77,7 +77,7 @@ function DrawerMenu({ toggleDrawer }: any) {
         <></>
       )}
       <Divider />
-      {user?.role === "1" ? (
+      {user?.role === "0" ? (
         <DrawerList>
           <ListItem className="list-item">
             <span className="list-text">{t("menu.admin.original")}</span>

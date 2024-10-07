@@ -61,6 +61,7 @@ function NoticeForm() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType: "",
       start: "",
       display: "",
       searchType: "NOTICE",
