@@ -16,7 +16,12 @@ export const Banner = styled(({ isDarkMode, ...rest } : any) => (
   background-size: cover;
   background-position: center;
   display: flex;
-
+  ${media.small`
+    height: 110vh;
+  `};
+  ${media.xsmall`
+    height: 142vh;
+  `};
 `;
 
 
@@ -215,7 +220,10 @@ export const SloganButton = styled(Button)`
 export const NoticeTable = styled.div`
   width: 100%;
   order: 3;
-
+  position : relative;
+  ${media.small`
+    margin-top : -50px;
+  `}
   .title {
     width: 85%;
     margin: 50px auto;
@@ -252,9 +260,11 @@ export const GreetingsWrapper = styled.div`
   margin: 0 auto; 
   overflow: hidden; 
   color: ${(props) => props.theme.mainColor};
+  position: relative;
   .greetings-wrapper {
     display: flex;
     white-space: nowrap;
+    max-width: 100%;
     animation: marquee 15s linear infinite; /* 15초 동안 무한 반복 */
   }
 
@@ -270,6 +280,12 @@ export const GreetingsWrapper = styled.div`
       transform: translateX(-100%); /* 텍스트 전체가 이동 */
     }
   }
+  ${media.small`
+    margin-bottom: 30px; /* 추가: 공지사항 테이블과 푸터 간 간격 확보 */
+    .greetings-wrapper {
+      max-width: 100%; /* 추가: 작은 화면에서도 잘 보이게 */
+    }
+  `}
 `;
 
 export const MainNoticeTable = styled.div`

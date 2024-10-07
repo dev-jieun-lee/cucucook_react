@@ -128,6 +128,7 @@ export const SummaryCountArea = styled.div`
 `;
 
 export const SummaryDataArea = styled.div`
+  /* overflow-x: hidden; */
   width: 100%;
   margin: 50px 0 50px;
   display: grid;
@@ -172,19 +173,19 @@ export const MypageContentArea = styled.div`
 `;
 
 export const MypageHeaderListItem = styled(ListItem)`
+width: 100%;
   .no{
     flex: 1;
     text-align: center;
   }
   .division{
-    flex: 1;
-    text-align: center;
+    flex: 4;
     ${media.small`
       display : none;
     `};
   }
   .title{
-    flex: 5;
+    flex: 4;
     text-align: center;
     ${media.small`
       flex: 6;
@@ -227,6 +228,7 @@ export const MypageHeaderListItem = styled(ListItem)`
 `;
 
 export const MypageRowListItem = styled(ListItem)`
+width: 100%;
   .no{
     flex: 1;
     text-align: center;
@@ -337,12 +339,15 @@ export const ActivityHeaderListItem = styled(ListItem)`
   .activity-no{
     flex: 1;
     text-align: center;
+    ${media.small`
+      display : none;
+    `};
   }
   .activity-title{
     flex: 4;
     text-align: center;
     ${media.small`
-      flex: 8;
+      flex: 1;
     `};
   }
   /* .activity-comment{
@@ -355,6 +360,9 @@ export const ActivityHeaderListItem = styled(ListItem)`
   .date{
     flex: 2;
     text-align: center;
+    ${media.small`
+      flex: 1;
+    `};
   }
 
 `;
@@ -371,8 +379,11 @@ export const ActivityRowListItem = styled(ListItem)`
     flex: 1;
     text-align: center;
     font-size: 12px;
+    ${media.small`
+      display : none;
+    `};
   }
-  .activity-title{
+  .activity-title, .comment-title{
     flex: 4;
     width : 90%;
     margin-left : 10px;
@@ -394,6 +405,7 @@ export const ActivityRowListItem = styled(ListItem)`
     text-align: center;
     font-size: 12px;
     ${media.small`
+      flex :1;
       font-size: 12px;
       color : ${(props : any) =>  props.theme.navBorderColor};
     `};
@@ -409,10 +421,14 @@ export const ActivityRowListItem = styled(ListItem)`
     white-space: nowrap;         
     overflow: hidden;            
     text-overflow: ellipsis;   
-    .activity-title{
+    .comment-title{
       font-size: 13px;
       color : ${(props : any) =>  props.theme.navBorderColor};
     }
+    ${media.small`
+      flex: 1;
+      margin-left : 0px;
+    `};
   }
   &:hover{
     cursor: pointer;

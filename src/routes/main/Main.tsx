@@ -17,7 +17,6 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import { useTranslation } from "react-i18next";
 import { getBoardCategory, getBoardList } from "../../apis/boardApi";
 import { useQuery } from "react-query";
-import moment from "moment";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { Wrapper } from "../../styles/CommonStyles";
 import { useNavigate } from "react-router-dom";
@@ -237,60 +236,6 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                   )}
                 </List>
               </MainNoticeTable>
-              {/* <TableContainer className="table-container" component={Paper}>
-                <Table
-                  className="table"
-                  sx={{ minWidth: 650 }}
-                  aria-label="board table"
-                >
-                  <TableHead className="head">
-                    <TableRow>
-                      <TableCell className="category-cell">
-                        {t("text.category")}
-                      </TableCell>
-                      <TableCell className="title-cell">
-                        {t("text.title")}
-                      </TableCell>
-                      <TableCell>{t("text.register_date")}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {boardListWithCategory &&
-                    boardListWithCategory.length > 0 ? (
-                      boardListWithCategory.map(
-                        (boardItem: any, index: number) => (
-                          <TableRow
-                            className="row"
-                            key={index}
-                            onClick={() => onClickNotice(boardItem.boardId)}
-                          >
-                            <TableCell className="cell">
-                              <CustomCategory
-                                style={{ color: `${boardItem.category.color}` }}
-                                className="category"
-                              >
-                                [ {boardItem.category.name} ]
-                              </CustomCategory>
-                            </TableCell>
-                            <TableCell className="cell">
-                              {boardItem.title}
-                            </TableCell>
-                            <TableCell className="cell">
-                              {moment(boardItem.udtDt).format("YYYY-MM-DD")}
-                            </TableCell>
-                          </TableRow>
-                        )
-                      )
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} align="center">
-                          {t("sentence.no_data")}
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer> */}
             </div>
           </NoticeTable>
           <div className="slogan-main">

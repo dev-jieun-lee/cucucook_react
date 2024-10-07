@@ -20,7 +20,6 @@ import {
   TitleArea,
 } from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
-import moment from "moment";
 import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
@@ -333,7 +332,7 @@ function QnaDetail() {
             ) : (
               <>
                 <span className="date">
-                  {moment(reBoardData[0]?.udtDt).format("YYYY-MM-DD")}
+                  {dayjs(reBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
                 </span>
                 <span className="border"></span>
                 <span className="member">{reBoardData[0]?.userName}</span>
