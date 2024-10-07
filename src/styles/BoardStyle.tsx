@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import styled from "styled-components";
+import media from "./MediaQuery";
 
 export const ContentsArea = styled.div`
   margin: 20px auto;
@@ -45,6 +46,9 @@ export const ContentsArea = styled.div`
     background-color: ${(props) => props.theme.accordionColor};
     text-align: start;
     padding: 20px 60px;
+    ${media.medium`
+      padding: 20px 20px;
+    `};
     .btn-area {
       text-align: right;
       .update-btn {
@@ -100,18 +104,33 @@ export const AnswerContainer = styled.div`
 
 export const AccordionTitle = styled.div`
   flex-direction: row;
-
   .title-area {
+    display: flex;
     .category {
       display: inline-block;
       margin-right: 30px;
       width: 130px;
       text-align: center;
+      ${media.medium`
+        width: 100px;
+        order : 1;
+        text-align: left;
+      `};
     }
     .q {
       font-weight: bold;
       margin-right: 10px;
     }
+    .title{
+      ${media.medium`
+        order : 2;
+      `};
+    }
+    ${media.medium`
+      flex-direction: column;
+      text-align : left;
+      align-items: flex-start;
+    `};
   }
 `;
 
@@ -133,9 +152,38 @@ export const TitleArea = styled.div`
   padding: 0 15px 0;
   align-items: center;
   justify-content: space-between;
+  ${media.medium`
+    display: block;
+    min-height: 100px;
+    max-height: 100px;
+  `};
+  .board-title{
+    display : flex;
+    align-items: center;
+    ${media.medium`
+      display : block;
+      text-align: left;
+      line-height : 7px;
+      white-space: nowrap;         
+      overflow: hidden;    
+      text-overflow: ellipsis; 
+      padding-top : 15px;
+      /* margin-top : 19px;  */
+    `};
+  }
   .board-info {
+    display : flex;
     color: ${(props) => props.theme.navBorderColor};
     font-size: 14px;
+    ${media.medium`
+      display : block;
+      font-size : 12px;
+      text-align: left;
+      line-height : 15px;
+    `};
+    .m-border{
+      display : none;
+    }
     .border {
       border-right: 1px solid;
       margin: 0 10px;

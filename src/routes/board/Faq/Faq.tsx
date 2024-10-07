@@ -359,8 +359,10 @@ function Faq() {
                       >
                         [ {boardItem.category.name} ]
                       </CustomCategory>
-                      <span className="q">Q.</span>
-                      <span className="title">{boardItem.title}</span>
+                      <div className="title">
+                        <span className="q">Q.</span>
+                        <span>{boardItem.title}</span>
+                      </div>
                     </div>
                   </AccordionTitle>
                 </AccordionSummary>
