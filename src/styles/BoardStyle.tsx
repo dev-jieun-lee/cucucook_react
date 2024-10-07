@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import styled from "styled-components";
 
 export const ContentsArea = styled.div`
@@ -275,7 +275,7 @@ export const QuestionArea = styled.div`
   .q-contents {
     width: 100%;
     border: 1px solid;
-    border-radius: 5px;
+    border-radius: 5px;/
     text-align: left;
     padding: 0px 15px;
     border-color: ${(props) => props.theme.navBorderColor};
@@ -286,4 +286,140 @@ export const QuestionArea = styled.div`
 
 export const AnswerButton = styled(Button)`
   margin-right: -15px;
+`;
+
+export const FileInput = styled.input`
+  display: none;
+`;
+
+export const UploadBoxContainer = styled(Box)`
+  .upload-box {
+    border: 1px solid ${(props) => props.theme.navBorderColor};
+    border-radius: 8px;
+    width: 100%;
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &.isDrag {
+      border: 1px solid ${(props) => props.theme.mainColor};
+      background: ${(props) => props.theme.mainColorOpacity10};
+    }
+
+    &:has(.file-upload-box) {
+      border-style: dashed;
+    }
+
+    &:has(.file-upload-box-wrap):hover {
+      border: 1px solid ${(props) => props.theme.mainColor};
+      background: ${(props) => props.theme.mainColorOpacity10};
+      color: ${(props) => props.theme.mainColor};
+    }
+
+    .file-list-box {
+      width: 100%;
+      .css-cveggr-MuiListItemIcon-root {
+        min-width: auto;
+      }
+      .file-list {
+        background: transparent;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+        position: relative;
+
+        &:last-child {
+          border-bottom: none;
+          &::after {
+            content: "";
+            display: block;
+            height: 10px;
+            border-top: 1px solid ${(props) => props.theme.navBorderColor};
+          }
+        }
+
+        .MuiTypography-root {
+          font-size: 0.9rem;
+        }
+
+        .file-list-item {
+          gap: 10px;
+          .delete-icon-wrap {
+          }
+          .attach-icon-wrap {
+          }
+          .list-item-text {
+          }
+        }
+      }
+    }
+    .file-upload-box-wrap {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 0 10px;
+
+      .file-upload-box {
+        .file-upload-icon-wrap {
+        }
+        .file-upload-info-wrap {
+          .file-upload-info {
+          }
+          .file-upload-allowed-extensions {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const BoardFilesListContainer = styled(Box)`
+  border: 1px solid ${(props) => props.theme.navBorderColor};
+  border-radius: 8px;
+  width: 100%;
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 20px 0;
+
+  .file-list-box {
+    width: 100%;
+    .css-cveggr-MuiListItemIcon-root {
+      min-width: auto;
+    }
+    .file-list {
+      cursor: pointer;
+      &:hover {
+        color: ${(props) => props.theme.mainColor};
+        background: ${(props) => props.theme.mainColorOpacity10};
+      }
+      background: transparent;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+      position: relative;
+
+      &:last-child {
+        //border-bottom: none;
+      }
+
+      .MuiTypography-root {
+        font-size: 0.9rem;
+      }
+
+      .file-list-item {
+        gap: 10px;
+        .delete-icon-wrap {
+        }
+        .attach-icon-wrap {
+        }
+        .list-item-text {
+        }
+      }
+    }
+  }
 `;

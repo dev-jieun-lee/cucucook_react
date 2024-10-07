@@ -1,26 +1,26 @@
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import dompurify from "dompurify";
+import moment from "moment";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import {
   deleteBoard,
   getBoard,
   getBoardCategory,
 } from "../../../apis/boardApi";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   BoardButtonArea,
   CustomCategory,
   DetailContents,
   TitleArea,
 } from "../../../styles/BoardStyle";
-import Loading from "../../../components/Loading";
-import moment from "moment";
-import { Button, IconButton, Tooltip } from "@mui/material";
-import dompurify from "dompurify";
-import Swal from "sweetalert2";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { useAuth } from "../../../auth/AuthContext";
-import { useState } from "react";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import BoardFilesList from "../BoardFilesList";
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
@@ -167,6 +167,7 @@ function NoticeDetail() {
           }}
         ></div>
       </DetailContents>
+      <BoardFilesList boardId={boardId || ""} />
       {user?.role === "1" ? (
         <BoardButtonArea>
           <Button
