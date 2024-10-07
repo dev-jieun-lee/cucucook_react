@@ -4,6 +4,10 @@ import { useMutation } from "react-query";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
+// REST API 키 설정
+const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
+const REDIRECT_URI = "https://cucucook.site";
+
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -103,6 +107,7 @@ export const findId = async (data: {
   email: string;
   verificationCode: string;
 }) => {
+  console.log("아이디찾기data:", data);
   const response = await fetch("/api/members/find-id", {
     method: "POST",
     headers: {
@@ -240,6 +245,40 @@ export const deleteAccount = async (memberId: string) => {
     return response.data;
   } catch (error) {
     console.error("회원 탈퇴 실패:", error);
+    throw error;
+  }
+};
+
+//회원 목록 조회
+export async function getMemberList(params: any) {
+  const response = await axios.get(`${BASE_URL}/getMemberList`, {
+    params: params,
+  });
+  return response.data;
+}
+
+// 카카오 토큰 요청
+export const kakaoLogin = async (code: string) => {
+  try {
+    const response = await axios.post(
+      `https://kauth.kakao.com/oauth/token`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+        params: {
+          grant_type: "authorization_code",
+          client_id: KAKAO_CLIENT_ID,
+          redirect_uri: REDIRECT_URI,
+          code: code,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Kakao login failed", error);
     throw error;
   }
 };

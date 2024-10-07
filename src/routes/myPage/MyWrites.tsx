@@ -11,235 +11,354 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Pagination,
+  Tooltip,
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
-import { Wrapper } from "../../styles/CommonStyles";
-import { fetchMyWrites } from "./api";
-import { getBoardCategoryList } from "../board/api";
-//mport { getRecipeCategoryList } from "../recipe/api";
+import {
+  CustomPagination,
+  PageTitleBasic,
+  SearchArea,
+  TitleBox,
+  TitleCenter,
+  Wrapper,
+} from "../../styles/CommonStyles";
+import { fetchMyWrites } from "../../apis/mypageApi";
+import { getBoardCategory, getBoardCategoryList } from "../../apis/boardApi";
 import { useAuth } from "../../auth/AuthContext";
+import { useQuery } from "react-query";
+import SearchIcon from "@mui/icons-material/Search";
+import {
+  MypageContentArea,
+  MypageHeaderListItem,
+  MypageRowListItem,
+} from "../../styles/MypageStyle";
+import dayjs from "dayjs";
+import { DeleteIconButton } from "../../styles/AdminStyle";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import Loading from "../../components/Loading";
 
-interface Write {
-  title: string;
-  id: number;
-}
 
-interface MyWritesProps {
-  isDarkMode: boolean;
-}
 
-const MyWrites: React.FC<MyWritesProps> = ({ isDarkMode }) => {
+const MyWrites: React.FC<{}> = () => {
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const memberId = user ? user.memberId.toString() : null;
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const [board_division, setBoardDivision] = useState("NOTICE"); // 기본값을 빈 문자열로 설정
-  const [writes, setWrites] = useState<Write[]>([]);
-  const [categories, setCategories] = useState<any[]>([]); // 카테고리 목록 상태 추가
+  const [currentPage, setCurrentPage] = useState(1); // 페이지는 1부터 시작
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
+  const [boardDivision, setBoardDivision] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("all"); // 검색 유형
+  const [triggerSearch, setTriggerSearch] = useState(true);
 
-  const loadWrites = async (currentPage: number) => {
-    if (!memberId) return;
+  const itemsPerPage = 10; // 페이지 당 보여줄 아이템 수
 
-    console.log(
-      "Fetching data with memberId:",
-      memberId,
-      "page:",
-      currentPage,
-      "board_division:",
-      board_division
-    );
-    const response = await fetchMyWrites(
-      memberId,
-      currentPage,
-      5,
-      board_division
-    );
-    console.log("Response data for page", currentPage, ":", response);
+  // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      boardDivision : boardDivision
+    });
+  }, [search, searchType, currentPage, boardDivision, setSearchParams]);
 
-    if (currentPage === 0) {
-      setWrites(response);
+  //카테고리 포함 게시글 리스트 받아오기
+  const getBoardListWithCategory = async () => {
+    try {
+      const writesData = await fetchMyWrites(
+        memberId!,
+        currentPage,
+        itemsPerPage,
+        boardDivision,
+        search,
+        searchType
+      ); // 게시글 리슽 조회
+      setTotalPages(Math.ceil(writesData.totalItems / itemsPerPage));
+
+
+      // 각 보드의 카테고리 조회
+      const boardListWithCategory = await Promise.all(
+        writesData.boards.map(async (board: any) => {
+          const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
+          return {
+            ...board,
+            category: categoryData.data, // 카테고리 정보를 추가
+          };
+        })
+      );
+      return boardListWithCategory;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+
+
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getBoardListWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const boardList = await getBoardListWithCategory(); // 데이터 불러오기
+    setLoading(false);
+    return boardList;
+  };
+
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+    refetch,
+  } = useQuery(
+    ["boardListWithCategory", currentPage, search, searchType, boardDivision],
+    getBoardListWithDelay
+    // {
+    //   enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    //   keepPreviousData: false,
+    //   refetchOnWindowFocus: false,
+    //   staleTime: 0,
+    // }
+  );
+
+
+
+  // 트리거 변경 시 데이터 초기화 및 로딩 처리
+  useEffect(() => {
+    if (triggerSearch) {
+      setTriggerSearch(false); // 트리거를 false로 초기화
+      refetch(); // 데이터 가져오기
+    }
+  }, [triggerSearch, refetch]);
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    setCurrentPage(1);
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
+  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+  useEffect(() => {
+    if (boardDivision) {
+      setTriggerSearch(true);
+      refetch();
+    }
+  }, [boardDivision, refetch]);
+
+  // 검색 유형 select 변경 이벤트
+  const handleSearchTypeChange = (e: any) => {
+    setSearchType(e.target.value);
+    // 카테고리를 선택할 경우 search 값 초기화
+    if (e.target.value === "boardDivision") {
+      setSearch(""); // 카테고리 검색에서는 검색어 초기화
     } else {
-      setWrites((prev) => [...prev, ...response]);
+      setBoardDivision("all"); // 카테고리 외 검색 유형에서는 카테고리 초기화
     }
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
-    if (memberId) {
-      loadWrites(0);
-    }
-  }, [memberId]);
-
-  useEffect(() => {
-    loadWrites(0);
-  }, [board_division]);
-
-  const handleboardDivisionChange = (event: SelectChangeEvent<string>) => {
-    const newBoardDivision = event.target.value;
-    if (newBoardDivision !== board_division) {
-      console.log("셀렉박스 선택값:", newBoardDivision);
-      setBoardDivision(newBoardDivision);
-      setWrites([]);
-    }
+  //카테고리 핸들러
+  const handleCategoryChange = (e: any) => {
+    setBoardDivision(e.target.value);
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleGoBack = () => {
-    console.log("뒤로가기 클릭");
-    navigate(-1);
+  // 페이지 변경 핸들러
+  const handlePageChange = (event: any, page: number) => {
+    setCurrentPage(page); // 선택한 페이지로 변경
+    refetch(); // 해당 페이지의 데이터를 가져오기 위해 refetch 호출
   };
 
-  const scrollToTop = () => {
-    console.log("페이지 상단으로 스크롤");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const loadCategories = async () => {
-    const params = {
-      search: "",
-      start: "",
-      display: "",
-    };
-    const response = await getBoardCategoryList(params);
-    console.log(response.data);
-
-    // board_category_id가 'BC'로 시작하는 카테고리들 필터링
-    const filteredCategories = response.data.filter(
-      (category: any) =>
-        category.boardCategoryId && category.boardCategoryId.startsWith("BC")
-    );
-
-    if (filteredCategories.length > 0) {
-      const boardDivision = filteredCategories[0].boardDivision; // 첫 번째 카테고리의 board_division 값 가져오기
-      console.log("board_division:", boardDivision);
-
-      // 필터링된 카테고리와 board_division을 상태로 설정
-      setCategories(filteredCategories);
-      setBoardDivision(boardDivision); // 첫 번째 필터링된 카테고리의 board_division 값을 설정
-    } else {
-      setCategories([]);
-      setBoardDivision(""); // 필터링된 결과가 없을 때는 셀렉트박스 초기화
+  //상세 페이지로 이동
+  const onClickDetail = (boardId: string, division: string) => {
+    console.log(division);
+    
+    switch (division) {
+      case "NOTICE":
+        navigate(`/notice/${boardId}`);
+        break;
+    
+        ///////추가 구현 필요!!!! 넘어가면 해당 게시글 열리도록?
+      case "FAQ":
+        navigate(`/faq`);
+        break;
+    
+      case "QNA":
+        navigate(`/qna/${boardId}`);
+        break;
+    
+      default:
+        break;
     }
   };
 
-  // 페이지 진입 시 게시글 버튼을 자동으로 클릭
-  useEffect(() => {
-    handlePostButtonClick();
-  }, []);
 
-  const handlePostButtonClick = async () => {
-    setBoardDivision(""); // 셀렉트박스 초기화
-    await loadCategories(); // 게시글 버튼 클릭 시 카테고리 목록 로드
-  };
-
-  const handleRecipeButtonClick = () => {
-    console.log("레시피 버튼 클릭");
-    setWrites([]); // 리스트 초기화
-    setBoardDivision(""); // 셀렉트박스 초기화
-  };
+  //로딩
+  if (loading || boardListLoading ) {
+    return <Loading />;
+  }
 
   return (
     <Wrapper>
-      <Box sx={activityStyles.container}>
-        <Box sx={activityStyles.content}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
+      <TitleCenter>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate("/mypage/activity")}
           >
-            <Typography variant="subtitle1">{t("내가 쓴 게시글")}</Typography>
-            <Button variant="outlined" onClick={handleGoBack}>
-              {t("뒤로 가기")}
-            </Button>
-          </Box>
-
-          {/* 셀렉트 박스 및 버튼 */}
-          <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              onClick={handlePostButtonClick}
-              sx={{ marginRight: 1 }}
-            >
-              게시글
-            </Button>
-            <Button variant="contained" onClick={handleRecipeButtonClick}>
-              레시피
-            </Button>
-            <Select
-              value={board_division}
-              onChange={handleboardDivisionChange}
-              displayEmpty
-              inputProps={{ "aria-label": "Board categoryId Select" }}
-              sx={{ marginLeft: 1 }}
-            >
-              {categories.map((category) => (
-                <MenuItem
-                  key={category.boardDivision}
-                  value={category.boardDivision}
-                >
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Box>
-
-          <List
-            sx={{
-              width: "100%",
-              overflowY: "auto",
-              maxHeight: "calc(100% - 48px)",
-            }}
-          >
-            {writes.length > 0 ? (
-              writes.map((write, index) => (
-                <ListItem
-                  key={write.id}
-                  sx={{ padding: "8px", borderBottom: "1px solid #ddd" }}
-                >
-                  <ListItemText primary={write.title} />
-                </ListItem>
-              ))
-            ) : (
-              <Typography variant="body2" sx={{ padding: 2 }}>
-                게시물이 없습니다.
-              </Typography>
-            )}
-          </List>
-        </Box>
-      </Box>
-      {showScrollButton && (
-        <Fab
-          color="primary"
-          size="small"
-          sx={scrollButtonStyles}
-          onClick={scrollToTop}
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("mypage.myWriting")}
+      </TitleCenter>
+      <SearchArea>
+        <Select
+          className="select-category"
+          variant="standard"
+          labelId="select-category"
+          value={searchType}
+          onChange={handleSearchTypeChange}
         >
-          <KeyboardArrowUp />
-        </Fab>
-      )}
+          <MenuItem value="all">
+            {t("text.title")} + {t("text.content")}
+          </MenuItem>
+          <MenuItem value="title">{t("text.title")}</MenuItem>
+          <MenuItem value="contents">{t("text.content")}</MenuItem>
+          <MenuItem value="division">{t("menu.board.division")}</MenuItem>
+        </Select>
+        {searchType === "division" ? (
+          <Select
+            className="select-category-item"
+            variant="standard"
+            labelId="select-category"
+            value={boardDivision}
+            onChange={handleCategoryChange}
+          >
+            <MenuItem value={"all"}>{t("text.all")}</MenuItem>
+            <MenuItem value={"NOTICE"}>{t("menu.board.notice")}</MenuItem>
+            <MenuItem value={"FAQ"}>{t("menu.board.FAQ")}</MenuItem>
+            <MenuItem value={"QNA"}>{t("menu.board.QNA")}</MenuItem>
+          </Select>
+        ) : (
+        <TextField
+          className="search-input"
+          variant="standard"
+          placeholder={t("sentence.searching")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown} // 엔터 키로 검색
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  // color="primary"
+                  aria-label="toggle password visibility"
+                  onClick={handleSearchClick}
+                  edge="end"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        )} 
+      </SearchArea>
+      <MypageContentArea>
+        <List>
+          <MypageHeaderListItem className="list-item header">
+            <Box className="no">
+              <span>No.</span>
+            </Box>
+            <Box className="division">
+              <span>{t("menu.board.division")}</span>
+            </Box>
+            <Box className="title">
+              <span>{t("text.title")}</span>
+            </Box>
+            <Box className="date">
+              <span>{t("text.register_date")}</span>
+            </Box>
+            {/* <Box className="delete">
+              <span>{t("text.delete")}</span>
+            </Box> */}
+          </MypageHeaderListItem>
+          {boardListWithCategory && boardListWithCategory.length > 0 ? (
+            boardListWithCategory.map((item, index) => (
+              <MypageRowListItem
+                className="list-item"
+                key={item.boardId}
+                onClick={() => onClickDetail(item.boardId, item.boardDivision)}
+                // ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
+              >
+                <Box className="no">
+                  <span>{(currentPage - 1) * itemsPerPage + index + 1}</span>
+                </Box>
+                <Box className="content">
+                  <Box className="division">
+                    {item.boardDivision === "NOTICE" ? (
+                      t("menu.board.notice")
+                    ) : item.boardDivision === "FAQ" ? (
+                      t("menu.board.FAQ")
+                    ) : item.boardDivision === "QNA" ? (
+                      t("menu.board.QNA")
+                    ) : (
+                      <></>
+                    )}
+                  </Box>
+                  <Box className="title">
+                    <span>{item.title}</span>
+                  </Box>
+                </Box>
+                <Box className="date">
+                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                </Box>
+                {/* <Box className="delete">
+                  <DeleteIconButton
+                    className="icon-btn"
+                    // onClick={(event) => {
+                    //   event.stopPropagation();
+                    //   onClickDelete(categoryItem.boardCategoryId);
+                    // }}
+                  >
+                    <DeleteForeverIcon color="error" className="delete-icon" />
+                  </DeleteIconButton>
+                </Box> */}
+              </MypageRowListItem>
+            ))
+          ) : (
+            <Typography>{t("sentence.no_data")}</Typography>
+          )}
+        </List>
+        <CustomPagination className="pagination" spacing={2}>
+          <Pagination
+            className="pagination-btn"
+            color="primary"
+            count={totalPages} // 전체 페이지 수
+            page={currentPage} // 현재 페이지
+            onChange={handlePageChange} // 페이지 변경 시 실행되는 핸들러
+          />
+        </CustomPagination>
+      </MypageContentArea>
     </Wrapper>
   );
 };

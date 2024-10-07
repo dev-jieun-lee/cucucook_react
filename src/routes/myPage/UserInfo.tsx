@@ -1,227 +1,166 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {
   Button,
   FormControl,
-  InputLabel,
-  OutlinedInput,
-  IconButton,
-  InputAdornment,
-  Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
+  TextField,
 } from "@mui/material";
-import { userInfoStyles } from "./myPageStyles";
+import { activityUserInfoStyles } from "./myPageStyles";
+
 import { useNavigate } from "react-router-dom";
-import { Wrapper } from "../../styles/CommonStyles";
+import { TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import Swal from "sweetalert2";
-import { useQuery } from "react-query";
-import { getMember, deleteAccount } from "../members/api";
+import { useMutation, useQuery } from "react-query";
+import { getMember, deleteAccount } from "../../apis/memberApi";
 import { useAuth } from "../../auth/AuthContext";
-import { changePasswordByUser, updateMember } from "./api";
+import { changePasswordByUser, updateMember } from "../../apis/mypageApi";
 import Cookies from "js-cookie"; // 쿠키를 삭제하기 위해 필요
-
-// 전화번호 포맷 함수
-const formatPhoneNumber = (value: string) => {
-  const cleaned = value.replace(/\D/g, ""); // 숫자만 추출
-  if (cleaned.length <= 3) return cleaned;
-  if (cleaned.length <= 7) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
-  return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(
-    7,
-    11
-  )}`;
-};
-
-// 입력된 이름을 한글로 변환하는 함수
-const convertToHangul = (input: string) => {
-  const hangulRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
-  return input.match(hangulRegex)?.join("") || "";
-};
-
-// SweetAlert 초기화
-const MySwal = Swal;
-
-// 비밀번호 변경 아코디언 컴포넌트
-const ChangePasswordAccordion: React.FC<{ memberId: string }> = ({
-  memberId,
-}) => {
-  const { t } = useTranslation();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const formik = useFormik({
-    initialValues: {
-      newPassword: "",
-      confirmNewPassword: "",
-    },
-    onSubmit: async (values) => {
-      if (values.newPassword === values.confirmNewPassword) {
-        try {
-          await changePasswordByUser(memberId, values.newPassword);
-          MySwal.fire({
-            title: t("mypage.password_changed"),
-            icon: "success",
-            confirmButtonText: t("alert.ok"),
-          });
-          formik.resetForm();
-        } catch (error) {
-          MySwal.fire({
-            title: t("mypage.password_change_failed"),
-            text: t("mypage.password_change_error"),
-            icon: "error",
-            confirmButtonText: t("alert.ok"),
-          });
-        }
-      } else {
-        MySwal.fire({
-          title: t("mypage.password_mismatch"),
-          icon: "error",
-          confirmButtonText: t("alert.ok"),
-        });
-      }
-    },
-  });
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  return (
-    <Accordion>
-      <AccordionSummary
-        expandIcon={<ExpandMore />}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
-      >
-        <Typography>{t("mypage.change_password")}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <FormControl
-          fullWidth
-          sx={userInfoStyles.formControl}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="newPassword">
-            {t("mypage.new_password")}
-          </InputLabel>
-          <OutlinedInput
-            id="newPassword"
-            label={t("mypage.new_password")}
-            type={showPassword ? "text" : "password"}
-            value={formik.values.newPassword}
-            onChange={formik.handleChange}
-            name="newPassword"
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
-        <FormControl
-          fullWidth
-          sx={userInfoStyles.formControl}
-          variant="outlined"
-        >
-          <InputLabel htmlFor="confirmNewPassword">
-            {t("mypage.confirm_new_password")}
-          </InputLabel>
-          <OutlinedInput
-            id="confirmNewPassword"
-            label={t("mypage.confirm_new_password")}
-            type={showPassword ? "text" : "password"}
-            value={formik.values.confirmNewPassword}
-            onChange={formik.handleChange}
-            name="confirmNewPassword"
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
-        <Button
-          color="primary"
-          variant="contained"
-          fullWidth
-          onClick={() => formik.handleSubmit()} // 비밀번호 변경 함수 호출
-          sx={userInfoStyles.button}
-        >
-          {t("mypage.pw_save_changes")}
-        </Button>
-      </AccordionDetails>
-    </Accordion>
-  );
-};
+import { LoginWrapper } from "../../styles/LoginStyle";
+import * as Yup from "yup";
+import Loading from "../../components/Loading";
+import { BoardButtonArea } from "../../styles/BoardStyle";
+import {
+  ConnectButton,
+  PwChangeArea,
+  PwChangeButton,
+  UserInfoForm,
+} from "../../styles/MypageStyle";
+import PwChange from "./PwChange";
 
 // UserInfo 컴포넌트
-const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const UserInfo = () => {
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth(); 
   const memberId = user ? user.memberId.toString() : null;
   const [phone, setPhone] = useState("");
 
-  // useQuery로 회원 정보 불러오기
-  const { data, isLoading, error } = useQuery(
-    ["member", memberId],
-    () => getMember(memberId!),
-    {
-      enabled: !!memberId,
-      onSuccess: (data) => {
-        setPhone(formatPhoneNumber(data.phone)); // 초기 전화번호 설정
-      },
-    }
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getMemberWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const memberData = await getMember(memberId!); // 데이터 불러오기
+    setLoading(false);
+    return memberData;
+  };
+
+  //데이터 받아오기
+  const { data: memberData, isLoading: memberLoading } = useQuery(
+    "memberData",
+    getMemberWithDelay
   );
 
   const formik = useFormik({
-    initialValues: {
-      username: data?.userId || "",
-      name: data?.name || "",
-      phone: phone || "",
-      email: data?.email || "",
-    },
     enableReinitialize: true,
-    onSubmit: async (values) => {
-      try {
-        await updateMember(memberId!, values.name, values.email, values.phone);
-        MySwal.fire({
-          title: t("mypage.info_updated"),
-          icon: "success",
-          confirmButtonText: t("alert.ok"),
+    initialValues: {
+      userId: memberData?.userId,
+      name: memberData?.name,
+      phone: memberData?.phone,
+      email: memberData?.email,
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .required(t("error.required", { value: t("text.name") }))
+        .max(5, t("error.max_length", { value: t("text.name"), length: 5 })),
+      phone: Yup.string()
+        .required(t("error.required", { value: t("text.phone") }))
+        .matches(
+          /^\d{3}-\d{3,4}-\d{4}$/,
+          t("error.format", { value: t("text.phone") })
+        ) // 형식 검증
+        .test(
+          "len",
+          t("error.format", { value: t("text.phone") }),
+          (val: any) => val && val.replace(/-/g, "").length === 11
+        ), // 13자리 검사
+      email: Yup.string()
+        .required(t("error.required", { value: t("text.email") }))
+        .email(t("error.format", { value: t("text.email") })),
+    }),
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: (values) => {
+      values.phone = values.phone.replace(/-/g, ""); // '-' 제거
+      mutation.mutate(values as any); // mutation 실행
+    },
+  });
+
+  const mutation = useMutation(
+    (values: any) =>
+      updateMember(memberId!, values.name, values.email, values.phone),
+    {
+      onSuccess: (data) => {
+        // AuthContext에 사용자 정보 업데이트
+        setUser({
+          userId: user?.userId,
+          name: data.name,
+          role: user?.role,
+          memberId: data.memberId,
         });
-      } catch (error) {
-        MySwal.fire({
+        Swal.fire({
+          icon: "success",
+          title: t("text.save"),
+          text: t("menu.board.alert.save"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // window.location.reload();
+          }
+        });
+      },
+      onError: (error) => {
+        Swal.fire({
           title: t("mypage.update_failed"),
           icon: "error",
           confirmButtonText: t("alert.ok"),
         });
-      }
-    },
-  });
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value.replace(/\D/g, "").length <= 11) {
-      setPhone(formatPhoneNumber(value)); // 전화번호 형식 자동 적용
-      formik.setFieldValue("phone", value);
+      },
     }
+  );
+
+  // 전화번호 포맷 및 유효성 검사
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    // 입력한 값에서 숫자만 추출
+    const cleaned = value.replace(/\D/g, "");
+    // 숫자 11자리를 초과할 경우 자르기
+    if (cleaned.length > 11) return;
+    // 전화번호 포맷 적용
+    const formattedPhone = formatPhoneNumber(cleaned);
+    // 폼의 상태 업데이트
+    formik.setFieldValue("phone", formattedPhone);
   };
+
+  // 전화번호 포맷 함수
+  const formatPhoneNumber = (value: string) => {
+    const cleaned = value.replace(/\D/g, ""); // 숫자만 남기기
+    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 7)
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(
+      7,
+      11
+    )}`;
+  };
+
+  useEffect(() => {
+    if (memberData) {
+      formik.setFieldValue("phone", formatPhoneNumber(memberData.phone));
+    }
+  }, [memberData]);
+
+  // // 입력된 이름을 한글로 변환하는 함수
+  // const convertToHangul = (input: string) => {
+  //   const hangulRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+  //   return input.match(hangulRegex)?.join("") || "";
+  // };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -234,18 +173,18 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const hangulValue = convertToHangul(value); // 한글로 변환
-    formik.setFieldValue("name", hangulValue); // 한글 외의 문자는 자동으로 제거됨
+    // const hangulValue = convertToHangul(value); // 한글로 변환
+    // formik.setFieldValue("name", hangulValue); // 한글 외의 문자는 자동으로 제거됨
   };
 
   // 이름, 전화번호, 이메일 중 하나라도 변경되었는지 확인
   const isFormModified =
-    formik.values.name !== data?.name ||
-    formik.values.phone !== data?.phone ||
-    formik.values.email !== data?.email;
+    formik.values.name !== memberData?.name ||
+    formik.values.phone !== memberData?.phone ||
+    formik.values.email !== memberData?.email;
 
   const handleSaveChangesClick = async () => {
-    const confirmSave = await MySwal.fire({
+    const confirmSave = await Swal.fire({
       title: t("mypage.save_changes"),
       text: t("mypage.save_changes_confirm"),
       icon: "question",
@@ -260,7 +199,7 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
   };
 
   const handleDeleteAccountClick = async () => {
-    const confirmDelete = await MySwal.fire({
+    const confirmDelete = await Swal.fire({
       title: t("mypage.delete_account"),
       text: t("mypage.delete_account_confirm"),
       icon: "warning",
@@ -273,14 +212,14 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
       try {
         await deleteAccount(memberId); // 회원 탈퇴 API 호출 (타입 변환 제거)
         Cookies.remove("auth_token"); // 쿠키에 저장된 인증 토큰 삭제 (로그아웃)
-        MySwal.fire({
+        Swal.fire({
           title: t("mypage.account_deleted"),
           icon: "success",
           confirmButtonText: t("alert.ok"),
         });
         navigate("/"); // 성공 후 홈으로 이동
       } catch (error) {
-        MySwal.fire({
+        Swal.fire({
           title: t("mypage.delete_failed"),
           text: t("mypage.delete_account_error"),
           icon: "error",
@@ -290,106 +229,124 @@ const UserInfo = ({ isDarkMode }: { isDarkMode: boolean }) => {
     }
   };
 
-  if (isLoading) return <div>{t("loading")}</div>;
-  if (error) return <div>{t("error.fetch_failed")}</div>;
+  //비밀번호변경 페이지로 이동
+  const onClickPwChange = () => {
+    navigate(`/mypage/profile/userInfo/passwordChange/${memberId}`);
+  };
+
+  //로딩
+  if (loading || memberLoading) {
+    return <Loading />;
+  }
 
   return (
     <Wrapper>
-      <Box sx={userInfoStyles.container}>
-        <div className="title">
-          <span>{t("mypage.edit_info")}</span>
-        </div>
-
-        <form onSubmit={formik.handleSubmit}>
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="username">{t("mypage.username")}</InputLabel>
-            <OutlinedInput
-              id="username"
-              label={t("mypage.username")}
-              value={formik.values.username}
+      <TitleCenter>{t("mypage.profile")}</TitleCenter>
+      <LoginWrapper>
+        <UserInfoForm onSubmit={formik.handleSubmit}>
+          <FormControl className="input-form">
+            <TextField
+              id="userId"
+              name="userId"
+              label={t("text.user_id")}
               disabled
+              value={formik.values.userId}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.userId && Boolean(formik.errors.userId)}
+              // helperText={formik.touched.userId && formik.errors.userId}
             />
           </FormControl>
-
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="name">{t("mypage.name")}</InputLabel>
-            <OutlinedInput
+          <FormControl className="input-form">
+            <TextField
               id="name"
-              label={t("mypage.name")}
-              value={formik.values.name}
-              onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
               name="name"
+              label={t("text.name")}
+              value={formik.values.name}
+              // onChange={formik.handleChange}
+              onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
+              onBlur={formik.handleBlur}
+              error={formik.touched.name && Boolean(formik.errors.name)}
+              helperText={
+                formik.touched.name && typeof formik.errors.name === "string"
+                  ? formik.errors.name
+                  : ""
+              }
             />
           </FormControl>
-
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="phone">{t("mypage.phone_number")}</InputLabel>
-            <OutlinedInput
+          <FormControl className="input-form">
+            <TextField
               id="phone"
-              label={t("mypage.phone_number")}
-              value={phone}
-              onChange={handlePhoneChange}
               name="phone"
+              label={t("mypage.phone_number")}
+              value={formik.values.phone}
+              onChange={handlePhoneChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={
+                formik.touched.phone && typeof formik.errors.phone === "string"
+                  ? formik.errors.phone
+                  : ""
+              }
             />
           </FormControl>
-
-          <FormControl
-            fullWidth
-            sx={userInfoStyles.formControl}
-            variant="outlined"
-          >
-            <InputLabel htmlFor="email">{t("mypage.email")}</InputLabel>
-            <OutlinedInput
-              id="email"
-              label={t("mypage.email")}
-              value={formik.values.email}
-              onChange={handleEmailChange} // 이메일에 문자 제한 추가
-              name="email"
-            />
+          <FormControl className="input-form">
+            <div className="input-email">
+              <TextField
+                className="email"
+                id="email"
+                name="email"
+                label={t("text.email")}
+                value={formik.values.email}
+                onChange={handleEmailChange} // 이메일에 문자 제한 추가
+                onBlur={formik.handleBlur}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={
+                  formik.touched.email &&
+                  typeof formik.errors.email === "string"
+                    ? formik.errors.email
+                    : ""
+                }
+              />
+            </div>
           </FormControl>
-
-          {/* 비밀번호 변경 아코디언 */}
-          <ChangePasswordAccordion memberId={memberId!} />
-
-          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-            {t("mypage.connect_naver")}
-          </Button>
-          <Button variant="outlined" fullWidth sx={userInfoStyles.button}>
-            {t("mypage.connect_kakao")}
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            fullWidth
-            sx={userInfoStyles.button}
-            onClick={handleSaveChangesClick}
-            disabled={!isFormModified || !formik.isValid} // 값이 변경되지 않았거나 유효하지 않으면 비활성화
-          >
-            {t("mypage.save_changes")}
-          </Button>
-
-          <Button
+          <PwChangeButton
             variant="outlined"
-            color="error"
-            fullWidth
-            onClick={handleDeleteAccountClick}
+            color="warning"
+            onClick={onClickPwChange}
           >
-            {t("mypage.delete_account")}
-          </Button>
-        </form>
-      </Box>
+            {t("mypage.change_password")}
+          </PwChangeButton>
+          <ConnectButton>
+            <Button className="con-btn kakao" variant="outlined">
+              {t("mypage.connect_kakao")}
+            </Button>
+            <Button className="con-btn naver" variant="outlined">
+              {t("mypage.connect_naver")}
+            </Button>
+          </ConnectButton>
+          <BoardButtonArea>
+            <Button
+              className="cancel-btn"
+              type="button"
+              variant="outlined"
+              color="warning"
+              onClick={() => handleDeleteAccountClick()}
+            >
+              {t("mypage.delete_account")}
+            </Button>
+            <Button
+              className="save-btn"
+              type="submit"
+              variant="contained"
+              onClick={handleSaveChangesClick}
+              disabled={!isFormModified || !formik.isValid}
+            >
+              {t("text.save")}
+            </Button>
+          </BoardButtonArea>
+        </UserInfoForm>
+      </LoginWrapper>
     </Wrapper>
   );
 };

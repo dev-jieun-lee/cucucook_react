@@ -1,11 +1,6 @@
-import { useTranslation } from "react-i18next";
-import {
-  CustomPagination,
-  SearchArea,
-  TitleCenter,
-  Wrapper,
-} from "../../../styles/CommonStyles";
-import { AccordionTitle, ContentsArea, CustomCategory } from "../BoardStyle";
+import AddIcon from "@mui/icons-material/Add";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Accordion,
   AccordionDetails,
@@ -17,29 +12,35 @@ import {
   MenuItem,
   Pagination,
   Select,
-  Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import dompurify from "dompurify";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import {
   deleteBoard,
-  getBoard,
   getBoardCategory,
   getBoardCategoryList,
   getBoardList,
-} from "../api";
-import { useMutation, useQuery } from "react-query";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import Loading from "../../../components/Loading";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import dompurify from "dompurify";
-import Swal from "sweetalert2";
-import moment from "moment";
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
+} from "../../../apis/boardApi";
 import { useAuth } from "../../../auth/AuthContext";
+import Loading from "../../../components/Loading";
+import {
+  AccordionTitle,
+  ContentsArea,
+  CustomCategory,
+} from "../../../styles/BoardStyle";
+import {
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../../styles/CommonStyles";
+import BoardFilesList from "../BoardFilesList";
 
 function Faq() {
   const { user } = useAuth(); //로그인 상태관리
@@ -67,30 +68,35 @@ function Faq() {
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    setSearchParams({ search, searchType, category });
-  }, [search, searchType, category, setSearchParams]);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString(),
+      category: category,
+    });
+  }, [search, searchType, currentPage, category, setSearchParams]);
 
   //FAQ 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
+      searchType : "",
       start: "",
       display: "",
     };
     const response = await getBoardCategoryList(params);
-      if (response && response.data) {
-        return response.data.filter(
-          (category: any) => category.division === "FAQ"
-        );
-      }
+    if (response && response.data) {
+      return response.data.filter(
+        (category: any) => category.division === "FAQ"
+      );
+    }
 
-      return [];
+    return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
-
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
@@ -147,7 +153,6 @@ function Faq() {
   } = useQuery("boardListWithCategory", getBoardListWithDelay, {
     enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
   });
-
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
@@ -256,8 +261,8 @@ function Faq() {
     <Wrapper>
       <TitleCenter>
         {t("menu.board.FAQ")}
-        {user?.role === "1" ? (
-          <Tooltip title={t("text.writing")}>
+        {user?.role === "0" ? (
+          <Tooltip title={t("text.add")}>
             <Fab
               className="add-btn"
               size="small"
@@ -271,7 +276,6 @@ function Faq() {
         ) : (
           <></>
         )}
-
       </TitleCenter>
       <SearchArea>
         <Select
@@ -357,8 +361,10 @@ function Faq() {
                       >
                         [ {boardItem.category.name} ]
                       </CustomCategory>
-                      <span className="q">Q.</span>
-                      <span className="title">{boardItem.title}</span>
+                      <div className="title">
+                        <span className="q">Q.</span>
+                        <span>{boardItem.title}</span>
+                      </div>
                     </div>
                   </AccordionTitle>
                 </AccordionSummary>
@@ -372,6 +378,7 @@ function Faq() {
                           : "",
                     }}
                   ></div>
+                  <BoardFilesList boardId={boardItem.boardId || ""} />
                   <div className="btn-area">
                     <Button
                       className="update-btn"
