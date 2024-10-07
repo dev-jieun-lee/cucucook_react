@@ -21,11 +21,11 @@ import {
 } from "../../apis/recipeApi";
 
 import { useAuth } from "../../auth/AuthContext";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   RecipeCommentWrite,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-import { handleApiError } from "../../hooks/errorHandler";
 
 const customStyles = recipeCommonStyles();
 
@@ -88,7 +88,7 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
     {
       onSuccess: (data) => {
         console.log(data);
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.save"),

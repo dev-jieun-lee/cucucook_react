@@ -1,4 +1,4 @@
-import { Button, ListItem } from "@mui/material";
+import { Box, Button, ListItem } from "@mui/material";
 import styled from "styled-components";
 import media from "./MediaQuery";
 
@@ -88,7 +88,6 @@ export const ContentsArea = styled.div`
       color: ${(props) => props.theme.mainColor};
     }
   }
-
 `;
 
 export const BoardHeaderListItem = styled(ListItem)`
@@ -97,36 +96,36 @@ export const BoardHeaderListItem = styled(ListItem)`
   border-top: 1px solid;
   height: 55px;
   text-align: center;
-  border-color: ${(props) =>  props.theme.navBorderColor};
-  .no{
+  border-color: ${(props) => props.theme.navBorderColor};
+  .no {
     flex: 1;
   }
-  .category{
+  .category {
     flex: 2;
     text-align: center;
     ${media.medium`
       display : none;
     `};
   }
-  .title{
+  .title {
     flex: 4;
   }
-  .writer{
+  .writer {
     flex: 2;
   }
-  .date{
+  .date {
     flex: 2;
     text-align: center;
     ${media.medium`
       display : none;
     `};
   }
-  .view{
+  .view {
     flex: 1;
   }
-  .answer{
+  .answer {
     flex: 3;
-    text-align : center;
+    text-align: center;
   }
 `;
 
@@ -134,22 +133,22 @@ export const BoardRowListItem = styled(ListItem)`
   width: 100%;
   border-bottom: 1px solid;
   height: 55px;
-  border-color: ${(props) =>  props.theme.tableBorderColor};
-  &:last-child{
-    border-color: ${(props) =>  props.theme.navBorderColor};
+  border-color: ${(props) => props.theme.tableBorderColor};
+  &:last-child {
+    border-color: ${(props) => props.theme.navBorderColor};
   }
-  &:hover{
+  &:hover {
     cursor: pointer;
-    background-color : ${(props) =>  props.theme.tableHoverColor};
+    background-color: ${(props) => props.theme.tableHoverColor};
   }
-  .no{
+  .no {
     flex: 1;
     text-align: center;
     ${media.medium`
       font-size : 13px;
     `};
   }
-  .category{
+  .category {
     flex: 2;
     text-align: center;
     ${media.medium`
@@ -157,50 +156,50 @@ export const BoardRowListItem = styled(ListItem)`
       font-size : 13px;
     `};
   }
-  .title{
+  .title {
     flex: 4;
-    white-space: nowrap;         
-    overflow: hidden;            
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
   }
-  .title-area{
-    display : flex;
+  .title-area {
+    display: flex;
     flex: 6;
-    white-space: nowrap;         
-    overflow: hidden;            
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
-    width : 90%;
+    width: 90%;
     ${media.medium`
       flex: 4;
       display : block;
     `};
   }
-  .writer{
+  .writer {
     flex: 2;
     text-align: center;
     ${media.medium`
       font-size : 13px;
     `};
   }
-  .date{
+  .date {
     flex: 2;
-    text-align : center;
-    font-size : 13px;
+    text-align: center;
+    font-size: 13px;
     ${media.medium`
       display : none;
     `};
   }
-  .view{
+  .view {
     flex: 1;
     text-align: center;
     ${media.medium`
       font-size : 13px;
     `};
   }
-  .answer{
+  .answer {
     flex: 3;
-    text-align : center;
-    align-items : center;
+    text-align: center;
+    align-items: center;
     .answer-icon {
       transform: scale(0.6);
       color: ${(props) => props.theme.mainColor};
@@ -239,7 +238,7 @@ export const AccordionTitle = styled.div`
       font-weight: bold;
       margin-right: 10px;
     }
-    .title{
+    .title {
       ${media.medium`
         order : 2;
       `};
@@ -275,8 +274,8 @@ export const TitleArea = styled.div`
     min-height: 100px;
     max-height: 100px;
   `};
-  .board-title{
-    display : flex;
+  .board-title {
+    display: flex;
     align-items: center;
     ${media.medium`
       display : block;
@@ -290,7 +289,7 @@ export const TitleArea = styled.div`
     `};
   }
   .board-info {
-    display : flex;
+    display: flex;
     color: ${(props) => props.theme.navBorderColor};
     font-size: 14px;
     ${media.medium`
@@ -299,8 +298,8 @@ export const TitleArea = styled.div`
       text-align: left;
       line-height : 15px;
     `};
-    .m-border{
-      display : none;
+    .m-border {
+      display: none;
     }
     .border {
       border-right: 1px solid;
@@ -328,7 +327,7 @@ export const TitleAreaAnswer = styled.div`
   align-items: center;
   justify-content: space-between;
   .board-info {
-    display : flex;
+    display: flex;
     color: ${(props) => props.theme.navBorderColor};
     font-size: 14px;
     ${media.medium`
@@ -337,8 +336,8 @@ export const TitleAreaAnswer = styled.div`
       text-align: left;
       line-height : 15px;
     `};
-    .m-border{
-      display : none;
+    .m-border {
+      display: none;
     }
     .border {
       border-right: 1px solid;
@@ -480,7 +479,7 @@ export const QuestionArea = styled.div`
   .q-contents {
     width: 100%;
     border: 1px solid;
-    border-radius: 5px;
+    border-radius: 5px;/
     text-align: left;
     padding: 0px 15px;
     border-color: ${(props) => props.theme.navBorderColor};
@@ -491,4 +490,140 @@ export const QuestionArea = styled.div`
 
 export const AnswerButton = styled(Button)`
   margin-right: -15px;
+`;
+
+export const FileInput = styled.input`
+  display: none;
+`;
+
+export const UploadBoxContainer = styled(Box)`
+  .upload-box {
+    border: 1px solid ${(props) => props.theme.navBorderColor};
+    border-radius: 8px;
+    width: 100%;
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &.isDrag {
+      border: 1px solid ${(props) => props.theme.mainColor};
+      background: ${(props) => props.theme.mainColorOpacity10};
+    }
+
+    &:has(.file-upload-box) {
+      border-style: dashed;
+    }
+
+    &:has(.file-upload-box-wrap):hover {
+      border: 1px solid ${(props) => props.theme.mainColor};
+      background: ${(props) => props.theme.mainColorOpacity10};
+      color: ${(props) => props.theme.mainColor};
+    }
+
+    .file-list-box {
+      width: 100%;
+      .css-cveggr-MuiListItemIcon-root {
+        min-width: auto;
+      }
+      .file-list {
+        background: transparent;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+        position: relative;
+
+        &:last-child {
+          border-bottom: none;
+          &::after {
+            content: "";
+            display: block;
+            height: 10px;
+            border-top: 1px solid ${(props) => props.theme.navBorderColor};
+          }
+        }
+
+        .MuiTypography-root {
+          font-size: 0.9rem;
+        }
+
+        .file-list-item {
+          gap: 10px;
+          .delete-icon-wrap {
+          }
+          .attach-icon-wrap {
+          }
+          .list-item-text {
+          }
+        }
+      }
+    }
+    .file-upload-box-wrap {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 0 10px;
+
+      .file-upload-box {
+        .file-upload-icon-wrap {
+        }
+        .file-upload-info-wrap {
+          .file-upload-info {
+          }
+          .file-upload-allowed-extensions {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const BoardFilesListContainer = styled(Box)`
+  border: 1px solid ${(props) => props.theme.navBorderColor};
+  border-radius: 8px;
+  width: 100%;
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 20px 0;
+
+  .file-list-box {
+    width: 100%;
+    .css-cveggr-MuiListItemIcon-root {
+      min-width: auto;
+    }
+    .file-list {
+      cursor: pointer;
+      &:hover {
+        color: ${(props) => props.theme.mainColor};
+        background: ${(props) => props.theme.mainColorOpacity10};
+      }
+      background: transparent;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
+      position: relative;
+
+      &:last-child {
+        //border-bottom: none;
+      }
+
+      .MuiTypography-root {
+        font-size: 0.9rem;
+      }
+
+      .file-list-item {
+        gap: 10px;
+        .delete-icon-wrap {
+        }
+        .attach-icon-wrap {
+        }
+        .list-item-text {
+        }
+      }
+    }
+  }
 `;
