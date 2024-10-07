@@ -64,7 +64,6 @@ function NoticeForm() {
       searchType: "",
       start: "",
       display: "",
-      searchType: "NOTICE",
     };
     const response = await getBoardCategoryList(params);
     if (response && response.data) {
