@@ -146,7 +146,14 @@ function Header({ isDarkMode, onToggleTheme }: any) {
       </Col>
 
       {/* 드로어 컴포넌트 */}
-      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={() => toggleDrawer(false)}
+        ModalProps={{
+          disableAutoFocus: true,
+        }}
+      >
         <div style={{ width: "100%", padding: "0" }} role="presentation">
           {/* 드로어 상단 */}
           <DrawerTop>
