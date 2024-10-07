@@ -16,6 +16,7 @@ import {
   LoginWrapper,
   ButtonArea,
   StyledAnchor,
+  SnsLogin,
 } from "../../../styles/LoginStyle";
 import { login } from "../../../apis/memberApi";
 import { kakaoLoginHandler, naverLoginHandler } from "../socialLoginApi";
@@ -93,12 +94,6 @@ function Login({ isDarkMode }: LoginProps) {
 
           // JWT 토큰을 쿠키에 저장
           Cookies.set("access_token", response.accessToken, {
-            expires: 7, // 만료 기간 설정
-            secure: true,
-            sameSite: "Strict",
-          });
-
-          Cookies.set("refresh_token", response.refreshToken, {
             expires: 7, // 만료 기간 설정
             secure: true,
             sameSite: "Strict",
@@ -203,7 +198,7 @@ function Login({ isDarkMode }: LoginProps) {
         </div>
 
         <form className="form" onSubmit={formik.handleSubmit}>
-          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
+          <FormControl className="input-form" variant="outlined">
             <InputLabel htmlFor="userId">{t("members.id")}</InputLabel>
             <OutlinedInput
               id="userId"
@@ -214,7 +209,7 @@ function Login({ isDarkMode }: LoginProps) {
             {idError && <div style={{ color: "red" }}>{idError}</div>}
           </FormControl>
 
-          <FormControl className="input-form" sx={{ m: 1 }} variant="outlined">
+          <FormControl className="input-form" variant="outlined">
             <InputLabel htmlFor="password">{t("members.password")}</InputLabel>
             <OutlinedInput
               id="password"
@@ -238,6 +233,7 @@ function Login({ isDarkMode }: LoginProps) {
           </FormControl>
 
           <Button
+            className="submit-button"
             color="primary"
             variant="contained"
             type="submit"
@@ -268,9 +264,20 @@ function Login({ isDarkMode }: LoginProps) {
           <span />
           <StyledAnchor to="/signup/intro">{t("members.join")}</StyledAnchor>
         </ButtonArea>
-        {/* 카카오와 네이버 로그인 버튼 */}
-        <button onClick={kakaoLoginHandler}>카카오로 로그인</button>
-        <button onClick={naverLoginHandler}>네이버로 로그인</button>
+        <SnsLogin>
+          <img
+            src="image/kakao.png"
+            alt="kakao login"
+            className="kakao"
+            onClick={kakaoLoginHandler}
+          />
+          <img
+            src="image/naver.png"
+            alt="naver login"
+            className="naver"
+            onClick={naverLoginHandler}
+          />
+        </SnsLogin>
       </LoginWrapper>
     </Wrapper>
   );
