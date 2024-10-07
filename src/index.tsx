@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createGlobalStyle } from "styled-components";
 import "./locales/i18n";
@@ -29,6 +28,9 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     font-family: 'Pretendard-Regular' !important;
+  }
+  .swal2-container {
+    z-index: 10000 !important; 
   }
 `;
 

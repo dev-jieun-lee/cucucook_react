@@ -1,22 +1,27 @@
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import dompurify from "dompurify";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteBoard, getBoard, getBoardCategory } from "../api";
+import Swal from "sweetalert2";
+import {
+  deleteBoard,
+  getBoard,
+  getBoardCategory,
+} from "../../../apis/boardApi";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   BoardButtonArea,
   CustomCategory,
   DetailContents,
   TitleArea,
-} from "../BoardStyle";
+} from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
-import moment from "moment";
-import { Button, IconButton, Tooltip } from "@mui/material";
-import dompurify from "dompurify";
-import Swal from "sweetalert2";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useAuth } from "../../../auth/AuthContext";
-import { useState } from "react";
+import dayjs from "dayjs";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import BoardFilesList from "../BoardFilesList";
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
@@ -55,11 +60,11 @@ function NoticeDetail() {
   const getBoardWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 
@@ -69,35 +74,34 @@ function NoticeDetail() {
     getBoardWithDelay
   );
 
-
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
-    (boardId : string) => deleteBoard(boardId),
+    (boardId: string) => deleteBoard(boardId),
     {
       onSuccess: () => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
-        navigate(-1); 
+        navigate(-1);
       },
       onError: (error) => {
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
           text: t("menu.board.alert.delete_error"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
   const onClickDelete = () => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm"),
       showCancelButton: true,
@@ -111,7 +115,6 @@ function NoticeDetail() {
     });
   };
 
-
   //수정 페이지로 이동
   const onClickRegister = () => {
     navigate(`/notice/form/${boardId}`);
@@ -119,7 +122,7 @@ function NoticeDetail() {
 
   //로딩
   if (loading || boardLoading) {
-    return<></>;
+    return <></>;
   }
 
   return (
@@ -129,14 +132,14 @@ function NoticeDetail() {
           <IconButton
             color="primary"
             aria-label="add"
-            style={{marginTop : '-5px'}}
+            style={{ marginTop: "-5px" }}
             onClick={() => navigate(-1)}
           >
             <ArrowBackIosNewIcon />
           </IconButton>
         </Tooltip>
         {t("menu.board.notice")}
-        </TitleCenter>
+      </TitleCenter>
       <TitleArea>
         <div className="board-title">
           <CustomCategory
@@ -144,25 +147,41 @@ function NoticeDetail() {
           >
             [ {boardWithCategory?.category.name} ]
           </CustomCategory>
-          <span className="title">{boardWithCategory?.data.title}</span>
+          <p className="title">{boardWithCategory?.data.title}</p>
         </div>
         <div className="board-info">
-          <span className="date">
-            {moment(boardWithCategory?.data.udtDt).format("YYYY-MM-DD")}
-          </span>
-          <span className="border"></span>
-          <span className="member">{boardWithCategory?.data.userName}</span>
-          <span className="border"></span>
-          <span className="hit">{t("text.hit")}</span>
-          <span className="viewCount">{boardWithCategory?.data.viewCount}</span>
+          <div className="date-area">
+            <span className="hit">{t("text.register_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.regDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+            <span className="border"></span>
+            <span className="hit">{t("text.update_date")}</span>
+            <span className="date">
+              {dayjs(boardWithCategory?.data.udtDt).format("YYYY-MM-DD HH:mm")}
+            </span>
+          </div>
+          <div className="hit-area">
+            <span className="border m-border"></span>
+            <span className="member">{boardWithCategory?.data.userName}</span>
+            <span className="border"></span>
+            <span className="hit">{t("text.hit")}</span>
+            <span className="viewCount">
+              {boardWithCategory?.data.viewCount}
+            </span>
+          </div>
         </div>
       </TitleArea>
       <DetailContents>
-        <div className="board-contents"
-        dangerouslySetInnerHTML={{ __html : sanitizer(`${boardWithCategory?.data.contents}`) }}
+        <div
+          className="board-contents"
+          dangerouslySetInnerHTML={{
+            __html: sanitizer(`${boardWithCategory?.data.contents}`),
+          }}
         ></div>
       </DetailContents>
-      {user?.role === "1" ? (
+      <BoardFilesList boardId={boardId || ""} />
+      {user?.role === "0" ? (
         <BoardButtonArea>
           <Button
             className="delete-btn"
@@ -185,7 +204,6 @@ function NoticeDetail() {
       ) : (
         <></>
       )}
-
     </Wrapper>
   );
 }

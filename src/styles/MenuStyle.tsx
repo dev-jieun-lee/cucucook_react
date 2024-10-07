@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import media from "../styles/MediaQuery";
+import media from "./MediaQuery";
 import { List, ListItemText } from "@mui/material";
 
 //**헤더, 메뉴 스타일 */
@@ -14,35 +14,38 @@ export const Nav = styled.nav`
   width: 100%;
   position: fixed;
   z-index: 1000;
-  top : 0;
+  top: 0;
   background-color: ${(props) => props.theme.bgColor};
   /* border-bottom: 1px solid ; */
-  align-items: center; 
-  .mode-icon, .search-icon, .login{
+  align-items: center;
+  .mode-icon,
+  .search-icon,
+  .login {
     transform: scale(1.3);
     z-index: 1111;
   }
-  .mode-icon{
+  .mode-icon {
     margin: 0 20px;
   }
-  .login,.profile{
+  .login,
+  .profile {
     ${media.medium`
       display: none;
     `};
   }
-  .profile{
-    &:hover{
+  .profile {
+    &:hover {
       cursor: pointer;
     }
   }
-  .drawer-icon{
+  .drawer-icon {
     transform: scale(1.3);
     z-index: 1111;
     ${media.large`
       display: none;
     `};
   }
-  .avatar{
+  .avatar {
     transform: scale(0.8);
     z-index: 1111;
   }
@@ -54,13 +57,11 @@ export const Nav = styled.nav`
     border-bottom: 1px solid ${(props) => props.theme.navBorderColor};
   }
 
-  .menu-box{
+  .menu-box {
     ${media.medium`
       display: none;
     `};
   }
-
-
 `;
 
 export const Col = styled.div`
@@ -78,10 +79,10 @@ export const Col = styled.div`
 export const Logo = styled.div`
   padding: 10px;
   margin-top: 10px;
-  .logo{
+  .logo {
     width: 150px;
-    
-  ${media.medium`
+
+    ${media.medium`
 
     width: 130px;
   `};
@@ -94,7 +95,7 @@ export const MainMenu = styled.div`
   ul {
     list-style-type: none;
   }
-  .main-menu{
+  .main-menu {
     ${media.medium`
       margin-left : -20px
     `};
@@ -107,13 +108,12 @@ export const MainMenu = styled.div`
     ${media.medium`
       width: 90px !important;
     `};
-    
   }
   .menu-title {
     display: block;
     z-index: 9999;
-    width: 120px !important;
-    display: 'flex';
+    width: 140px !important;
+    display: "flex";
     height: 100%;
     font-size: 18px;
     font-weight: 600;
@@ -126,10 +126,9 @@ export const MainMenu = styled.div`
       /* font-size: 15px;
       width: 90px !important; */
     `};
-    
   }
   .menu-title::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 0;
     height: 2px;
@@ -138,7 +137,7 @@ export const MainMenu = styled.div`
     background-color: ${(props) => props.theme.mainColor};
     transition: width 0.3s ease, left 0.3s ease;
   }
-    .menu-title.active::after {
+  .menu-title.active::after {
     width: 100%;
     left: 0;
   }
@@ -151,7 +150,6 @@ export const MainMenu = styled.div`
   .main-menu-item.active .sub-menu {
     display: block;
   }
-
 `;
 
 export const SubMenu = styled.div`
@@ -159,17 +157,17 @@ export const SubMenu = styled.div`
   margin-top: 1.5;
   padding-top: 5px;
   position: absolute;
-  color: ${(props) => props.theme.bgColor};;
+  color: ${(props) => props.theme.bgColor};
   background-color: ${(props) => props.theme.bgColor};
-  border: 1px solid ;
+  border: 1px solid;
   border-color: ${(props) => props.theme.mainColor};
   /* box-shadow: 1px 1px 0px 0px #050404; */
   z-index: 1000;
-  width: 120px;
-  ul{
+  width: 140px;
+  ul {
     padding-left: 0;
   }
-  li{
+  li {
     text-align: center;
     line-height: 30px;
   }
@@ -183,7 +181,7 @@ export const LinkItem = styled(Link)`
   font-size: 15px;
   text-decoration: none;
   cursor: pointer;
-  &:hover{
+  &:hover {
     color: ${(props) => props.theme.mainColor};
   }
   ${media.medium`
@@ -192,7 +190,7 @@ export const LinkItem = styled(Link)`
 `;
 
 export const MotionSearch = styled.form`
-  color: ${(props) => props.theme.mainColor};;
+  color: ${(props) => props.theme.mainColor};
   display: flex;
   align-items: center;
   position: relative;
@@ -202,7 +200,6 @@ export const MotionSearch = styled.form`
   ${media.medium`
     display : none;
   `};
-  
 `;
 
 export const MotionInput = styled(motion.input)`
@@ -212,7 +209,7 @@ export const MotionInput = styled(motion.input)`
   right: 0px;
   padding: 5px 10px;
   /* padding-left: 40px; */
-  z-index: 1112; 
+  z-index: 1112;
   color: grey;
   font-size: 16px;
   background-color: transparent;
@@ -221,25 +218,23 @@ export const MotionInput = styled(motion.input)`
   outline: none;
 `;
 
-export const MotionIconButton  = styled(motion.div)`
+export const MotionIconButton = styled(motion.div)`
   display: flex;
   align-items: center;
   z-index: 1111;
 `;
 
-
-
 // drawer 메뉴 스타일
 export const DrawerList = styled(List)`
-  .list-item{
+  .list-item {
     line-height: 33px;
   }
-  .list-text{
+  .list-text {
     margin-left: 10px;
     font-weight: bold;
     color: ${(props) => props.theme.mainColor};
   }
-  .list-item-text{
+  .list-item-text {
     font-size: 15px;
     margin-left: 15px;
   }
@@ -250,20 +245,20 @@ export const DrawerTop = styled.div`
   margin: 7px 0;
   display: flex;
   justify-content: space-between;
-  .drawer-login-btn{
-    span{
-      color:  ${(props) => props.theme.mainColor};
+  .drawer-login-btn {
+    span {
+      color: ${(props) => props.theme.mainColor};
       font-size: 13px;
     }
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }
-  .icon-btn{
+  .icon-btn {
     transform: scale(0.8);
   }
-  .profile{
-    &:hover{
+  .profile {
+    &:hover {
       cursor: pointer;
     }
   }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // useState import 추가
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -16,15 +16,13 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
-  LoginWrapper,
-  LoginSubmitButton,
   StyledSubtitle,
   LeftAlignedFormControlLabel,
   CheckBoxContainer,
   SignupIntroWrapper,
-} from "../login/LoginStyle";
+} from "../../../styles/LoginStyle";
 import { useEmailVerification } from "../../../hooks/useEmailVerification";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -38,6 +36,8 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     handleVerifyCode,
     verificationResult,
   } = useEmailVerification();
+
+  const [emailError, setEmailError] = useState<string | null>(null); // emailError 상태 변수 정의
 
   const formik = useFormik({
     initialValues: {
@@ -86,6 +86,23 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     formik.setFieldValue("agreeTerms", checked);
     formik.setFieldValue("agreePrivacy", checked);
     formik.setFieldValue("agreeMarketing", checked);
+  };
+
+  // 이메일 핸들링 함수
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    // 이메일 주소에 허용된 문자 및 기호 정의
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(value)) {
+      setEmailError(t("members.email_invalid")); // 유효하지 않은 이메일일 경우 오류 메시지 설정
+    } else {
+      setEmailError(null); // 유효한 이메일일 경우 오류 메시지 제거
+    }
+
+    // 허용된 문자와 기호만 남기기 (정규 표현식에 맞는 문자)
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9._%+-@]/g, "");
+    formik.setFieldValue("email", sanitizedValue); // sanitizedValue로 필드 값 업데이트
   };
 
   return (
@@ -180,7 +197,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   border: "1px solid #ccc",
                   padding: "10px",
                   position: "relative",
-                  textAlign: "left"
+                  textAlign: "left",
                 }}
               >
                 <Typography variant="body2">
@@ -224,11 +241,14 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                 name="email"
                 label={t("members.email")}
                 value={formik.values.email}
-                onChange={(e) => {
-                  formik.setFieldValue("email", e.target.value);
-                }}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
+                onChange={handleEmailChange} // 핸들링 함수 사용
+                error={
+                  (formik.touched.email && Boolean(formik.errors.email)) ||
+                  Boolean(emailError)
+                }
+                helperText={
+                  (formik.touched.email && formik.errors.email) || emailError
+                } // 이메일 오류 메시지 표시
               />
             </Grid>
             <Grid item xs={2}>
@@ -243,7 +263,13 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
               </Button>
             </Grid>
             {isCodeSent && (
-              <Grid container spacing={2} alignItems="center" marginTop={1} marginLeft={0}>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                marginTop={1}
+                marginLeft={0}
+              >
                 <Grid item xs={10}>
                   <TextField
                     fullWidth

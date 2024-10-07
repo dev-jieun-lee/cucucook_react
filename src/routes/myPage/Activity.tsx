@@ -1,135 +1,409 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Avatar, List, ListItem, ListItemText, Fab } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { KeyboardArrowUp } from '@mui/icons-material';
-import { activityStyles, myPageGridStyles, scrollButtonStyles } from './myPageStyles';
-import { Wrapper } from '../../styles/CommonStyles';
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../auth/AuthContext";
+import { Wrapper } from "../../styles/CommonStyles";
+import {
+  ActivityHeaderListItem,
+  ActivityRowListItem,
+  MypageHeaderListItem,
+  MypageRowListItem,
+  MyPageTitle,
+  SummaryCountArea,
+  SummaryDataArea,
+} from "../../styles/MypageStyle";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import { useEffect, useState } from "react";
+import {
+  fetchActivityStats,
+  fetchLikedRecipes,
+  fetchMemberBoardList,
+  fetchMyComments,
+  fetchMyRecipeList,
+} from "../../apis/mypageApi";
+import {
+  Box,
+  Button,
+  List,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import dayjs from "dayjs";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Loading from "../../components/Loading";
+import { useNavigate } from "react-router-dom";
 
-type SectionProps = {
-  title: string;
-  linkTo: string;
-  children: React.ReactNode;
-};
-
-const Section: React.FC<SectionProps> = ({ title, linkTo, children }) => {
-  return (
-    <Box sx={activityStyles.section}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <Typography variant="h6">{title}</Typography>
-        <Button component={Link} to={linkTo} variant="contained">
-          더보기
-        </Button>
-      </Box>
-      <Box>{children}</Box>
-    </Box>
-  );
-};
-
-interface ActivityProps {
-  isDarkMode: boolean;
-}
-
-const Activity: React.FC<ActivityProps> = ({ isDarkMode }) => {
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const username = "회원";
-  const likeCount = 5;
-  const writeCount = 10;
-  const replyCount = 3;
-
-  const likedRecipes = ["레시피 A", "레시피 B", "레시피 C", "레시피 D", "레시피 E"];
-  const writtenPosts = ["게시글 A", "게시글 B", "게시글 C", "게시글 D", "게시글 E"];
-  const writtenReplies = ["댓글 A", "댓글 B", "댓글 C", "댓글 D", "댓글 E"];
+function Activity() {
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [likeCount, setLikeCount] = useState(0);
+  const [writeCount, setWriteCount] = useState(0);
+  const [recipeCount, setRecipeount] = useState(0);
+  const [replyCount, setReplyCount] = useState(0);
+  const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
+  const [latestPosts, setLatestPosts] = useState<any[]>([]);
+  const [latestReplies, setLatestReplies] = useState<any[]>([]);
+  const [latestRecipes, setLatestRecipes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
+    if (user?.memberId) {
+      fetchAllData(user.memberId);
+    }
+  }, [user?.memberId]);
 
-    window.addEventListener('scroll', handleScroll);
+  const fetchAllData = async (memberId: number) => {
+    setIsLoading(true);
+    try {
+      const [stats, likedRecipes, posts, recipes, replies] = await Promise.all([
+        fetchActivityStats(memberId),
+        fetchLikedRecipes(memberId),
+        fetchMemberBoardList(memberId, 3),
+        fetchMyRecipeList(memberId, 3),
+        fetchMyComments(memberId, 1, 3),
+      ]);
+      console.log(stats);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      console.log("Liked Recipes:", likedRecipes); // 데이터 로그 출력
+      console.log("Posts:", posts);
+      console.log("Recipes:", recipes);
+      console.log("Replies:", replies);
+      setLikeCount(stats.likeCount);
+      setWriteCount(stats.writeCount);
+      setReplyCount(stats.replyCount);
+      setRecipeount(stats.recipeCount);
+      setLikedRecipes(likedRecipes);
+      setLatestPosts(posts);
+      setLatestRecipes(recipes);
+      setLatestReplies(replies);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const onDetail = (kind: string, id: string) => {
+    if (kind === "like" || kind === "recipe" || kind === "comment") {
+      navigate(`/recipe/member_recipe/${id}`);
+    } 
+    else if (kind === "NOTICE") {
+      navigate(`/notice/${id}`);
+    }
+    else if (kind === "FAQ") {
+      navigate(`/faq/${id}`);
+    }
+    else if (kind === "QNA") {
+      navigate(`/qna/${id}`);
+    }
+  };
+
+  const onMoreData = (kind: string) => {
+    switch (kind) {
+      case "like":
+        navigate(`/mypage/activity/LikeLists`);
+        break;
+      case "writing":
+        navigate(`/mypage/activity/MyWrites`);
+        break;
+      case "recipe":
+        navigate(`/mypage/activity/MyRecipes`);
+        break;
+      case "comment":
+        navigate(`/mypage/activity/MyReplys`);
+        break;
+      default:
+        break;
+    }
+  };
+
+  //로딩
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <Wrapper>
-      <Box
-        sx={{
-          ...activityStyles.content,
-          minHeight: 'calc(100vh - 200px)',
-        }}
-      >
-        <Box sx={activityStyles.welcomeBox}>
-          <Typography variant="h5">{username}님 안녕하세요!</Typography>
-        </Box>
-
-        <Box sx={activityStyles.statsBox}>
-          <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/image/cucucook_like.png" alt="찜 아이콘" sx={activityStyles.statIcon} />
-            <Typography>{likeCount}개</Typography>
-          </Box>
-          <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/image/cucucook_write.png" alt="게시글 아이콘" sx={activityStyles.statIcon} />
-            <Typography>{writeCount}개</Typography>
-          </Box>
-          <Box sx={activityStyles.statItem}>
-            <Avatar src="/public/image/cucucook_reply.png" alt="댓글 아이콘" sx={activityStyles.statIcon} />
-            <Typography>{replyCount}개</Typography>
-          </Box>
-        </Box>
-
-        <Section title="레시피 찜목록" linkTo="/myPage/LikeLists">
-          <Box sx={myPageGridStyles.gridContainer}>
-            {likedRecipes.map((recipe, index) => (
-              <Box key={index} sx={myPageGridStyles.itemBox}>
-                <Typography>{recipe}</Typography>
-              </Box>
-            ))}
-          </Box>
-        </Section>
-
-        <Section title="내가 쓴 게시글" linkTo="/myPage/MyWrites">
-          <List>
-            {writtenPosts.map((post, index) => (
-              <ListItem key={index} sx={{ borderBottom: '1px solid #ddd' }}>
-                <ListItemText primary={post} />
-              </ListItem>
-            ))}
-          </List>
-        </Section>
-
-        <Section title="내가 쓴 댓글" linkTo="/myPage/MyReplys">
-          <List>
-            {writtenReplies.map((reply, index) => (
-              <ListItem key={index} sx={{ borderBottom: '1px solid #ddd' }}>
-                <ListItemText primary={reply} />
-              </ListItem>
-            ))}
-          </List>
-        </Section>
-      </Box>
-
-      {showScrollButton && (
-        <Fab
-          color="primary"
-          size="small"
-          sx={scrollButtonStyles}
-          onClick={scrollToTop}
-        >
-          <KeyboardArrowUp />
-        </Fab>
-      )}
+      <MyPageTitle>
+        <span>{t("mypage.greetings", { name: user?.name })}</span>
+      </MyPageTitle>
+      <SummaryCountArea>
+        <div className="like-cnt grid">
+          <FavoriteIcon className="icon" />
+          <p className="kind">{t("text.like")}</p>
+          <p className="count">{likeCount}</p>
+        </div>
+        <div className="like-cnt grid">
+          <ListAltIcon className="icon" />
+          <p className="kind">{t("text.recipe")}</p>
+          <p className="count">{recipeCount}</p>
+        </div>
+        <div className="like-cnt grid">
+          <SubdirectoryArrowRightIcon className="icon" />
+          <p className="kind">{t("text.comment")}</p>
+          <p className="count">{replyCount}</p>
+        </div>
+      </SummaryCountArea>
+      <SummaryDataArea>
+        <div className="like grid">
+          <div className="title">
+            <span>
+              <FavoriteIcon className="icon" />
+              {t("mypage.myLikes")}
+            </span>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => onMoreData("like")}
+            >
+              + {t("text.more_view")}
+            </Button>
+          </div>
+          <div className="content">
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
+              {likedRecipes && likedRecipes.length > 0 ? (
+                likedRecipes?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.recipeId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="contents">
+                      <Box className="activity-title">
+                        <span>{item.title}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
+              ) : (
+                <Typography>{t("sentence.no_data")}</Typography>
+              )}
+            </List>
+            {likedRecipes && likedRecipes.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+        <div className="recipe grid">
+          <div className="title">
+            <span>
+              <ListAltIcon className="icon" />
+              {t("mypage.myRecipe")}
+            </span>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => onMoreData("recipe")}
+            >
+              + {t("text.more_view")}
+            </Button>
+          </div>
+          <div className="content">
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
+              {latestRecipes && latestRecipes.length > 0 ? (
+                latestRecipes?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.recipeId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="contents">
+                      <Box className="activity-title">
+                        <span>{item.title}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
+              ) : (
+                <Typography>{t("sentence.no_data")}</Typography>
+              )}
+            </List>
+            {latestRecipes && latestRecipes.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+        <div className="writing grid">
+          <div className="title">
+            <span>
+              <ListAltIcon className="icon" />
+              {t("mypage.myWriting")}
+            </span>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => onMoreData("writing")}
+            >
+              + {t("text.more_view")}
+            </Button>
+          </div>
+          <div className="content">
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.title")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
+              {latestPosts && latestPosts.length > 0 ? (
+                latestPosts?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.boardId}
+                    onClick={() => onDetail(item.boardDivision, item.boardId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className="contents">
+                      <Box className="comment-title">
+                        <span>
+                        {item.boardDivision === "NOTICE" ? (
+                          t("menu.board.notice")
+                        ) : item.boardDivision === "FAQ" ? (
+                          t("menu.board.FAQ")
+                        ) : item.boardDivision === "QNA" ? (
+                          t("menu.board.QNA")
+                        ) : (
+                          <></>
+                        )}
+                        </span>
+                      </Box>
+                      <Box className="activity-comment">
+                        <span>{item.title}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
+              ) : (
+                <Typography>{t("sentence.no_data")}</Typography>
+              )}
+            </List>
+            {latestPosts && latestPosts.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+        <div className="comment grid">
+          <div className="title">
+            <span>
+              <SubdirectoryArrowRightIcon className="icon" />
+              {t("mypage.myCommnet")}
+            </span>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => onMoreData("comment")}
+            >
+              + {t("text.more_view")}
+            </Button>
+          </div>
+          <div className="content">
+            <List>
+              <ActivityHeaderListItem  className="list-item header">
+                <Box className="activity-no">
+                  <span>No.</span>
+                </Box>
+                <Box className="activity-title">
+                  <span>{t("text.comment")}</span>
+                </Box>
+                <Box className="date">
+                  <span>{t("text.register_date")}</span>
+                </Box>
+              </ActivityHeaderListItem>
+              {latestReplies && latestReplies.length > 0 ? (
+                latestReplies?.slice(0, 3).map((item, index) => (
+                  <ActivityRowListItem
+                    className="list-item"
+                    key={item.commentId}
+                    onClick={() => onDetail("recipe", item.recipeId)}
+                  >
+                    <Box className="activity-no">
+                      <span>{index + 1}</span>
+                    </Box>
+                    <Box className = "contents">
+                      <Box className="comment-title">
+                        <span>{item.title}</span>
+                      </Box>
+                      <Box className="activity-comment">
+                        <span>{item.comment}</span>
+                      </Box>
+                    </Box>
+                    <Box className="date">
+                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                    </Box>
+                  </ActivityRowListItem>
+                ))
+              ) : (
+                <Typography>{t("sentence.no_data")}</Typography>
+              )}
+            </List>
+            {latestReplies && latestReplies.length > 0 ? (
+              <MoreVertIcon className="more-icon" />
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      </SummaryDataArea>
     </Wrapper>
   );
-};
+}
 
 export default Activity;

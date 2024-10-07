@@ -10,17 +10,16 @@ import {
   Box,
   Typography,
   Grid,
-  Link,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { findId } from "../api";
+import { findId } from "../../../apis/memberApi";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
   LoginWrapper,
   ButtonArea,
   StyledAnchor,
   FindIdBox,
-} from "./LoginStyle";
+} from "../../../styles/LoginStyle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useEmailVerification } from "../../../hooks/useEmailVerification"; // Assumed import path
@@ -125,7 +124,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               </Grid>
             </Grid>
             {isCodeSent && (
-              <Grid container spacing={2} alignItems="center">
+              <Grid container spacing={2} alignItems="center" className="email-area">
                 <Grid item xs={9}>
                   <FormControl fullWidth margin="normal">
                     <InputLabel htmlFor="verificationCode">

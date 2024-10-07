@@ -6,16 +6,15 @@ import {
   FormControl,
   Select,
   MenuItem,
-  FormHelperText,
   InputAdornment,
   Button,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LoginSubmitButton, LoginWrapper } from "../login/LoginStyle";
+import { LoginSubmitButton, LoginWrapper } from "../../../styles/LoginStyle";
 import { Wrapper } from "../../../styles/CommonStyles";
 import PersonIcon from "@mui/icons-material/Person";
-import { register, idCheck } from "../api";
+import { register, idCheck } from "../../../apis/memberApi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -237,7 +236,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
                   (isIdAvailable === false && t("members.id_in_use")) ||
                   (isIdAvailable === true && t("members.id_available")))
               }
-              margin="normal"
             />
           </FormControl>
 
@@ -252,7 +250,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               onBlur={formik.handleBlur}
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
-              margin="normal"
             />
           </FormControl>
 
@@ -272,7 +269,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               helperText={
                 formik.touched.confirmPassword && formik.errors.confirmPassword
               }
-              margin="normal"
             />
           </FormControl>
 
@@ -286,7 +282,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
               onBlur={formik.handleBlur}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
-              margin="normal"
             />
           </FormControl>
 
@@ -302,7 +297,6 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 setPhoneError(null); // 입력이 변경될 때 전화번호 오류 메시지 초기화
               }}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              margin="normal"
               error={Boolean(phoneError)}
               helperText={phoneError}
             />
