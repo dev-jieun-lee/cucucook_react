@@ -34,32 +34,17 @@ const NAVER_BACKEND_URL = "http://localhost:8080/auth/naver/login"; // 백엔드
 
 let isKakaoCallbackProcessing = false;
 
-//카카오백엔드
+// 중복 요청 방지를 위한 플래그를 전역 변수로 설정하지 말고, 로컬 스테이트나 다른 메커니즘을 사용
 export const handleKakaoCallback = async (code: string) => {
-  // 중복 요청 방지
-  if (isKakaoCallbackProcessing) {
-    console.warn("이미 카카오 콜백 요청이 처리 중입니다.");
-    return;
-  }
-
-  isKakaoCallbackProcessing = true; // 중복 요청 방지 플래그 설정
   console.log("인가 코드 수신:", code);
   try {
-    // URL 파라미터를 사용하여 인증 코드 전달
     const params = new URLSearchParams({ code }).toString();
-    const response = await axios.post(
-      `${KAKAO_BACKEND_URL}?${params}`,
-      null, // POST 바디는 필요 없으므로 null 처리
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    isKakaoCallbackProcessing = false; // 처리 완료 후 플래그 해제
+    const response = await axios.post(`${KAKAO_BACKEND_URL}?${params}`, null, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
+    console.log("카카오 로그인 성공:", response.data);
     return response.data;
   } catch (error) {
-    isKakaoCallbackProcessing = false; // 처리 실패 시 플래그 해제
     console.error("카카오 로그인 처리 중 오류 발생", error);
     throw error;
   }
