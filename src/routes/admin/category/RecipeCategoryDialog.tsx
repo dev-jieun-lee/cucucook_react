@@ -16,6 +16,7 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 import {
@@ -24,10 +25,9 @@ import {
   insertRecipeCategory,
   updateRecipeCategory,
 } from "../../../apis/recipeApi";
-import { BoardButtonArea } from "../../../styles/BoardStyle";
 import { handleApiError } from "../../../hooks/errorHandler";
-import { useNavigate } from "react-router-dom";
 import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
+import { BoardButtonArea } from "../../../styles/BoardStyle";
 
 interface RecipeCategoryDialogProps {
   open: boolean;
@@ -86,7 +86,7 @@ function RecipeCategoryDialog({
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: categoryId ? t("text.update") : t("text.save"),
@@ -190,7 +190,7 @@ function RecipeCategoryDialog({
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),

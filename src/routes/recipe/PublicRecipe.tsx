@@ -1,29 +1,27 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "styled-components";
+import Swal from "sweetalert2";
 import { getPublicRecipe } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   PageSubTitleBasic,
   PageTitleBasic,
-  ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
 import {
-  RecipeView,
+  recipeCommonStyles,
   RecipeImgBox,
   RecipeImgBoxContainer,
-  recipeCommonStyles,
+  RecipeView,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import Swal from "sweetalert2";
-import ScrollTop from "../../components/ScrollTop";
-import { handleApiError } from "../../hooks/errorHandler";
 
 const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const customStyles = recipeCommonStyles();
@@ -58,7 +56,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
         // 데이터가 성공적으로 로드되면 로딩 상태를 false로 설정
-        if (data.success) setLoading(false);
+        if (data && data.success) setLoading(false);
       },
       onError: (error) => {
         setLoading(false);
