@@ -27,3 +27,4 @@ nginx.conf
 default.conf
 
 .vscode/settings.json
+.prettierrc
