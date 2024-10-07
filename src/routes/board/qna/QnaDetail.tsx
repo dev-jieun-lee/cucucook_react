@@ -1,7 +1,15 @@
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
+import dompurify from "dompurify";
+import { useFormik } from "formik";
+import moment from "moment";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import * as Yup from "yup";
 import {
   deleteBoard,
   getBoardCategory,
@@ -9,6 +17,7 @@ import {
   insertBoard,
   updateBoard,
 } from "../../../apis/boardApi";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   AnswerButton,
   AnswerContainer,
@@ -19,18 +28,9 @@ import {
   QnaContentsArea,
   TitleArea,
 } from "../../../styles/BoardStyle";
-import Loading from "../../../components/Loading";
-import moment from "moment";
-import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
-import dompurify from "dompurify";
-import Swal from "sweetalert2";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { useAuth } from "../../../auth/AuthContext";
-import { useEffect, useRef, useState } from "react";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import BoardFilesList from "../BoardFilesList";
 import QuillEditer from "../QuillEditer";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
@@ -267,6 +267,7 @@ function QnaDetail() {
                 __html: sanitizer(`${pBoardData[0]?.contents}`),
               }}
             ></div>
+            <BoardFilesList boardId={pBoardData[0]?.boardId || ""} />
             {user?.memberId === pBoardData[0]?.memberId ? (
               <div className="btn-area">
                 <Button
@@ -341,6 +342,7 @@ function QnaDetail() {
                       __html: sanitizer(`${reBoardData[0]?.contents}`),
                     }}
                   ></div>
+                  <BoardFilesList boardId={reBoardId || ""} />
                   {user?.role === "1" ? (
                     <div className="btn-area">
                       <Button

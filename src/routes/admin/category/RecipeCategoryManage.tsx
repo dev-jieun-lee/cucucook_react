@@ -30,6 +30,7 @@ import {
 } from "../../../apis/recipeApi";
 import { useAuth } from "../../../auth/AuthContext";
 import Loading from "../../../components/Loading";
+import { handleApiError } from "../../../hooks/errorHandler";
 import { DeleteIconButton } from "../../../styles/AdminStyle";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
@@ -39,7 +40,6 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import RecipeCategoryDialog from "./RecipeCategoryDialog";
-import { handleApiError } from "../../../hooks/errorHandler";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
@@ -169,7 +169,7 @@ function RecipeCategoryManage() {
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),

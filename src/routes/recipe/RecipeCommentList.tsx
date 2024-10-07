@@ -6,21 +6,21 @@ import { Box, Divider, Grid, Rating, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "styled-components";
 import Swal from "sweetalert2";
 import {
   deleteRecipeComment,
   deleteRecipeCommentHasChild,
 } from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   CommentIconButton,
   RecipeCommentList,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
-import { useAuth } from "../../auth/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { handleApiError } from "../../hooks/errorHandler";
 
 const customStyles = recipeCommonStyles();
 
@@ -81,7 +81,7 @@ const RecipeCommentListBox: React.FC<{
     }) => deleteRecipeCommentHasChild(params),
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
@@ -114,7 +114,7 @@ const RecipeCommentListBox: React.FC<{
     }) => deleteRecipeComment(params),
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
