@@ -190,8 +190,10 @@ function Activity() {
                     <Box className="activity-no">
                       <span>{index + 1}</span>
                     </Box>
-                    <Box className="activity-title">
-                      <span>{item.title}</span>
+                    <Box className="contents">
+                      <Box className="activity-title">
+                        <span>{item.title}</span>
+                      </Box>
                     </Box>
                     <Box className="date">
                       <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
@@ -246,8 +248,10 @@ function Activity() {
                     <Box className="activity-no">
                       <span>{index + 1}</span>
                     </Box>
-                    <Box className="activity-title">
-                      <span>{item.title}</span>
+                    <Box className="contents">
+                      <Box className="activity-title">
+                        <span>{item.title}</span>
+                      </Box>
                     </Box>
                     <Box className="date">
                       <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
@@ -303,7 +307,7 @@ function Activity() {
                       <span>{index + 1}</span>
                     </Box>
                     <Box className="contents">
-                      <Box className="activity-title">
+                      <Box className="comment-title">
                         <span>
                         {item.boardDivision === "NOTICE" ? (
                           t("menu.board.notice")
@@ -374,7 +378,7 @@ function Activity() {
                       <span>{index + 1}</span>
                     </Box>
                     <Box className = "contents">
-                      <Box className="activity-title">
+                      <Box className="comment-title">
                         <span>{item.title}</span>
                       </Box>
                       <Box className="activity-comment">

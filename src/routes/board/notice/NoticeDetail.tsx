@@ -14,7 +14,6 @@ import {
   TitleArea,
 } from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
-import moment from "moment";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import dompurify from "dompurify";
 import Swal from "sweetalert2";
