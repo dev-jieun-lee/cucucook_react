@@ -29,7 +29,7 @@ import {
   TitleBox,
 } from "../../styles/RecipeStyle";
 
-const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const PublicRecipe = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const categories = ["전체", "국&찌개", "반찬", "밥", "일품", "후식"];
