@@ -23,7 +23,7 @@ import {
   TitleBox,
 } from "../../styles/RecipeStyle";
 
-const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const PublicRecipe = () => {
   const customStyles = recipeCommonStyles();
   const theme = useTheme();
   const navigate = useNavigate();
