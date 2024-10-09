@@ -149,10 +149,9 @@ function Header({ isDarkMode, onToggleTheme }: any) {
       <Drawer
         anchor="right"
         open={open}
-        onClose={() => toggleDrawer(false)}
+        onClose={() => setOpen(false)}
         ModalProps={{
           disableAutoFocus: true,
-          onBackdropClick: toggleDrawer(false), // backdrop 영역 클릭 시 닫힘
         }}
       >
         <div style={{ width: "100%", padding: "0" }} role="presentation">
