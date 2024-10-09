@@ -39,9 +39,12 @@ function NoticeDetail() {
     try {
       // 보드 데이터 가져오기
       const board = await getBoard(boardId);
+      
 
       // 보드의 카테고리 정보 가져오기
       const categoryData = await getBoardCategory(board.data.boardCategoryId);
+      console.log(categoryData);
+      
 
       // 카테고리 정보 추가
       const boardWithCategory = {
@@ -73,6 +76,9 @@ function NoticeDetail() {
     "boardWithCategory",
     getBoardWithDelay
   );
+
+  console.log(boardWithCategory);
+  
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
