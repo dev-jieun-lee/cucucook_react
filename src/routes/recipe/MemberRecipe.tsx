@@ -46,7 +46,7 @@ import {
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
 
-const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const MemberRecipe = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기

@@ -40,7 +40,7 @@ export interface FocusableButton {
   focus: () => void;
 }
 
-function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
+function MemberRecipeWrite() {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const { recipeId } = useParams(); //레시피 아이디 파라미터 받아오기
