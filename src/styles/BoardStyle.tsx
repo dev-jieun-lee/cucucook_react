@@ -479,7 +479,7 @@ export const QuestionArea = styled.div`
   .q-contents {
     width: 100%;
     border: 1px solid;
-    border-radius: 5px;/
+    border-radius: 5px;
     text-align: left;
     padding: 0px 15px;
     border-color: ${(props) => props.theme.navBorderColor};

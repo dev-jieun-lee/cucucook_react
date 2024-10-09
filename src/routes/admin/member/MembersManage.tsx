@@ -11,8 +11,10 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import {
+  Box,
   IconButton,
   InputAdornment,
+  List,
   MenuItem,
   Pagination,
   Paper,
@@ -24,10 +26,13 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { ContentsArea } from "../../../styles/BoardStyle";
 import { getMemberList } from "../../../apis/memberApi";
+import { AdminHeaderListItem, AdminRowListItem } from "../../../styles/AdminStyle";
+import dayjs from "dayjs";
 
 function MembersManage() {
   const { user } = useAuth(); //로그인 상태관리
@@ -173,7 +178,7 @@ function MembersManage() {
         />
       </SearchArea>
       <ContentsArea>
-        <TableContainer className="table-container" component={Paper}>
+        {/* <TableContainer className="table-container" component={Paper}>
           <Table
             className="table"
             sx={{ minWidth: 650 }}
@@ -204,7 +209,7 @@ function MembersManage() {
                       <TableCell>{memberItem.userId}</TableCell>
                       <TableCell>{memberItem.name}</TableCell>
                       <TableCell>
-                        {/* {moment(memberItem.udtDt).format("YYYY-MM-DD")} */}
+                        
                       </TableCell>
                       <TableCell>
                         {memberItem.role === "0" ? (
@@ -228,7 +233,69 @@ function MembersManage() {
               )}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> */}
+        <List>
+          <AdminHeaderListItem className="list-item header">
+            <Box className="no">
+              <span>No.</span>
+            </Box>
+            <Box className = "name-area">
+              <Box className="user-id">
+                <span>{t("text.user_id")}</span>
+              </Box>
+              <Box className="user-name">
+                <span>{t("text.name")}</span>
+              </Box>
+            </Box>
+            <Box className="date">
+              <span>{t("text.subscription_data")}</span>
+            </Box>
+            <Box className="role">
+              <span>{t("text.role")}</span>
+            </Box>
+          </AdminHeaderListItem>
+          {memberList && memberList.length > 0 ? (
+            memberList
+            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+            .map((item : any, index : any) => (
+              <AdminRowListItem
+                className="list-item"
+                key={item.boardId}
+                // onClick={() => onClickDetail(item.boardId)}
+              >
+                <Box className="no">
+                  {(currentPage - 1) * display + index + 1}
+                </Box>
+                <Box className="name-area">
+                  <Box className="user-id">
+                    <span>{item.userId}</span>
+                  </Box>
+                  <Box className="user-name">
+                    <span>{item.name}</span>
+                  </Box>
+                </Box>
+                <Box className="date">
+                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                </Box>
+                <Box className="role">
+                  <span>
+                    {item.role === "0" ? (
+                      t("text.admin")
+                    ) : item.role === "1" ? (
+                      t("text.member")
+                    ) : item.role === "2" ? (
+                      t("text.super_admin")
+                    ) : (
+                      <></>
+                    )}
+                  </span>
+                </Box>
+              </AdminRowListItem>
+            ))
+          ) : (
+            <Typography>{t("sentence.no_data")}</Typography>
+          )}
+        </List>
         <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
