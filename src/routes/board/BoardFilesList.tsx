@@ -45,7 +45,7 @@ const BoardFilesList: React.FC<{
         a.download = `${uploadFileItem.orgFileName}.${uploadFileItem.extension}`;
         document.body.appendChild(a);
         a.click();
-        setTimeout((_) => {
+        setTimeout((_ : any) => {
           window.URL.revokeObjectURL(url);
         }, 1000);
         a.remove();
