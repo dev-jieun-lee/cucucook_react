@@ -43,10 +43,7 @@ interface Reply {
   hasChildComment?: string;
 }
 
-interface MyReplysProps {
-  isDarkMode: boolean;
-}
-const MyReplys: React.FC<MyReplysProps> = ({ isDarkMode }) => {
+const MyReplys = () => {
   const { t } = useTranslation();
   const [myReplies, setMyReplies] = useState<Reply[]>([]);
   const [page, setPage] = useState(0);
