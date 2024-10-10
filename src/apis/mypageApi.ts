@@ -35,14 +35,7 @@ export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("mypage로그인 응답데이터", response.data);
-    // 로그인 성공 시 JWT 토큰을 쿠키에 저장
-    if (response.data.token) {
-      Cookies.set("auth_token", response.data.token, {
-        expires: TOKEN_EXPIRED_DAY,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
-      });
-    }
+
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -91,25 +84,6 @@ export const changePassword = async (userId: string, newPassword: string) => {
       newPassword,
     });
     console.log("비밀번호 변경 성공");
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
-
-// 내정보 - 회원 정보 수정 API 호출
-export const updateUserInfo = async (
-  userId: string,
-  name: string,
-  email: string,
-  phone: string
-) => {
-  try {
-    console.log(
-      `회원 정보 수정 시도: userId=${userId}, name=${name}, email=${email}, phone=${phone}`
-    );
-    const response = await api.put("/update", { userId, name, email, phone });
-    console.log("회원 정보 수정 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -175,7 +149,7 @@ export const fetchMyReplies = async (
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: {memberId, page, pageSize,  sortOption, sortDirection },
+      params: { memberId, page, pageSize, sortOption, sortDirection },
     });
     return response.data;
   } catch (error) {
@@ -183,7 +157,6 @@ export const fetchMyReplies = async (
     throw error;
   }
 };
-
 
 //댓글 삭제
 export const deleteReply = async (memberId: string, commentId: string) => {
@@ -250,8 +223,8 @@ export const fetchMyWrites = async (
   page: number,
   pageSize: number,
   boardDivision: string,
-  search : string,
-  searchType : string
+  search: string,
+  searchType: string
 ) => {
   try {
     // 여기서 boardDivision을 로깅합니다.
@@ -264,7 +237,7 @@ export const fetchMyWrites = async (
         pageSize,
         boardDivision,
         search,
-        searchType
+        searchType,
       },
     });
     return response.data;
@@ -288,7 +261,7 @@ export async function updateMember(
       name,
       email,
       phone,
-      role
+      role,
     });
     return response.data;
   } catch (error) {

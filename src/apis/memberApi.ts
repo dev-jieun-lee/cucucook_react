@@ -8,10 +8,10 @@ const BASE_URL = apiUrl + "/api/members";
 const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
 const REDIRECT_URI = "https://cucucook.site";
 
-
 // 기본 axios 인스턴스 설정
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -37,14 +37,6 @@ export async function login(form: { userId: string; password: string }) {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
 
-    if (response.data.token) {
-      Cookies.set("auth_token", response.data.token, {
-        expires: 7,
-        secure: true,
-        sameSite: "Strict",
-      });
-    }
-
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
@@ -67,9 +59,6 @@ export async function logout() {
   try {
     const response = await api.post("/logout");
     console.log("로그아웃 응답데이터", response.data);
-
-    // 로그아웃 시 쿠키에서 JWT 토큰 삭제
-    Cookies.remove("auth_token");
 
     return response.data;
   } catch (error) {

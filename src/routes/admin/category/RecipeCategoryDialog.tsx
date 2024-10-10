@@ -24,7 +24,7 @@ import {
   getRecipeCategory,
   insertRecipeCategory,
   updateRecipeCategory,
-} from "../../../apis/recipeApi";
+} from "../../../apis/adminApi";
 import { handleApiError } from "../../../hooks/errorHandler";
 import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
 import { BoardButtonArea } from "../../../styles/BoardStyle";

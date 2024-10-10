@@ -27,7 +27,7 @@ import Swal from "sweetalert2";
 import {
   deleteRecipeCategory,
   getRecipeCategoryListForAdmin,
-} from "../../../apis/recipeApi";
+} from "../../../apis/adminApi";
 import { useAuth } from "../../../auth/AuthContext";
 import Loading from "../../../components/Loading";
 import { handleApiError } from "../../../hooks/errorHandler";
@@ -43,7 +43,6 @@ import RecipeCategoryDialog from "./RecipeCategoryDialog";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
-  const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
@@ -57,6 +56,7 @@ function RecipeCategoryManage() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
+  const [hasError, setHasError] = useState(false);
 
   const display = 10; // 한 페이지에 표시할 게시물 수
 
@@ -91,12 +91,21 @@ function RecipeCategoryManage() {
   // 데이터 가져오기 시 로딩 상태 추가
   const getCategoryListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
-
-    // 인위적인 지연 시간 추가
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    const categoryList = await getCategoryListApi(); // 데이터 불러오기
-    setLoading(false);
-    return categoryList.data;
+    try {
+      // 인위적인 지연 시간 추가
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      setHasError(false);
+      const categoryList = await getCategoryListApi(); // 데이터 불러오기
+      return categoryList.data;
+    } catch (error) {
+      if (!hasError) {
+        handleApiError(error, navigate, t);
+        setHasError(true);
+      }
+      throw error;
+    } finally {
+      setLoading(false); // 로딩 상태 종료
+    }
   };
 
   const {

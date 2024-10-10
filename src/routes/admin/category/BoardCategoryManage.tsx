@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { deleteBoardCategory, getBoardCategoryList } from "../../../apis/boardApi";
+import {
+  deleteBoardCategory,
+  getBoardCategoryList,
+} from "../../../apis/adminApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import {
@@ -95,7 +98,6 @@ function BoardCategoryManage() {
     return categoryList.data;
   };
 
-
   const {
     data: boardCategoryList,
     isLoading: boardCategoryListLoading,
@@ -129,7 +131,6 @@ function BoardCategoryManage() {
     }
   };
 
-
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
@@ -140,57 +141,57 @@ function BoardCategoryManage() {
   // 카테고리 핸들러
   const handleCategoryChange = (e: any) => {
     const selectedDivision = e.target.value;
-    setDivision(selectedDivision); 
+    setDivision(selectedDivision);
     setSearch(selectedDivision); // 선택한 값을 즉시 검색어로 설정
     setTriggerSearch(true); // 트리거 활성화
   };
 
-
   // 검색 유형 select 변경 이벤트
   const handleSearchTypeChange = (e: any) => {
     setSearchType(e.target.value);
-  
+
     if (e.target.value === "division") {
-      setSearch("all"); 
+      setSearch("all");
       setDivision("all");
-    } 
-    else {
-      setSearch(""); 
+    } else {
+      setSearch("");
     }
-  
-    // setTriggerSearch(true); 
+
+    // setTriggerSearch(true);
   };
-  
 
   //삭제
   const { mutate: deleteCategoryMutation } = useMutation(
-    (categoryId : string) => deleteBoardCategory(categoryId),
+    (categoryId: string) => deleteBoardCategory(categoryId),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
         window.location.reload();
       },
-      onError: (error : any) => {
-        const errorCode = error.response?.data.errorCode ;
+      onError: (error: any) => {
+        const errorCode = error.response?.data.errorCode;
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
-          text: errorCode === "ERR_CG_01" ? t("menu.board.error.ERR_CG_01") : t("menu.board.alert.delete"),
+          text:
+            errorCode === "ERR_CG_01"
+              ? t("menu.board.error.ERR_CG_01")
+              : t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (categoryId : string) => {
+  const onClickDelete = (categoryId: string) => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm_category"),
       showCancelButton: true,
@@ -252,9 +253,7 @@ function BoardCategoryManage() {
           onChange={handleSearchTypeChange}
         >
           <MenuItem value="name">{t("menu.board.category_name")}</MenuItem>
-          <MenuItem value="nameEn">
-            {t("menu.board.category_name_en")}
-          </MenuItem>
+          <MenuItem value="nameEn">{t("menu.board.category_name_en")}</MenuItem>
           <MenuItem value="division">{t("menu.board.division")}</MenuItem>
         </Select>
         {searchType === "division" ? (

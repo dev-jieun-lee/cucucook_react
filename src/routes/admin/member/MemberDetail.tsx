@@ -16,14 +16,18 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
-import { deleteAccount, getMember } from "../../../apis/memberApi";
+import { deleteAccount, getMember } from "../../../apis/adminApi";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Loading from "../../../components/Loading";
-import { updateMember, updateUserInfo } from "../../../apis/mypageApi";
-import { ConnectButton, PwChangeButton, UserInfoForm } from "../../../styles/MypageStyle";
+import { updateMember } from "../../../apis/adminApi";
+import {
+  ConnectButton,
+  PwChangeButton,
+  UserInfoForm,
+} from "../../../styles/MypageStyle";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
@@ -36,16 +40,15 @@ function MemberDetail() {
   const { memberId } = useParams();
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(
+    undefined
+  );
 
   const roles = [
     { value: "0", label: t("text.admin") },
     { value: "1", label: t("text.member") },
     { value: "2", label: t("text.super_admin") },
   ];
-
 
   // 데이터 가져오기 시 로딩 상태 추가
   const getMemberWithDelay = async () => {
@@ -65,11 +68,15 @@ function MemberDetail() {
     getMemberWithDelay
   );
 
-
-
   const mutation = useMutation(
     (values: any) =>
-      updateMember(memberId!, values.name, values.email, values.phone, values.role),
+      updateMember(
+        memberId!,
+        values.name,
+        values.email,
+        values.phone,
+        values.role
+      ),
     {
       onSuccess: (data) => {
         Swal.fire({
@@ -106,10 +113,11 @@ function MemberDetail() {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-      .required(t("error.required", { value: t("text.name") }))
-      .max(5, t("error.max_length", { value: t("text.name"), length: 5 })),
-      role: Yup.string()
-      .required(t("error.required", { value: t("text.role") })),
+        .required(t("error.required", { value: t("text.name") }))
+        .max(5, t("error.max_length", { value: t("text.name"), length: 5 })),
+      role: Yup.string().required(
+        t("error.required", { value: t("text.role") })
+      ),
       phone: Yup.string()
         .required(t("error.required", { value: t("text.phone") }))
         .matches(
@@ -124,7 +132,7 @@ function MemberDetail() {
       email: Yup.string()
         .required(t("error.required", { value: t("text.email") }))
         .email(t("error.format", { value: t("text.email") })),
-      }),
+    }),
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
@@ -178,14 +186,13 @@ function MemberDetail() {
     formik.setFieldTouched("role", true); // 필드를 touched로 표시
     formik.validateForm(); // 유효성 검사 트리거
   };
-  
 
   // 이름, 전화번호, 이메일 중 하나라도 변경되었는지 확인
   const isFormModified =
-  formik.values.name !== memberData?.name ||
-  formik.values.phone !== memberData?.phone ||
-  formik.values.role !== memberData?.role ||
-  formik.values.email !== memberData?.email;
+    formik.values.name !== memberData?.name ||
+    formik.values.phone !== memberData?.phone ||
+    formik.values.role !== memberData?.role ||
+    formik.values.email !== memberData?.email;
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await Swal.fire({
@@ -221,7 +228,7 @@ function MemberDetail() {
           icon: "success",
           confirmButtonText: t("alert.ok"),
         });
-        navigate(-1); 
+        navigate(-1);
       } catch (error) {
         Swal.fire({
           title: t("mypage.delete_failed"),
@@ -244,7 +251,6 @@ function MemberDetail() {
     setSelectedMemberId(undefined);
     setDialogOpen(false);
   };
-
 
   //로딩
   if (loading || memberLoading) {
@@ -285,7 +291,8 @@ function MemberDetail() {
               onBlur={formik.handleBlur}
               error={formik.touched.userId && Boolean(formik.errors.userId)}
               helperText={
-                formik.touched.userId && typeof formik.errors.userId === "string"
+                formik.touched.userId &&
+                typeof formik.errors.userId === "string"
                   ? formik.errors.userId
                   : ""
               }
@@ -325,9 +332,7 @@ function MemberDetail() {
             />
           </FormControl>
           <FormControl className="input-form form-select">
-            <InputLabel htmlFor="boardCategoryId">
-              {t("text.role")}
-            </InputLabel>
+            <InputLabel htmlFor="boardCategoryId">{t("text.role")}</InputLabel>
             <Select
               fullWidth
               variant="outlined"
@@ -344,7 +349,9 @@ function MemberDetail() {
               ))}
             </Select>
             {formik.touched.role && formik.errors.role && (
-              <FormHelperText error>{t("error.required", { value: t("text.role") })}</FormHelperText>
+              <FormHelperText error>
+                {t("error.required", { value: t("text.role") })}
+              </FormHelperText>
             )}
           </FormControl>
           <FormControl className="input-form">
@@ -370,9 +377,7 @@ function MemberDetail() {
           <PwChangeButton
             variant="outlined"
             color="warning"
-            onClick={() =>
-              onClickDialog(memberData.memberId)
-            }
+            onClick={() => onClickDialog(memberData.memberId)}
           >
             {t("mypage.change_password")}
           </PwChangeButton>
