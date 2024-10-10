@@ -253,9 +253,9 @@ export const TitleArea = styled.div`
       overflow: hidden;    
       text-overflow: ellipsis; 
       padding-top : 15px;
-      /* margin-top : 19px;  */
     `};
   }
+
   .board-info {
     display: flex;
     color: ${(props) => props.theme.navBorderColor};

@@ -30,24 +30,7 @@ function handleApiError(error: unknown) {
   }
 }
 
-// 로그인 요청
-export async function login(form: { userId: string; password: string }) {
-  try {
-    const response = await api.post("/login", form);
-    console.log("mypage로그인 응답데이터", response.data);
-    // 로그인 성공 시 JWT 토큰을 쿠키에 저장
-    if (response.data.token) {
-      Cookies.set("auth_token", response.data.token, {
-        expires: TOKEN_EXPIRED_DAY,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
-      });
-    }
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-}
+
 
 // 내정보 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
