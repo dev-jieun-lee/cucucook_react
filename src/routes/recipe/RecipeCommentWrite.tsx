@@ -47,7 +47,6 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   const { recipeId } = useParams();
   const [commentId, setCommentId] = useState<string | null>(null);
   const [pCommentId, setPCommentId] = useState<string | null>(null);
-  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   useEffect(() => {
     if (activeBoxStatus === "edit" && activeCommentId)
       setCommentId(activeCommentId);

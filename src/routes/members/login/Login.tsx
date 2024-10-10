@@ -19,7 +19,10 @@ import {
   SnsLogin,
 } from "../../../styles/LoginStyle";
 import { login } from "../../../apis/memberApi";
-import { kakaoLoginHandler, naverLoginHandler } from "../socialLoginApi";
+import {
+  kakaoLoginHandler,
+  naverLoginHandler,
+} from "../../../apis/socialLoginApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Swal, { SweetAlertIcon } from "sweetalert2";
