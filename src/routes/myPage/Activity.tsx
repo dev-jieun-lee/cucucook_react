@@ -68,7 +68,7 @@ function Activity() {
         fetchLikedRecipes(memberId),
         fetchMemberBoardList(memberId, 3),
         fetchMyRecipeList(memberId, 3),
-        fetchMyComments(memberId, 1, 3),
+        fetchMyComments(memberId, 1, 3, "", ""),
       ]);
       console.log(stats);
 
@@ -83,7 +83,7 @@ function Activity() {
       setLikedRecipes(likedRecipes);
       setLatestPosts(posts);
       setLatestRecipes(recipes);
-      setLatestReplies(replies);
+      setLatestReplies(replies.comments);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
