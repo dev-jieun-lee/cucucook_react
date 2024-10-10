@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -53,6 +55,7 @@ function Login({ isDarkMode }: LoginProps) {
   const location = useLocation();
   const initialRender = useRef(true);
   const [idError, setIdError] = useState<string | null>(null); // idError 상태 변수 정의
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   interface LoginValues {
     userId: string;
@@ -81,6 +84,21 @@ function Login({ isDarkMode }: LoginProps) {
         const response = await login(values);
         console.log("로그인 성공 후 응답 확인:", response); // 응답 확인 로그
 
+        //로그인 잠금시 로그인 시도일 경우
+        if (response.lockoutTime && response.lockoutTime > 0) {
+          console.log("로그인잠금인경우", response.lockoutTime);
+          // 서버가 로그인 성공을 허용하지 않은 상태이므로 경고 메시지 출력
+          Swal.fire({
+            title: "계정 잠김",
+            text: `계정이 아직 잠겨 있습니다. ${response.lockoutTime}초 후에 다시 시도해주세요.`,
+            icon: "warning" as SweetAlertIcon,
+            confirmButtonText: "확인",
+          });
+
+          setLockoutTimer(response.lockoutTime);
+          return; // 잠금 시간이 남아 있을 경우 로그인 시도 중단
+        }
+
         // 기존 response.token 대신 response.accessToken을 사용하여 조건 확인
         if (response.accessToken && response.refreshToken) {
           console.log("엑세스 토큰 및 리프레시 토큰 확인됨");
@@ -95,55 +113,40 @@ function Login({ isDarkMode }: LoginProps) {
 
           setLoggedIn(true);
 
-          // JWT 토큰을 쿠키에 저장
-          Cookies.set("access_token", response.accessToken, {
-            expires: 7, // 만료 기간 설정
-            secure: true,
-            sameSite: "Strict",
-          });
-
-          Cookies.set("refresh_token", response.refreshToken, {
-            expires: 7, // 만료 기간 설정
-            secure: true,
-            sameSite: "Strict",
-          });
-
           // 로그인 성공 시 메인 페이지 또는 이전 페이지로 이동
           navigate(location.state?.from || "/main"); // 기본적으로 "/main"으로 이동
         } else {
           console.warn("엑세스 토큰이나 리프레시 토큰이 없음");
         }
-      } catch (error: unknown) {
-        const e = error as ErrorResponse;
-        console.log("로그인페이지 서버 응답 데이터:", e.response?.data);
+      } catch (error: any) {
+        // 서버에서 전달된 에러 데이터를 변수에 저장
+        const serverData = error.response?.data;
+        console.log("서버 응답 데이터:", serverData);
 
-        const failedAttempts = e.response?.data?.failedAttempts ?? 0;
-        const remainingTime = e.response?.data?.lockoutTime ?? 0;
-        const errorMessage =
-          e.response?.data?.message ||
-          "로그인에 실패했습니다. 계속 실패할 경우 계정이 잠길 수 있습니다.";
+        // 실패 횟수와 잠금 시간을 상태로 업데이트
+        setFailedAttempts(serverData?.failedAttempts || 0);
+        setLockoutTimer(serverData?.lockoutTime || 0);
 
+        // Swal 메시지 설정
         const swalOptions = {
-          title: "로그인 실패",
-          text: errorMessage,
+          title: t("alert.loginfail_title"),
+          text: serverData?.message || t("alert.attempt"),
           icon: "warning" as SweetAlertIcon,
-          confirmButtonText: "확인",
+          confirmButtonText: t("alert.ok"),
         };
 
-        if (e.response?.status === 403) {
-          swalOptions.title = "계정 잠김";
-          swalOptions.text = `계정이 잠겼습니다. ${remainingTime}초 후에 다시 시도해주세요.`;
-          setLockoutTimer(remainingTime); // 잠금 타이머 설정
-        } else if (e.response?.status === 401) {
-          if (failedAttempts === 3) {
-            swalOptions.text = errorMessage;
-          } else if (failedAttempts === 4) {
-            swalOptions.text = "네 번 연속 로그인에 실패했습니다.";
-          } else if (failedAttempts >= 5) {
+        const remainingTime = serverData?.lockoutTime ?? 0;
+
+        if (error.response?.status === 403) {
+          swalOptions.title = t("alert.locked_time");
+        } else if (error.response?.status === 401) {
+          if (serverData?.failedAttempts === 3) {
+            swalOptions.text = t("alert.attempt_3");
+          } else if (serverData?.failedAttempts === 4) {
+            swalOptions.text = t("alert.attempt_4");
+          } else if (serverData?.failedAttempts >= 5) {
             swalOptions.icon = "error";
-            swalOptions.text =
-              "로그인 시도가 너무 많습니다. 계정이 잠겼습니다.";
-            setLockoutTimer(remainingTime); // 잠금 타이머 설정
+            t("alert.contact_admin");
           }
         }
 
@@ -241,6 +244,17 @@ function Login({ isDarkMode }: LoginProps) {
             />
           </FormControl>
 
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={saveId}
+                onChange={() => setSaveId(!saveId)} // 체크박스 상태 토글
+                color="primary"
+              />
+            }
+            label={t("members.save_id")}
+          />
+
           <Button
             className="submit-button"
             color="primary"
@@ -255,9 +269,11 @@ function Login({ isDarkMode }: LoginProps) {
           {/* 로그인 버튼 아래에 남은 시간 표시 */}
           {lockoutTimer !== null && lockoutTimer > 0 && (
             <Typography color="error" sx={{ mt: 2 }}>
-              남은 시간: {remainingTimeRef.current.minutes}분{" "}
-              {formatSeconds(remainingTimeRef.current.seconds)}초 후에 다시
-              시도해주세요.
+              {t("alert.locked_time")}{" "}
+              {t("alert.try_again", {
+                minutes: remainingTimeRef.current.minutes,
+                seconds: formatSeconds(remainingTimeRef.current.seconds),
+              })}
             </Typography>
           )}
         </form>

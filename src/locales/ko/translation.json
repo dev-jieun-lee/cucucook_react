@@ -203,14 +203,13 @@
     "Success": "성공",
     "Password verification successful": "비밀번호 확인에 성공했습니다",
     "OK": "확인",
-    "mycommnet": "내가 쓴 댓글",
-    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?",
+    "myComment": "내가 쓴 댓글",
     "liked_recipes": "레시피 찜 목록",
-    "myCommnet": "내가 댓글 쓴 글",
     "myWriting": "내가 쓴 글",
     "myLikes": "내가 찜한 레시피",
     "myRecipe": "나의 D.I.Y. 레시피",
-    "greetings": "{{name}}님, 안녕하세요! :)"
+    "greetings": "{{name}}님, 안녕하세요! :)",
+    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -370,6 +369,7 @@
     "canceled": "취소하였습니다",
     "confirmed": "확인",
     "ok": "확인",
+    "loginfail_title": "로그인 실패",
     "attempt": "로그인에 실패했습니다. 계속 실패할경우 계정이 잠길 수 있습니다.",
     "attempt_1": "비밀번호가 일치하지 않습니다. 다시 시도해주세요.",
     "attempt_2": "비밀번호가 또 틀렸습니다. 다시 확인해주세요.",

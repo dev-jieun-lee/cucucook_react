@@ -1,12 +1,10 @@
 import axios from "axios";
 import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
 import { useMutation } from "react-query";
+import { handleApiError } from "../hooks/errorHandler";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
-// REST API 키 설정
-const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
-const REDIRECT_URI = "https://cucucook.site";
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -16,48 +14,24 @@ const api = axios.create({
   },
 });
 
-// 에러 처리 헬퍼 함수
-function handleApiError(error: unknown) {
-  if (axios.isAxiosError(error)) {
-    // Axios 에러
-    throw new Error(error.response?.data?.message || "API 요청 실패");
-  } else if (error instanceof Error) {
-    // 일반 에러
-    throw new Error(error.message);
-  } else {
-    // 기타 에러
-    throw new Error("알 수 없는 에러 발생");
-  }
-}
-
 // 로그인 요청
 export async function login(form: { userId: string; password: string }) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
 
-    if (response.data.token) {
-      Cookies.set("auth_token", response.data.token, {
-        expires: 7,
-        secure: true,
-        sameSite: "Strict",
-      });
-    }
-
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
-      // 서버에서 전달된 전체 응답 데이터 출력
       console.log("서버 응답 데이터:", error.response.data);
-
-      // 실패 횟수와 잠금 시간을 출력
       console.log("실패 횟수:", error.response.data.failedAttempts || 0);
       console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
     } else {
       console.error("알 수 없는 오류 발생:", error);
     }
 
-    handleApiError(error);
+    // `handleApiError`를 호출하는 대신, 에러를 다시 throw
+    throw error; // 에러를 다시 던져서 호출한 컴포넌트에서 처리하도록 한다.
   }
 }
 
@@ -72,7 +46,7 @@ export async function logout() {
 
     return response.data;
   } catch (error) {
-    handleApiError(error);
+    //handleApiError(error);
   }
 }
 
@@ -124,26 +98,24 @@ export const findId = async (data: {
 
 // 이메일 인증 코드 발송
 export const useSendEmailVerificationCode = () =>
-  useMutation((email: string) =>
-    api
-      .post("/sendVerificationCode", { email })
-      .then((response) => {
+  useMutation(
+    (email: string) =>
+      api.post("/sendVerificationCode", { email }).then((response) => {
         console.log("이메일 인증 코드 발송 성공:", response.data);
         return response.data;
       })
-      .catch(handleApiError)
+    //.catch(handleApiError)
   );
 
 // 이메일 인증 코드 검증
 export const useVerifyEmailCode = () =>
-  useMutation(({ email, code }: { email: string; code: string }) =>
-    api
-      .post("/verify", { email, code })
-      .then((response) => {
+  useMutation(
+    ({ email, code }: { email: string; code: string }) =>
+      api.post("/verify", { email, code }).then((response) => {
         console.log("이메일 인증 코드 검증 성공:", response.data);
         return response.data;
       })
-      .catch(handleApiError)
+    // .catch(handleApiError)
   );
 
 // 이메일 중복 체크 API
@@ -179,7 +151,7 @@ export async function validateToken(token: string) {
     const response = await api.post("/validateToken", { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
   } catch (error) {
-    handleApiError(error);
+    // handleApiError(error);
   }
 }
 
