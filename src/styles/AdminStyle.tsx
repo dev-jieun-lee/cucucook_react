@@ -24,6 +24,9 @@ export const AdminHeaderListItem = styled(ListItem)`
   height: 55px;
   text-align: center;
   border-color: ${(props) => props.theme.navBorderColor};
+  ${media.small`
+    font-size : 14px;
+  `};
   .no{
     flex : 1;
   }
@@ -51,6 +54,32 @@ export const AdminHeaderListItem = styled(ListItem)`
       display : block;
     `};
   }
+  .division{
+    flex : 2;
+  }
+  .category{
+    flex : 2;
+  }
+  .category-en{
+    flex : 2;
+  }
+  .color{
+    flex : 1;
+  }
+  .category-area{
+    display : flex;
+    flex : 4;
+    .category-en{
+      ${media.small`
+        display : none;
+      `};
+    }
+  }
+  .delete{
+    ${media.small`
+      display : none;
+    `};
+  }
 `;
 
 
@@ -69,6 +98,9 @@ export const AdminRowListItem = styled(ListItem)`
   }
   .no{
     flex : 1;
+    ${media.small`
+      font-size : 14px;
+    `};
   }
   .user-id{
     flex : 3;
@@ -88,11 +120,15 @@ export const AdminRowListItem = styled(ListItem)`
     flex : 2;
     font-size: 14px;
     ${media.small`
+      font-size : 12px;
       color: ${(props: any) => props.theme.navBorderColor};
     `};
   }
   .role{
     flex : 1;
+    ${media.small`
+      font-size : 14px;
+    `};
   }
   .name-area{
     flex : 6;
@@ -102,6 +138,44 @@ export const AdminRowListItem = styled(ListItem)`
       flex : 2;
       display : block;
       text-align : left;
+    `};
+  }
+  .division{
+    flex : 2;
+    width : 90%;
+    white-space: nowrap;         
+    overflow: hidden;    
+    text-overflow: ellipsis; 
+    ${media.small`
+      font-size : 14px;
+    `};
+  }
+  .category{
+    flex : 2;
+    width : 90%;
+    white-space: nowrap;         
+    overflow: hidden;    
+    text-overflow: ellipsis; 
+  }
+  .color{
+    flex : 1;
+  }
+  .category-area{
+    display : flex;
+    flex : 4;
+    width : 90%;
+    white-space: nowrap;         
+    overflow: hidden;    
+    text-overflow: ellipsis; 
+    ${media.small`
+      display : block;
+      font-size : 14px;
+      
+    `};
+  }
+  .delete{
+    ${media.small`
+      display : none;
     `};
   }
 `;
