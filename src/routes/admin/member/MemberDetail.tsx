@@ -6,12 +6,14 @@ import {
   Button,
   FormControl,
   FormHelperText,
+  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import { deleteAccount, getMember } from "../../../apis/memberApi";
@@ -21,11 +23,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Loading from "../../../components/Loading";
 import { updateMember, updateUserInfo } from "../../../apis/mypageApi";
-import { ConnectButton, PwChangeButton, UserInfoForm } from "../../../styles/MypageStyle";
+import {
+  ConnectButton,
+  PwChangeButton,
+  UserInfoForm,
+} from "../../../styles/MypageStyle";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import MemberPwChange from "./MemberPwChange";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 function MemberDetail() {
   const { t } = useTranslation();
@@ -33,16 +40,15 @@ function MemberDetail() {
   const { memberId } = useParams();
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(
+    undefined
+  );
 
   const roles = [
     { value: "0", label: t("text.admin") },
     { value: "1", label: t("text.member") },
     { value: "2", label: t("text.super_admin") },
   ];
-
 
   // 데이터 가져오기 시 로딩 상태 추가
   const getMemberWithDelay = async () => {
@@ -62,11 +68,15 @@ function MemberDetail() {
     getMemberWithDelay
   );
 
-
-
   const mutation = useMutation(
     (values: any) =>
-      updateMember(memberId!, values.name, values.email, values.phone, values.role),
+      updateMember(
+        memberId!,
+        values.name,
+        values.email,
+        values.phone,
+        values.role
+      ),
     {
       onSuccess: (data) => {
         Swal.fire({
@@ -103,10 +113,11 @@ function MemberDetail() {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-      .required(t("error.required", { value: t("text.name") }))
-      .max(5, t("error.max_length", { value: t("text.name"), length: 5 })),
-      role: Yup.string()
-      .required(t("error.required", { value: t("text.role") })),
+        .required(t("error.required", { value: t("text.name") }))
+        .max(5, t("error.max_length", { value: t("text.name"), length: 5 })),
+      role: Yup.string().required(
+        t("error.required", { value: t("text.role") })
+      ),
       phone: Yup.string()
         .required(t("error.required", { value: t("text.phone") }))
         .matches(
@@ -121,7 +132,7 @@ function MemberDetail() {
       email: Yup.string()
         .required(t("error.required", { value: t("text.email") }))
         .email(t("error.format", { value: t("text.email") })),
-      }),
+    }),
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
@@ -175,14 +186,13 @@ function MemberDetail() {
     formik.setFieldTouched("role", true); // 필드를 touched로 표시
     formik.validateForm(); // 유효성 검사 트리거
   };
-  
 
   // 이름, 전화번호, 이메일 중 하나라도 변경되었는지 확인
   const isFormModified =
-  formik.values.name !== memberData?.name ||
-  formik.values.phone !== memberData?.phone ||
-  formik.values.role !== memberData?.role ||
-  formik.values.email !== memberData?.email;
+    formik.values.name !== memberData?.name ||
+    formik.values.phone !== memberData?.phone ||
+    formik.values.role !== memberData?.role ||
+    formik.values.email !== memberData?.email;
 
   const handleSaveChangesClick = async () => {
     const confirmSave = await Swal.fire({
@@ -218,7 +228,7 @@ function MemberDetail() {
           icon: "success",
           confirmButtonText: t("alert.ok"),
         });
-        navigate(-1); 
+        navigate(-1);
       } catch (error) {
         Swal.fire({
           title: t("mypage.delete_failed"),
@@ -242,7 +252,6 @@ function MemberDetail() {
     setDialogOpen(false);
   };
 
-
   //로딩
   if (loading || memberLoading) {
     return <Loading />;
@@ -256,7 +265,19 @@ function MemberDetail() {
         onClose={handleDialogClose}
         memberId={selectedMemberId}
       />
-      <TitleCenter>{t("menu.admin.members_info")}</TitleCenter>
+      <TitleCenter>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("menu.admin.members_info")}
+      </TitleCenter>
       <LoginWrapper>
         <UserInfoForm onSubmit={formik.handleSubmit}>
           <FormControl className="input-form">
@@ -265,12 +286,13 @@ function MemberDetail() {
               name="userId"
               label={t("text.user_id")}
               disabled
-              value={formik.values.userId}
+              value={formik.values.userId || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.userId && Boolean(formik.errors.userId)}
               helperText={
-                formik.touched.userId && typeof formik.errors.userId === "string"
+                formik.touched.userId &&
+                typeof formik.errors.userId === "string"
                   ? formik.errors.userId
                   : ""
               }
@@ -281,7 +303,7 @@ function MemberDetail() {
               id="name"
               name="name"
               label={t("text.name")}
-              value={formik.values.name}
+              value={formik.values.name || ""}
               onChange={formik.handleChange}
               // onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
               onBlur={formik.handleBlur}
@@ -298,7 +320,7 @@ function MemberDetail() {
               id="phone"
               name="phone"
               label={t("mypage.phone_number")}
-              value={formik.values.phone}
+              value={formik.values.phone || ""}
               onChange={handlePhoneChange}
               onBlur={formik.handleBlur}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -310,14 +332,12 @@ function MemberDetail() {
             />
           </FormControl>
           <FormControl className="input-form form-select">
-            <InputLabel htmlFor="boardCategoryId">
-              {t("text.role")}
-            </InputLabel>
+            <InputLabel htmlFor="boardCategoryId">{t("text.role")}</InputLabel>
             <Select
               fullWidth
               variant="outlined"
               className="category-select"
-              value={formik.values.role}
+              value={formik.values.role || ""}
               label={t("text.role")}
               onChange={handleRoleChange}
               error={formik.touched.role && Boolean(formik.errors.role)}
@@ -329,7 +349,9 @@ function MemberDetail() {
               ))}
             </Select>
             {formik.touched.role && formik.errors.role && (
-              <FormHelperText error>{t("error.required", { value: t("text.role") })}</FormHelperText>
+              <FormHelperText error>
+                {t("error.required", { value: t("text.role") })}
+              </FormHelperText>
             )}
           </FormControl>
           <FormControl className="input-form">
@@ -339,7 +361,7 @@ function MemberDetail() {
                 id="email"
                 name="email"
                 label={t("text.email")}
-                value={formik.values.email}
+                value={formik.values.email || ""}
                 onChange={handleEmailChange} // 이메일에 문자 제한 추가
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}
@@ -355,9 +377,7 @@ function MemberDetail() {
           <PwChangeButton
             variant="outlined"
             color="warning"
-            onClick={() =>
-              onClickDialog(memberData.memberId)
-            }
+            onClick={() => onClickDialog(memberData.memberId)}
           >
             {t("mypage.change_password")}
           </PwChangeButton>

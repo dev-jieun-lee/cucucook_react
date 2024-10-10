@@ -59,7 +59,9 @@
         "delete_error": "삭제중 오류가 발생했습니다.",
         "save": "저장되었습니다.",
         "modify": "수정되었습니다.",
-        "cancel": "게시글 작성을 정말 취소하시겠습니까?"
+        "cancel": "게시글 작성을 정말 취소하시겠습니까?",
+        "file_upload_info": "이 곳을 클릭하거나 드래그하면 파일 업로드가 가능합니다.",
+        "allowed_extensions": "업로드 가능한 확장자"
       }
     },
     "admin": {
@@ -80,8 +82,8 @@
     }
   },
   "text": {
-    "like" : "찜",
-    "writing" : "글",
+    "like": "찜",
+    "writing": "글",
     "phone": "전화번호",
     "color": "색상",
     "name": "이름",
@@ -208,7 +210,7 @@
     "myWriting": "내가 쓴 글",
     "myLikes": "내가 찜한 레시피",
     "myRecipe": "나의 D.I.Y. 레시피",
-    "greetings" : "{{name}}님, 안녕하세요! :)"
+    "greetings": "{{name}}님, 안녕하세요! :)"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",
@@ -430,11 +432,12 @@
     "E_SERVER_CODE": "오류가 발생했습니다. 관리자에게 문의하세요. 코드 : {{status}}",
     "E_AUTH": "로그인이 필요합니다. 로그인 해주세요.",
     "E_ROLE": "접근 권한이 없습니다.",
-    "E_LOGIN_EXPIRED": "로그인이 만료되었습니다. 다시 로그인 해주세요."
+    "E_LOGIN_EXPIRED": "로그인이 만료되었습니다. 다시 로그인 해주세요.",
+    "E_UNUSABLE_EXTENSION": "사용 불가한 확장자 입니다. [{{extension}}]"
   },
-  "error" : {
+  "error": {
     "required": "{{value}}은(는) 필수 입력 항목입니다.",
-    "max_length" : "{{value}}은(는) {{length}}자 이하여야 합니다.",
-    "format" : "{{value}} 형식이 올바르지 않습니다."
+    "max_length": "{{value}}은(는) {{length}}자 이하여야 합니다.",
+    "format": "{{value}} 형식이 올바르지 않습니다."
   }
 }

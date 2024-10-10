@@ -108,7 +108,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <AllRecipeList isDarkMode={isDarkMode} />
+            <AllRecipeList />
           </RouteBox>
         }
       />
@@ -117,7 +117,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <PublicRecipeList isDarkMode={isDarkMode} />
+            <PublicRecipeList />
           </RouteBox>
         }
       />
@@ -126,7 +126,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <MemberRecipeList isDarkMode={isDarkMode} />
+            <MemberRecipeList />
           </RouteBox>
         }
       />
@@ -135,7 +135,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <PublicRecipe isDarkMode={isDarkMode} />
+            <PublicRecipe />
           </RouteBox>
         }
       />
@@ -144,7 +144,7 @@ function RoutesConfig({ isDarkMode }: any) {
         element={
           <RouteBox>
             <RecipeSideMenu isDarkMode={isDarkMode} />
-            <MemberRecipe isDarkMode={isDarkMode} />
+            <MemberRecipe />
           </RouteBox>
         }
       />
@@ -154,7 +154,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <RecipeSideMenu isDarkMode={isDarkMode} />
-              <MemberRecipeWrite isDarkMode={isDarkMode} />
+              <MemberRecipeWrite />
             </RouteBox>
           }
         />
@@ -318,7 +318,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyWrites isDarkMode={false} />
+              <MyWrites />
             </RouteBox>
           }
         />
@@ -336,7 +336,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <MyRecipes isDarkMode={false} />
+              <MyRecipes />
             </RouteBox>
           }
         />

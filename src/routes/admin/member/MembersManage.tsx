@@ -26,7 +26,6 @@ import {
   TextField,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import moment from "moment";
 import { ContentsArea } from "../../../styles/BoardStyle";
 import { getMemberList } from "../../../apis/memberApi";
 

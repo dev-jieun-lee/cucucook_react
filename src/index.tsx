@@ -40,10 +40,10 @@ const root = ReactDOM.createRoot(
 
 const client = new QueryClient();
 root.render(
-  //<React.StrictMode>
-  <QueryClientProvider client={client}>
-    <GlobalStyle />
-    <App />
-  </QueryClientProvider>
-  // </React.StrictMode>
+  <React.StrictMode>
+    <QueryClientProvider client={client}>
+      <GlobalStyle />
+      <App />
+    </QueryClientProvider>
+  </React.StrictMode>
 );

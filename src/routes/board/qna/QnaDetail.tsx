@@ -1,7 +1,14 @@
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
+import dompurify from "dompurify";
+import { useFormik } from "formik";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import * as Yup from "yup";
 import {
   deleteBoard,
   getBoardCategory,
@@ -9,6 +16,7 @@ import {
   insertBoard,
   updateBoard,
 } from "../../../apis/boardApi";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   AnswerButton,
   AnswerContainer,
@@ -18,19 +26,12 @@ import {
   ParentBoardData,
   QnaContentsArea,
   TitleArea,
+  TitleAreaAnswer,
 } from "../../../styles/BoardStyle";
 import Loading from "../../../components/Loading";
-import moment from "moment";
-import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
-import dompurify from "dompurify";
-import Swal from "sweetalert2";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { useAuth } from "../../../auth/AuthContext";
-import { useEffect, useRef, useState } from "react";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import BoardFilesList from "../BoardFilesList";
 import QuillEditer from "../QuillEditer";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 import dayjs from "dayjs";
 
 function QnaDetail() {
@@ -248,23 +249,27 @@ function QnaDetail() {
               >
                 [ {boardWithCategory?.category.name} ]
               </CustomCategory>
-              <span className="title">{pBoardData[0]?.title}</span>
+              <p className="title">{pBoardData[0]?.title}</p>
             </div>
             <div className="board-info">
-              <span className="hit">{t("text.register_date")}</span>
-              <span className="date">
-                {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
-              </span>
-              <span className="border"></span>
-              <span className="hit">{t("text.update_date")}</span>
-              <span className="date">
-                {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
-              </span>
-              <span className="border"></span>
-              <span className="member">{pBoardData[0]?.userName}</span>
-              <span className="border"></span>
-              <span className="hit">{t("text.hit")}</span>
-              <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              <div className="date-area">
+                <span className="hit">{t("text.register_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.regDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+                <span className="border"></span>
+                <span className="hit">{t("text.update_date")}</span>
+                <span className="date">
+                  {dayjs(pBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
+                </span>
+              </div>
+              <div className="hit-area">
+                <span className="border m-border"></span>
+                <span className="member">{pBoardData[0]?.userName}</span>
+                <span className="border"></span>
+                <span className="hit">{t("text.hit")}</span>
+                <span className="viewCount">{pBoardData[0]?.viewCount}</span>
+              </div>
             </div>
           </TitleArea>
           <QnaContentsArea>
@@ -274,6 +279,7 @@ function QnaDetail() {
                 __html: sanitizer(`${pBoardData[0]?.contents}`),
               }}
             ></div>
+            <BoardFilesList boardId={pBoardData[0]?.boardId || ""} />
             {user?.memberId === pBoardData[0]?.memberId ? (
               <div className="btn-area">
                 <Button
@@ -304,7 +310,7 @@ function QnaDetail() {
         <></>
       )}
       <div style={{ marginTop: "-50px", width: "100%" }}>
-        <TitleArea>
+        <TitleAreaAnswer style={{ display: "flex", alignItems: "center" }}>
           <div className="board-title">
             <AnswerContainer className="answer-container">
               <SubdirectoryArrowRightIcon className="answer-icon" />
@@ -329,14 +335,14 @@ function QnaDetail() {
             ) : (
               <>
                 <span className="date">
-                  {moment(reBoardData[0]?.udtDt).format("YYYY-MM-DD")}
+                  {dayjs(reBoardData[0]?.udtDt).format("YYYY-MM-DD HH:mm")}
                 </span>
                 <span className="border"></span>
                 <span className="member">{reBoardData[0]?.userName}</span>
               </>
             )}
           </div>
-        </TitleArea>
+        </TitleAreaAnswer>
         <>
           {!isEditing ? (
             <QnaContentsArea>
@@ -348,6 +354,7 @@ function QnaDetail() {
                       __html: sanitizer(`${reBoardData[0]?.contents}`),
                     }}
                   ></div>
+                  <BoardFilesList boardId={reBoardId || ""} />
                   {user?.role === "0" ? (
                     <div className="btn-area">
                       <Button

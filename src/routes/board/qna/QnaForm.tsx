@@ -1,20 +1,5 @@
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../../../auth/AuthContext";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  getBoard,
-  getBoardCategory,
-  getBoardCategoryList,
-  insertBoard,
-  updateBoard,
-} from "../../../apis/boardApi";
-import { useMutation, useQuery } from "react-query";
-import Swal from "sweetalert2";
-import { useEffect } from "react";
-import { useFormik } from "formik";
-import Loading from "../../../components/Loading";
-import {
+  Box,
   Button,
   FormControl,
   FormHelperText,
@@ -24,15 +9,42 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import dompurify from "dompurify";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import * as Yup from "yup";
+import {
+  getBoard,
+  getBoardCategory,
+  getBoardCategoryList,
+  getBoardFilesList,
+  insertBoard,
+  updateBoard,
+} from "../../../apis/boardApi";
+import { useAuth } from "../../../auth/AuthContext";
+import Loading from "../../../components/Loading";
 import {
   BoardButtonArea,
   ContentsInputArea,
-  QuestionArea,
   TitleInputArea,
 } from "../../../styles/BoardStyle";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { convertFileSize } from "../../utils/commonUtil";
+import BoardFilesUpload from "../BoardFilesUpload";
 import QuillEditer from "../QuillEditer";
-import dompurify from "dompurify";
+
+//첨부파일
+interface UploadFiles {
+  file: File | null;
+  fileName: string;
+  fileType: string;
+  fileSize: string;
+  fileId: String;
+}
 
 function QnaForm() {
   const sanitizer = dompurify.sanitize;
@@ -40,6 +52,11 @@ function QnaForm() {
   const { t } = useTranslation();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
+  const [uploadFiles, setUploadFiles] = useState<UploadFiles[]>([]);
+  const [delFileIds, setDelFileIds] = useState<string[]>([]);
+  const [uploadFileList, setUploadFileList] = useState<UploadFiles[]>([
+    { file: null, fileName: "", fileType: "", fileSize: "", fileId: "" },
+  ]);
 
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
@@ -72,10 +89,23 @@ function QnaForm() {
       // 보드의 카테고리 정보 가져오기
       const categoryData = await getBoardCategory(board.data.boardCategoryId);
 
+      //파일데이터 가져오기
+      const uploadFileListApi = await getBoardFilesList(boardId);
+      const uploadFileData: UploadFiles[] = uploadFileListApi.data.map(
+        (item: any) => ({
+          file: item.file,
+          fileName: item.orgFileName,
+          fileType: item.fileType,
+          fileSize: convertFileSize(item.fileSize),
+          fileId: item.fileId,
+        })
+      );
+
       // 카테고리 정보 추가
       const boardWithCategory = {
         ...board,
         category: categoryData.data,
+        uploadFileList: uploadFileData,
       };
 
       return boardWithCategory;
@@ -99,14 +129,24 @@ function QnaForm() {
     (values) => (boardId ? updateBoard(boardId, values) : insertBoard(values)),
     {
       onSuccess: (data) => {
-        Swal.fire({
-          icon: "success",
-          title: t("text.save"),
-          text: t("menu.board.alert.save"),
-          showConfirmButton: true,
-          confirmButtonText: t("text.check"),
-        });
-        navigate(-1);
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: t("text.save"),
+            text: t("menu.board.alert.save"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+          navigate(-1);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: t("text.save"),
+            text: t("CODE.E_ADD_DATA"),
+            showConfirmButton: true,
+            confirmButtonText: t("text.check"),
+          });
+        }
       },
       onError: (error) => {
         // 에러 처리
@@ -126,6 +166,8 @@ function QnaForm() {
       contents: boardId ? boardWithCategory?.data?.contents || "" : "",
       status: "0",
       boardDivision: "QNA",
+      uploadFileList: boardId ? boardWithCategory?.uploadFileList || [] : [],
+      delFileIds: delFileIds,
     },
     validationSchema: Yup.object({
       title: Yup.string().required(),
@@ -135,7 +177,26 @@ function QnaForm() {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      mutation.mutate(values as any); // mutation 실행
+      //json값에 uploadFileList를 제외한 value 값 넣기
+      const { uploadFileList, ...jsonValues } = values;
+
+      const formData = new FormData();
+      formData.append(
+        "board",
+        new Blob([JSON.stringify(jsonValues)], {
+          type: "application/json",
+        })
+      );
+
+      //uploadFileListInfo값에 파일만 추출해서 formdata에 넣어주기
+      uploadFileList.map((uploadFileItem: any) => {
+        const file =
+          uploadFileItem.file ||
+          new Blob([], { type: "application/octet-stream" });
+        console.log(file);
+        formData.append("uploadFileList", file);
+      });
+      mutation.mutate(formData as any); // mutation 실행
     },
   });
 
@@ -152,6 +213,8 @@ function QnaForm() {
         contents: "",
         status: "0",
         boardDivision: "QNA",
+        uploadFileList: [],
+        delFileIds: delFileIds,
       });
     }
   }, [boardId]); // boardId가 없을 때 폼 값을 초기화
@@ -184,6 +247,24 @@ function QnaForm() {
   if (boardLoading || boardCategoryLoading) {
     return <Loading />;
   }
+
+  //첨부파일 변경 시
+  const handleUploadFileSelect = (uploadFileList: UploadFiles[]) => {
+    setUploadFiles(uploadFileList);
+    formik.setFieldValue("uploadFileList", uploadFileList);
+  };
+
+  //첨부파일 삭제 시 (기등록된 파일만)
+  const handleDeleteFile = (
+    uploadFileList: UploadFiles[],
+    updateDelFileIds: string[]
+  ) => {
+    formik.setFieldValue("uploadFileList", uploadFileList);
+    formik.setFieldValue("delFileIds", [
+      ...formik.values.delFileIds,
+      ...updateDelFileIds,
+    ]);
+  };
 
   return (
     <Wrapper>
@@ -255,6 +336,13 @@ function QnaForm() {
             </FormHelperText>
           )}
         </ContentsInputArea>
+        <Box margin={"0 0 20px 0"}>
+          <BoardFilesUpload
+            values={formik.values.uploadFileList}
+            onChangeFile={handleUploadFileSelect}
+            onDeleteFile={handleDeleteFile}
+          />
+        </Box>
         <BoardButtonArea>
           <Button
             className="cancel-btn"

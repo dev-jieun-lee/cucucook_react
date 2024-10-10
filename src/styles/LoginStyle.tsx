@@ -37,9 +37,13 @@ export const LoginWrapper = styled.div`
 
   .input-form {
     width: 100%;
+    margin-bottom: 20px;
     .input {
       display: block;
       margin-top: 15px;
+    }
+    .input-email {
+      margin: 0;
     }
   }
 
@@ -61,8 +65,8 @@ export const LoginWrapper = styled.div`
   }
 
   .submit-button {
-    margin: 10px 8px 15px;
-    height: 40px;
+    margin: 0px 0px 15px;
+    height: 50px;
   }
 
   .save-id {
@@ -82,8 +86,9 @@ export const LoginWrapper = styled.div`
   `};
 
   .email-btn {
-    height: 53px;
-    margin-top: -3px;
+    align-items: center;
+    height: 54px;
+    margin-top: -13px;
     font-size: 15px;
     margin-right: -5px;
   }
@@ -91,6 +96,23 @@ export const LoginWrapper = styled.div`
     margin-top: 50px;
     height: 53px;
     font-size: 15px;
+  }
+`;
+
+export const SnsLogin = styled.div`
+  margin: 0 auto;
+  width: 60%;
+  height: 40px;
+  display: flex;
+  .naver {
+    width: 50%;
+  }
+  .kakao {
+    width: 50%;
+    margin-right: 5px;
+  }
+  &:hover {
+    cursor: pointer;
   }
 `;
 
@@ -137,6 +159,7 @@ export const SignupIntroWrapper = styled.div`
 `;
 
 export const ButtonArea = styled.div`
+  margin-bottom: 15px;
   button {
     font-size: 15px;
     border: 0;
@@ -215,9 +238,13 @@ export const StyledAnchor = styled(Link)`
 
 export const FindIdBox = styled(Box)`
   .find-btn {
-    height: 53px;
-    margin-top: 6px;
+    align-items: center;
+    height: 54px;
+    margin-top: 7px;
     font-size: 16px;
+  }
+  .email-area {
+    align-items: center;
   }
   .submit {
     height: 53px;

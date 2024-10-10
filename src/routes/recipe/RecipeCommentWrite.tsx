@@ -21,11 +21,11 @@ import {
 } from "../../apis/recipeApi";
 
 import { useAuth } from "../../auth/AuthContext";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   RecipeCommentWrite,
   recipeCommonStyles,
 } from "../../styles/RecipeStyle";
-import { handleApiError } from "../../hooks/errorHandler";
 
 const customStyles = recipeCommonStyles();
 
@@ -45,9 +45,9 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { recipeId } = useParams();
-  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const [commentId, setCommentId] = useState<string | null>(null);
   const [pCommentId, setPCommentId] = useState<string | null>(null);
+  const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   useEffect(() => {
     if (activeBoxStatus === "edit" && activeCommentId)
       setCommentId(activeCommentId);
@@ -88,7 +88,7 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
     {
       onSuccess: (data) => {
         console.log(data);
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.save"),

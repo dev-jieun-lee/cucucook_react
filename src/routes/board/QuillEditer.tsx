@@ -1,5 +1,6 @@
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill-new";
 import EditerModule from "./EditerModule";
+import "react-quill-new/dist/quill.snow.css";
 import { forwardRef, useMemo, useState } from "react";
 
 const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
@@ -13,7 +14,6 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     "strike",
     "blockquote",
     "list",
-    "bullet",
     "indent",
     "link",
     "image",
@@ -22,7 +22,6 @@ const QuillEditer = forwardRef(({ onChange, value }: any, ref: any) => {
     "align",
     "script",
     "code-block",
-    "clean",
   ];
 
   const modules: {} = useMemo(

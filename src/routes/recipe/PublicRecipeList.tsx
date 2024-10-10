@@ -1,4 +1,4 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Button,
@@ -14,16 +14,12 @@ import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "styled-components";
 import { getPublicRecipeList } from "../../apis/recipeApi";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
-import {
-  PageTitleBasic,
-  ScrollBtnFab,
-  Wrapper,
-  SearchArea,
-} from "../../styles/CommonStyles";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
+import { PageTitleBasic, SearchArea, Wrapper } from "../../styles/CommonStyles";
 import {
   SearchBox,
   SearchBoxContainer,
@@ -32,11 +28,8 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
-import SearchIcon from "@mui/icons-material/Search";
-import ScrollTop from "../../components/ScrollTop";
-import { handleApiError } from "../../hooks/errorHandler";
 
-const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const PublicRecipe = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const categories = ["전체", "국&찌개", "반찬", "밥", "일품", "후식"];
@@ -108,7 +101,7 @@ const PublicRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
         setLoading(false);
-        if (data.success) {
+        if (data && data.success) {
           setHasMore(data.addData?.hasMore ?? false);
           if (data.data != null) {
             setRecipes((prevRecipes) => [...prevRecipes, ...data.data]);

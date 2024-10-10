@@ -53,6 +53,9 @@ export const TitleCenter = styled.div`
   font-size: 30px;
   font-weight: 600;
   color: ${(props) => props.theme.mainColor};
+  ${media.xsmall`
+    font-size: 27px;
+  `};
 `;
 
 export const TitleBasic = styled.div`
@@ -104,6 +107,11 @@ export const SearchArea = styled.div`
   justify-content: center;
   ${media.small`
     display: block;
+    /* margin-left : 50px; */
+  `};
+  ${media.xsmall`
+    margin-left : 25px;
+    margin-right : 25px;
   `};
 
   .select-category {
@@ -112,12 +120,14 @@ export const SearchArea = styled.div`
     ${media.small`
     margin : 0 auto;
     margin-bottom : 10px;
+    margin-right : 20px;
+    /* margin-left : 50px; */
   `};
   }
 
   .select-category-item {
-    width: 180px;
-    margin-right: 50px;
+    width: 200px;
+    /* margin-right: 50px; */
   }
   .search-input {
     width: 350px;

@@ -57,7 +57,9 @@
         "delete_error": "An error occurred while deleting.",
         "save": "Saved.",
         "modify": "Modified.",
-        "cancel": "Are you sure you want to cancel writing the post?"
+        "cancel": "Are you sure you want to cancel writing the post?",
+        "file_upload_info": "You can click or drag here to upload the file.",
+        "allowed_extensions": "Allowed file extensions"
       }
     },
     "admin": {
@@ -78,17 +80,17 @@
     }
   },
   "text": {
-    "like" : "Like",
-    "writing" : "Writing",
+    "like": "Like",
+    "writing": "Writing",
     "phone": "Phone Number",
-    "color" : "Color",
-    "name" : "Name",
-    "name_en" : "Name(English)",
-    "super_admin" : "Super Admin",
-    "admin" : "Admin",
-    "member" : "Member",
-    "role" : "Role",
-    "user_id" : "User Id",
+    "color": "Color",
+    "name": "Name",
+    "name_en": "Name(English)",
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "member": "Member",
+    "role": "Role",
+    "user_id": "User Id",
     "search": "Search",
     "mode": "Mode",
     "change_mode": "Change Mode",
@@ -204,7 +206,7 @@
     "myLikes": "the one I picked up,",
     "myRecipe": "my D.I.Y. recipe",
     "confirm_delete_account": "Are you sure you want to delete your account?",
-    "greetings" : "{{name}}, Hello! :)"
+    "greetings": "{{name}}, Hello! :)"
   },
   "sentence": {
     "no_data": "No data exists.",
@@ -419,9 +421,10 @@
     "E_SERVER_CODE": "An error occurred. Please contact the administrator. code : {{status}}",
     "E_AUTH": "Login is required. Please log in.",
     "E_ROLE": "You do not have permission to access.",
-    "E_LOGIN_EXPIRED": "Your session has expired. Please log in again."
+    "E_LOGIN_EXPIRED": "Your session has expired. Please log in again.",
+    "E_UNUSABLE_EXTENSION": "This extension is not allowed. [{{extension}}]"
   },
-  "error" : {
+  "error": {
     "required": "{{value}} is a required entry,",
     "max_length": "{{value}} must be no more than {{length}} characters",
     "format": "The {{value}} format is invalid."

@@ -19,35 +19,33 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import { useAuth } from "../../auth/AuthContext";
-import Loading from "../../components/Loading";
-import ScrollTop from "../../components/ScrollTop";
 import {
   getMemberRecipe,
   getRecipeCategoryListForWrite,
   insertMemberRecipe,
   updateMemberRecipe,
 } from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
+import Loading from "../../components/Loading";
+import ScrollTop from "../../components/ScrollTop";
 
-import RecipeImageUpload from "./RecipeImageUpload";
-import RecipeProcessListInput from "./RecipeProcessListInput";
-import RecipeIngredientInputList from "./RecipeIngredientInputList";
+import { handleApiError } from "../../hooks/errorHandler";
 import { PageTitleBasic, Wrapper } from "../../styles/CommonStyles";
 import { MemberRecipeWirteForm, TitleBox } from "../../styles/RecipeStyle";
-import axios from "axios";
-import { handleApiError } from "../../hooks/errorHandler";
+import RecipeImageUpload from "./RecipeImageUpload";
+import RecipeIngredientInputList from "./RecipeIngredientInputList";
+import RecipeProcessListInput from "./RecipeProcessListInput";
 
 export interface FocusableButton {
   focus: () => void;
 }
 
-function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
+function MemberRecipeWrite() {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const { recipeId } = useParams(); //레시피 아이디 파라미터 받아오기
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
   const navigate = useNavigate();
-  const [touchedChanged, setTouchedChanged] = useState(false);
   const [style, setStyle] = useState<React.CSSProperties>({});
   const [ingredients] = useState<{ name: string; amount: string }[]>([
     { name: "", amount: "" },
@@ -131,7 +129,7 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         : insertMemberRecipe(values),
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: recipeId ? t("text.update") : t("text.save"),
@@ -260,23 +258,21 @@ function MemberRecipeWrite({ isDarkMode }: { isDarkMode: boolean }) {
         })
       );
 
-      values.recipeProcessItems.forEach(
-        (recipeProcessItem: any, index: number) => {
-          const file =
-            recipeProcessItem.image ||
-            new Blob([], { type: "application/octet-stream" });
+      values.recipeProcessItems.forEach((recipeProcessItem: any) => {
+        const file =
+          recipeProcessItem.image ||
+          new Blob([], { type: "application/octet-stream" });
 
-          formData.append(`recipeProcessItems.image`, file);
-          formData.append(
-            "recipeProcessItems.contents",
-            recipeProcessItem.contents || ""
-          );
-          formData.append(
-            "recipeProcessItems.imgId",
-            recipeProcessItem.imgId || ""
-          );
-        }
-      );
+        formData.append("recipeProcessItems.image", file);
+        formData.append(
+          "recipeProcessItems.contents",
+          recipeProcessItem.contents || ""
+        );
+        formData.append(
+          "recipeProcessItems.imgId",
+          recipeProcessItem.imgId || ""
+        );
+      });
 
       // mutation 호출 시 추가 데이터 포함
       mutation.mutate(formData as any);

@@ -1,12 +1,15 @@
-import { KeyboardArrowUp } from "@mui/icons-material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import StarIcon from "@mui/icons-material/Star";
+import TextsmsIcon from "@mui/icons-material/Textsms";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
   Divider,
   Grid,
   Pagination,
-  Stack,
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -14,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "styled-components";
+import Swal from "sweetalert2";
 import {
   deleteMemberRecipe,
   deleteMemberRecipeLike,
@@ -21,36 +25,28 @@ import {
   getRecipeCommentList,
   insertMemberRecipeLike,
 } from "../../apis/recipeApi";
+import { useAuth } from "../../auth/AuthContext";
 import Loading from "../../components/Loading";
+import ScrollTop from "../../components/ScrollTop";
+import { handleApiError } from "../../hooks/errorHandler";
 import {
   CustomPagination,
   PageSubTitleBasic,
   PageTitleBasic,
-  ScrollBtnFab,
   Wrapper,
 } from "../../styles/CommonStyles";
 import {
   IngredientGrid,
-  RecipeView,
+  recipeCommonStyles,
   RecipeImgBox,
   RecipeImgBoxContainer,
-  recipeCommonStyles,
+  RecipeView,
   TitleBox,
 } from "../../styles/RecipeStyle";
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
-import Swal from "sweetalert2";
-import StarIcon from "@mui/icons-material/Star";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import TextsmsIcon from "@mui/icons-material/Textsms";
-import { useAuth } from "../../auth/AuthContext";
-import { title } from "process";
-import ScrollTop from "../../components/ScrollTop";
-import { handleApiError } from "../../hooks/errorHandler";
 
-const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const MemberRecipe = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
@@ -123,7 +119,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
   } = useQuery("memberRecipe", fetchMemberRecipe, {
     refetchOnWindowFocus: false,
     onSuccess: (data) => {
-      if (data.success) {
+      if (data && data.success) {
         setIsLike(data?.data.memberRecipe.memberRecipeLike);
         setLikeCount(data?.data.memberRecipe.likeCount);
         setIsLoading(false);
@@ -160,7 +156,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setComments(data.data);
           setTotalCount(data.addData.totalCnt);
           setIsLoading(false);
@@ -179,7 +175,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     (params: { recipeId: string }) => deleteMemberRecipe(params),
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
@@ -214,7 +210,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setIsLike(!isLike);
           setLikeCount(data.data);
         }
@@ -233,7 +229,7 @@ const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
     },
     {
       onSuccess: (data) => {
-        if (data.success) {
+        if (data && data.success) {
           setIsLike(!isLike);
           setLikeCount(data.data);
         }

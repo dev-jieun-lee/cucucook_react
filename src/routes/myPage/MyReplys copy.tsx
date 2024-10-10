@@ -11,13 +11,10 @@ import {
   FormControl,
   MenuItem,
   Select,
-  IconButton,
-  Tooltip,
-  InputAdornment,
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { SearchArea, TitleCenter, Wrapper } from "../../styles/CommonStyles";
+import { Wrapper } from "../../styles/CommonStyles";
 import {
   fetchMyReplies,
   deleteReply,
@@ -29,15 +26,6 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import SearchIcon from "@mui/icons-material/Search";
-import {
-  MypageContentArea,
-  MypageHeaderListItem,
-  MypageRowListItem,
-} from "../../styles/MypageStyle";
-import { DeleteIconButton } from "../../styles/AdminStyle";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 const MySwal = withReactContent(Swal);
 
@@ -57,7 +45,7 @@ const MyReplys: React.FC<{}> = () => {
   const { t } = useTranslation();
   const [myReplies, setMyReplies] = useState<Reply[]>([]);
   const [page, setPage] = useState(0);
-  const [pageSize] = useState(100); // 처음에 5개씩 불러오도록 설정
+  const [pageSize] = useState(5); // 처음에 5개씩 불러오도록 설정
   const [hasMore, setHasMore] = useState(true); // 더 로드할 데이터가 있는지 여부
   const [searchType, setSearchType] = useState("content"); // 기본값으로 'content'
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -122,12 +110,12 @@ const MyReplys: React.FC<{}> = () => {
     try {
       const newReplies = await fetchMyReplies(
         memberId!,
-        page,
-        pageSize,
-        sortOption,
-        sortDirection
-        // "",
-        // searchType
+      1,
+      1,
+      sortOption,
+      sortDirection,
+      // "",
+      // searchType
       );
       if (page === 0) {
         setMyReplies(newReplies); // 처음 로드 시에는 새로 불러온 데이터로 초기화
@@ -253,125 +241,204 @@ const MyReplys: React.FC<{}> = () => {
 
   return (
     <Wrapper>
-      <TitleCenter>
-        <Tooltip title={t("text.go_back")}>
-          <IconButton
-            color="primary"
-            aria-label="add"
-            style={{ marginTop: "-5px" }}
-            onClick={() => navigate("/mypage/activity")}
+      <Box sx={activityStyles.container}>
+        <Box sx={activityStyles.content}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
           >
-            <ArrowBackIosNewIcon />
-          </IconButton>
-        </Tooltip>
-        {t("mypage.mycommnet")}
-      </TitleCenter>
-      <SearchArea>
-        <Select
-          className="select-category"
-          variant="standard"
-          labelId="select-category"
-          value={searchType}
-          // onChange={handleSearchTypeChange}
-        >
-          <MenuItem value="all">{t("text.all")}</MenuItem>
-          <MenuItem value="title">{t("text.recipe")}</MenuItem>
-          <MenuItem value="contents">{t("text.comment")}</MenuItem>
-        </Select>
-        <TextField
-          className="search-input"
-          variant="standard"
-          placeholder={t("sentence.searching")}
-          // value={search}
-          // onChange={(e) => setSearch(e.target.value)}
-          // onKeyDown={handleKeyDown} // 엔터 키로 검색
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  // color="primary"
-                  aria-label="toggle password visibility"
-                  // onClick={handleSearchClick}
-                  edge="end"
+            <div className="title">
+              <span>{t("mypage.mycommnet")}</span>
+            </div>
+            <Button variant="outlined" onClick={handleGoBack}>
+              뒤로 가기
+            </Button>
+          </Box>
+
+          {/* 검색창과 정렬 버튼 */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            {/* 검색 유형 선택과 검색창, 검색 버튼을 하나로 묶음 */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1, // 컴포넌트 사이 간격 최소화
+                width: "60%", // 전체 공간 차지 비율
+              }}
+            >
+              {/* 검색 유형 선택 (댓글 내용 / 레시피 번호) */}
+              <FormControl sx={{ minWidth: 120 }}>
+                <Select
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "검색 유형" }}
                 >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </SearchArea>
-      <MypageContentArea>
-        <List>
-          <MypageHeaderListItem className="list-item header">
-            <Box className="no">
-              <span>No.</span>
-            </Box>
-            <Box className="recipe">
-              <span>
-                {t("text.recipe")} {t("text.title")}
-              </span>
-            </Box>
-            <Box className="comment">
-              <span>{t("text.comment")}</span>
-            </Box>
-            <Box className="date">
-              <span>{t("text.register_date")}</span>
-            </Box>
-            <Box className="delete">
-              <span>{t("text.delete")}</span>
-            </Box>
-          </MypageHeaderListItem>
-          {myReplies && myReplies.length > 0 ? (
-            myReplies.map((item: any, index: any) => (
-              <MypageRowListItem
-                className="list-item"
-                key={item.commentId}
-                // onClick={() => onClickDetail(item.boardId, item.boardDivision)}
-                // ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
+                  <MenuItem value="content">댓글 내용</MenuItem>
+                  <MenuItem value="title">레시피</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* 검색창 */}
+              <TextField
+                label="검색"
+                variant="outlined"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                sx={{ flex: 1 }} // 버튼과 비율 맞추기 위해 flex 사용
+              />
+
+              {/* 검색 버튼 */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearch}
+                sx={{ height: "56px" }} // 검색창과 버튼의 높이를 맞춤
               >
-                <Box className="no">
-                  {/* <span>{(currentPage - 1) * itemsPerPage + index + 1}</span> */}
-                  <span>{index + 1}</span>
-                </Box>
-                <Box className="content">
-                  <Box className="recipe">
-                    <span>{item.title}</span>
+                검색
+              </Button>
+            </Box>
+
+            {/* 정렬 버튼들 */}
+            <Box sx={{ display: "flex", gap: "10px" }}>
+              <Button
+                variant={sortOption === "regDt" ? "contained" : "outlined"}
+                onClick={() => handleSortChange("regDt")}
+                endIcon={
+                  sortOption === "regDt" &&
+                  (sortDirection === "DESC" ? (
+                    <ArrowDownward />
+                  ) : (
+                    <ArrowUpward />
+                  ))
+                }
+              >
+                댓글 적은 순
+              </Button>
+              <Button
+                variant={sortOption === "recipeId" ? "contained" : "outlined"}
+                onClick={() => handleSortChange("recipeId")}
+                endIcon={
+                  sortOption === "recipeId" &&
+                  (sortDirection === "DESC" ? (
+                    <ArrowDownward />
+                  ) : (
+                    <ArrowUpward />
+                  ))
+                }
+              >
+                레시피 번호순
+              </Button>
+            </Box>
+          </Box>
+
+          {/* 댓글 리스트 */}
+          <List
+            sx={{
+              width: "100%",
+              overflowY: "auto",
+              maxHeight: "calc(100% - 48px)",
+            }}
+          >
+            {myReplies && myReplies.length > 0 ? (
+              myReplies.map((reply, index) => (
+                <ListItem
+                  key={reply.id}
+                  ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "8px",
+                    borderBottom: "1px solid #ddd",
+                  }}
+                >
+                  {/* No 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography>{index + 1}</Typography>
                   </Box>
-                  <Box className="comment">
-                    <span>{item.comment}</span>
+
+                  {/* 게시글 제목 섹션 */}
+                  <Box sx={{ flex: 2 }}>
+                    <Typography>{reply.title || ""}</Typography>
                   </Box>
-                </Box>
-                <Box className="date">
-                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="delete">
-                  <DeleteIconButton
-                    className="icon-btn"
-                    // onClick={(event) => {
-                    //   event.stopPropagation();
-                    //   onClickDelete(categoryItem.boardCategoryId);
-                    // }}
-                  >
-                    <DeleteForeverIcon color="error" className="delete-icon" />
-                  </DeleteIconButton>
-                </Box>
-              </MypageRowListItem>
-            ))
-          ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
-          )}
-        </List>
-        {/* <CustomPagination className="pagination" spacing={2}>
-          <Pagination
-            className="pagination-btn"
-            color="primary"
-            count={totalPages} // 전체 페이지 수
-            page={currentPage} // 현재 페이지
-            onChange={handlePageChange} // 페이지 변경 시 실행되는 핸들러
-          />
-        </CustomPagination> */}
-      </MypageContentArea>
+
+                  {/* 댓글 내용 섹션 */}
+                  <Box sx={{ flex: 3 }}>
+                    <Typography>
+                      {reply.comment ? reply.comment.slice(0, 10) + "..." : ""}
+                    </Typography>
+                  </Box>
+
+                  {/* 작성 시간 섹션 */}
+                  <Box sx={{ flex: 2 }}>
+                    <Typography>
+                      {reply.regDt
+                        ? dayjs(reply.regDt).format("YYYY-MM-DD HH:mm")
+                        : "시간 없음"}
+                    </Typography>
+                  </Box>
+
+                  {/* 게시글 보기 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() =>
+                        navigate(`/recipe/member_recipe/${reply.recipeId}`)
+                      }
+                    >
+                      레시피 보기
+                    </Button>
+                  </Box>
+
+                  {/* 삭제 버튼 섹션 */}
+                  <Box sx={{ flex: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        if (reply.commentId) {
+                          handleDelete(
+                            reply.memberId,
+                            reply.commentId, // commentId가 있을 경우에만 실행
+                            reply.hasChildComment
+                          );
+                        }
+                      }}
+                    >
+                      삭제
+                    </Button>
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <Typography>댓글이 없습니다.</Typography>
+            )}
+          </List>
+        </Box>
+      </Box>
+      {showScrollButton && (
+        <Fab
+          color="primary"
+          size="small"
+          sx={scrollButtonStyles}
+          onClick={scrollToTop}
+        >
+          <KeyboardArrowUp />
+        </Fab>
+      )}
     </Wrapper>
   );
 };
