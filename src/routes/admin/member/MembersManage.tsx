@@ -178,62 +178,6 @@ function MembersManage() {
         />
       </SearchArea>
       <ContentsArea>
-        {/* <TableContainer className="table-container" component={Paper}>
-          <Table
-            className="table"
-            sx={{ minWidth: 650 }}
-            aria-label="board table"
-          >
-            <TableHead className="head">
-              <TableRow>
-                <TableCell className="no-cell">No.</TableCell>
-                <TableCell className="id-cell">{t("text.user_id")}</TableCell>
-                <TableCell className="name-cell">{t("text.name")}</TableCell>
-                <TableCell>{t("text.subscription_data")}</TableCell>
-                <TableCell>{t("text.role")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {memberList && memberList.length > 0 ? (
-                memberList
-                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                  .map((memberItem: any, index: number) => (
-                    <TableRow
-                      className="row"
-                      key={index}
-                      onClick={() => onClickDetail(memberItem.memberId)}
-                    >
-                      <TableCell component="th" scope="row">
-                        {(currentPage - 1) * display + index + 1}
-                      </TableCell>
-                      <TableCell>{memberItem.userId}</TableCell>
-                      <TableCell>{memberItem.name}</TableCell>
-                      <TableCell>
-                        
-                      </TableCell>
-                      <TableCell>
-                        {memberItem.role === "0" ? (
-                          t("text.admin")
-                        ) : memberItem.role === "1" ? (
-                          t("text.member")
-                        ) : memberItem.role === "2" ? (
-                          t("text.super_admin")
-                        ) : (
-                          <></>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    {t("sentence.no_data")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer> */}
         <List>
           <AdminHeaderListItem className="list-item header">
             <Box className="no">
@@ -260,8 +204,8 @@ function MembersManage() {
             .map((item : any, index : any) => (
               <AdminRowListItem
                 className="list-item"
-                key={item.boardId}
-                // onClick={() => onClickDetail(item.boardId)}
+                key={item.memberId}
+                onClick={() => onClickDetail(item.memberId)}
               >
                 <Box className="no">
                   {(currentPage - 1) * display + index + 1}
