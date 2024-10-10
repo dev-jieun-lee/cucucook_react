@@ -28,3 +28,4 @@ default.conf
 
 .vscode/settings.json
 .prettierrc
+/doc
