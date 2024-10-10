@@ -45,8 +45,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const rememberLogin = Cookies.get("remember_login");
     const storedUser = sessionStorage.getItem("user");
-
-    console.log(rememberLogin);
     const handleAutoLogin = async () => {
       try {
         //자동로그인 체크상태인데 session에 값이 없다면 로그인

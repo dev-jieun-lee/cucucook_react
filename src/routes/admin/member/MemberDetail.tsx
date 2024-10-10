@@ -1,13 +1,9 @@
-import { useTranslation } from "react-i18next";
-import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
-import { LoginWrapper } from "../../../styles/LoginStyle";
-import PersonIcon from "@mui/icons-material/Person";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import {
   Button,
   FormControl,
   FormHelperText,
   IconButton,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -15,24 +11,20 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { useMutation, useQuery } from "react-query";
-import { deleteAccount, getMember } from "../../../apis/adminApi";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import Loading from "../../../components/Loading";
-import { updateMember } from "../../../apis/adminApi";
-import {
-  ConnectButton,
-  PwChangeButton,
-  UserInfoForm,
-} from "../../../styles/MypageStyle";
-import { BoardButtonArea } from "../../../styles/BoardStyle";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
+import * as Yup from "yup";
+import { deleteAccount, getMember, updateMember } from "../../../apis/adminApi";
+import Loading from "../../../components/Loading";
+import { BoardButtonArea } from "../../../styles/BoardStyle";
+import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import { LoginWrapper } from "../../../styles/LoginStyle";
+import { PwChangeButton, UserInfoForm } from "../../../styles/MypageStyle";
 import MemberPwChange from "./MemberPwChange";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 function MemberDetail() {
   const { t } = useTranslation();
