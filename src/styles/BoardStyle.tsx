@@ -267,7 +267,9 @@ export const TitleArea = styled.div`
       line-height : 15px;
     `};
     .m-border {
-      display: none;
+      ${media.medium`
+        display: none; 
+      `};
     }
     .border {
       border-right: 1px solid;

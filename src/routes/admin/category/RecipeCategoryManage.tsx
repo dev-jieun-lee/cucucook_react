@@ -27,10 +27,6 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import {
-  deleteRecipeCategory,
-  getRecipeCategoryListForAdmin,
-} from "../../../apis/recipeApi";
 import { useAuth } from "../../../auth/AuthContext";
 import Loading from "../../../components/Loading";
 import { handleApiError } from "../../../hooks/errorHandler";
@@ -43,6 +39,7 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import RecipeCategoryDialog from "./RecipeCategoryDialog";
+import { deleteRecipeCategory, getRecipeCategoryListForAdmin } from "../../../apis/adminApi";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
