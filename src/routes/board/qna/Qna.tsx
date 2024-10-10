@@ -1,16 +1,49 @@
 import { useTranslation } from "react-i18next";
-import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import {
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../../styles/CommonStyles";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, Fab, IconButton, InputAdornment, List, MenuItem, Pagination, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Fab,
+  IconButton,
+  InputAdornment,
+  List,
+  MenuItem,
+  Pagination,
+  Paper,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { BoardHeaderListItem, BoardRowListItem, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
+import {
+  BoardHeaderListItem,
+  BoardRowListItem,
+  ContentsArea,
+  CustomCategory,
+} from "../../../styles/BoardStyle";
 import React, { useEffect, useState } from "react";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
+import {
+  getBoardCategory,
+  getBoardCategoryList,
+  getBoardList,
+} from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import { useAuth } from "../../../auth/AuthContext";
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import dayjs from "dayjs";
 
 function Qna() {
@@ -34,7 +67,7 @@ function Qna() {
       search: search,
       searchType: searchType,
       currentPage: currentPage.toString(),
-      category : category
+      category: category,
     });
   }, [search, searchType, currentPage, category, setSearchParams]);
 
@@ -42,24 +75,23 @@ function Qna() {
   const getBoardCategoryListApi = async () => {
     const params = {
       search: "",
-      searchType : "",
+      searchType: "",
       start: "",
       display: "",
     };
     const response = await getBoardCategoryList(params);
-      if (response && response.data) {
-        return response.data.filter(
-          (category: any) => category.division === "QNA"
-        );
-      }
+    if (response && response.data) {
+      return response.data.filter(
+        (category: any) => category.division === "QNA"
+      );
+    }
 
-      return [];
+    return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
-
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
@@ -80,21 +112,22 @@ function Qna() {
   const getBoardListWithCategory = async () => {
     try {
       const boardList = await getBoardListApi();
-      
+
       // 부모글만 필터링 (status가 0인 글)
       const parentBoards = boardList.data.filter(
         (board: any) => board.status === "0"
       );
-  
+
       const boardListWithCategory = await Promise.all(
         parentBoards.map(async (board: any) => {
           const categoryData = await getBoardCategory(board.boardCategoryId); // 카테고리 조회
-  
+
           // 해당 부모글의 답글 여부 확인
           const hasReply = boardList.data.some(
-            (reply: any) => reply.pboardId === board.boardId && reply.status === "1"
+            (reply: any) =>
+              reply.pboardId === board.boardId && reply.status === "1"
           );
-  
+
           return {
             ...board,
             category: categoryData.data, // 카테고리 정보를 추가
@@ -102,35 +135,34 @@ function Qna() {
           };
         })
       );
-  
+
       return boardListWithCategory;
     } catch (error) {
       console.error(error);
       return [];
     }
   };
-  
+
   // 데이터 가져오기 시 로딩 상태 추가
   const getBoardListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardListWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 
-    // 데이터 가져오기
-    const {
-      data: boardListWithCategory,
-      isLoading: boardListLoading,
-      refetch,
-    } = useQuery("boardListWithCategory", getBoardListWithDelay, {
-      enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
-    });
-
+  // 데이터 가져오기
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+    refetch,
+  } = useQuery("boardListWithCategory", getBoardListWithDelay, {
+    enabled: triggerSearch, // 검색 트리거가 활성화될 때 쿼리 실행
+  });
 
   // 검색 버튼 클릭 핸들러
   const handleSearchClick = () => {
@@ -146,69 +178,65 @@ function Qna() {
     }
   };
 
-    // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
-    useEffect(() => {
-      if (category) {
-        setTriggerSearch(true);
-        refetch();
-      }
-    }, [category, refetch]);
-  
-    // 검색 유형 select 변경 이벤트
-    const handleSearchTypeChange = (e: any) => {
-      setSearchType(e.target.value);
-      // 카테고리를 선택할 경우 search 값 초기화
-      if (e.target.value === "category") {
-        setSearch(""); // 카테고리 검색에서는 검색어 초기화
-      } else {
-        setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
-      }
-    };
-  
-    //카테고리 핸들러
-    const handleCategoryChange = (e: any) => {
-      setCategory(e.target.value);
-    };
-  
-    // 페이지 변경 핸들러
-    const handlePageChange = (event: any, page: any) => {
-      console.log(page);
-  
-      setCurrentPage(page);
-      setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+  // 카테고리 변경 시 검색 트리거 활성화 및 데이터 불러오기
+  useEffect(() => {
+    if (category) {
+      setTriggerSearch(true);
       refetch();
-    };
-  
-    //상세 페이지로 이동
-    const onClickDetail = (boardId: string, status : string) => {
-      if(status === "1"){
-        navigate(`/qna/${boardId}`, {
-          state: {
-            isReply: true,  // 답글임을 나타내는 상태
-            parentBoardId: boardId  // 부모글의 ID 전달
-          }
-        });
-      }else{
-        navigate(`/qna/${boardId}`);
-      }
-    };
-    //추가 페이지로 이동
-    const onClickAdd = () => {
-      navigate(`/qna/form`);
-    };
-  
-    //로딩
-    if (loading || boardListLoading) {
-      return <Loading />;
     }
-  
+  }, [category, refetch]);
 
+  // 검색 유형 select 변경 이벤트
+  const handleSearchTypeChange = (e: any) => {
+    setSearchType(e.target.value);
+    // 카테고리를 선택할 경우 search 값 초기화
+    if (e.target.value === "category") {
+      setSearch(""); // 카테고리 검색에서는 검색어 초기화
+    } else {
+      setCategory(""); // 카테고리 외 검색 유형에서는 카테고리 초기화
+    }
+  };
 
-  return(
+  //카테고리 핸들러
+  const handleCategoryChange = (e: any) => {
+    setCategory(e.target.value);
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (event: any, page: any) => {
+    setCurrentPage(page);
+    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+    refetch();
+  };
+
+  //상세 페이지로 이동
+  const onClickDetail = (boardId: string, status: string) => {
+    if (status === "1") {
+      navigate(`/qna/${boardId}`, {
+        state: {
+          isReply: true, // 답글임을 나타내는 상태
+          parentBoardId: boardId, // 부모글의 ID 전달
+        },
+      });
+    } else {
+      navigate(`/qna/${boardId}`);
+    }
+  };
+  //추가 페이지로 이동
+  const onClickAdd = () => {
+    navigate(`/qna/form`);
+  };
+
+  //로딩
+  if (loading || boardListLoading) {
+    return <Loading />;
+  }
+
+  return (
     <Wrapper>
       <TitleCenter>
         {t("menu.board.QNA")}
-        {user? (
+        {user ? (
           <Tooltip title={t("text.writing")}>
             <Fab
               className="add-btn"
@@ -223,7 +251,6 @@ function Qna() {
         ) : (
           <></>
         )}
-        
       </TitleCenter>
       <SearchArea>
         <Select
@@ -233,9 +260,7 @@ function Qna() {
           value={searchType}
           onChange={handleSearchTypeChange}
         >
-          <MenuItem value="all">
-            {t("text.all")}
-          </MenuItem>
+          <MenuItem value="all">{t("text.all")}</MenuItem>
           <MenuItem value="contents">{t("text.content")}</MenuItem>
           <MenuItem value="category">{t("text.category")}</MenuItem>
         </Select>
@@ -312,50 +337,58 @@ function Qna() {
           </BoardHeaderListItem>
           {boardListWithCategory && boardListWithCategory.length > 0 ? (
             boardListWithCategory
-            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-            .map((item, index) => (
-              <BoardRowListItem
-                className="list-item"
-                key={item.boardId}
-                onClick={() => onClickDetail(item.boardId, item.status)}
-              >
-                <Box className="no">
-                  {(currentPage - 1) * display + index + 1}
-                </Box>
-                <Box className="title-area">
-                  <Box className="category">
-                    <CustomCategory
-                      style={{ color: `${item.category.color}` }}
-                      className="category"
-                    >
-                      [ {item.category.name} ]
-                    </CustomCategory>
+              ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+              .map((item, index) => (
+                <BoardRowListItem
+                  className="list-item"
+                  key={item.boardId}
+                  onClick={() => onClickDetail(item.boardId, item.status)}
+                >
+                  <Box className="no">
+                    {(currentPage - 1) * display + index + 1}
                   </Box>
-                  <Box className="title">
-                    <span>{item.title}</span>
+                  <Box className="title-area">
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.category.color}` }}
+                        className="category"
+                      >
+                        [ {item.category.name} ]
+                      </CustomCategory>
+                    </Box>
+                    <Box className="title">
+                      <span>{item.title}</span>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className="answer">
-                  {item.hasReply ? (
-                    <span className="answer_ok"><QuestionAnswerIcon className="answer answer-icon" />{t("menu.board.answer_ok") }</span>
-                  ) : (
-                    <span style={{color : '#817878d5'}} className="answer_chk">{t("menu.board.answer_no") }</span>
-                  )}
-                </Box>
-                <Box className="writer">
-                  <span>{item.userName}</span>
-                </Box>
-                <Box className="date">
-                  <span>{dayjs(item.udtDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="date">
-                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="view">
-                  <span>{item.viewCount}</span>
-                </Box>
-              </BoardRowListItem>
-            ))
+                  <Box className="answer">
+                    {item.hasReply ? (
+                      <span className="answer_ok">
+                        <QuestionAnswerIcon className="answer answer-icon" />
+                        {t("menu.board.answer_ok")}
+                      </span>
+                    ) : (
+                      <span
+                        style={{ color: "#817878d5" }}
+                        className="answer_chk"
+                      >
+                        {t("menu.board.answer_no")}
+                      </span>
+                    )}
+                  </Box>
+                  <Box className="writer">
+                    <span>{item.userName}</span>
+                  </Box>
+                  <Box className="date">
+                    <span>{dayjs(item.udtDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="date">
+                    <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="view">
+                    <span>{item.viewCount}</span>
+                  </Box>
+                </BoardRowListItem>
+              ))
           ) : (
             <Typography>{t("sentence.no_data")}</Typography>
           )}
@@ -372,8 +405,7 @@ function Qna() {
         </CustomPagination>
       </ContentsArea>
     </Wrapper>
-  )
+  );
 }
 
 export default Qna;
-

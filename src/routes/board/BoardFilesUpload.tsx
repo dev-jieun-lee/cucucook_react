@@ -161,7 +161,6 @@ const BoardFilesUpload: React.FC<{
   };
 
   useEffect(() => {
-    console.log(values);
     setUploadFiles(values);
   }, [values]);
 
@@ -205,12 +204,20 @@ const BoardFilesUpload: React.FC<{
                   >
                     <ListItemIcon>
                       {fileTypeIcon(
-                        uploadFileItem.fileName,
+                        uploadFileItem.file instanceof File
+                          ? uploadFileItem.fileName
+                          : uploadFileItem.fileName +
+                              "." +
+                              uploadFileItem.fileType,
                         uploadFileItem.fileType
                       )}
                     </ListItemIcon>
                     <ListItemText>
-                      {uploadFileItem.fileName} ({uploadFileItem.fileSize})
+                      {uploadFileItem.fileName}
+                      {uploadFileItem.file instanceof File
+                        ? ""
+                        : "." + uploadFileItem.fileType}
+                      ({uploadFileItem.fileSize})
                     </ListItemText>
                   </ListItem>
                 </List>

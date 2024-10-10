@@ -1,5 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../../styles/CommonStyles";
+import {
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../../styles/CommonStyles";
 import {
   Box,
   Fab,
@@ -20,7 +25,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { getBoardCategory, getBoardCategoryList, getBoardList } from "../../../apis/boardApi";
+import {
+  getBoardCategory,
+  getBoardCategoryList,
+  getBoardList,
+} from "../../../apis/boardApi";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -28,7 +37,12 @@ import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../../auth/AuthContext";
-import { BoardHeaderListItem, BoardRowListItem, ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
+import {
+  BoardHeaderListItem,
+  BoardRowListItem,
+  ContentsArea,
+  CustomCategory,
+} from "../../../styles/BoardStyle";
 import dayjs from "dayjs";
 
 function Notice() {
@@ -44,7 +58,6 @@ function Notice() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-
   const display = 10; // 한 페이지에 표시할 게시물 수
 
   // 검색 파라미터 URL 업데이트
@@ -53,7 +66,7 @@ function Notice() {
       search: search,
       searchType: searchType,
       currentPage: currentPage.toString(),
-      category : category
+      category: category,
     });
   }, [search, searchType, currentPage, category, setSearchParams]);
 
@@ -62,23 +75,22 @@ function Notice() {
     const params = {
       search: "",
       start: "",
-      searchType : "",
+      searchType: "",
       display: "",
     };
     const response = await getBoardCategoryList(params);
-      if (response && response.data) {
-        return response.data.filter(
-          (category: any) => category.division === "NOTICE"
-        );
-      }
+    if (response && response.data) {
+      return response.data.filter(
+        (category: any) => category.division === "NOTICE"
+      );
+    }
 
-      return [];
+    return [];
   };
   const { data: boardCategoryList, isLoading: boardCategoryLoading } = useQuery(
     "boardCategoryList",
     getBoardCategoryListApi
   );
-
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = async () => {
@@ -120,28 +132,24 @@ function Notice() {
   const getBoardListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
 
-    // 인위적인 지연 시간 추가 
+    // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardListWithCategory(); // 데이터 불러오기
-    setLoading(false); 
+    setLoading(false);
     return boardList;
   };
 
-  const { data: boardListWithCategory,isLoading: boardListLoading, refetch } = useQuery(
-    "boardListWithCategory",
-    getBoardListWithDelay,
-    {
-      enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
-      keepPreviousData: false,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    }
-  );
-
-  console.log(boardListWithCategory);
-  
-
+  const {
+    data: boardListWithCategory,
+    isLoading: boardListLoading,
+    refetch,
+  } = useQuery("boardListWithCategory", getBoardListWithDelay, {
+    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -191,8 +199,6 @@ function Notice() {
 
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
-    console.log(page);
-
     setCurrentPage(page);
     setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
     refetch();
@@ -208,7 +214,7 @@ function Notice() {
   };
 
   //로딩
-  if (loading || boardListLoading ) {
+  if (loading || boardListLoading) {
     return <Loading />;
   }
 
@@ -317,43 +323,43 @@ function Notice() {
           </BoardHeaderListItem>
           {boardListWithCategory && boardListWithCategory.length > 0 ? (
             boardListWithCategory
-            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-            .map((item, index) => (
-              <BoardRowListItem
-                className="list-item"
-                key={item.boardId}
-                onClick={() => onClickDetail(item.boardId)}
-              >
-                <Box className="no">
-                  {(currentPage - 1) * display + index + 1}
-                </Box>
-                <Box className="title-area">
-                  <Box className="category">
-                    <CustomCategory
-                      style={{ color: `${item.category.color}` }}
-                      className="category"
-                    >
-                      [ {item.category.name} ]
-                    </CustomCategory>
+              ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+              .map((item, index) => (
+                <BoardRowListItem
+                  className="list-item"
+                  key={item.boardId}
+                  onClick={() => onClickDetail(item.boardId)}
+                >
+                  <Box className="no">
+                    {(currentPage - 1) * display + index + 1}
                   </Box>
-                  <Box className="title">
-                    <span>{item.title}</span>
+                  <Box className="title-area">
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.category.color}` }}
+                        className="category"
+                      >
+                        [ {item.category.name} ]
+                      </CustomCategory>
+                    </Box>
+                    <Box className="title">
+                      <span>{item.title}</span>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className="writer">
-                  <span>{item.userName}</span>
-                </Box>
-                <Box className="date">
-                  <span>{dayjs(item.udtDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="date">
-                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="view">
-                  <span>{item.viewCount}</span>
-                </Box>
-              </BoardRowListItem>
-            ))
+                  <Box className="writer">
+                    <span>{item.userName}</span>
+                  </Box>
+                  <Box className="date">
+                    <span>{dayjs(item.udtDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="date">
+                    <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="view">
+                    <span>{item.viewCount}</span>
+                  </Box>
+                </BoardRowListItem>
+              ))
           ) : (
             <Typography>{t("sentence.no_data")}</Typography>
           )}
