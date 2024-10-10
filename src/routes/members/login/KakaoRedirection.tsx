@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { handleKakaoCallback } from "../socialLoginApi"; // 카카오 콜백 함수 임포트
+import { handleKakaoCallback } from "../../../apis/socialLoginApi";
 
 const KakaoCallback = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  // `code`를 useEffect 외부에서 정의
+  const code = new URLSearchParams(location.search).get("code");
+
   useEffect(() => {
-    const code = new URLSearchParams(location.search).get("code");
     if (code && !isProcessing) {
-      setIsProcessing(true); // 요청 중 상태 설정
+      setIsProcessing(true);
       handleKakaoCallback(code)
         .then((data) => {
           console.log("카카오 로그인 성공:", data);
@@ -20,9 +22,9 @@ const KakaoCallback = () => {
           console.error("카카오 로그인 처리 중 오류:", error);
           navigate("/login"); // 로그인 실패 시 로그인 페이지로 이동
         })
-        .finally(() => setIsProcessing(false)); // 완료 후 상태 초기화
+        .finally(() => setIsProcessing(false));
     }
-  }, [location.search, isProcessing, navigate]);
+  }, [code, isProcessing, navigate]); // `code`를 의존성 배열에 포함
 
   return <div>카카오 로그인 처리 중...</div>;
 };

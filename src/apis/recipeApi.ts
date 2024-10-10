@@ -1,24 +1,16 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const BASE_URL = apiUrl + "/api/recipe";
-const token = Cookies.get("auth_token");
 
 // 기본 Axios 인스턴스 생성 (공통 헤더 넣기 위함)
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true, // 쿠키 포함 설정
 });
+//공통적으로 들어갈 헤드 추가시
 api.interceptors.request.use(
   (config) => {
-    // JWT 토큰을 쿠키에서 가져옴
-    const token = Cookies.get("auth_token");
-    // 토큰이 존재할 경우 Authorization 헤더 추가
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
     return config;
   },
   (error) => {
@@ -172,45 +164,6 @@ export async function insertMemberRecipeLike(form: any) {
 //회원 레시피 좋아요 삭제
 export async function deleteMemberRecipeLike(params: any) {
   const response = await api.delete(`/deleteMemberRecipeLike`, {
-    params: params,
-  });
-  return response.data;
-}
-
-/* 관리자 */
-//레시피카테고리 관리용 카테고리목록 가져오기
-export async function getRecipeCategoryListForAdmin(params: any) {
-  const response = await api.get(`/getRecipeCategoryList`, {
-    params: params,
-  });
-  return response;
-}
-
-//레시피 카테고리 가져오기
-export async function getRecipeCategory(params: any) {
-  const response = await api.get(`/getRecipeCategory`, {
-    params: params,
-  });
-  return response;
-}
-
-//레시피카테고리 추가
-export async function insertRecipeCategory(form: any) {
-  const response = await api.post(`/insertRecipeCategory`, form);
-  return response.data;
-}
-
-//레시피카테고리 수정
-export async function updateRecipeCategory(params: any, form: any) {
-  const response = await api.put(`/updateRecipeCategory`, form, {
-    params: params,
-  });
-  return response.data;
-}
-
-//레시피카테고리 삭제
-export async function deleteRecipeCategory(params: any) {
-  const response = await api.delete(`/deleteRecipeCategory`, {
     params: params,
   });
   return response.data;

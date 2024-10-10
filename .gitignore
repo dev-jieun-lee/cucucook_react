@@ -29,14 +29,5 @@ default.conf
 .vscode/settings.json
 .prettierrc
 
-nginx.conf
-default.conf
-
-.vscode/settings.json
-.prettierrc
-
-nginx.conf
-default.conf
-
-.vscode/settings.json
-.prettierrc
+/doc
+bfg-1.14.0.jar
