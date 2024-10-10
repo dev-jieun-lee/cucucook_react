@@ -32,7 +32,11 @@ function handleApiError(error: unknown) {
 }
 
 // 로그인 요청
-export async function login(form: { userId: string; password: string }) {
+export async function login(form: {
+  userId: string;
+  password: string;
+  rememberLogin: boolean;
+}) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
@@ -271,3 +275,16 @@ export const kakaoLogin = async (code: string) => {
     throw error;
   }
 };
+
+// 자동로그인
+export async function autoLogin() {
+  try {
+    console.log(Cookies.get("refresh_token"));
+    const response = await api.post("/getAutoLogin", {
+      refreshToken: Cookies.get("refresh_token"),
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+}

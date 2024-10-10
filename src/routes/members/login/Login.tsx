@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -57,6 +59,7 @@ function Login({ isDarkMode }: LoginProps) {
   interface LoginValues {
     userId: string;
     password: string;
+    rememberLogin: boolean;
   }
 
   interface ErrorResponse {
@@ -74,6 +77,7 @@ function Login({ isDarkMode }: LoginProps) {
     initialValues: {
       userId: localStorage.getItem("userId") || "",
       password: "",
+      rememberLogin: false,
     },
     onSubmit: async (values) => {
       console.log("로그인 페이지 트라이케치 전");
@@ -94,13 +98,6 @@ function Login({ isDarkMode }: LoginProps) {
           });
 
           setLoggedIn(true);
-
-          // JWT 토큰을 쿠키에 저장
-          Cookies.set("access_token", response.accessToken, {
-            expires: 7, // 만료 기간 설정
-            secure: true,
-            sameSite: "Strict",
-          });
 
           // 로그인 성공 시 메인 페이지 또는 이전 페이지로 이동
           navigate(location.state?.from || "/main"); // 기본적으로 "/main"으로 이동
@@ -232,6 +229,17 @@ function Login({ isDarkMode }: LoginProps) {
               }
               label={t("members.password")}
               disabled={!!lockoutTimer && lockoutTimer > 0} // 잠금 타이머가 있을 때 비활성화
+            />
+          </FormControl>
+
+          <FormControl className="input-form" variant="outlined">
+            <FormControlLabel
+              id="rememberLogin"
+              name="rememberLogin"
+              control={<Checkbox />}
+              label="자동로그인"
+              value={formik.values.rememberLogin}
+              onChange={formik.handleChange}
             />
           </FormControl>
 
