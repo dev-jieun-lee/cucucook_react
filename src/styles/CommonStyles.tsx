@@ -110,8 +110,8 @@ export const SearchArea = styled.div`
     /* margin-left : 50px; */
   `};
   ${media.xsmall`
-    margin-left : 25px;
-    margin-right : 25px;
+    /* margin-left : 25px;
+    margin-right : 25px; */
   `};
 
   .select-category {

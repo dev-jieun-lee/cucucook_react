@@ -3,7 +3,7 @@ import styled from "styled-components";
 import media from "./MediaQuery";
 
 export const ContentsArea = styled.div`
-  margin: 20px auto;
+  margin: 0px auto;
   margin-bottom: 100px;
   width: 100%;
   .accordion {
@@ -54,38 +54,6 @@ export const ContentsArea = styled.div`
       .update-btn {
         margin-right: 10px;
       }
-    }
-  }
-  .table-container {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-radius: 0;
-    box-shadow: none;
-    background: none;
-    .head {
-      text-align: center;
-      /* .no-cell{
-        width: 20px;
-      }
-      .category-cell{
-        width: 150px;
-      }
-      .title-cell{
-        width: 50%;
-        text-align: center;
-        background-color: pink;
-      } */
-    }
-    .row {
-      text-align: center;
-      &:hover {
-        cursor: pointer;
-        background-color: #cccccc10;
-      }
-    }
-    .file-icon {
-      transform: scale(0.7);
-      color: ${(props) => props.theme.mainColor};
     }
   }
 `;
@@ -285,9 +253,9 @@ export const TitleArea = styled.div`
       overflow: hidden;    
       text-overflow: ellipsis; 
       padding-top : 15px;
-      /* margin-top : 19px;  */
     `};
   }
+
   .board-info {
     display: flex;
     color: ${(props) => props.theme.navBorderColor};
@@ -299,7 +267,9 @@ export const TitleArea = styled.div`
       line-height : 15px;
     `};
     .m-border {
-      display: none;
+      ${media.medium`
+        display: none; 
+      `};
     }
     .border {
       border-right: 1px solid;
@@ -479,7 +449,7 @@ export const QuestionArea = styled.div`
   .q-contents {
     width: 100%;
     border: 1px solid;
-    border-radius: 5px;/
+    border-radius: 5px;
     text-align: left;
     padding: 0px 15px;
     border-color: ${(props) => props.theme.navBorderColor};

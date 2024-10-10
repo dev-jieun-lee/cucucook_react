@@ -123,13 +123,13 @@ const MyWrites: React.FC<{}> = () => {
     refetch,
   } = useQuery(
     ["boardListWithCategory", currentPage, search, searchType, boardDivision],
-    getBoardListWithDelay
-    // {
-    //   enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
-    //   keepPreviousData: false,
-    //   refetchOnWindowFocus: false,
-    //   staleTime: 0,
-    // }
+    getBoardListWithDelay,
+    {
+      enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+    }
   );
 
 
@@ -182,14 +182,13 @@ const MyWrites: React.FC<{}> = () => {
 
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: number) => {
-    setCurrentPage(page); // 선택한 페이지로 변경
-    refetch(); // 해당 페이지의 데이터를 가져오기 위해 refetch 호출
+    setCurrentPage(page);
+    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+    refetch();
   };
 
   //상세 페이지로 이동
   const onClickDetail = (boardId: string, division: string) => {
-    console.log(division);
-    
     switch (division) {
       case "NOTICE":
         navigate(`/notice/${boardId}`);
@@ -308,7 +307,6 @@ const MyWrites: React.FC<{}> = () => {
                 className="list-item"
                 key={item.boardId}
                 onClick={() => onClickDetail(item.boardId, item.boardDivision)}
-                // ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
               >
                 <Box className="no">
                   <span>{(currentPage - 1) * itemsPerPage + index + 1}</span>

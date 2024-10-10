@@ -2,9 +2,11 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  Box,
   Fab,
   IconButton,
   InputAdornment,
+  List,
   MenuItem,
   Pagination,
   Paper,
@@ -17,6 +19,7 @@ import {
   TableRow,
   TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -24,14 +27,10 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import {
-  deleteRecipeCategory,
-  getRecipeCategoryListForAdmin,
-} from "../../../apis/adminApi";
 import { useAuth } from "../../../auth/AuthContext";
 import Loading from "../../../components/Loading";
 import { handleApiError } from "../../../hooks/errorHandler";
-import { DeleteIconButton } from "../../../styles/AdminStyle";
+import { AdminHeaderListItem, AdminRowListItem, DeleteIconButton } from "../../../styles/AdminStyle";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
   CustomPagination,
@@ -40,9 +39,11 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import RecipeCategoryDialog from "./RecipeCategoryDialog";
+import { deleteRecipeCategory, getRecipeCategoryListForAdmin } from "../../../apis/adminApi";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
+  const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(""); //검색어
@@ -56,7 +57,6 @@ function RecipeCategoryManage() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
   const { t } = useTranslation();
-  const [hasError, setHasError] = useState(false);
 
   const display = 10; // 한 페이지에 표시할 게시물 수
 
@@ -91,21 +91,12 @@ function RecipeCategoryManage() {
   // 데이터 가져오기 시 로딩 상태 추가
   const getCategoryListWithDelay = async () => {
     setLoading(true); // 로딩 상태 시작
-    try {
-      // 인위적인 지연 시간 추가
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      setHasError(false);
-      const categoryList = await getCategoryListApi(); // 데이터 불러오기
-      return categoryList.data;
-    } catch (error) {
-      if (!hasError) {
-        handleApiError(error, navigate, t);
-        setHasError(true);
-      }
-      throw error;
-    } finally {
-      setLoading(false); // 로딩 상태 종료
-    }
+
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const categoryList = await getCategoryListApi(); // 데이터 불러오기
+    setLoading(false);
+    return categoryList.data;
   };
 
   const {
@@ -315,95 +306,83 @@ function RecipeCategoryManage() {
         )}
       </SearchArea>
       <ContentsArea>
-        <TableContainer className="table-container" component={Paper}>
-          <Table
-            className="table"
-            sx={{ minWidth: 650 }}
-            aria-label="recipe table"
-          >
-            <TableHead className="head">
-              <TableRow>
-                <TableCell className="no-cell">No.</TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.recipe.division")}
-                </TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.recipe.category_name")}
-                </TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.recipe.category_name_en")}
-                </TableCell>
-                <TableCell>{t("text.register_date")}</TableCell>
-                <TableCell>{t("text.update_date")}</TableCell>
-                <TableCell>{t("text.delete")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {recipeCategoryList && recipeCategoryList.length > 0 ? (
-                recipeCategoryList.map((categoryItem: any, index: number) => (
-                  <TableRow
-                    className="row"
-                    key={index}
-                    onClick={() => onClickDialog(categoryItem.recipeCategoryId)}
+        <List>
+          <AdminHeaderListItem className="list-item header">
+            <Box className="no">
+              <span>No.</span>
+            </Box>
+            <Box className="division">
+              <span>{t("menu.recipe.division")}</span>
+            </Box>
+            <Box className = "category-area">
+              <Box className="category">
+                <span>{t("menu.recipe.category_name")}</span>
+              </Box>
+              <Box className="category-en">
+                <span>{t("menu.recipe.category_name_en")}</span>
+              </Box>
+            </Box>
+            <Box className="date">
+              <span>{t("text.register_date")}</span>
+            </Box>
+            <Box className="delete">
+              <span>{t("text.delete")}</span>
+            </Box>
+          </AdminHeaderListItem>
+          {recipeCategoryList && recipeCategoryList.length > 0 ? (
+            recipeCategoryList.map((item : any, index : any) => (
+              <AdminRowListItem
+                className="list-item"
+                key={item.recipeCategoryId}
+                onClick={() => onClickDialog(item.recipeCategoryId)}
+              >
+                <Box className="no">
+                  {(currentPage - 1) * display + index + 1}
+                </Box>
+                <Box className="division">
+                  <span>
+                    {item.division === "C" ? (
+                      t("text.category")
+                    ) : item.division === "M" ? (
+                      t("text.cooking-method")
+                    ) : item.division === "L" ? (
+                      t("text.difficulty-level")
+                    ) : (
+                      <></>
+                    )}
+                  </span>
+                </Box>
+                <Box className = "category-area">
+                  <Box className="category">
+                    {item.name}
+                  </Box>
+                  <Box className="category">
+                    {item.nameEn}
+                  </Box>
+                </Box>
+                <Box className="date">
+                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                </Box>
+                <Box className="delete">
+                  <DeleteIconButton
+                    className="icon-btn"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onClickDelete(item.recipeCategoryId);
+                    }}
                   >
-                    <TableCell component="th" scope="row">
-                      {(currentPage - 1) * display + index + 1}
-                    </TableCell>
-                    <TableCell>
-                      {categoryItem.division === "C" ? (
-                        t("text.category")
-                      ) : categoryItem.division === "M" ? (
-                        t("text.cooking-method")
-                      ) : categoryItem.division === "L" ? (
-                        t("text.difficulty-level")
-                      ) : (
-                        <></>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <CustomCategory className="category">
-                        {categoryItem.name}
-                      </CustomCategory>
-                    </TableCell>
-                    <TableCell>
-                      <CustomCategory className="category">
-                        {categoryItem.nameEn}
-                      </CustomCategory>
-                    </TableCell>
-                    <TableCell>
-                      {dayjs(categoryItem.regDt).format("YYYY-MM-DD HH:mm")}
-                    </TableCell>
-                    <TableCell>
-                      {categoryItem.uptDt === null
-                        ? ""
-                        : dayjs(categoryItem.uptDt).format("YYYY-MM-DD HH:mm")}
-                    </TableCell>
-                    <TableCell>
-                      <DeleteIconButton
-                        className="icon-btn"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onClickDelete(categoryItem.recipeCategoryId);
-                        }}
-                      >
-                        <DeleteForeverIcon
-                          color="error"
-                          className="delete-icon"
-                        />
-                      </DeleteIconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    {t("sentence.no_data")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    <DeleteForeverIcon
+                      color="error"
+                      className="delete-icon"
+                    />
+                  </DeleteIconButton>
+                </Box>
+              </AdminRowListItem>
+            ))
+          ) : (
+            <Typography>{t("sentence.no_data")}</Typography>
+          )}
+        </List>
         <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
