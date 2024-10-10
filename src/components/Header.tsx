@@ -149,7 +149,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
       <Drawer
         anchor="right"
         open={open}
-        onClose={() => toggleDrawer(false)}
+        onClose={() => setOpen(false)}
         ModalProps={{
           disableAutoFocus: true,
         }}

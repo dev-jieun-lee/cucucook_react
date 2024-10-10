@@ -206,7 +206,9 @@
     "myLikes": "the one I picked up,",
     "myRecipe": "my D.I.Y. recipe",
     "confirm_delete_account": "Are you sure you want to delete your account?",
-    "greetings": "{{name}}, Hello! :)"
+    "greetings": "{{name}}, Hello! :)",
+    "confirm_delete": "Are you sure you want to delete {{value}}?",
+    "comment_delete_error": "It's impossible to delete because it has major comments. Please delete major comments first."
   },
   "sentence": {
     "no_data": "No data exists.",

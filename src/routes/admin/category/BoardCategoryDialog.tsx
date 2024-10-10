@@ -1,28 +1,10 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
-import CloseIcon from "@mui/icons-material/Close";
+import CloseIcon from '@mui/icons-material/Close';
 import { HexColorPicker } from "react-colorful";
-import {
-  deleteBoardCategory,
-  getBoardCategory,
-  insertBoardCategory,
-  updateBoardCategory,
-} from "../../../apis/adminApi";
+import { deleteBoardCategory, getBoardCategory, insertBoardCategory, updateBoardCategory } from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import Swal from "sweetalert2";
@@ -45,26 +27,23 @@ interface CategoryData {
   color: string;
 }
 
-function BoardCategoryDialog({
-  open,
-  onClose,
-  categoryId,
-}: BoardCategoryDialogProps) {
+function BoardCategoryDialog({ open, onClose, categoryId }: BoardCategoryDialogProps) {
   const { t } = useTranslation();
-  const [color, setColor] = useState("#000000");
+  const [color, setColor] = useState("#000000"); 
   const [showPicker, setShowPicker] = useState(false); //
   const [categoryData, setCategoryData] = useState<CategoryData | null>(null);
 
+
   const boardDivision = [
     { value: "NOTICE", label: t("menu.board.notice") },
-    { value: "FAQ", label: t("menu.board.FAQ") },
-    { value: "QNA", label: t("menu.board.QNA") },
+    { value: "FAQ", label: t("menu.board.FAQ")  },
+    { value: "QNA", label: t("menu.board.QNA")  }
   ];
 
   // 색상 선택 함수
   const handleColorChange = (newColor: string) => {
     setColor(newColor);
-    // setShowPicker(false);
+    // setShowPicker(false); 
   };
 
   useEffect(() => {
@@ -78,17 +57,14 @@ function BoardCategoryDialog({
           console.error("Failed to fetch category data:", error);
         }
       };
-
+  
       fetchData();
     }
   }, [open, categoryId]);
 
   //categoryId 있을경우 수정, 없을경우 생성
   const mutation = useMutation(
-    (values) =>
-      categoryId
-        ? updateBoardCategory(categoryId, values)
-        : insertBoardCategory(values),
+    (values) => (categoryId ? updateBoardCategory(categoryId, values) : insertBoardCategory(values)),
     {
       onSuccess: (data) => {
         Swal.fire({
@@ -96,7 +72,7 @@ function BoardCategoryDialog({
           title: t("text.save"),
           text: t("menu.board.alert.save"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check"),
+          confirmButtonText: t("text.check")
         });
         onClose();
         window.location.reload();
@@ -107,51 +83,37 @@ function BoardCategoryDialog({
     }
   );
 
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       name: categoryId ? categoryData?.name || "" : "",
       nameEn: categoryId ? categoryData?.nameEn || "" : "",
-      division: categoryData?.division || "",
+      division : categoryData?.division || "",
       color: categoryId ? categoryData?.color || "" : "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .required(t("error.required", { value: t("menu.board.category_name") }))
-        .max(
-          10,
-          t("error.max_length", {
-            value: t("menu.board.category_name"),
-            length: 10,
-          })
-        ),
-      nameEn: Yup.string()
-        .required(
-          t("error.required", { value: t("menu.board.category_name_en") })
-        )
-        .max(
-          30,
-          t("error.max_length", {
-            value: t("menu.board.category_name_en"),
-            length: 30,
-          })
-        ),
-      division: Yup.string().required(
-        t("error.required", { value: t("menu.board.division") })
-      ),
+        .required(t("error.required", { value: t("menu.board.category_name") })) 
+        .max(10, t("error.max_length", { value: t("menu.board.category_name"), length : 10 })),
+        nameEn: Yup.string()
+        .required(t("error.required", { value: t("menu.board.category_name_en") })) 
+        .max(30, t("error.max_length", { value: t("menu.board.category_name_en"), length : 30 })),
+      division: Yup.string().required(t("error.required", { value: t("menu.board.division") })) 
     }),
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
       // color가 선택되지 않았으면 기본값 검정색
       if (!values.color) {
-        values.color = "#000000";
+        values.color = "#000000"; 
       }
       console.log(values);
-
+      
       mutation.mutate(values as any); // mutation 실행
     },
   });
+
 
   // 내용 초기화
   useEffect(() => {
@@ -160,40 +122,41 @@ function BoardCategoryDialog({
       formik.setValues({
         name: "",
         nameEn: "",
-        division: "",
+        division : "",
         color: "",
       });
     }
   }, [categoryId]);
+
 
   useEffect(() => {
     if (open) {
       setShowPicker(false); // 다이얼로그 열릴 때 color picker 닫기
     }
   }, [open]);
-
+  
   // color picker 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        showPicker &&
+        showPicker && 
         event.target instanceof HTMLElement &&
         !event.target.closest(".color-picker-container")
       ) {
         setShowPicker(false); // 외부 클릭 시 color picker 닫기
       }
     };
-
+  
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPicker]);
-
+  
   // 다이얼로그 닫기 처리 및 상태 초기화
   const handleClose = () => {
-    onClose();
-    setColor("");
+    onClose(); 
+    setColor(""); 
     setShowPicker(false); // Picker 닫기
   };
 
@@ -203,39 +166,36 @@ function BoardCategoryDialog({
     formik.setFieldTouched("division", true); // 필드를 touched로 표시
     formik.validateForm(); // 유효성 검사 트리거
   };
-
+  
   //삭제
   const { mutate: deleteCategoryMutation } = useMutation(
-    (categoryId: string) => deleteBoardCategory(categoryId),
+    (categoryId : string) => deleteBoardCategory(categoryId),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: "success",
+          icon: 'success',
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check"),
+          confirmButtonText: t("text.check")
         });
         window.location.reload();
       },
-      onError: (error: any) => {
-        const errorCode = error.response?.data.errorCode;
+      onError: (error : any) => {
+        const errorCode = error.response?.data.errorCode ;
         Swal.fire({
-          icon: "error",
+          icon: 'error',
           title: t("text.delete"),
-          text:
-            errorCode === "ERR_CG_01"
-              ? t("menu.board.error.ERR_CG_01")
-              : t("menu.board.alert.delete"),
+          text: errorCode === "ERR_CG_01" ? t("menu.board.error.ERR_CG_01") : t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check"),
+          confirmButtonText: t("text.check")
         });
       },
     }
   );
-  const onClickDelete = (categoryId: string) => {
+  const onClickDelete = (categoryId : string) => {
     Swal.fire({
-      icon: "warning",
+      icon: 'warning',
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm_category"),
       showCancelButton: true,
@@ -249,19 +209,20 @@ function BoardCategoryDialog({
     });
   };
 
+
   return (
-    <Dialog
-      onClose={handleClose}
-      open={open}
-      maxWidth="xs"
+    <Dialog 
+      onClose={handleClose} 
+      open={open} 
+      maxWidth="xs" 
       fullWidth
       PaperProps={{
-        style: { overflow: "visible" },
+        style: { overflow: "visible"} 
       }}
     >
       <DialogTitleArea>
         <DialogTitle>
-          {categoryId ? (
+          {categoryId? (
             <span className="title">
               {t("text.category")} {t("text.update")}
             </span>
@@ -271,7 +232,11 @@ function BoardCategoryDialog({
             </span>
           )}
         </DialogTitle>
-        <IconButton className="close-btn" aria-label="close" onClick={onClose}>
+        <IconButton
+          className="close-btn"
+          aria-label="close"
+          onClick={onClose}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitleArea>
@@ -312,7 +277,7 @@ function BoardCategoryDialog({
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
+              helperText={formik.touched.name && formik.errors.name} 
             />
           </FormControl>
           <FormControl className="input-form">
@@ -325,7 +290,7 @@ function BoardCategoryDialog({
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               error={formik.touched.nameEn && Boolean(formik.errors.nameEn)}
-              helperText={formik.touched.nameEn && formik.errors.nameEn}
+              helperText={formik.touched.nameEn && formik.errors.nameEn} 
             />
           </FormControl>
           <FormControl className="input-form">
@@ -335,12 +300,12 @@ function BoardCategoryDialog({
               name="color"
               label="Color"
               value={formik.values.color}
-              InputProps={{ readOnly: true }}
+              InputProps={{ readOnly: true }} 
               onClick={() => setShowPicker((prev) => !prev)} // input 클릭 시 ColorPicker 표시/닫기
             />
 
             {showPicker && (
-              <div
+              <div 
                 className="color-picker-container"
                 style={{
                   position: "absolute",
@@ -348,10 +313,10 @@ function BoardCategoryDialog({
                   bottom: "100%", // input 위에 표시되게 설정
                 }}
               >
-                <HexColorPicker
+                <HexColorPicker 
                   color={formik.values.color || color} // formik의 컬러 값 반영
                   onChange={(newColor) => {
-                    handleColorChange(newColor);
+                    handleColorChange(newColor); 
                     formik.setFieldValue("color", newColor); // formik의 컬러 값 업데이트
                   }}
                 />
