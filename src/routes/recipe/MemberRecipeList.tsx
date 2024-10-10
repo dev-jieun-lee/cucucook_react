@@ -39,7 +39,7 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
-const MemberRecipe = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const MemberRecipe = () => {
   // 파라미터 받아오기
   const { order } = useParams();
   const { t, i18n } = useTranslation();

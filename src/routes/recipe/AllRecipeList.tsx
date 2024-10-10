@@ -27,7 +27,7 @@ import {
   TitleBox,
 } from "../../styles/RecipeStyle";
 
-const AllRecipeList = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const AllRecipeList = () => {
   const { user } = useAuth(); // 로그인된 사용자 정보 가져오기
 
   const { t } = useTranslation();
