@@ -171,11 +171,13 @@ export const fetchMyReplies = async (
   page: number,
   pageSize: number,
   sortOption: string,
-  sortDirection: string
+  sortDirection: string,
+  search : string,
+  searchType : string
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: {memberId, page, pageSize,  sortOption, sortDirection },
+      params: {memberId, page, pageSize,  sortOption, sortDirection, search, searchType},
     });
     return response.data;
   } catch (error) {
@@ -200,49 +202,6 @@ export const deleteReply = async (memberId: string, commentId: string) => {
   }
 };
 
-// 댓글 검색
-export const searchReplies = async (
-  searchKeyword: string,
-  searchType: string,
-  memberId: string,
-  page: number,
-  pageSize: number,
-  sortOption: string,
-  sortDirection: string
-) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/search`, {
-      params: {
-        searchKeyword,
-        searchType,
-        memberId,
-        page,
-        pageSize,
-        sortOption,
-        sortDirection,
-      },
-    });
-    //console.log("검색한데이터", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("검색 실패:", error);
-
-    if (axios.isAxiosError(error)) {
-      // error가 AxiosError인지 확인
-      if (error.response) {
-        console.error("응답 데이터:", error.response.data);
-        console.error("응답 상태:", error.response.status);
-        console.error("응답 헤더:", error.response.headers);
-      } else if (error.request) {
-        console.error("요청이 이루어졌으나 응답이 없음:", error.request);
-      } else {
-        console.error("에러 메시지:", error.message);
-      }
-    } else {
-      console.error("알 수 없는 에러:", error);
-    }
-  }
-};
 
 //게시물
 export const fetchMyWrites = async (
@@ -374,7 +333,9 @@ export const fetchMemberBoardList = async (memberId: number, limit: number) => {
 export const fetchMyComments = async (
   memberId: number,
   page: number,
-  pageSize: number
+  pageSize: number,
+  search : string,
+  searchType : string
 ) => {
   try {
     // console.log(" 최신 댓글5개 Params:", { memberId, page, pageSize });
@@ -383,6 +344,8 @@ export const fetchMyComments = async (
         memberId,
         page: 1,
         pageSize: 5,
+        search,
+        searchType
       },
     });
     // console.log("최신 댓글Response from API:", response.data);

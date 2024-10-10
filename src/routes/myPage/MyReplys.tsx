@@ -14,14 +14,14 @@ import {
   IconButton,
   Tooltip,
   InputAdornment,
+  Pagination,
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { SearchArea, TitleCenter, Wrapper } from "../../styles/CommonStyles";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import {
-  fetchMyReplies,
   deleteReply,
-  searchReplies,
+  fetchMyReplies,
 } from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
@@ -34,218 +34,179 @@ import SearchIcon from "@mui/icons-material/Search";
 import { MypageContentArea, MypageHeaderListItem, MypageRowListItem } from "../../styles/MypageStyle";
 import { DeleteIconButton } from "../../styles/AdminStyle";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useMutation, useQuery } from "react-query";
+import Loading from "../../components/Loading";
 
-const MySwal = withReactContent(Swal);
-
-interface Reply {
-  id: string;
-  memberId: string;
-  content: string;
-  title?: string;
-  recipeId?: string;
-  comment?: string;
-  regDt?: string;
-  commentId?: string;
-  hasChildComment?: string;
-}
 
 const MyReplys: React.FC<{}> = () => {
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
-  const [myReplies, setMyReplies] = useState<Reply[]>([]);
-  const [page, setPage] = useState(0);
-  const [pageSize] = useState(100); // 처음에 5개씩 불러오도록 설정
-  const [hasMore, setHasMore] = useState(true); // 더 로드할 데이터가 있는지 여부
-  const [searchType, setSearchType] = useState("content"); // 기본값으로 'content'
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [sortOption, setSortOption] = useState("comment");
+  const [currentPage, setCurrentPage] = useState(1); // 페이지는 1부터 시작
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태 추가
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("all"); // 검색 유형
+  const [triggerSearch, setTriggerSearch] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [sortDirection, setSortDirection] = useState("DESC"); // 정렬 방향 (DESC 또는 ASC)
+  const [sortOption, setSortOption] = useState("comment");
 
   let memberId = user ? user.memberId.toString() : null;
 
+  const itemsPerPage = 10; // 페이지 당 보여줄 아이템 수
+
+  // 검색 파라미터 URL 업데이트
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      currentPage: currentPage.toString()
+    });
+  }, [search, searchType, currentPage, setSearchParams]);
 
-  useEffect(() => {
-    if (searchKeyword.trim()) {
-      // 검색어가 있으면 검색 결과에 따라 정렬
-      handleSearch();
-    } else {
-      // 검색어가 없으면 기본 댓글 로드
-      loadReplies();
-    }
-  }, [sortOption, sortDirection, page]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollButton(true);
-      } else {
-        setShowScrollButton(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const loadReplies = async () => {
-    if (!memberId) {
-      console.error("사용자 정보 없음");
-
-      await MySwal.fire({
-        title: "잘못된 접근입니다",
-        text: "사용자 정보가 없으므로 로그인 화면으로 이동합니다.",
-        icon: "warning",
-        confirmButtonText: "확인",
-      });
-
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const newReplies = await fetchMyReplies(
+  // 데이터를 불러오는 API 호출 함수
+  const getCommentListApi = async () => {
+    const writesData = await fetchMyReplies(
       memberId!,
-      page,
-      pageSize,
+      currentPage,
+      itemsPerPage,
       sortOption,
       sortDirection,
-      // "",
-      // searchType
-      );
-      if (page === 0) {
-        setMyReplies(newReplies); // 처음 로드 시에는 새로 불러온 데이터로 초기화
-      } else {
-        setMyReplies((prevReplies) => [...prevReplies, ...newReplies]); // 추가로 불러온 댓글은 기존 목록에 추가
-      }
-      setHasMore(newReplies.length === pageSize); // 더 로드할 댓글이 있는지 확인
-    } catch (error) {
-      console.error("데이터 로딩 실패:", error);
+      search,
+      searchType
+    ); 
+    setTotalPages(Math.ceil(writesData.totalItems / itemsPerPage));
+    return writesData;
+  };
+
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getCommentWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const comments= await getCommentListApi(); // 데이터 불러오기
+
+    setLoading(false);
+    return comments.comments;
+  };
+
+  
+
+  const {
+    data: commentList,
+    isLoading: commentListLoading,
+    refetch,
+  } = useQuery(["comments", currentPage], getCommentWithDelay, {
+    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+  console.log(commentList);
+
+
+  // 트리거 변경 시 데이터 초기화 및 로딩 처리
+  useEffect(() => {
+    if (triggerSearch) {
+      refetch(); // 데이터 가져오기
+      setTriggerSearch(false); // 트리거를 false로 초기화
+    }
+  }, [triggerSearch, refetch]);
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    setCurrentPage(1);
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
     }
   };
 
-  // 정렬 옵션과 방향을 토글하는 함수
-  const handleSortChange = (newSortOption: string) => {
-    if (newSortOption === sortOption) {
-      // 이미 선택된 정렬 기준이면 방향을 토글
-      setSortDirection((prevDirection) =>
-        prevDirection === "ASC" ? "DESC" : "ASC"
-      );
-    } else {
-      // 새로운 정렬 기준이 선택되면 기본으로 내림차순
-      setSortOption(newSortOption);
-      setSortDirection("DESC");
-    }
-    setPage(0); // 페이지 초기화
-    // 검색 상태에 따라 검색 결과 유지
-    if (searchKeyword.trim()) {
-      handleSearch(); // 검색 상태 유지
-    } else {
-      setMyReplies([]); // 검색어가 없으면 댓글 목록 초기화
-    }
+  // 페이지 변경 핸들러
+  const handlePageChange = (event: any, page: any) => {
+    setCurrentPage(page);
+    setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
+    refetch();
   };
 
-  //댓글 검색
-  const handleSearch = async () => {
-    setPage(0); // 페이지 초기화
-    try {
-      if (searchKeyword.trim() && memberId) {
-        const searchedReplies = await searchReplies(
-          searchKeyword,
-          searchType,
-          memberId,
-          0, // 페이지는 항상 처음부터 검색
-          pageSize,
-          sortOption,
-          sortDirection
-        );
-        // 검색된 결과만 상태에 저장, 이전 데이터 제거
-        setMyReplies(searchedReplies);
-      } else {
-        // 검색어가 없을 경우 기존 로딩 로직 실행
-        loadReplies();
-      }
-    } catch (error) {
-      console.error("검색 실패:", error);
-    }
+  // 검색 유형 select 변경 이벤트
+  const handleSearchTypeChange = (e: any) => {
+    setSearchType(e.target.value);
   };
 
-  const handleDelete = async (
-    memberId: string,
-    commentId: string,
-    hasChildComment: string | undefined
-  ) => {
-    if (!hasChildComment) {
-      try {
-        const success = await deleteReply(memberId, commentId);
-
-        if (success) {
-          MySwal.fire({
-            title: "삭제 완료",
-            text: "댓글이 삭제되었습니다!",
-            icon: "success",
-            confirmButtonText: "확인",
-          });
-
-          setMyReplies((prevReplies) =>
-            prevReplies.filter((reply) => reply.commentId !== commentId)
-          );
-        } else {
-          MySwal.fire({
-            title: "삭제 실패",
-            text: "댓글 삭제에 실패했습니다. 다시 시도해 주세요.",
-            icon: "error",
-            confirmButtonText: "확인",
-          });
-        }
-      } catch (error) {
-        console.error("댓글 삭제 실패:", error);
-        MySwal.fire({
-          title: "삭제 실패",
-          text: "댓글 삭제 중 오류가 발생했습니다.",
-          icon: "error",
-          confirmButtonText: "확인",
+  //상세 페이지로 이동
+  const onClickDetail = (id: string) => {
+    navigate(`/recipe/member_recipe/${id}`);
+  };
+  
+  //삭제
+  const { mutate: deleteCommentMutation } = useMutation(
+    (commentId : string) => deleteReply(memberId!, commentId),
+    {
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: 'success',
+          title: t("text.delete"),
+          text: t("menu.board.alert.delete"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check")
         });
-      }
-    } else {
-      await MySwal.fire({
-        title: "삭제 불가한 댓글입니다.",
-        text: "대댓글이 존재합니다.",
-        icon: "warning",
-        confirmButtonText: "확인",
+        window.location.reload();
+      },
+      onError: (error : any) => {
+        const errorCode = error.response?.data.errorCode ;
+        Swal.fire({
+          icon: 'error',
+          title: t("text.delete"),
+          text:  t("menu.board.alert.delete_error"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check")
+        });
+      },
+    }
+  );
+  const onClickDelete = (commentId : string, hasChildComment : boolean) => {
+    if(hasChildComment === true){
+      Swal.fire({
+        icon: 'error',
+        title: t("text.delete"),
+        text: t("mypage.comment_delete_error"),
+        showConfirmButton: true,
+        confirmButtonText: t("text.check")
+      });
+    }
+    else{
+      Swal.fire({
+        icon: 'warning',
+        title: t("text.delete"),
+        text:  t("mypage.confirm_delete", { value: t("text.comment") }),
+        showCancelButton: true,
+        confirmButtonText: t("text.delete"),
+        cancelButtonText: t("text.cancel"),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // 삭제 API 호출
+          deleteCommentMutation(commentId as string);
+        }
       });
     }
   };
+  
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
-  const lastReplyRef = (node: HTMLElement | null) => {
-    if (!hasMore || !node) return;
+  //로딩
+  if (loading || commentListLoading ) {
+    return <Loading />;
+  }
 
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setPage((prevPage) => prevPage + 1); // 페이지를 증가시켜 추가 댓글 로드
-      }
-    });
-
-    observerRef.current.observe(node);
-  };
 
   return (
     <Wrapper>
@@ -268,28 +229,28 @@ const MyReplys: React.FC<{}> = () => {
           variant="standard"
           labelId="select-category"
           value={searchType}
-          // onChange={handleSearchTypeChange}
+          onChange={handleSearchTypeChange}
         >
           <MenuItem value="all">
             {t("text.all")}
           </MenuItem>
           <MenuItem value="title">{t("text.recipe")}</MenuItem>
-          <MenuItem value="contents">{t("text.comment")}</MenuItem>
+          <MenuItem value="comment">{t("text.comment")}</MenuItem>
         </Select>
         <TextField
           className="search-input"
           variant="standard"
           placeholder={t("sentence.searching")}
-          // value={search}
-          // onChange={(e) => setSearch(e.target.value)}
-          // onKeyDown={handleKeyDown} // 엔터 키로 검색
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown} // 엔터 키로 검색
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   // color="primary"
                   aria-label="toggle password visibility"
-                  // onClick={handleSearchClick}
+                  onClick={handleSearchClick}
                   edge="end"
                 >
                   <SearchIcon />
@@ -318,17 +279,15 @@ const MyReplys: React.FC<{}> = () => {
               <span>{t("text.delete")}</span>
             </Box>
           </MypageHeaderListItem>
-          {myReplies && myReplies.length > 0 ? (
-            myReplies.map((item : any, index : any) => (
+          {commentList && commentList.length > 0 ? (
+            commentList.map((item : any, index : any) => (
               <MypageRowListItem
                 className="list-item"
                 key={item.commentId}
-                // onClick={() => onClickDetail(item.boardId, item.boardDivision)}
-                // ref={index === myReplies.length - 1 ? lastReplyRef : null} // 마지막 댓글에 대한 ref 설정
+                onClick={() => onClickDetail(item.recipeId)}
               >
                 <Box className="no">
-                  {/* <span>{(currentPage - 1) * itemsPerPage + index + 1}</span> */}
-                  <span>{index +1}</span>
+                  <span>{(currentPage - 1) * itemsPerPage + index + 1}</span>
                 </Box>
                 <Box className="content">
                   <Box className="recipe">
@@ -344,10 +303,10 @@ const MyReplys: React.FC<{}> = () => {
                 <Box className="delete">
                   <DeleteIconButton
                     className="icon-btn"
-                    // onClick={(event) => {
-                    //   event.stopPropagation();
-                    //   onClickDelete(categoryItem.boardCategoryId);
-                    // }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onClickDelete(item.commentId, item.hasChildComment);
+                    }}
                   >
                     <DeleteForeverIcon color="error" className="delete-icon" />
                   </DeleteIconButton>
@@ -358,7 +317,7 @@ const MyReplys: React.FC<{}> = () => {
             <Typography>{t("sentence.no_data")}</Typography>
           )}
         </List>
-        {/* <CustomPagination className="pagination" spacing={2}>
+        <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"
             color="primary"
@@ -366,7 +325,7 @@ const MyReplys: React.FC<{}> = () => {
             page={currentPage} // 현재 페이지
             onChange={handlePageChange} // 페이지 변경 시 실행되는 핸들러
           />
-        </CustomPagination> */}
+        </CustomPagination>
       </MypageContentArea>
     </Wrapper>
   );

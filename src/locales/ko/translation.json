@@ -210,7 +210,9 @@
     "myWriting": "내가 쓴 글",
     "myLikes": "내가 찜한 레시피",
     "myRecipe": "나의 D.I.Y. 레시피",
-    "greetings": "{{name}}님, 안녕하세요! :)"
+    "greetings": "{{name}}님, 안녕하세요! :)",
+    "confirm_delete" : "{{value}} 를(을) 정말 삭제하시겠습니까?",
+    "comment_delete_error" : "대댓글이 달려있어 삭제가 불가능 합니다. 대댓글을 먼저 삭제해주세요."
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import media from "./MediaQuery";
 
 export const ContentsArea = styled.div`
-  margin: 20px auto;
+  margin: 0px auto;
   margin-bottom: 100px;
   width: 100%;
   .accordion {
@@ -54,38 +54,6 @@ export const ContentsArea = styled.div`
       .update-btn {
         margin-right: 10px;
       }
-    }
-  }
-  .table-container {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-radius: 0;
-    box-shadow: none;
-    background: none;
-    .head {
-      text-align: center;
-      /* .no-cell{
-        width: 20px;
-      }
-      .category-cell{
-        width: 150px;
-      }
-      .title-cell{
-        width: 50%;
-        text-align: center;
-        background-color: pink;
-      } */
-    }
-    .row {
-      text-align: center;
-      &:hover {
-        cursor: pointer;
-        background-color: #cccccc10;
-      }
-    }
-    .file-icon {
-      transform: scale(0.7);
-      color: ${(props) => props.theme.mainColor};
     }
   }
 `;
