@@ -8,6 +8,7 @@ import BoardSideMenu from "./memu/sideMenu/BoardSideMenu";
 import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 
 import KakaoCallback from "./routes/members/login/KakaoRedirection";
+import NaverCallback from "./routes/members/login/NaverRedirection";
 import { ProtectAuthRouter } from "./auth/ProtectAuthRouter";
 import { ProtectRoleRouter } from "./auth/ProtectRoleRouter";
 import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
@@ -99,9 +100,9 @@ function RoutesConfig({ isDarkMode }: any) {
         path="/login/FindPw"
         element={<FindPw isDarkMode={isDarkMode} />}
       />
-      {/* 카카오 리디렉션 핸들러 라우트 추가 */}
+      {/* 소셜로그인 리디렉션 핸들러 라우트 추가 */}
       <Route path="/kakao/callback" element={<KakaoCallback />} />
-
+      <Route path="/naver/callback" element={<NaverCallback />} />
       {/* 레시피 */}
       <Route
         path="/recipe/all_recipe_list"

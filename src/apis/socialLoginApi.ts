@@ -53,10 +53,17 @@ export const handleKakaoCallback = async (code: string) => {
 export const handleNaverCallback = async (code: string) => {
   console.log("네이버 인가코드:", code);
   try {
-    const response = await axios.post(`${NAVER_BACKEND_URL}`, { code });
-    return response.data;
+    // 쿼리 파라미터로 코드를 전달합니다.
+    const params = new URLSearchParams({ code });
+    const response = await axios.post(
+      `${NAVER_BACKEND_URL}?${params.toString()}`
+    );
+
+    // 성공적으로 로그인한 경우 사용자 정보를 반환
+    console.log("네이버 로그인 성공:", response.data);
+    return response.data; // 사용자 정보 반환
   } catch (error) {
     console.error("네이버 로그인 처리 중 오류 발생", error);
-    throw error;
+    throw error; // 에러 발생 시 재던져서 처리할 수 있도록 함
   }
 };
