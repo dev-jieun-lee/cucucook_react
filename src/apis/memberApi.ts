@@ -279,7 +279,7 @@ export const kakaoLogin = async (code: string) => {
 // 자동로그인
 export async function autoLogin() {
   try {
-    const response = await api.post("/getAutoLogin");
+    const response = await api.get("/getAutoLogin");
     return response.data;
   } catch (error) {
     handleApiError(error);
