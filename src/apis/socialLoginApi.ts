@@ -29,9 +29,8 @@ export const naverLoginHandler = () => {
 };
 
 // 인가 코드를 백엔드로 전달하는 함수
-const KAKAO_BACKEND_URL = "http://localhost:8080/auth/kakao/login"; // 백엔드 URL
-const NAVER_BACKEND_URL = "http://localhost:8080/auth/naver/login"; // 백엔드 URL
-
+const KAKAO_BACKEND_URL = process.env.REACT_APP_KAKAO_BACKEND_URL;
+const NAVER_BACKEND_URL = process.env.REACT_APP_NAVER_BACKEND_URL;
 let isKakaoCallbackProcessing = false;
 
 // 중복 요청 방지를 위한 플래그를 전역 변수로 설정하지 말고, 로컬 스테이트나 다른 메커니즘을 사용
