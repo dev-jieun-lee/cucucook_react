@@ -95,7 +95,10 @@ export const LoginWrapper = styled.div`
   .submit-btn {
     margin-top: 50px;
     height: 53px;
-    font-size: 15px;
+  }
+
+  .chk-area{
+    margin-bottom: 20px;
   }
 `;
 

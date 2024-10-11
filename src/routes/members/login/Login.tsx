@@ -30,13 +30,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-const MySwal = withReactContent(Swal);
 
-type LoginProps = {
-  isDarkMode: boolean;
-};
-
-function Login({ isDarkMode }: LoginProps) {
+function Login() {
   const { t } = useTranslation();
   const { setUser, setLoggedIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -245,27 +240,30 @@ function Login({ isDarkMode }: LoginProps) {
             />
           </FormControl>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={saveId}
-                onChange={() => setSaveId(!saveId)} // 체크박스 상태 토글
-                color="primary"
-              />
-            }
-            label={t("members.save_id")}
-          />
-
-          <FormControl className="input-form" variant="outlined">
+          <div className="chk-area">
             <FormControlLabel
-              id="rememberLogin"
-              name="rememberLogin"
-              control={<Checkbox />}
-              label="자동로그인"
-              value={formik.values.rememberLogin}
-              onChange={formik.handleChange}
+              className="chk-form"
+              control={
+                <Checkbox
+                  checked={saveId}
+                  onChange={() => setSaveId(!saveId)} // 체크박스 상태 토글
+                  color="primary"
+                />
+              }
+              label={t("members.save_id")}
             />
-          </FormControl>
+
+            <FormControl className="chk-form" variant="outlined">
+              <FormControlLabel
+                id="rememberLogin"
+                name="rememberLogin"
+                control={<Checkbox />}
+                label="자동로그인"
+                value={formik.values.rememberLogin}
+                onChange={formik.handleChange}
+              />
+            </FormControl>
+          </div>
 
           <Button
             className="submit-button"
