@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { deleteBoardCategory, getBoardCategoryList } from "../../../apis/boardApi";
+import {
+  deleteBoardCategory,
+  getBoardCategoryList,
+} from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import {
@@ -33,7 +36,12 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
-import { AdminHeaderListItem, AdminRowListItem, ColorDots, DeleteIconButton } from "../../../styles/AdminStyle";
+import {
+  AdminHeaderListItem,
+  AdminRowListItem,
+  ColorDots,
+  DeleteIconButton,
+} from "../../../styles/AdminStyle";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import BoardCategoryDialog from "./BoardCategoryDialog";
@@ -98,8 +106,6 @@ function BoardCategoryManage() {
     return categoryList.data;
   };
 
-  
-  
   const {
     data: boardCategoryList,
     isLoading: boardCategoryListLoading,
@@ -110,7 +116,7 @@ function BoardCategoryManage() {
     refetchOnWindowFocus: false,
     staleTime: 0,
   });
-  
+
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
     if (triggerSearch) {
@@ -133,7 +139,6 @@ function BoardCategoryManage() {
     }
   };
 
-
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
@@ -144,57 +149,57 @@ function BoardCategoryManage() {
   // 카테고리 핸들러
   const handleCategoryChange = (e: any) => {
     const selectedDivision = e.target.value;
-    setDivision(selectedDivision); 
+    setDivision(selectedDivision);
     setSearch(selectedDivision); // 선택한 값을 즉시 검색어로 설정
     setTriggerSearch(true); // 트리거 활성화
   };
 
-
   // 검색 유형 select 변경 이벤트
   const handleSearchTypeChange = (e: any) => {
     setSearchType(e.target.value);
-  
+
     if (e.target.value === "division") {
-      setSearch("all"); 
+      setSearch("all");
       setDivision("all");
-    } 
-    else {
-      setSearch(""); 
+    } else {
+      setSearch("");
     }
-  
-    // setTriggerSearch(true); 
+
+    // setTriggerSearch(true);
   };
-  
 
   //삭제
   const { mutate: deleteCategoryMutation } = useMutation(
-    (categoryId : string) => deleteBoardCategory(categoryId),
+    (categoryId: string) => deleteBoardCategory(categoryId),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
         window.location.reload();
       },
-      onError: (error : any) => {
-        const errorCode = error.response?.data.errorCode ;
+      onError: (error: any) => {
+        const errorCode = error.response?.data.errorCode;
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
-          text: errorCode === "ERR_CG_01" ? t("menu.board.error.ERR_CG_01") : t("menu.board.alert.delete"),
+          text:
+            errorCode === "ERR_CG_01"
+              ? t("menu.board.error.ERR_CG_01")
+              : t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (categoryId : string) => {
+  const onClickDelete = (categoryId: string) => {
     Swal.fire({
-      icon: 'warning',
+      icon: "warning",
       title: t("text.delete"),
       text: t("menu.board.alert.delete_confirm_category"),
       showCancelButton: true,
@@ -256,9 +261,7 @@ function BoardCategoryManage() {
           onChange={handleSearchTypeChange}
         >
           <MenuItem value="name">{t("menu.board.category_name")}</MenuItem>
-          <MenuItem value="nameEn">
-            {t("menu.board.category_name_en")}
-          </MenuItem>
+          <MenuItem value="nameEn">{t("menu.board.category_name_en")}</MenuItem>
           <MenuItem value="division">{t("menu.board.division")}</MenuItem>
         </Select>
         {searchType === "division" ? (
@@ -310,7 +313,7 @@ function BoardCategoryManage() {
             <Box className="division">
               <span>{t("menu.board.division")}</span>
             </Box>
-            <Box className = "category-area">
+            <Box className="category-area">
               <Box className="category">
                 <span>{t("menu.board.category_name")}</span>
               </Box>
@@ -330,72 +333,72 @@ function BoardCategoryManage() {
           </AdminHeaderListItem>
           {boardCategoryList && boardCategoryList.length > 0 ? (
             boardCategoryList
-            ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-            .map((item : any, index : any) => (
-              <AdminRowListItem
-                className="list-item"
-                key={item.boardCategoryId}
-                onClick={() => onClickDialog(item.boardCategoryId)}
-              >
-                <Box className="no">
-                  {(currentPage - 1) * display + index + 1}
-                </Box>
-                <Box className="division">
-                  <span>
-                    {item.division === "NOTICE" ? (
-                      t("menu.board.notice")
-                    ) : item.division === "FAQ" ? (
-                      t("menu.board.FAQ")
-                    ) : item.division === "QNA" ? (
-                      t("menu.board.QNA")
-                    ) : (
-                      <></>
-                    )}
-                  </span>
-                </Box>
-                <Box className = "category-area">
-                  <Box className="category">
-                    <CustomCategory
-                      style={{ color: `${item.color}` }}
-                      className="category"
-                    >
-                      {item.name}
-                    </CustomCategory>
+              ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+              .map((item: any, index: any) => (
+                <AdminRowListItem
+                  className="list-item"
+                  key={item.boardCategoryId}
+                  onClick={() => onClickDialog(item.boardCategoryId)}
+                >
+                  <Box className="no">
+                    {(currentPage - 1) * display + index + 1}
                   </Box>
-                  <Box className="category">
-                    <CustomCategory
-                      style={{ color: `${item.color}` }}
-                      className="category"
-                    >
-                      {item.nameEn}
-                    </CustomCategory>
+                  <Box className="division">
+                    <span>
+                      {item.division === "NOTICE" ? (
+                        t("menu.board.notice")
+                      ) : item.division === "FAQ" ? (
+                        t("menu.board.FAQ")
+                      ) : item.division === "QNA" ? (
+                        t("menu.board.QNA")
+                      ) : (
+                        <></>
+                      )}
+                    </span>
                   </Box>
-                </Box>
-                {/* <Box className="color">
+                  <Box className="category-area">
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.color}` }}
+                        className="category"
+                      >
+                        {item.name}
+                      </CustomCategory>
+                    </Box>
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.color}` }}
+                        className="category"
+                      >
+                        {item.nameEn}
+                      </CustomCategory>
+                    </Box>
+                  </Box>
+                  {/* <Box className="color">
                   <ColorDots
                     style={{ backgroundColor: `${item.color}` }}
                   >
                   </ColorDots>
                 </Box> */}
-                <Box className="date">
-                  <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
-                </Box>
-                <Box className="delete">
-                  <DeleteIconButton
-                    className="icon-btn"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onClickDelete(item.boardCategoryId);
-                    }}
-                  >
-                    <DeleteForeverIcon
-                      color="error"
-                      className="delete-icon"
-                    />
-                  </DeleteIconButton>
-                </Box>
-              </AdminRowListItem>
-            ))
+                  <Box className="date">
+                    <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="delete">
+                    <DeleteIconButton
+                      className="icon-btn"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onClickDelete(item.boardCategoryId);
+                      }}
+                    >
+                      <DeleteForeverIcon
+                        color="error"
+                        className="delete-icon"
+                      />
+                    </DeleteIconButton>
+                  </Box>
+                </AdminRowListItem>
+              ))
           ) : (
             <Typography>{t("sentence.no_data")}</Typography>
           )}

@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import { Wrapper, PageTitleBasic, TitleCenter } from "../../styles/CommonStyles";
+import {
+  Wrapper,
+  PageTitleBasic,
+  TitleCenter,
+} from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -71,19 +75,19 @@ const MyRecipes = () => {
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
-      <TitleCenter style={{ marginBottom: "30px" }}>
-        <Tooltip title={t("text.go_back")}>
-          <IconButton
-            color="primary"
-            aria-label="add"
-            style={{ marginTop: "-5px" }}
-            onClick={() => navigate("/mypage/activity")}
-          >
-            <ArrowBackIosNewIcon />
-          </IconButton>
-        </Tooltip>
-        {t("mypage.myRecipe")}
-      </TitleCenter>
+        <TitleCenter style={{ marginBottom: "30px" }}>
+          <Tooltip title={t("text.go_back")}>
+            <IconButton
+              color="primary"
+              aria-label="add"
+              style={{ marginTop: "-5px" }}
+              onClick={() => navigate("/mypage/activity")}
+            >
+              <ArrowBackIosNewIcon />
+            </IconButton>
+          </Tooltip>
+          {t("mypage.myRecipe")}
+        </TitleCenter>
 
         <Box component="section" sx={{ width: "100%" }}>
           <Grid container spacing={2}>

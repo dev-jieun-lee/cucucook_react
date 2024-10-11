@@ -18,11 +18,13 @@ import {
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { CustomPagination, SearchArea, TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import {
-  deleteReply,
-  fetchMyReplies,
-} from "../../apis/mypageApi";
+  CustomPagination,
+  SearchArea,
+  TitleCenter,
+  Wrapper,
+} from "../../styles/CommonStyles";
+import { deleteReply, fetchMyReplies } from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -31,12 +33,15 @@ import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
-import { MypageContentArea, MypageHeaderListItem, MypageRowListItem } from "../../styles/MypageStyle";
+import {
+  MypageContentArea,
+  MypageHeaderListItem,
+  MypageRowListItem,
+} from "../../styles/MypageStyle";
 import { DeleteIconButton } from "../../styles/AdminStyle";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../components/Loading";
-
 
 const MyReplys: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
@@ -61,7 +66,7 @@ const MyReplys: React.FC<{}> = () => {
     setSearchParams({
       search: search,
       searchType: searchType,
-      currentPage: currentPage.toString()
+      currentPage: currentPage.toString(),
     });
   }, [search, searchType, currentPage, setSearchParams]);
 
@@ -75,7 +80,7 @@ const MyReplys: React.FC<{}> = () => {
       sortDirection,
       search,
       searchType
-    ); 
+    );
     setTotalPages(Math.ceil(writesData.totalItems / itemsPerPage));
     return writesData;
   };
@@ -87,13 +92,11 @@ const MyReplys: React.FC<{}> = () => {
     // 인위적인 지연 시간 추가
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const comments= await getCommentListApi(); // 데이터 불러오기
+    const comments = await getCommentListApi(); // 데이터 불러오기
 
     setLoading(false);
     return comments.comments;
   };
-
-  
 
   const {
     data: commentList,
@@ -106,7 +109,6 @@ const MyReplys: React.FC<{}> = () => {
     staleTime: 0,
   });
   console.log(commentList);
-
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -146,48 +148,47 @@ const MyReplys: React.FC<{}> = () => {
   const onClickDetail = (id: string) => {
     navigate(`/recipe/member_recipe/${id}`);
   };
-  
+
   //삭제
   const { mutate: deleteCommentMutation } = useMutation(
-    (commentId : string) => deleteReply(memberId!, commentId),
+    (commentId: string) => deleteReply(memberId!, commentId),
     {
       onSuccess: (data) => {
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: t("text.delete"),
           text: t("menu.board.alert.delete"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
         window.location.reload();
       },
-      onError: (error : any) => {
-        const errorCode = error.response?.data.errorCode ;
+      onError: (error: any) => {
+        const errorCode = error.response?.data.errorCode;
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: t("text.delete"),
-          text:  t("menu.board.alert.delete_error"),
+          text: t("menu.board.alert.delete_error"),
           showConfirmButton: true,
-          confirmButtonText: t("text.check")
+          confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (commentId : string, hasChildComment : boolean) => {
-    if(hasChildComment === true){
+  const onClickDelete = (commentId: string, hasChildComment: boolean) => {
+    if (hasChildComment === true) {
       Swal.fire({
-        icon: 'error',
+        icon: "error",
         title: t("text.delete"),
         text: t("mypage.comment_delete_error"),
         showConfirmButton: true,
-        confirmButtonText: t("text.check")
+        confirmButtonText: t("text.check"),
       });
-    }
-    else{
+    } else {
       Swal.fire({
-        icon: 'warning',
+        icon: "warning",
         title: t("text.delete"),
-        text:  t("mypage.confirm_delete", { value: t("text.comment") }),
+        text: t("mypage.confirm_delete", { value: t("text.comment") }),
         showCancelButton: true,
         confirmButtonText: t("text.delete"),
         cancelButtonText: t("text.cancel"),
@@ -199,14 +200,11 @@ const MyReplys: React.FC<{}> = () => {
       });
     }
   };
-  
-
 
   //로딩
-  if (loading || commentListLoading ) {
+  if (loading || commentListLoading) {
     return <Loading />;
   }
-
 
   return (
     <Wrapper>
@@ -231,9 +229,7 @@ const MyReplys: React.FC<{}> = () => {
           value={searchType}
           onChange={handleSearchTypeChange}
         >
-          <MenuItem value="all">
-            {t("text.all")}
-          </MenuItem>
+          <MenuItem value="all">{t("text.all")}</MenuItem>
           <MenuItem value="title">{t("text.recipe")}</MenuItem>
           <MenuItem value="comment">{t("text.comment")}</MenuItem>
         </Select>
@@ -267,7 +263,9 @@ const MyReplys: React.FC<{}> = () => {
               <span>No.</span>
             </Box>
             <Box className="recipe">
-              <span>{t("text.recipe")} {t("text.title")}</span>
+              <span>
+                {t("text.recipe")} {t("text.title")}
+              </span>
             </Box>
             <Box className="comment">
               <span>{t("text.comment")}</span>
@@ -280,7 +278,7 @@ const MyReplys: React.FC<{}> = () => {
             </Box>
           </MypageHeaderListItem>
           {commentList && commentList.length > 0 ? (
-            commentList.map((item : any, index : any) => (
+            commentList.map((item: any, index: any) => (
               <MypageRowListItem
                 className="list-item"
                 key={item.commentId}

@@ -44,8 +44,6 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Loading from "../../components/Loading";
 
-
-
 const MyWrites: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
@@ -68,7 +66,7 @@ const MyWrites: React.FC<{}> = () => {
       search: search,
       searchType: searchType,
       currentPage: currentPage.toString(),
-      boardDivision : boardDivision
+      boardDivision: boardDivision,
     });
   }, [search, searchType, currentPage, boardDivision, setSearchParams]);
 
@@ -84,7 +82,6 @@ const MyWrites: React.FC<{}> = () => {
         searchType
       ); // 게시글 리슽 조회
       setTotalPages(Math.ceil(writesData.totalItems / itemsPerPage));
-
 
       // 각 보드의 카테고리 조회
       const boardListWithCategory = await Promise.all(
@@ -102,8 +99,6 @@ const MyWrites: React.FC<{}> = () => {
       return [];
     }
   };
-
-
 
   // 데이터 가져오기 시 로딩 상태 추가
   const getBoardListWithDelay = async () => {
@@ -131,8 +126,6 @@ const MyWrites: React.FC<{}> = () => {
       staleTime: 0,
     }
   );
-
-
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -193,24 +186,23 @@ const MyWrites: React.FC<{}> = () => {
       case "NOTICE":
         navigate(`/notice/${boardId}`);
         break;
-    
-        ///////추가 구현 필요!!!! 넘어가면 해당 게시글 열리도록?
+
+      ///////추가 구현 필요!!!! 넘어가면 해당 게시글 열리도록?
       case "FAQ":
         navigate(`/faq`);
         break;
-    
+
       case "QNA":
         navigate(`/qna/${boardId}`);
         break;
-    
+
       default:
         break;
     }
   };
 
-
   //로딩
-  if (loading || boardListLoading ) {
+  if (loading || boardListLoading) {
     return <Loading />;
   }
 
@@ -258,29 +250,29 @@ const MyWrites: React.FC<{}> = () => {
             <MenuItem value={"QNA"}>{t("menu.board.QNA")}</MenuItem>
           </Select>
         ) : (
-        <TextField
-          className="search-input"
-          variant="standard"
-          placeholder={t("sentence.searching")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={handleKeyDown} // 엔터 키로 검색
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  // color="primary"
-                  aria-label="toggle password visibility"
-                  onClick={handleSearchClick}
-                  edge="end"
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-        )} 
+          <TextField
+            className="search-input"
+            variant="standard"
+            placeholder={t("sentence.searching")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown} // 엔터 키로 검색
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    // color="primary"
+                    aria-label="toggle password visibility"
+                    onClick={handleSearchClick}
+                    edge="end"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
       </SearchArea>
       <MypageContentArea>
         <List>

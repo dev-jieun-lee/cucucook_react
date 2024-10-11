@@ -2,7 +2,6 @@ import styled from "styled-components";
 import media from "./MediaQuery";
 import { Fab, Stack } from "@mui/material";
 
-
 export const Wrapper = styled.div`
   width: 100%;
   margin: 0 auto;
@@ -145,13 +144,13 @@ export const CustomPagination = styled(Stack)`
 //dialog 스타일
 export const DialogTitleArea = styled.div`
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   align-items: center;
-  .title{
+  .title {
     color: ${(props) => props.theme.mainColor};
     font-weight: 600;
   }
-  .close-btn{
+  .close-btn {
     height: 40px;
     margin: 15px;
   }
@@ -159,10 +158,10 @@ export const DialogTitleArea = styled.div`
 
 export const DialogForm = styled.form`
   position: relative;
-  .input-form{
+  .input-form {
     display: block;
     margin-bottom: 20px;
-    &:first-child{
+    &:first-child {
       margin-top: 15px;
     }
   }
