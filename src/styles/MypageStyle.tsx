@@ -25,7 +25,7 @@ export const PwButtonArea = styled.div`
 
 export const PwChangeButton = styled(Button)`
   width: 100%;
-  margin: -5px 0 25px;
+  margin: 10px 0 25px;
   height: 50px;
 `;
 

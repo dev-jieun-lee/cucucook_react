@@ -55,14 +55,14 @@ const UserInfo = () => {
     "memberData",
     getMemberWithDelay
   );
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       userId: memberData?.userId,
-      name: memberData?.name,
-      phone: memberData?.phone,
-      email: memberData?.email,
+      name: memberData?.name || "",
+      phone: memberData?.phone || "",
+      email: memberData?.email || "",
+      role: memberData?.role || "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -86,14 +86,15 @@ const UserInfo = () => {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
+      
       values.phone = values.phone.replace(/-/g, ""); // '-' 제거
       mutation.mutate(values as any); // mutation 실행
     },
   });
-
+  
   const mutation = useMutation(
     (values: any) =>
-      updateMember(memberId!, values.name, values.email, values.phone),
+      updateMember(memberId!, values.name, values.email, values.phone, values.role),
     {
       onSuccess: (data) => {
         // AuthContext에 사용자 정보 업데이트
@@ -250,7 +251,7 @@ const UserInfo = () => {
               name="userId"
               label={t("text.user_id")}
               disabled
-              value={formik.values.userId}
+              value={formik.values.userId || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.userId && Boolean(formik.errors.userId)}
@@ -262,9 +263,9 @@ const UserInfo = () => {
               id="name"
               name="name"
               label={t("text.name")}
-              value={formik.values.name}
-              // onChange={formik.handleChange}
-              onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
+              value={formik.values.name || ""}
+              onChange={formik.handleChange}
+              // onChange={handleNameChange} // 이름 변경 시 한글만 입력되도록 처리
               onBlur={formik.handleBlur}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={
@@ -279,7 +280,7 @@ const UserInfo = () => {
               id="phone"
               name="phone"
               label={t("mypage.phone_number")}
-              value={formik.values.phone}
+              value={formik.values.phone || ""}
               onChange={handlePhoneChange}
               onBlur={formik.handleBlur}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -297,7 +298,7 @@ const UserInfo = () => {
                 id="email"
                 name="email"
                 label={t("text.email")}
-                value={formik.values.email}
+                value={formik.values.email || ""}
                 onChange={handleEmailChange} // 이메일에 문자 제한 추가
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}

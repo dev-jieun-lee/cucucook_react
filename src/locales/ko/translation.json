@@ -208,8 +208,7 @@
     "myWriting": "내가 쓴 글",
     "myLikes": "내가 찜한 레시피",
     "myRecipe": "나의 D.I.Y. 레시피",
-    "greetings": "{{name}}님, 안녕하세요! :)",
-    "confirm_delete_account": "정말 회원 탈퇴를 하시겠습니까?"
+    "greetings": "{{name}}님, 안녕하세요! :)"
   },
   "sentence": {
     "no_data": "데이터가 존재하지 않습니다.",

@@ -19,15 +19,15 @@ import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
+import { handleApiError } from "../../../hooks/errorHandler";
+import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
+import { BoardButtonArea } from "../../../styles/BoardStyle";
 import {
   deleteRecipeCategory,
   getRecipeCategory,
   insertRecipeCategory,
   updateRecipeCategory,
-} from "../../../apis/recipeApi";
-import { handleApiError } from "../../../hooks/errorHandler";
-import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
-import { BoardButtonArea } from "../../../styles/BoardStyle";
+} from "../../../apis/adminApi";
 
 interface RecipeCategoryDialogProps {
   open: boolean;
