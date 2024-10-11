@@ -30,7 +30,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Pretendard-Regular' !important;
   }
   .swal2-container {
-    z-index: 10000 !important; 
+    z-index: 10000 !important;
   }
 `;
 
@@ -40,10 +40,10 @@ const root = ReactDOM.createRoot(
 
 const client = new QueryClient();
 root.render(
-  <React.StrictMode>
-    <QueryClientProvider client={client}>
-      <GlobalStyle />
-      <App />
-    </QueryClientProvider>
-  </React.StrictMode>
+  //<React.StrictMode>
+  <QueryClientProvider client={client}>
+    <GlobalStyle />
+    <App />
+  </QueryClientProvider>
+  // </React.StrictMode>
 );
