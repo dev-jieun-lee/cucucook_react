@@ -290,7 +290,7 @@ const MyReplys: React.FC<{}> = () => {
             <ArrowBackIosNewIcon />
           </IconButton>
         </Tooltip>
-        {t("mypage.mycommnet")}
+        {t("mypage.myComment")}
       </TitleCenter>
       <SearchArea>
         <Select

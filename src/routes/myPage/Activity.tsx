@@ -347,7 +347,7 @@ function Activity() {
           <div className="title">
             <span>
               <SubdirectoryArrowRightIcon className="icon" />
-              {t("mypage.myCommnet")}
+              {t("mypage.myComment")}
             </span>
             <Button
               variant="text"
