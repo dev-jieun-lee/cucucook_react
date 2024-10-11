@@ -67,7 +67,7 @@ function Activity() {
         fetchActivityStats(memberId),
         fetchLikedRecipes(memberId),
         fetchMemberBoardList(memberId, 3),
-        fetchMyRecipeList(memberId, 3),
+        fetchMyRecipeList(memberId, 3, "", ""),
         fetchMyComments(memberId, 1, 3, "", ""),
       ]);
       console.log(stats);
