@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Divider, Grid, IconButton, Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Divider, Grid, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import { Wrapper, PageTitleBasic, TitleCenter } from "../../styles/CommonStyles";
+import { Wrapper, PageTitleBasic, TitleCenter, SearchArea } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -19,19 +19,32 @@ import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import { fetchMyRecipeList } from "../../apis/mypageApi";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SearchIcon from "@mui/icons-material/Search";
 
 const MyRecipes = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const memberId = user?.memberId;
-
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("title"); // 검색 유형
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [triggerSearch, setTriggerSearch] = useState(true);
   const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
 
   const display = 10;
+
+  // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      // currentPage: currentPage.toString()
+    });
+  }, [search, searchType, setSearchParams]);
 
   const fetchData = async () => {
     if (loading || !hasMore) return; // 중복 호출 방지 조건
@@ -44,7 +57,7 @@ const MyRecipes = () => {
     }
 
     try {
-      const response = await fetchMyRecipeList(memberId, undefined); // 모든 레시피를 가져오도록 null 전달
+      const response = await fetchMyRecipeList(memberId, undefined, search, searchType); // 모든 레시피를 가져오도록 null 전달
 
       if (response && response.length > 0) {
         setLikedRecipes(response); // 모든 레시피로 업데이트
@@ -64,10 +77,13 @@ const MyRecipes = () => {
     }
   }, [memberId]); // memberId가 변경될 때만 호출
 
+  
+
   const handleViewDetailClick = (path: string, params: string) => {
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };
+
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
@@ -84,6 +100,30 @@ const MyRecipes = () => {
         </Tooltip>
         {t("mypage.myRecipe")}
       </TitleCenter>
+      <SearchArea>
+        <TextField
+          className="search-input"
+          variant="standard"
+          placeholder={t("sentence.searching")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          // onKeyDown={handleKeyDown} // 엔터 키로 검색
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  // color="primary"
+                  aria-label="toggle password visibility"
+                  // onClick={handleSearchClick}
+                  edge="end"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </SearchArea>
 
         <Box component="section" sx={{ width: "100%" }}>
           <Grid container spacing={2}>
