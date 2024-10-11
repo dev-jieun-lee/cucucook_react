@@ -72,7 +72,7 @@ function RoutesConfig({ isDarkMode }: any) {
         path="/login"
         element={
           <LoginRouteBox>
-            <Login isDarkMode={isDarkMode} />
+            <Login/>
           </LoginRouteBox>
         }
       />
