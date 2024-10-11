@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
 import { useMutation } from "react-query";
-import { handleApiError } from "../hooks/errorHandler";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
@@ -14,6 +13,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 
 // 로그인 요청
 export async function login(form: {
@@ -28,15 +28,16 @@ export async function login(form: {
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
+      // 서버에서 전달된 전체 응답 데이터 출력
       console.log("서버 응답 데이터:", error.response.data);
+
+      // 실패 횟수와 잠금 시간을 출력
       console.log("실패 횟수:", error.response.data.failedAttempts || 0);
       console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
     } else {
       console.error("알 수 없는 오류 발생:", error);
     }
 
-    // `handleApiError`를 호출하는 대신, 에러를 다시 throw
-    throw error; // 에러를 다시 던져서 호출한 컴포넌트에서 처리하도록 한다.
   }
 }
 
@@ -48,7 +49,6 @@ export async function logout() {
 
     return response.data;
   } catch (error) {
-    //handleApiError(error);
   }
 }
 
@@ -100,24 +100,24 @@ export const findId = async (data: {
 
 // 이메일 인증 코드 발송
 export const useSendEmailVerificationCode = () =>
-  useMutation(
-    (email: string) =>
-      api.post("/sendVerificationCode", { email }).then((response) => {
+  useMutation((email: string) =>
+    api
+      .post("/sendVerificationCode", { email })
+      .then((response) => {
         console.log("이메일 인증 코드 발송 성공:", response.data);
         return response.data;
       })
-    //.catch(handleApiError)
   );
 
 // 이메일 인증 코드 검증
 export const useVerifyEmailCode = () =>
-  useMutation(
-    ({ email, code }: { email: string; code: string }) =>
-      api.post("/verify", { email, code }).then((response) => {
+  useMutation(({ email, code }: { email: string; code: string }) =>
+    api
+      .post("/verify", { email, code })
+      .then((response) => {
         console.log("이메일 인증 코드 검증 성공:", response.data);
         return response.data;
       })
-    // .catch(handleApiError)
   );
 
 // 이메일 중복 체크 API
@@ -153,7 +153,6 @@ export async function validateToken(token: string) {
     const response = await api.post("/validateToken", { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
   } catch (error) {
-    // handleApiError(error);
   }
 }
 
@@ -228,4 +227,14 @@ export async function getMemberList(params: any) {
     params: params,
   });
   return response.data;
+}
+
+// 자동로그인
+export async function autoLogin() {
+  try {
+    const response = await api.get("/getAutoLogin");
+    return response.data;
+  } catch (error) {
+   
+  }
 }
