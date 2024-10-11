@@ -94,14 +94,11 @@ function Activity() {
   const onDetail = (kind: string, id: string) => {
     if (kind === "like" || kind === "recipe" || kind === "comment") {
       navigate(`/recipe/member_recipe/${id}`);
-    } 
-    else if (kind === "NOTICE") {
+    } else if (kind === "NOTICE") {
       navigate(`/notice/${id}`);
-    }
-    else if (kind === "FAQ") {
+    } else if (kind === "FAQ") {
       navigate(`/faq/${id}`);
-    }
-    else if (kind === "QNA") {
+    } else if (kind === "QNA") {
       navigate(`/qna/${id}`);
     }
   };
@@ -169,7 +166,7 @@ function Activity() {
           </div>
           <div className="content">
             <List>
-              <ActivityHeaderListItem  className="list-item header">
+              <ActivityHeaderListItem className="list-item header">
                 <Box className="activity-no">
                   <span>No.</span>
                 </Box>
@@ -196,7 +193,9 @@ function Activity() {
                       </Box>
                     </Box>
                     <Box className="date">
-                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                      <span>
+                        {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                      </span>
                     </Box>
                   </ActivityRowListItem>
                 ))
@@ -227,7 +226,7 @@ function Activity() {
           </div>
           <div className="content">
             <List>
-              <ActivityHeaderListItem  className="list-item header">
+              <ActivityHeaderListItem className="list-item header">
                 <Box className="activity-no">
                   <span>No.</span>
                 </Box>
@@ -254,7 +253,9 @@ function Activity() {
                       </Box>
                     </Box>
                     <Box className="date">
-                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                      <span>
+                        {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                      </span>
                     </Box>
                   </ActivityRowListItem>
                 ))
@@ -285,7 +286,7 @@ function Activity() {
           </div>
           <div className="content">
             <List>
-              <ActivityHeaderListItem  className="list-item header">
+              <ActivityHeaderListItem className="list-item header">
                 <Box className="activity-no">
                   <span>No.</span>
                 </Box>
@@ -309,15 +310,15 @@ function Activity() {
                     <Box className="contents">
                       <Box className="comment-title">
                         <span>
-                        {item.boardDivision === "NOTICE" ? (
-                          t("menu.board.notice")
-                        ) : item.boardDivision === "FAQ" ? (
-                          t("menu.board.FAQ")
-                        ) : item.boardDivision === "QNA" ? (
-                          t("menu.board.QNA")
-                        ) : (
-                          <></>
-                        )}
+                          {item.boardDivision === "NOTICE" ? (
+                            t("menu.board.notice")
+                          ) : item.boardDivision === "FAQ" ? (
+                            t("menu.board.FAQ")
+                          ) : item.boardDivision === "QNA" ? (
+                            t("menu.board.QNA")
+                          ) : (
+                            <></>
+                          )}
                         </span>
                       </Box>
                       <Box className="activity-comment">
@@ -325,7 +326,9 @@ function Activity() {
                       </Box>
                     </Box>
                     <Box className="date">
-                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                      <span>
+                        {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                      </span>
                     </Box>
                   </ActivityRowListItem>
                 ))
@@ -356,7 +359,7 @@ function Activity() {
           </div>
           <div className="content">
             <List>
-              <ActivityHeaderListItem  className="list-item header">
+              <ActivityHeaderListItem className="list-item header">
                 <Box className="activity-no">
                   <span>No.</span>
                 </Box>
@@ -377,7 +380,7 @@ function Activity() {
                     <Box className="activity-no">
                       <span>{index + 1}</span>
                     </Box>
-                    <Box className = "contents">
+                    <Box className="contents">
                       <Box className="comment-title">
                         <span>{item.title}</span>
                       </Box>
@@ -386,7 +389,9 @@ function Activity() {
                       </Box>
                     </Box>
                     <Box className="date">
-                      <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                      <span>
+                        {dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}
+                      </span>
                     </Box>
                   </ActivityRowListItem>
                 ))
