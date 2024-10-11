@@ -136,17 +136,18 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
                 </FormHelperText>
               )}
             </Grid>
-            <Grid item xs={12} sm={9}>
+            <Grid item xs={12} sm={9} >
               <Grid
                 sx={{
                   display: "grid",
                   gap: "16px",
                   gridTemplateColumns: "1fr 40px",
                   alignItems: "center",
+                  height : "100%"
                 }}
               >
-                <Grid>
-                  <FormControl className="width-max">
+                <Grid sx={{height : "100%", paddingBottom : "10px" }}>
+                  <FormControl className="width-max" sx={{ height: "100%" }}>
                     <InputLabel htmlFor={`recipe_process_contents_${index}`}>
                       {t("text.recipe_process_contents")}
                     </InputLabel>
@@ -155,6 +156,8 @@ const RecipeProcessListInput: React.FC<RecipeIngredientInputListProps> = ({
                       name={`recipeProcessItems[${index}].contents`}
                       label={t("text.recipe_process_contents")}
                       multiline
+                      fullWidth
+                      sx={{ height: "100%", alignItems: "center"}}
                       rows={5}
                       value={input.contents}
                       onChange={(e) =>

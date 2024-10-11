@@ -104,6 +104,10 @@ export const AdminRowListItem = styled(ListItem)`
   }
   .user-id{
     flex : 3;
+    width : 90%;
+    white-space: nowrap;         
+    overflow: hidden;    
+    text-overflow: ellipsis; 
     ${media.small`
       flex : 2;
       font-size : 13px;
