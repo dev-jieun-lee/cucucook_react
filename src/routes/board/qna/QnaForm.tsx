@@ -43,7 +43,7 @@ interface UploadFiles {
   fileName: string;
   fileType: string;
   fileSize: string;
-  fileId: String;
+  fileId: string;
 }
 
 function QnaForm() {
@@ -95,7 +95,7 @@ function QnaForm() {
         (item: any) => ({
           file: item.file,
           fileName: item.orgFileName,
-          fileType: item.fileType,
+          fileType: item.extension,
           fileSize: convertFileSize(item.fileSize),
           fileId: item.fileId,
         })
@@ -193,7 +193,6 @@ function QnaForm() {
         const file =
           uploadFileItem.file ||
           new Blob([], { type: "application/octet-stream" });
-        console.log(file);
         formData.append("uploadFileList", file);
       });
       mutation.mutate(formData as any); // mutation 실행

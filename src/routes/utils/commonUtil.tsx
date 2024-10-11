@@ -10,11 +10,22 @@ import React from "react";
 export const convertFileSize = (fileSize: number): string => {
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   let i = 0;
-  while (fileSize > 1024) {
-    fileSize /= 1024;
+  let sizeInBytes =
+    typeof fileSize === "string" ? parseFloat(fileSize) : fileSize;
+
+  if (
+    typeof sizeInBytes !== "number" ||
+    isNaN(sizeInBytes) ||
+    sizeInBytes < 0
+  ) {
+    return "0 Bytes";
+  }
+  while (sizeInBytes > 1024) {
+    sizeInBytes /= 1024;
     i++;
   }
-  return `${fileSize.toFixed(2) + sizes[i]}`;
+
+  return `${sizeInBytes.toFixed(2) + sizes[i]}`;
 };
 
 //첨부파일 확장자 제한

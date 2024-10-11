@@ -43,7 +43,7 @@ interface UploadFiles {
   fileName: string;
   fileType: string;
   fileSize: string;
-  fileId: String;
+  fileId: string;
 }
 
 function NoticeForm() {
@@ -94,7 +94,7 @@ function NoticeForm() {
         (item: any) => ({
           file: item.file,
           fileName: item.orgFileName,
-          fileType: item.fileType,
+          fileType: item.extension,
           fileSize: convertFileSize(item.fileSize),
           fileId: item.fileId,
         })
@@ -192,7 +192,6 @@ function NoticeForm() {
         const file =
           uploadFileItem.file ||
           new Blob([], { type: "application/octet-stream" });
-        console.log(file);
         formData.append("uploadFileList", file);
       });
 

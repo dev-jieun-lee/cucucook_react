@@ -87,7 +87,6 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
       commentId ? updateRecipeComment(values) : insertRecipeComment(values),
     {
       onSuccess: (data) => {
-        console.log(data);
         if (data && data.success) {
           Swal.fire({
             icon: "success",

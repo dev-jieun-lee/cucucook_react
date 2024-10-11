@@ -23,7 +23,6 @@ const BoardFilesList: React.FC<{
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const uploadFileList = await getBoardFilesList(boardId);
-    console.log("Fetched Files:", uploadFileList); // API 결과 로그
     setLoading(false);
     return uploadFileList.data;
   };
@@ -45,7 +44,7 @@ const BoardFilesList: React.FC<{
         a.download = `${uploadFileItem.orgFileName}.${uploadFileItem.extension}`;
         document.body.appendChild(a);
         a.click();
-        setTimeout((_) => {
+        setTimeout((_: any) => {
           window.URL.revokeObjectURL(url);
         }, 1000);
         a.remove();

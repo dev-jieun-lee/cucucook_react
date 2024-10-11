@@ -1,6 +1,12 @@
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
-import { Button, FormHelperText, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormHelperText,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import dompurify from "dompurify";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +18,7 @@ import * as Yup from "yup";
 import {
   deleteBoard,
   getBoardCategory,
+  getBoardFilesList,
   getBoardWithReplies,
   insertBoard,
   updateBoard,
@@ -33,6 +40,17 @@ import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import BoardFilesList from "../BoardFilesList";
 import QuillEditer from "../QuillEditer";
 import dayjs from "dayjs";
+import BoardFilesUpload from "../BoardFilesUpload";
+import { convertFileSize } from "../../utils/commonUtil";
+
+//첨부파일
+interface UploadFiles {
+  file: File | null;
+  fileName: string;
+  fileType: string;
+  fileSize: string;
+  fileId: string;
+}
 
 function QnaDetail() {
   const sanitizer = dompurify.sanitize;
@@ -48,6 +66,12 @@ function QnaDetail() {
   const [isEditing, setIsEditing] = useState(false); // 답글 수정 상태
 
   const editorRef = useRef(null); // QuillEditer에 사용할 ref
+
+  const [uploadFiles, setUploadFiles] = useState<UploadFiles[]>([]);
+  const [delFileIds, setDelFileIds] = useState<string[]>([]);
+  const [uploadFileList, setUploadFileList] = useState<UploadFiles[]>([
+    { file: null, fileName: "", fileType: "", fileSize: "", fileId: "" },
+  ]);
 
   //카테고리 포함 데이터 받아오기
   const getBoardWithCategory = async () => {
@@ -75,17 +99,37 @@ function QnaDetail() {
         } else if (item.status === "1") {
           replyPosts.push(item); // 답글
           setIsReply(true);
+          //getUploadFileListData(item?.boardId);
         }
       });
 
       setPBoardData(parentPosts);
       setReBoardData(replyPosts);
+      if (reBoardData) {
+        const uploadFiles = await getUploadFileListData(replyPosts[0].boardId);
+        setUploadFileList(uploadFiles);
+      }
 
       return boardWithCategory;
     } catch (error) {
       console.error(error);
       return null;
     }
+  };
+
+  //파일데이터 가져오기
+  const getUploadFileListData: any = async (boardId: any) => {
+    const uploadFileListApi = await getBoardFilesList(boardId);
+    const uploadFileData: UploadFiles[] = uploadFileListApi.data.map(
+      (item: any) => ({
+        file: item.file,
+        fileName: item.orgFileName,
+        fileType: item.extension,
+        fileSize: convertFileSize(item.fileSize),
+        fileId: item.fileId,
+      })
+    );
+    return uploadFileData;
   };
 
   // 데이터 가져오기 시 로딩 상태 추가
@@ -199,6 +243,8 @@ function QnaDetail() {
       contents: reBoardData[0]?.contents || "",
       status: "1", //답글
       boardDivision: "QNA",
+      uploadFileList: boardId ? uploadFileList || [] : [],
+      delFileIds: delFileIds,
       pboardId: pBoardData[0]?.boardId, //질문글 아이디
     },
     validationSchema: Yup.object({
@@ -209,9 +255,24 @@ function QnaDetail() {
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      console.log(values);
+      const { uploadFileList, ...jsonValues } = values;
 
-      mutation.mutate(values as any); // mutation 실행
+      const formData = new FormData();
+      formData.append(
+        "board",
+        new Blob([JSON.stringify(jsonValues)], {
+          type: "application/json",
+        })
+      );
+
+      //uploadFileListInfo값에 파일만 추출해서 formdata에 넣어주기
+      uploadFileList.map((uploadFileItem: any) => {
+        const file =
+          uploadFileItem.file ||
+          new Blob([], { type: "application/octet-stream" });
+        formData.append("uploadFileList", file);
+      });
+      mutation.mutate(formData as any); // mutation 실행
     },
   });
 
@@ -224,6 +285,24 @@ function QnaDetail() {
   if (loading || boardLoading) {
     return <></>;
   }
+
+  //첨부파일 변경 시
+  const handleUploadFileSelect = (uploadFileList: UploadFiles[]) => {
+    setUploadFiles(uploadFileList);
+    formik.setFieldValue("uploadFileList", uploadFileList);
+  };
+
+  //첨부파일 삭제 시 (기등록된 파일만)
+  const handleDeleteFile = (
+    uploadFileList: UploadFiles[],
+    updateDelFileIds: string[]
+  ) => {
+    formik.setFieldValue("uploadFileList", uploadFileList);
+    formik.setFieldValue("delFileIds", [
+      ...formik.values.delFileIds,
+      ...updateDelFileIds,
+    ]);
+  };
 
   return (
     <Wrapper>
@@ -407,6 +486,13 @@ function QnaDetail() {
                     )}
                   </div>
                 </ContentsInputArea>
+                <Box margin={"0 0 20px 0"}>
+                  <BoardFilesUpload
+                    values={formik.values.uploadFileList}
+                    onChangeFile={handleUploadFileSelect}
+                    onDeleteFile={handleDeleteFile}
+                  />
+                </Box>
                 <BoardButtonArea>
                   <Button
                     className="cancel-btn"
