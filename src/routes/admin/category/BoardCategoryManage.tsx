@@ -15,9 +15,11 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import {
+  Box,
   Fab,
   IconButton,
   InputAdornment,
+  List,
   MenuItem,
   Pagination,
   Paper,
@@ -30,10 +32,16 @@ import {
   TableRow,
   TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
-import { ColorDots, DeleteIconButton } from "../../../styles/AdminStyle";
+import {
+  AdminHeaderListItem,
+  AdminRowListItem,
+  ColorDots,
+  DeleteIconButton,
+} from "../../../styles/AdminStyle";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import BoardCategoryDialog from "./BoardCategoryDialog";
@@ -297,111 +305,104 @@ function BoardCategoryManage() {
         )}
       </SearchArea>
       <ContentsArea>
-        <TableContainer className="table-container" component={Paper}>
-          <Table
-            className="table"
-            sx={{ minWidth: 650 }}
-            aria-label="board table"
-          >
-            <TableHead className="head">
-              <TableRow>
-                <TableCell className="no-cell">No.</TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.board.division")}
-                </TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.board.category_name")}
-                </TableCell>
-                <TableCell className="name-cell">
-                  {t("menu.board.category_name_en")}
-                </TableCell>
-                <TableCell className="name-cell">{t("text.color")}</TableCell>
-                <TableCell>{t("text.register_date")}</TableCell>
-                <TableCell>{t("text.update_date")}</TableCell>
-                <TableCell>{t("text.delete")}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {boardCategoryList && boardCategoryList.length > 0 ? (
-                boardCategoryList
-                  ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                  .map((categoryItem: any, index: number) => (
-                    <TableRow
-                      className="row"
-                      key={index}
-                      onClick={() =>
-                        onClickDialog(categoryItem.boardCategoryId)
-                      }
+        <List>
+          <AdminHeaderListItem className="list-item header">
+            <Box className="no">
+              <span>No.</span>
+            </Box>
+            <Box className="division">
+              <span>{t("menu.board.division")}</span>
+            </Box>
+            <Box className="category-area">
+              <Box className="category">
+                <span>{t("menu.board.category_name")}</span>
+              </Box>
+              <Box className="category-en">
+                <span>{t("menu.board.category_name_en")}</span>
+              </Box>
+            </Box>
+            {/* <Box className="color">
+              <span>{t("text.color")}</span>
+            </Box> */}
+            <Box className="date">
+              <span>{t("text.register_date")}</span>
+            </Box>
+            <Box className="delete">
+              <span>{t("text.delete")}</span>
+            </Box>
+          </AdminHeaderListItem>
+          {boardCategoryList && boardCategoryList.length > 0 ? (
+            boardCategoryList
+              ?.slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+              .map((item: any, index: any) => (
+                <AdminRowListItem
+                  className="list-item"
+                  key={item.boardCategoryId}
+                  onClick={() => onClickDialog(item.boardCategoryId)}
+                >
+                  <Box className="no">
+                    {(currentPage - 1) * display + index + 1}
+                  </Box>
+                  <Box className="division">
+                    <span>
+                      {item.division === "NOTICE" ? (
+                        t("menu.board.notice")
+                      ) : item.division === "FAQ" ? (
+                        t("menu.board.FAQ")
+                      ) : item.division === "QNA" ? (
+                        t("menu.board.QNA")
+                      ) : (
+                        <></>
+                      )}
+                    </span>
+                  </Box>
+                  <Box className="category-area">
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.color}` }}
+                        className="category"
+                      >
+                        {item.name}
+                      </CustomCategory>
+                    </Box>
+                    <Box className="category">
+                      <CustomCategory
+                        style={{ color: `${item.color}` }}
+                        className="category"
+                      >
+                        {item.nameEn}
+                      </CustomCategory>
+                    </Box>
+                  </Box>
+                  {/* <Box className="color">
+                  <ColorDots
+                    style={{ backgroundColor: `${item.color}` }}
+                  >
+                  </ColorDots>
+                </Box> */}
+                  <Box className="date">
+                    <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
+                  </Box>
+                  <Box className="delete">
+                    <DeleteIconButton
+                      className="icon-btn"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onClickDelete(item.boardCategoryId);
+                      }}
                     >
-                      <TableCell component="th" scope="row">
-                        {(currentPage - 1) * display + index + 1}
-                      </TableCell>
-                      <TableCell>
-                        {categoryItem.division === "NOTICE" ? (
-                          t("menu.board.notice")
-                        ) : categoryItem.division === "FAQ" ? (
-                          t("menu.board.FAQ")
-                        ) : categoryItem.division === "QNA" ? (
-                          t("menu.board.QNA")
-                        ) : (
-                          <></>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <CustomCategory
-                          style={{ color: `${categoryItem.color}` }}
-                          className="category"
-                        >
-                          {categoryItem.name}
-                        </CustomCategory>
-                      </TableCell>
-                      <TableCell>
-                        <CustomCategory
-                          style={{ color: `${categoryItem.color}` }}
-                          className="category"
-                        >
-                          {categoryItem.nameEn}
-                        </CustomCategory>
-                      </TableCell>
-                      <TableCell>
-                        <ColorDots
-                          style={{ backgroundColor: `${categoryItem.color}` }}
-                        >
-                          {" "}
-                        </ColorDots>
-                      </TableCell>
-                      <TableCell>
-                        {dayjs(categoryItem.regDt).format("YYYY-MM-DD HH:mm")}
-                      </TableCell>
-                      <TableCell>
-                        {dayjs(categoryItem.udtDt).format("YYYY-MM-DD HH:mm")}
-                      </TableCell>
-                      <TableCell>
-                        <DeleteIconButton
-                          className="icon-btn"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onClickDelete(categoryItem.boardCategoryId);
-                          }}
-                        >
-                          <DeleteForeverIcon
-                            color="error"
-                            className="delete-icon"
-                          />
-                        </DeleteIconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    {t("sentence.no_data")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      <DeleteForeverIcon
+                        color="error"
+                        className="delete-icon"
+                      />
+                    </DeleteIconButton>
+                  </Box>
+                </AdminRowListItem>
+              ))
+          ) : (
+            <Typography>{t("sentence.no_data")}</Typography>
+          )}
+        </List>
         <CustomPagination className="pagination" spacing={2}>
           <Pagination
             className="pagination-btn"

@@ -9,13 +9,18 @@ const BASE_URL = apiUrl + "/api/members";
 // 기본 axios 인스턴스 설정
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 // 로그인 요청
-export async function login(form: { userId: string; password: string }) {
+export async function login(form: {
+  userId: string;
+  password: string;
+  rememberLogin: boolean;
+}) {
   try {
     const response = await api.post("/login", form);
     console.log("로그인 응답데이터", response.data);
@@ -40,9 +45,6 @@ export async function logout() {
   try {
     const response = await api.post("/logout");
     console.log("로그아웃 응답데이터", response.data);
-
-    // 로그아웃 시 쿠키에서 JWT 토큰 삭제
-    Cookies.remove("auth_token");
 
     return response.data;
   } catch (error) {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Button,
   Checkbox,
@@ -12,7 +14,6 @@ import {
   OutlinedInput,
   Typography,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Wrapper } from "../../../styles/CommonStyles";
 import {
   LoginWrapper,
@@ -26,12 +27,9 @@ import {
   naverLoginHandler,
 } from "../../../apis/socialLoginApi";
 import { useNavigate, useLocation } from "react-router-dom";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { useAuth } from "../../../auth/AuthContext";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { useAuth } from "../../../auth/AuthContext";
-import Cookies from "js-cookie";
-
 const MySwal = withReactContent(Swal);
 
 type LoginProps = {
@@ -60,6 +58,7 @@ function Login({ isDarkMode }: LoginProps) {
   interface LoginValues {
     userId: string;
     password: string;
+    rememberLogin: boolean;
   }
 
   interface ErrorResponse {
@@ -77,6 +76,7 @@ function Login({ isDarkMode }: LoginProps) {
     initialValues: {
       userId: localStorage.getItem("userId") || "",
       password: "",
+      rememberLogin: false,
     },
     onSubmit: async (values) => {
       console.log("로그인 페이지 트라이케치 전");
@@ -254,6 +254,17 @@ function Login({ isDarkMode }: LoginProps) {
             }
             label={t("members.save_id")}
           />
+
+          <FormControl className="input-form" variant="outlined">
+            <FormControlLabel
+              id="rememberLogin"
+              name="rememberLogin"
+              control={<Checkbox />}
+              label="자동로그인"
+              value={formik.values.rememberLogin}
+              onChange={formik.handleChange}
+            />
+          </FormControl>
 
           <Button
             className="submit-button"
