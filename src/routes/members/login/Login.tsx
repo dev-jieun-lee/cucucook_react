@@ -80,6 +80,7 @@ function Login({ isDarkMode }: LoginProps) {
     },
     onSubmit: async (values) => {
       console.log("로그인 페이지 트라이케치 전");
+      console.log("로그인 요청 데이터:", values); // 로그인 요청 데이터 확인
       try {
         const response = await login(values);
         console.log("로그인 성공 후 응답 확인:", response); // 응답 확인 로그
