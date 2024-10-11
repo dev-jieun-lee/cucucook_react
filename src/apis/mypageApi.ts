@@ -329,7 +329,7 @@ export const fetchMyComments = async (
 };
 
 // 모든 레시피를 가져오는 함수
-export const fetchMyRecipeList = async (memberId: number, limit?: number) => {
+export const fetchMyRecipeList = async (memberId: number, limit?: number, search? : string, searchType? : string) => {
   try {
     // console.log("레시피 Params:", { memberId, limit });
 
@@ -337,6 +337,8 @@ export const fetchMyRecipeList = async (memberId: number, limit?: number) => {
     const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
       params: {
         memberId,
+        search,
+        searchType,
         ...(limit !== undefined && { limit }), // limit이 undefined가 아닐 경우에만 포함
       },
     });

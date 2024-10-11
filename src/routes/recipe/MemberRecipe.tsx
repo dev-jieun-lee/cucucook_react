@@ -314,7 +314,7 @@ const MemberRecipe = () => {
   return (
     <Wrapper>
       <RecipeView>
-        <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
+        <Box component="section" sx={{ width: "100%"}} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
               {t("text.member_recipe")} &nbsp;
