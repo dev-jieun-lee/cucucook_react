@@ -381,15 +381,22 @@ export const fetchLikedRecipes = async (memberId: number) => {
   }
 };
 
-//찜 진입시 정보가져오기
+// 찜한 레시피 목록 및 검색 API 통합 함수
 export const getRecipeLikeListOtherInfo = async (
   memberId: number,
   recipeCategoryId: string,
   orderby: string,
   display: number,
-  start: number
+  start: number,
+  keyword?: string // `keyword` 파라미터를 추가하여 검색 기능을 통합
 ) => {
   try {
+    // 파라미터 확인 로그
+    console.log(
+      `API 호출: memberId=${memberId}, recipeCategoryId=${recipeCategoryId}, orderby=${orderby}, display=${display}, start=${start}, keyword=${keyword}`
+    );
+
+    // 서버로 API 요청을 보낼 때 keyword 파라미터도 함께 전달
     const response = await axios.get(`${BASE_URL}/getRecipeLikeListOtherInfo`, {
       params: {
         memberId,
@@ -397,8 +404,10 @@ export const getRecipeLikeListOtherInfo = async (
         orderby,
         display,
         start,
+        keyword, // keyword 파라미터를 추가하여 조건 전달
       },
     });
+
     console.log("찜한 레시피 목록 로드 성공:", response.data);
     return response.data;
   } catch (error) {

@@ -1,16 +1,22 @@
-import { Box, Divider, Grid, IconButton, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  Typography,
+  Box,
+  List,
+  Divider,
+  Grid,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { useQuery } from "react-query";
 import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
-import {
-  PageTitleBasic,
-  TitleCenter,
-  Wrapper,
-} from "../../styles/CommonStyles";
+import { TitleCenter, Wrapper, SearchArea } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -19,93 +25,147 @@ import {
   ThumbnailBox,
   ThumbnailBoxContainer,
   ThumbnailButton,
-  TitleBox,
 } from "../../styles/RecipeStyle";
-import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SearchIcon from "@mui/icons-material/Search";
+import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
 
 const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const memberId = user?.memberId;
+  const memberId = user?.memberId || 0; // 기본값을 0으로 설정하여 undefined를 방지합니다.
 
   const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
-  const [start, setStart] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-
-  const display = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState(""); // 검색어 상태
+  const [triggerSearch, setTriggerSearch] = useState(false); // 검색 트리거 추가
   const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
 
-  const fetchData = async () => {
-    if (loading || isFetching || !hasMore) return; // 중복 호출 방지 조건
-    setLoading(true);
-    setIsFetching(true);
+  const itemsPerPage = 5;
 
-    if (!memberId) {
-      console.error("memberId is undefined");
-      setLoading(false);
-      setIsFetching(false);
-      return;
-    }
+  // 데이터 가져오기 함수
+  const fetchData = async (page: number, keyword: string) => {
+    setLoading(true);
+    const startValue = (page - 1) * itemsPerPage;
 
     try {
+      console.log(
+        `API 호출: memberId=${memberId}, start=${startValue}, keyword=${keyword}`
+      );
       const response = await getRecipeLikeListOtherInfo(
         memberId,
         "all",
         "reg_dt",
-        display,
-        start
+        itemsPerPage,
+        startValue,
+        search
       );
 
       if (response && response.length > 0) {
-        setLikedRecipes((prevRecipes) => [...prevRecipes, ...response]);
+        setLikedRecipes((prevRecipes) =>
+          triggerSearch ? response : [...prevRecipes, ...response]
+        );
+        setHasMore(response.length === itemsPerPage);
       } else {
-        setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
+        setHasMore(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error("데이터 가져오기 오류:", error);
     } finally {
-      setLoading(false); // 로딩 종료
-      setIsFetching(false); // 호출 완료 상태로 변경
+      setLoading(false);
+      setTriggerSearch(false);
     }
   };
 
-  useEffect(() => {
-    if (memberId) {
-      fetchData(); // memberId가 유효할 때만 fetchData 호출
+  // useQuery로 데이터 관리
+  const { refetch } = useQuery(
+    [currentPage, search],
+    () => fetchData(currentPage, search),
+    {
+      enabled: true, // 검색 실행 시 쿼리 실행
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
     }
-  }, [memberId, start]); // memberId 또는 start가 변경될 때만 호출
+  );
 
+  // 초기 데이터 로드
   useEffect(() => {
-    if (inView && hasMore && !loading && !isFetching) {
-      setStart((prevStart) => prevStart + display); // 다음 데이터 요청
+    if (memberId !== 0) {
+      fetchData(1, ""); // 처음 진입 시 검색어 없이 첫 페이지 데이터를 로드
     }
-  }, [inView, hasMore, loading, isFetching]); // 추가적인 상태 추가
+  }, [memberId]);
+
+  // 무한 스크롤 감지 및 다음 페이지 요청
+  useEffect(() => {
+    if (inView && hasMore && !loading && !triggerSearch) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [inView, hasMore, loading, triggerSearch]);
+
+  // 검색 실행 시 데이터 초기화 및 리패치
+  const handleSearchClick = () => {
+    if (!memberId || memberId === 0) return;
+    setHasMore(true);
+    setCurrentPage(1);
+    setTriggerSearch(true);
+    setLikedRecipes([]);
+    fetchData(1, search); // 검색어를 포함하여 첫 페이지부터 데이터 로드
+  };
+
+  // 검색 필드에서 Enter 키 입력 시 검색 실행
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
 
   const handleViewDetailClick = (path: string, params: string) => {
-    const pullPath = `${path}/` + params;
-    navigate(pullPath);
+    const fullPath = `${path}/${params}`;
+    navigate(fullPath);
   };
+
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
         <TitleCenter style={{ marginBottom: "30px" }}>
-          <Tooltip title={t("text.go_back")}>
-            <IconButton
-              color="primary"
-              aria-label="add"
-              style={{ marginTop: "-5px" }}
-              onClick={() => navigate("/mypage/activity")}
-            >
-              <ArrowBackIosNewIcon />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate("/mypage/activity")}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
           {t("mypage.myLikes")}
         </TitleCenter>
-
+        <SearchArea>
+          <TextField
+            className="search-input"
+            variant="standard"
+            placeholder={t("sentence.searching")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleSearchClick}
+                    edge="end"
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </SearchArea>
         <Box component="section" sx={{ width: "100%" }}>
           <Grid container spacing={2}>
             {loading && !hasMore ? (
@@ -119,7 +179,7 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     sm={6}
                     md={3}
                     key={`${recipeItem.recipeId}-${index}`}
-                    sx={{ flexDirection: "column" }} // 필요한 경우 추가
+                    sx={{ flexDirection: "column" }}
                   >
                     <ThumbnailButton
                       onClick={() =>
@@ -236,7 +296,6 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
                     </ThumbnailButton>
                   </Grid>
                 ))}
-
                 <Grid item xs={12}>
                   {hasMore && <LoadingNoMargin />}
                 </Grid>
