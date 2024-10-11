@@ -106,10 +106,6 @@ function QnaDetail() {
       setPBoardData(parentPosts);
       setReBoardData(replyPosts);
 
-      if (reBoardData.length > 0) {
-        const uploadFiles = await getUploadFileListData(replyPosts[0].boardId);
-        setUploadFileList(uploadFiles);
-      }
 
       return boardWithCategory;
     } catch (error) {
@@ -117,6 +113,8 @@ function QnaDetail() {
       return null;
     }
   };
+
+
 
   //파일데이터 가져오기
   const getUploadFileListData: any = async (boardId: any) => {
@@ -159,6 +157,12 @@ function QnaDetail() {
   useEffect(() => {
     if (reBoardData.length > 0) {
       setReBoardId(reBoardData[0].boardId);
+      const fetchUploadListData = async () => {
+        const uploadFiles = await getUploadFileListData(reBoardData[0].boardId);
+        setUploadFileList(uploadFiles);
+      };
+     
+      fetchUploadListData();
     }
     else{
       setReBoardId("");
