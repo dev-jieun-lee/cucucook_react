@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { handleKakaoCallback } from "../../../apis/socialLoginApi";
+import { useAuth } from "../../../auth/AuthContext";
 
 const KakaoCallback = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { setUser, setLoggedIn } = useAuth();
 
   // `code`를 useEffect 외부에서 정의
   const code = new URLSearchParams(location.search).get("code");
@@ -16,6 +18,15 @@ const KakaoCallback = () => {
       handleKakaoCallback(code)
         .then((data) => {
           console.log("카카오 로그인 성공:", data);
+          setUser({
+            userId: data.member.userId,
+            name: data.member.name,
+            role: data.member.role,
+            memberId: data.member.memberId,
+          });
+
+          setLoggedIn(true);
+
           navigate("/"); // 로그인 성공 시 메인 페이지로 이동
         })
         .catch((error) => {

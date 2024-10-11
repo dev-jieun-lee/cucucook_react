@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Divider, Grid, IconButton, Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Divider, Grid, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../../auth/AuthContext";
-import {
-  Wrapper,
-  PageTitleBasic,
-  TitleCenter,
-} from "../../styles/CommonStyles";
+import { Wrapper, PageTitleBasic, TitleCenter, SearchArea } from "../../styles/CommonStyles";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import TextsmsIcon from "@mui/icons-material/Textsms";
@@ -23,13 +19,18 @@ import Loading from "../../components/Loading";
 import LoadingNoMargin from "../../components/LoadingNoMargin";
 import { fetchMyRecipeList } from "../../apis/mypageApi";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SearchIcon from "@mui/icons-material/Search";
+import { useQuery } from "react-query";
 
 const MyRecipes = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const memberId = user?.memberId;
-
+  const [search, setSearch] = useState(""); //검색어
+  const [searchType, setSearchType] = useState("title"); // 검색 유형
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [triggerSearch, setTriggerSearch] = useState(true);
   const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -37,65 +38,129 @@ const MyRecipes = () => {
 
   const display = 10;
 
-  const fetchData = async () => {
-    if (loading || !hasMore) return; // 중복 호출 방지 조건
-    setLoading(true);
+  // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({
+      search: search,
+      searchType: searchType,
+      // currentPage: currentPage.toString()
+    });
+  }, [search, searchType, setSearchParams]);
 
-    if (!memberId) {
-      console.error("memberId is undefined");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetchMyRecipeList(memberId, undefined); // 모든 레시피를 가져오도록 null 전달
-
-      if (response && response.length > 0) {
-        setLikedRecipes(response); // 모든 레시피로 업데이트
-      } else {
-        setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false); // 로딩 종료
-    }
+  // 데이터를 불러오는 API 호출 함수
+  const getRecipeListApi = async () => {
+    const writesData = await fetchMyRecipeList(
+      memberId!, undefined, search, searchType
+    ); 
+    return writesData;
   };
 
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getRecipeWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
+
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const recipes= await getRecipeListApi(); // 데이터 불러오기
+
+    setLoading(false);
+    return recipes;
+  };
+
+
+  const {
+    data: recipeList,
+    isLoading: recipeListLoading,
+    refetch,
+  } = useQuery(["recipes"], getRecipeWithDelay, {
+    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+
+  // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
-    if (memberId) {
-      fetchData(); // 페이지 진입 시 한 번 호출
+    if (triggerSearch) {
+      refetch(); // 데이터 가져오기
+      setTriggerSearch(false); // 트리거를 false로 초기화
     }
-  }, [memberId]); // memberId가 변경될 때만 호출
+  }, [triggerSearch, refetch]);
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    // setCurrentPage(1);
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
 
   const handleViewDetailClick = (path: string, params: string) => {
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };
+
+    //로딩
+    if (loading || recipeListLoading ) {
+      return <Loading />;
+    }
+  
+
   return (
     <Wrapper>
       <Box component="section" sx={{ width: "100%" }}>
-        <TitleCenter style={{ marginBottom: "30px" }}>
-          <Tooltip title={t("text.go_back")}>
-            <IconButton
-              color="primary"
-              aria-label="add"
-              style={{ marginTop: "-5px" }}
-              onClick={() => navigate("/mypage/activity")}
-            >
-              <ArrowBackIosNewIcon />
-            </IconButton>
-          </Tooltip>
-          {t("mypage.myRecipe")}
-        </TitleCenter>
+      <TitleCenter style={{ marginBottom: "30px" }}>
+        <Tooltip title={t("text.go_back")}>
+          <IconButton
+            color="primary"
+            aria-label="add"
+            style={{ marginTop: "-5px" }}
+            onClick={() => navigate("/mypage/activity")}
+          >
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        </Tooltip>
+        {t("mypage.myRecipe")}
+      </TitleCenter>
+      <SearchArea>
+        <TextField
+          className="search-input"
+          variant="standard"
+          placeholder={t("sentence.searching")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown} // 엔터 키로 검색
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  // color="primary"
+                  aria-label="toggle password visibility"
+                  onClick={handleSearchClick}
+                  edge="end"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </SearchArea>
 
         <Box component="section" sx={{ width: "100%" }}>
           <Grid container spacing={2}>
             {loading && !hasMore ? (
               <Loading />
-            ) : likedRecipes.length > 0 ? (
+            ) : recipeList.length > 0 ? (
               <>
-                {likedRecipes.map((recipeItem, index) => (
+                {recipeList.map((recipeItem : any, index : any) => (
                   <Grid
                     item
                     xs={12}
