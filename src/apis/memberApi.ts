@@ -4,9 +4,6 @@ import { useMutation } from "react-query";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
-// REST API 키 설정
-const KAKAO_CLIENT_ID = "b5d69984f2fcc714f9fb98279f69343f";
-const REDIRECT_URI = "https://cucucook.site";
 
 // 기본 axios 인스턴스 설정
 const api = axios.create({
@@ -17,19 +14,6 @@ const api = axios.create({
   },
 });
 
-// 에러 처리 헬퍼 함수
-function handleApiError(error: unknown) {
-  if (axios.isAxiosError(error)) {
-    // Axios 에러
-    throw new Error(error.response?.data?.message || "API 요청 실패");
-  } else if (error instanceof Error) {
-    // 일반 에러
-    throw new Error(error.message);
-  } else {
-    // 기타 에러
-    throw new Error("알 수 없는 에러 발생");
-  }
-}
 
 // 로그인 요청
 export async function login(form: {
@@ -54,7 +38,6 @@ export async function login(form: {
       console.error("알 수 없는 오류 발생:", error);
     }
 
-    handleApiError(error);
   }
 }
 
@@ -66,7 +49,6 @@ export async function logout() {
 
     return response.data;
   } catch (error) {
-    handleApiError(error);
   }
 }
 
@@ -125,7 +107,6 @@ export const useSendEmailVerificationCode = () =>
         console.log("이메일 인증 코드 발송 성공:", response.data);
         return response.data;
       })
-      .catch(handleApiError)
   );
 
 // 이메일 인증 코드 검증
@@ -137,7 +118,6 @@ export const useVerifyEmailCode = () =>
         console.log("이메일 인증 코드 검증 성공:", response.data);
         return response.data;
       })
-      .catch(handleApiError)
   );
 
 // 이메일 중복 체크 API
@@ -173,7 +153,6 @@ export async function validateToken(token: string) {
     const response = await api.post("/validateToken", { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
   } catch (error) {
-    handleApiError(error);
   }
 }
 
@@ -250,38 +229,12 @@ export async function getMemberList(params: any) {
   return response.data;
 }
 
-// 카카오 토큰 요청
-export const kakaoLogin = async (code: string) => {
-  try {
-    const response = await axios.post(
-      `https://kauth.kakao.com/oauth/token`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-        params: {
-          grant_type: "authorization_code",
-          client_id: KAKAO_CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
-          code: code,
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Kakao login failed", error);
-    throw error;
-  }
-};
-
 // 자동로그인
 export async function autoLogin() {
   try {
     const response = await api.get("/getAutoLogin");
     return response.data;
   } catch (error) {
-    handleApiError(error);
+   
   }
 }

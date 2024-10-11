@@ -1,6 +1,11 @@
 import { css, type CSSObject, type Interpolation } from "styled-components";
 
-export type Breakpoints = "xsmall" | "small" | "extra-medium" | "medium" | "large";
+export type Breakpoints =
+  | "xsmall"
+  | "small"
+  | "extra-medium"
+  | "medium"
+  | "large";
 
 export const breakpoints: Record<Breakpoints, string> = {
   xsmall: "@media (max-width: 380px)",

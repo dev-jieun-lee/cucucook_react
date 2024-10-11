@@ -30,7 +30,11 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../../auth/AuthContext";
 import Loading from "../../../components/Loading";
 import { handleApiError } from "../../../hooks/errorHandler";
-import { AdminHeaderListItem, AdminRowListItem, DeleteIconButton } from "../../../styles/AdminStyle";
+import {
+  AdminHeaderListItem,
+  AdminRowListItem,
+  DeleteIconButton,
+} from "../../../styles/AdminStyle";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import {
   CustomPagination,
@@ -39,7 +43,10 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import RecipeCategoryDialog from "./RecipeCategoryDialog";
-import { deleteRecipeCategory, getRecipeCategoryListForAdmin } from "../../../apis/adminApi";
+import {
+  deleteRecipeCategory,
+  getRecipeCategoryListForAdmin,
+} from "../../../apis/adminApi";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
@@ -314,7 +321,7 @@ function RecipeCategoryManage() {
             <Box className="division">
               <span>{t("menu.recipe.division")}</span>
             </Box>
-            <Box className = "category-area">
+            <Box className="category-area">
               <Box className="category">
                 <span>{t("menu.recipe.category_name")}</span>
               </Box>
@@ -330,7 +337,7 @@ function RecipeCategoryManage() {
             </Box>
           </AdminHeaderListItem>
           {recipeCategoryList && recipeCategoryList.length > 0 ? (
-            recipeCategoryList.map((item : any, index : any) => (
+            recipeCategoryList.map((item: any, index: any) => (
               <AdminRowListItem
                 className="list-item"
                 key={item.recipeCategoryId}
@@ -352,13 +359,9 @@ function RecipeCategoryManage() {
                     )}
                   </span>
                 </Box>
-                <Box className = "category-area">
-                  <Box className="category">
-                    {item.name}
-                  </Box>
-                  <Box className="category">
-                    {item.nameEn}
-                  </Box>
+                <Box className="category-area">
+                  <Box className="category">{item.name}</Box>
+                  <Box className="category">{item.nameEn}</Box>
                 </Box>
                 <Box className="date">
                   <span>{dayjs(item.regDt).format("YYYY-MM-DD HH:mm")}</span>
@@ -371,10 +374,7 @@ function RecipeCategoryManage() {
                       onClickDelete(item.recipeCategoryId);
                     }}
                   >
-                    <DeleteForeverIcon
-                      color="error"
-                      className="delete-icon"
-                    />
+                    <DeleteForeverIcon color="error" className="delete-icon" />
                   </DeleteIconButton>
                 </Box>
               </AdminRowListItem>

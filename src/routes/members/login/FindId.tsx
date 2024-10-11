@@ -124,7 +124,12 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
               </Grid>
             </Grid>
             {isCodeSent && (
-              <Grid container spacing={2} alignItems="center" className="email-area">
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                className="email-area"
+              >
                 <Grid item xs={9}>
                   <FormControl fullWidth margin="normal">
                     <InputLabel htmlFor="verificationCode">
