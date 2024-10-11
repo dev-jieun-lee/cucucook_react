@@ -20,6 +20,7 @@ import LoadingNoMargin from "../../components/LoadingNoMargin";
 import { fetchMyRecipeList } from "../../apis/mypageApi";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
+import { useQuery } from "react-query";
 
 const MyRecipes = () => {
   const { t } = useTranslation();
@@ -46,43 +47,71 @@ const MyRecipes = () => {
     });
   }, [search, searchType, setSearchParams]);
 
-  const fetchData = async () => {
-    if (loading || !hasMore) return; // 중복 호출 방지 조건
-    setLoading(true);
-
-    if (!memberId) {
-      console.error("memberId is undefined");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetchMyRecipeList(memberId, undefined, search, searchType); // 모든 레시피를 가져오도록 null 전달
-
-      if (response && response.length > 0) {
-        setLikedRecipes(response); // 모든 레시피로 업데이트
-      } else {
-        setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false); // 로딩 종료
-    }
+  // 데이터를 불러오는 API 호출 함수
+  const getRecipeListApi = async () => {
+    const writesData = await fetchMyRecipeList(
+      memberId!, undefined, search, searchType
+    ); 
+    return writesData;
   };
 
-  useEffect(() => {
-    if (memberId) {
-      fetchData(); // 페이지 진입 시 한 번 호출
-    }
-  }, [memberId]); // memberId가 변경될 때만 호출
+  // 데이터 가져오기 시 로딩 상태 추가
+  const getRecipeWithDelay = async () => {
+    setLoading(true); // 로딩 상태 시작
 
-  
+    // 인위적인 지연 시간 추가
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const recipes= await getRecipeListApi(); // 데이터 불러오기
+
+    setLoading(false);
+    return recipes;
+  };
+
+
+  const {
+    data: recipeList,
+    isLoading: recipeListLoading,
+    refetch,
+  } = useQuery(["recipes"], getRecipeWithDelay, {
+    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
+    keepPreviousData: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+
+  // 트리거 변경 시 데이터 초기화 및 로딩 처리
+  useEffect(() => {
+    if (triggerSearch) {
+      refetch(); // 데이터 가져오기
+      setTriggerSearch(false); // 트리거를 false로 초기화
+    }
+  }, [triggerSearch, refetch]);
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearchClick = () => {
+    // setCurrentPage(1);
+    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
+    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
+  };
+
+  // 엔터 키로 검색 실행 핸들러
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
 
   const handleViewDetailClick = (path: string, params: string) => {
     const pullPath = `${path}/` + params;
     navigate(pullPath);
   };
+
+    //로딩
+    if (loading || recipeListLoading ) {
+      return <Loading />;
+    }
+  
 
   return (
     <Wrapper>
@@ -107,14 +136,14 @@ const MyRecipes = () => {
           placeholder={t("sentence.searching")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          // onKeyDown={handleKeyDown} // 엔터 키로 검색
+          onKeyDown={handleKeyDown} // 엔터 키로 검색
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   // color="primary"
                   aria-label="toggle password visibility"
-                  // onClick={handleSearchClick}
+                  onClick={handleSearchClick}
                   edge="end"
                 >
                   <SearchIcon />
@@ -129,9 +158,9 @@ const MyRecipes = () => {
           <Grid container spacing={2}>
             {loading && !hasMore ? (
               <Loading />
-            ) : likedRecipes.length > 0 ? (
+            ) : recipeList.length > 0 ? (
               <>
-                {likedRecipes.map((recipeItem, index) => (
+                {recipeList.map((recipeItem : any, index : any) => (
                   <Grid
                     item
                     xs={12}
