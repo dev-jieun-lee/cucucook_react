@@ -194,8 +194,6 @@ function Faq() {
 
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
-    console.log(page);
-
     setCurrentPage(page);
     setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
     refetch();

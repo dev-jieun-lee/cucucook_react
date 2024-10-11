@@ -151,8 +151,6 @@ function Notice() {
     staleTime: 0,
   });
 
-  console.log(boardListWithCategory);
-
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
     if (triggerSearch) {
@@ -201,8 +199,6 @@ function Notice() {
 
   // 페이지 변경 핸들러
   const handlePageChange = (event: any, page: any) => {
-    console.log(page);
-
     setCurrentPage(page);
     setTriggerSearch(true); // 페이지 변경 시 검색 트리거 활성화
     refetch();
