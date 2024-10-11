@@ -93,7 +93,7 @@ function QnaDetail() {
       const parentPosts: any[] = [];
       const replyPosts: any[] = [];
 
-      boardWithCategory.data.forEach((item: { status: string }) => {
+      boardWithCategory.data?.forEach((item: { status: string }) => {
         if (item.status === "0") {
           parentPosts.push(item); // 부모글
         } else if (item.status === "1") {
@@ -105,7 +105,8 @@ function QnaDetail() {
 
       setPBoardData(parentPosts);
       setReBoardData(replyPosts);
-      if (reBoardData) {
+
+      if (reBoardData.length > 0) {
         const uploadFiles = await getUploadFileListData(replyPosts[0].boardId);
         setUploadFileList(uploadFiles);
       }
@@ -154,11 +155,16 @@ function QnaDetail() {
     staleTime: 0,
   });
 
+
   useEffect(() => {
     if (reBoardData.length > 0) {
       setReBoardId(reBoardData[0].boardId);
     }
+    else{
+      setReBoardId("");
+    }
   }, [reBoardData]);
+
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
