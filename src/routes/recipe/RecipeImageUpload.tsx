@@ -118,7 +118,7 @@ const RecipeImageUpload = forwardRef<
     }, [initialServerImageVisible]);
 
     return (
-      <Box>
+      <Box >
         {!isServerImgVisible && !image ? (
           <Box
             ref={buttonContainerRef}
@@ -166,7 +166,7 @@ const RecipeImageUpload = forwardRef<
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: "8px",
+              borderRadius: "8px"
             }}
           >
             <img
