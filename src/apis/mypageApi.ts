@@ -30,8 +30,6 @@ function handleApiError(error: unknown) {
   }
 }
 
-
-
 // 내정보 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
   try {
@@ -155,12 +153,20 @@ export const fetchMyReplies = async (
   pageSize: number,
   sortOption: string,
   sortDirection: string,
-  search : string,
-  searchType : string
+  search: string,
+  searchType: string
 ) => {
   try {
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
-      params: {memberId, page, pageSize,  sortOption, sortDirection, search, searchType},
+      params: {
+        memberId,
+        page,
+        pageSize,
+        sortOption,
+        sortDirection,
+        search,
+        searchType,
+      },
     });
     return response.data;
   } catch (error) {
@@ -169,31 +175,14 @@ export const fetchMyReplies = async (
   }
 };
 
-
-//댓글 삭제
-export const deleteReply = async (memberId: string, commentId: string) => {
-  try {
-    //console.log("api.ts 진입");
-    const response = await axios.delete(`${BASE_URL}/delete`, {
-      params: { memberId, commentId },
-    });
-    // console.log("api.ts 들어갔다 나옴");
-    return response.data;
-  } catch (error) {
-    console.error("Failed to delete reply:", error);
-    throw error;
-  }
-};
-
-
 //게시물
 export const fetchMyWrites = async (
   memberId: string,
   page: number,
   pageSize: number,
   boardDivision: string,
-  search : string,
-  searchType : string
+  search: string,
+  searchType: string
 ) => {
   try {
     // 여기서 boardDivision을 로깅합니다.
@@ -206,7 +195,7 @@ export const fetchMyWrites = async (
         pageSize,
         boardDivision,
         search,
-        searchType
+        searchType,
       },
     });
     return response.data;
@@ -230,7 +219,7 @@ export async function updateMember(
       name,
       email,
       phone,
-      role
+      role,
     });
     return response.data;
   } catch (error) {
@@ -317,8 +306,8 @@ export const fetchMyComments = async (
   memberId: number,
   page: number,
   pageSize: number,
-  search : string,
-  searchType : string
+  search: string,
+  searchType: string
 ) => {
   try {
     // console.log(" 최신 댓글5개 Params:", { memberId, page, pageSize });
@@ -328,7 +317,7 @@ export const fetchMyComments = async (
         page: 1,
         pageSize: 5,
         search,
-        searchType
+        searchType,
       },
     });
     // console.log("최신 댓글Response from API:", response.data);

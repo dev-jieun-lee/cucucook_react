@@ -37,13 +37,13 @@ export const LoginWrapper = styled.div`
 
   .input-form {
     width: 100%;
-    margin-bottom : 20px;
+    margin-bottom: 20px;
     .input {
       display: block;
       margin-top: 15px;
     }
-    .input-email{
-      margin : 0;
+    .input-email {
+      margin: 0;
     }
   }
 
@@ -86,7 +86,7 @@ export const LoginWrapper = styled.div`
   `};
 
   .email-btn {
-    align-items : center;
+    align-items: center;
     height: 54px;
     margin-top: -13px;
     font-size: 15px;
@@ -104,15 +104,14 @@ export const SnsLogin = styled.div`
   width: 60%;
   height: 40px;
   display: flex;
-  .naver{
+  .naver {
     width: 50%;
-    
   }
-  .kakao{
+  .kakao {
     width: 50%;
     margin-right: 5px;
   }
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 `;
@@ -244,7 +243,7 @@ export const FindIdBox = styled(Box)`
     margin-top: 7px;
     font-size: 16px;
   }
-  .email-area{
+  .email-area {
     align-items: center;
   }
   .submit {

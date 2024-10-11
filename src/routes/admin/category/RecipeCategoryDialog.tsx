@@ -22,7 +22,12 @@ import * as Yup from "yup";
 import { handleApiError } from "../../../hooks/errorHandler";
 import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
-import { deleteRecipeCategory, getRecipeCategory, insertRecipeCategory, updateRecipeCategory } from "../../../apis/adminApi";
+import {
+  deleteRecipeCategory,
+  getRecipeCategory,
+  insertRecipeCategory,
+  updateRecipeCategory,
+} from "../../../apis/adminApi";
 
 interface RecipeCategoryDialogProps {
   open: boolean;
