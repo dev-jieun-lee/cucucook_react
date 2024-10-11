@@ -249,9 +249,9 @@ export const TitleArea = styled.div`
       display : block;
       text-align: left;
       line-height : 7px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap;         
+      overflow: hidden;    
+      text-overflow: ellipsis; 
       padding-top : 15px;
     `};
   }
@@ -268,7 +268,7 @@ export const TitleArea = styled.div`
     `};
     .m-border {
       ${media.medium`
-        display: none;
+        display: none; 
       `};
     }
     .border {

@@ -16,6 +16,7 @@ import {
 import i18n from "./locales/i18n";
 import RoutesConfig from "./RoutesConfig";
 import Loading from "./components/Loading";
+import AutoScrollTop from "./components/AutoScrollTop";
 
 const Header = lazy(() => import("./components/Header"));
 const Footer = lazy(() => import("./components/Footer"));
@@ -49,6 +50,7 @@ function App() {
             <StyledEngineProvider injectFirst>
               <CssBaseline />
               <BrowserRouter>
+              <AutoScrollTop/>
                 <Suspense fallback={<Loading />}>
                   <Box sx={{ width: "100%" }}>
                     <Header
