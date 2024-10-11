@@ -24,7 +24,7 @@ import {
   TitleCenter,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { deleteReply, fetchMyReplies } from "../../apis/mypageApi";
+import { fetchMyReplies } from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -42,6 +42,10 @@ import { DeleteIconButton } from "../../styles/AdminStyle";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../components/Loading";
+import {
+  deleteRecipeComment,
+  deleteRecipeCommentHasChild,
+} from "../../apis/recipeApi";
 
 const MyReplys: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
@@ -56,6 +60,7 @@ const MyReplys: React.FC<{}> = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortDirection, setSortDirection] = useState("DESC"); // 정렬 방향 (DESC 또는 ASC)
   const [sortOption, setSortOption] = useState("comment");
+  const [currentCommentId, setCurrentCommentId] = useState<string | null>(null);
 
   let memberId = user ? user.memberId.toString() : null;
 
@@ -149,57 +154,123 @@ const MyReplys: React.FC<{}> = () => {
     navigate(`/recipe/member_recipe/${id}`);
   };
 
-  //삭제
-  const { mutate: deleteCommentMutation } = useMutation(
-    (commentId: string) => deleteReply(memberId!, commentId),
+  //댓글삭제
+
+  const handleDeleteCommentClick = async (
+    recipeId: string,
+    commentId: string,
+    hasChildComment: boolean // boolean 타입으로 명시
+  ) => {
+    try {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: t("text.delete"),
+        text: t("recipe.alert.delete_comment_confirm"),
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: t("text.yes"),
+        cancelButtonText: t("text.no"),
+      });
+
+      if (result.isConfirmed) {
+        const params = {
+          recipeId: recipeId,
+          commentId: commentId,
+          hasChildComment: hasChildComment, // boolean 값 사용
+        };
+        if (hasChildComment) {
+          console.log("Deleting a comment with children", params);
+          return;
+          deleteRecipeCommentHasChildMutation(params);
+        } else {
+          console.log("Deleting a comment without children", params);
+          return;
+
+          deleteRecipeCommentMutation(params);
+        }
+      }
+    } catch (error) {
+      console.error("Error in deleting comment: ", error);
+      return { message: "E_ADMIN", success: false, data: [], addData: {} };
+    }
+  };
+
+  // 대댓글 있는 댓글 삭제
+  const { mutate: deleteRecipeCommentHasChildMutation } = useMutation(
+    (params: {
+      recipeId: string;
+      commentId: string;
+      hasChildComment: boolean;
+    }) => {
+      setCurrentCommentId(params.commentId); // 현재 댓글 ID 저장
+      console.log("대댓글이 있는댓글");
+      return deleteRecipeCommentHasChild(params);
+    },
     {
-      onSuccess: (data) => {
+      onMutate: async (params) => {
+        // 여기에서도 저장 가능
+        setCurrentCommentId(params.commentId);
+      },
+      onSuccess: () => {
         Swal.fire({
           icon: "success",
           title: t("text.delete"),
-          text: t("menu.board.alert.delete"),
+          text: t("recipe.alert.delete_comment_confirm_sucecss"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
-        window.location.reload();
+        console.log(
+          `Delete successful for comment ID: ${currentCommentId} with child comments.`
+        );
+        setCurrentCommentId(null); // 처리 완료 후 ID 초기화
       },
-      onError: (error: any) => {
-        const errorCode = error.response?.data.errorCode;
+      onError: (error) => {
         Swal.fire({
           icon: "error",
           title: t("text.delete"),
-          text: t("menu.board.alert.delete_error"),
+          text: t("recipe.alert.delete_comment_confirm_error"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
       },
     }
   );
-  const onClickDelete = (commentId: string, hasChildComment: boolean) => {
-    if (hasChildComment === true) {
-      Swal.fire({
-        icon: "error",
-        title: t("text.delete"),
-        text: t("mypage.comment_delete_error"),
-        showConfirmButton: true,
-        confirmButtonText: t("text.check"),
-      });
-    } else {
-      Swal.fire({
-        icon: "warning",
-        title: t("text.delete"),
-        text: t("mypage.confirm_delete", { value: t("text.comment") }),
-        showCancelButton: true,
-        confirmButtonText: t("text.delete"),
-        cancelButtonText: t("text.cancel"),
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // 삭제 API 호출
-          deleteCommentMutation(commentId as string);
-        }
-      });
+
+  // 대댓글 없는 댓글 삭제
+  const { mutate: deleteRecipeCommentMutation } = useMutation(
+    (params: {
+      recipeId: string;
+      commentId: string;
+      hasChildComment: boolean;
+    }) => {
+      setCurrentCommentId(params.commentId); // 현재 댓글 ID 저장
+      return deleteRecipeComment(params);
+    },
+    {
+      onSuccess: () => {
+        Swal.fire({
+          icon: "success",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+        console.log(
+          `Delete successful for comment ID: ${currentCommentId} without child comments.`
+        );
+        setCurrentCommentId(null); // 처리 완료 후 ID 초기화
+      },
+      onError: (error) => {
+        Swal.fire({
+          icon: "error",
+          title: t("text.delete"),
+          text: t("recipe.alert.delete_comment_confirm_error"),
+          showConfirmButton: true,
+          confirmButtonText: t("text.check"),
+        });
+      },
     }
-  };
+  );
 
   //로딩
   if (loading || commentListLoading) {
@@ -301,9 +372,17 @@ const MyReplys: React.FC<{}> = () => {
                 <Box className="delete">
                   <DeleteIconButton
                     className="icon-btn"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onClickDelete(item.commentId, item.hasChildComment);
+                    onClick={() => {
+                      if (item.commentId && item.recipeId) {
+                        const hasChildren = item.hasChildComment === "true"; // 문자열을 boolean으로 변환
+                        handleDeleteCommentClick(
+                          item.recipeId,
+                          item.commentId,
+                          hasChildren // boolean 값으로 전달
+                        );
+                      } else {
+                        console.error("recipeId or commentId is missing");
+                      }
                     }}
                   >
                     <DeleteForeverIcon color="error" className="delete-icon" />
