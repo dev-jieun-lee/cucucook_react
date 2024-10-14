@@ -5,8 +5,6 @@ import {
   FormControl,
   TextField,
 } from "@mui/material";
-import { activityUserInfoStyles } from "./myPageStyles";
-
 import { useNavigate } from "react-router-dom";
 import { TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import { ExpandMore, Visibility, VisibilityOff } from "@mui/icons-material";

@@ -11,7 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { useInView } from "react-intersection-observer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { useQuery } from "react-query";
 import Loading from "../../components/Loading";
@@ -29,12 +29,13 @@ import {
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
 import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
+import ScrollTop from "../../components/ScrollTop";
 
-const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const LikeLists = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const memberId = user?.memberId || 0; // 기본값을 0으로 설정하여 undefined를 방지합니다.
+  const memberId = user?.memberId || 0; 
 
   const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -44,18 +45,26 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
   const [search, setSearch] = useState(""); // 검색어 상태
   const [triggerSearch, setTriggerSearch] = useState(false); // 검색 트리거 추가
   const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 12;
+
+   // 검색 파라미터 URL 업데이트
+  useEffect(() => {
+    setSearchParams({
+      search: search
+      // currentPage: currentPage.toString()
+    });
+  }, [search, setSearchParams]);
 
   // 데이터 가져오기 함수
   const fetchData = async (page: number, keyword: string) => {
+    
+    // if (loading || isFetching) return; 
     setLoading(true);
     const startValue = (page - 1) * itemsPerPage;
-
     try {
-      console.log(
-        `API 호출: memberId=${memberId}, start=${startValue}, keyword=${keyword}`
-      );
+      await new Promise((resolve) => setTimeout(resolve, 300));
       const response = await getRecipeLikeListOtherInfo(
         memberId,
         "all",
@@ -64,7 +73,6 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
         startValue,
         search
       );
-
       if (response && response.length > 0) {
         setLikedRecipes((prevRecipes) =>
           triggerSearch ? response : [...prevRecipes, ...response]
@@ -77,21 +85,10 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
       console.error("데이터 가져오기 오류:", error);
     } finally {
       setLoading(false);
+      setIsFetching(false);
       setTriggerSearch(false);
     }
   };
-
-  // useQuery로 데이터 관리
-  const { refetch } = useQuery(
-    [currentPage, search],
-    () => fetchData(currentPage, search),
-    {
-      enabled: true, // 검색 실행 시 쿼리 실행
-      keepPreviousData: false,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    }
-  );
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -103,9 +100,18 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
   // 무한 스크롤 감지 및 다음 페이지 요청
   useEffect(() => {
     if (inView && hasMore && !loading && !triggerSearch) {
+      setIsFetching(true);
       setCurrentPage((prev) => prev + 1);
     }
   }, [inView, hasMore, loading, triggerSearch]);
+
+  // currentPage가 업데이트될 때마다 fetchData 호출
+  useEffect(() => {
+    
+    if (currentPage > 1) {
+      fetchData(currentPage, search);
+    }
+  }, [currentPage]);
 
   // 검색 실행 시 데이터 초기화 및 리패치
   const handleSearchClick = () => {
@@ -309,6 +315,7 @@ const LikeLists = ({ isDarkMode }: { isDarkMode: boolean }) => {
           </Grid>
         </Box>
       </Box>
+      <ScrollTop />
     </Wrapper>
   );
 };

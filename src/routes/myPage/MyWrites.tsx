@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import {
   CustomPagination,
   PageTitleBasic,

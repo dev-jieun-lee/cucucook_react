@@ -22,6 +22,7 @@ import Loading from "../../../components/Loading";
 import dayjs from "dayjs";
 import { TitleCenter, Wrapper } from "../../../styles/CommonStyles";
 import BoardFilesList from "../BoardFilesList";
+import ScrollTop from "../../../components/ScrollTop";
 
 function NoticeDetail() {
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
@@ -204,6 +205,7 @@ function NoticeDetail() {
       ) : (
         <></>
       )}
+      <ScrollTop />
     </Wrapper>
   );
 }
