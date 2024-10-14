@@ -310,7 +310,7 @@ function RoutesConfig({ isDarkMode }: any) {
           element={
             <RouteBox>
               <MypageSideMenu isDarkMode={isDarkMode} />
-              <LikeLists isDarkMode={false} />
+              <LikeLists />
             </RouteBox>
           }
         />

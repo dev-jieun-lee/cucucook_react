@@ -21,6 +21,7 @@ import { fetchMyRecipeList } from "../../apis/mypageApi";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
 import { useQuery } from "react-query";
+import ScrollTop from "../../components/ScrollTop";
 
 const MyRecipes = () => {
   const { t } = useTranslation();
@@ -31,12 +32,14 @@ const MyRecipes = () => {
   const [searchType, setSearchType] = useState("title"); // 검색 유형
   const [searchParams, setSearchParams] = useSearchParams();
   const [triggerSearch, setTriggerSearch] = useState(true);
-  const [likedRecipes, setLikedRecipes] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const { ref: lastItemRef, inView } = useInView({ threshold: 1 });
+  const [myRecipes, setMyRecipes] = useState<any[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const display = 10;
+  const itemsPerPage = 12;
 
   // 검색 파라미터 URL 업데이트
   useEffect(() => {
@@ -47,56 +50,70 @@ const MyRecipes = () => {
     });
   }, [search, searchType, setSearchParams]);
 
-  // 데이터를 불러오는 API 호출 함수
-  const getRecipeListApi = async () => {
-    const writesData = await fetchMyRecipeList(
-      memberId!, undefined, search, searchType
-    ); 
-    return writesData;
-  };
-
-  // 데이터 가져오기 시 로딩 상태 추가
-  const getRecipeWithDelay = async () => {
-    setLoading(true); // 로딩 상태 시작
-
-    // 인위적인 지연 시간 추가
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    const recipes= await getRecipeListApi(); // 데이터 불러오기
-
-    setLoading(false);
-    return recipes;
-  };
-
-
-  const {
-    data: recipeList,
-    isLoading: recipeListLoading,
-    refetch,
-  } = useQuery(["recipes"], getRecipeWithDelay, {
-    enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
-    keepPreviousData: false,
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-  });
-
-  // 트리거 변경 시 데이터 초기화 및 로딩 처리
-  useEffect(() => {
-    if (triggerSearch) {
-      refetch(); // 데이터 가져오기
-      setTriggerSearch(false); // 트리거를 false로 초기화
+  // 데이터 가져오기 함수
+  const fetchData = async (page: number, keyword: string) => {
+    
+    // if (loading || isFetching) return; 
+    setLoading(true);
+    const startValue = (page - 1) * itemsPerPage;
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const response = await fetchMyRecipeList(
+        memberId!, itemsPerPage, search, searchType, startValue
+      );
+      if (response && response.length > 0) {
+        setMyRecipes((prevRecipes) =>
+          triggerSearch ? response : [...prevRecipes, ...response]
+        );
+        setHasMore(response.length === itemsPerPage);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("데이터 가져오기 오류:", error);
+    } finally {
+      setLoading(false);
+      setIsFetching(false);
+      setTriggerSearch(false);
     }
-  }, [triggerSearch, refetch]);
-
-  // 검색 버튼 클릭 핸들러
-  const handleSearchClick = () => {
-    // setCurrentPage(1);
-    setTriggerSearch(true); // 검색 트리거를 true로 설정하여 검색 실행
-    refetch(); // refetch를 호출해 쿼리를 수동으로 실행
   };
 
-  // 엔터 키로 검색 실행 핸들러
-  const handleKeyDown = (e: any) => {
+  // 초기 데이터 로드
+  useEffect(() => {
+    if (memberId !== 0) {
+      fetchData(1, ""); // 처음 진입 시 검색어 없이 첫 페이지 데이터를 로드
+    }
+  }, [memberId]);
+
+  
+  // 무한 스크롤 감지 및 다음 페이지 요청
+  useEffect(() => {
+    if (inView && hasMore && !loading && !triggerSearch) {
+      setIsFetching(true);
+      setCurrentPage((prev) => prev + 1);
+    }
+  }, [inView, hasMore, loading, triggerSearch]);
+
+  // currentPage가 업데이트될 때마다 fetchData 호출
+  useEffect(() => {
+  
+    if (currentPage > 1) {
+      fetchData(currentPage, search);
+    }
+  }, [currentPage]);
+
+  // 검색 실행 시 데이터 초기화 및 리패치
+  const handleSearchClick = () => {
+    if (!memberId || memberId === 0) return;
+    setHasMore(true);
+    setCurrentPage(1);
+    setTriggerSearch(true);
+    setMyRecipes([]);
+    fetchData(1, search); // 검색어를 포함하여 첫 페이지부터 데이터 로드
+  };
+
+  // 검색 필드에서 Enter 키 입력 시 검색 실행
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSearchClick();
     }
@@ -107,11 +124,6 @@ const MyRecipes = () => {
     navigate(pullPath);
   };
 
-    //로딩
-    if (loading || recipeListLoading ) {
-      return <Loading />;
-    }
-  
 
   return (
     <Wrapper>
@@ -158,9 +170,9 @@ const MyRecipes = () => {
           <Grid container spacing={2}>
             {loading && !hasMore ? (
               <Loading />
-            ) : recipeList.length > 0 ? (
+            ) : myRecipes.length > 0 ? (
               <>
-                {recipeList.map((recipeItem : any, index : any) => (
+                {myRecipes.map((recipeItem : any, index : any) => (
                   <Grid
                     item
                     xs={12}
@@ -298,6 +310,7 @@ const MyRecipes = () => {
           </Grid>
         </Box>
       </Box>
+      <ScrollTop />
     </Wrapper>
   );
 };

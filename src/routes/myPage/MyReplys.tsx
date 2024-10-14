@@ -30,7 +30,6 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import { activityStyles, scrollButtonStyles } from "./myPageStyles";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
 import {

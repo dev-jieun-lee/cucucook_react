@@ -329,7 +329,13 @@ export const fetchMyComments = async (
 };
 
 // 모든 레시피를 가져오는 함수
-export const fetchMyRecipeList = async (memberId: number, limit?: number, search? : string, searchType? : string) => {
+export const fetchMyRecipeList = async (
+  memberId: number,
+  limit?: number,
+  search?: string,
+  searchType?: string,
+  start?: number
+) => {
   try {
     // console.log("레시피 Params:", { memberId, limit });
 
@@ -339,6 +345,7 @@ export const fetchMyRecipeList = async (memberId: number, limit?: number, search
         memberId,
         search,
         searchType,
+        start,
         ...(limit !== undefined && { limit }), // limit이 undefined가 아닐 경우에만 포함
       },
     });

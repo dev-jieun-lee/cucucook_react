@@ -42,6 +42,7 @@ import QuillEditer from "../QuillEditer";
 import dayjs from "dayjs";
 import BoardFilesUpload from "../BoardFilesUpload";
 import { convertFileSize } from "../../utils/commonUtil";
+import ScrollTop from "../../../components/ScrollTop";
 
 //첨부파일
 interface UploadFiles {
@@ -526,6 +527,7 @@ function QnaDetail() {
           )}
         </>
       </div>
+      <ScrollTop />
     </Wrapper>
   );
 }
