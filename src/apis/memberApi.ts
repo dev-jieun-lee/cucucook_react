@@ -14,7 +14,6 @@ const api = axios.create({
   },
 });
 
-
 // 로그인 요청
 export async function login(form: {
   userId: string;
@@ -30,7 +29,6 @@ export async function login(form: {
     } else {
       console.error("알 수 없는 오류 발생:", error);
     }
-
   }
 }
 
@@ -40,8 +38,7 @@ export async function logout() {
     const response = await api.post("/logout");
 
     return response.data;
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // 핸드폰번호 중복체크
@@ -86,21 +83,17 @@ export const findId = async (data: {
 // 이메일 인증 코드 발송
 export const useSendEmailVerificationCode = () =>
   useMutation((email: string) =>
-    api
-      .post("/sendVerificationCode", { email })
-      .then((response) => {
-        return response.data;
-      })
+    api.post("/sendVerificationCode", { email }).then((response) => {
+      return response.data;
+    })
   );
 
 // 이메일 인증 코드 검증
 export const useVerifyEmailCode = () =>
   useMutation(({ email, code }: { email: string; code: string }) =>
-    api
-      .post("/verify", { email, code })
-      .then((response) => {
-        return response.data;
-      })
+    api.post("/verify", { email, code }).then((response) => {
+      return response.data;
+    })
   );
 
 // 이메일 중복 체크 API
@@ -135,8 +128,7 @@ export async function validateToken(token: string) {
   try {
     const response = await api.post("/validateToken", { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // 이메일, 이름, ID로 사용자 존재 여부 확인 API
@@ -207,5 +199,7 @@ export async function autoLogin() {
     const response = await api.get("/getAutoLogin");
     return response.data;
   } catch (error) {
+    console.error(error);
+    throw error;
   }
 }

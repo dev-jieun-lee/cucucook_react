@@ -314,7 +314,7 @@ const MemberRecipe = () => {
   return (
     <Wrapper>
       <RecipeView>
-        <Box component="section" sx={{ width: "100%"}} padding={"20px 0"}>
+        <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
               {t("text.member_recipe")} &nbsp;
@@ -515,10 +515,21 @@ const MemberRecipe = () => {
                                   </Box>
                                 </Button>
                               ) : (
-                                <Box display="flex" alignItems="center">
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  sx={{
+                                    fontSize: "0.875rem",
+                                    padding: "8px 6px",
+                                    minWidth: "64px",
+                                    justifyContent: "center",
+                                  }}
+                                >
                                   <FavoriteBorderIcon
                                     fontSize="small"
-                                    style={{ verticalAlign: "middle" }}
+                                    style={{
+                                      verticalAlign: "middle",
+                                    }}
                                   />
                                   <Box component="span" ml={0.5}>
                                     {likeCount}
