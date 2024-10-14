@@ -116,7 +116,7 @@ const MyWrites: React.FC<{}> = () => {
     isLoading: boardListLoading,
     refetch,
   } = useQuery(
-    ["boardListWithCategory", currentPage, search, searchType, boardDivision],
+    ["boardListWithCategory", currentPage, boardDivision],
     getBoardListWithDelay,
     {
       enabled: triggerSearch, // 검색 트리거 활성화 시 쿼리 실행
