@@ -316,14 +316,14 @@ const UserInfo = () => {
           >
             {t("mypage.change_password")}
           </PwChangeButton>
-          <ConnectButton>
+          {/* <ConnectButton>
             <Button className="con-btn kakao" variant="outlined">
               {t("mypage.connect_kakao")}
             </Button>
             <Button className="con-btn naver" variant="outlined">
               {t("mypage.connect_naver")}
             </Button>
-          </ConnectButton>
+          </ConnectButton> */}
           <BoardButtonArea>
             <Button
               className="cancel-btn"

@@ -28,8 +28,8 @@ import {
 } from "../../styles/RecipeStyle";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
-import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
 import ScrollTop from "../../components/ScrollTop";
+import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
 
 const LikeLists = () => {
   const { t } = useTranslation();
@@ -75,9 +75,6 @@ const LikeLists = () => {
         search
       );
 
-      // if(response.length < itemsPerPage){
-      //   return;
-      // }
       if (response && response.length > 0) {
         setLikedRecipes((prevRecipes) =>
           triggerSearch ? response : [...prevRecipes, ...response]

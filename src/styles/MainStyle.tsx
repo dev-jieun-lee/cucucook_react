@@ -303,7 +303,7 @@ export const MainNoticeTable = styled.div`
       `};
     }
     .item-date {
-      flex: 3;
+      flex: 4;
       ${media.small`
         flex: 5;
       `};
@@ -338,6 +338,7 @@ export const MainNoticeTable = styled.div`
       `};
     }
     .item-date-row {
+      text-align : center;
       flex: 3;
       ${media.medium`
         font-size: 14px;
@@ -351,7 +352,7 @@ export const MainNoticeTable = styled.div`
     }
     .contents {
       width: 95%;
-      flex: 13;
+      flex: 10;
       display: flex;
       text-align: left;
       align-items: flex-start;
@@ -359,7 +360,7 @@ export const MainNoticeTable = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       ${media.small`
-        flex: 11;
+        flex: 13;
         /* flex: 4; */
         /* margin-left : 20px; */
         flex-direction: column;

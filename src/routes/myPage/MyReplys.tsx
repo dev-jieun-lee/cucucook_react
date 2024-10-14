@@ -24,7 +24,6 @@ import {
   TitleCenter,
   Wrapper,
 } from "../../styles/CommonStyles";
-import { fetchMyReplies } from "../../apis/mypageApi";
 import { useAuth } from "../../auth/AuthContext";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -45,6 +44,7 @@ import {
   deleteRecipeComment,
   deleteRecipeCommentHasChild,
 } from "../../apis/recipeApi";
+import { fetchMyReplies } from "../../apis/mypageApi";
 
 const MyReplys: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
@@ -112,7 +112,6 @@ const MyReplys: React.FC<{}> = () => {
     refetchOnWindowFocus: false,
     staleTime: 0,
   });
-  console.log(commentList);
 
   // 트리거 변경 시 데이터 초기화 및 로딩 처리
   useEffect(() => {
@@ -178,11 +177,9 @@ const MyReplys: React.FC<{}> = () => {
           hasChildComment: hasChildComment, // boolean 값 사용
         };
         if (hasChildComment) {
-          console.log("Deleting a comment with children", params);
           return;
           deleteRecipeCommentHasChildMutation(params);
         } else {
-          console.log("Deleting a comment without children", params);
           return;
 
           deleteRecipeCommentMutation(params);
@@ -202,7 +199,6 @@ const MyReplys: React.FC<{}> = () => {
       hasChildComment: boolean;
     }) => {
       setCurrentCommentId(params.commentId); // 현재 댓글 ID 저장
-      console.log("대댓글이 있는댓글");
       return deleteRecipeCommentHasChild(params);
     },
     {
@@ -218,9 +214,6 @@ const MyReplys: React.FC<{}> = () => {
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
-        console.log(
-          `Delete successful for comment ID: ${currentCommentId} with child comments.`
-        );
         setCurrentCommentId(null); // 처리 완료 후 ID 초기화
       },
       onError: (error) => {
@@ -254,9 +247,6 @@ const MyReplys: React.FC<{}> = () => {
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
-        console.log(
-          `Delete successful for comment ID: ${currentCommentId} without child comments.`
-        );
         setCurrentCommentId(null); // 처리 완료 후 ID 초기화
       },
       onError: (error) => {

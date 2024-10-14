@@ -107,6 +107,9 @@ export const SnsLogin = styled.div`
   width: 60%;
   height: 40px;
   display: flex;
+  ${media.small`
+    width: 80%;
+  `};
   .naver {
     width: 50%;
   }
