@@ -74,16 +74,11 @@ function Login() {
       rememberLogin: false,
     },
     onSubmit: async (values) => {
-      console.log("로그인 페이지 트라이케치 전");
-      console.log("로그인 요청 데이터:", values); // 로그인 요청 데이터 확인
       try {
         const response = await login(values);
-        console.log("로그인 성공 후 응답 확인:", response); // 응답 확인 로그
 
         //로그인 잠금시 로그인 시도일 경우
         if (response.lockoutTime && response.lockoutTime > 0) {
-          console.log("로그인잠금인경우", response.lockoutTime);
-          // 서버가 로그인 성공을 허용하지 않은 상태이므로 경고 메시지 출력
           Swal.fire({
             title: "계정 잠김",
             text: `계정이 아직 잠겨 있습니다. ${response.lockoutTime}초 후에 다시 시도해주세요.`,
@@ -97,7 +92,6 @@ function Login() {
 
         // 기존 response.token 대신 response.accessToken을 사용하여 조건 확인
         if (response.accessToken && response.refreshToken) {
-          console.log("엑세스 토큰 및 리프레시 토큰 확인됨");
           handleSaveId(values.userId, saveId);
 
           setUser({
@@ -117,7 +111,6 @@ function Login() {
       } catch (error: any) {
         // 서버에서 전달된 에러 데이터를 변수에 저장
         const serverData = error.response?.data;
-        console.log("서버 응답 데이터:", serverData);
 
         // 실패 횟수와 잠금 시간을 상태로 업데이트
         setFailedAttempts(serverData?.failedAttempts || 0);

@@ -35,13 +35,11 @@ let isKakaoCallbackProcessing = false;
 
 // 중복 요청 방지를 위한 플래그를 전역 변수로 설정하지 말고, 로컬 스테이트나 다른 메커니즘을 사용
 export const handleKakaoCallback = async (code: string) => {
-  console.log("인가 코드 수신:", code);
   try {
     const params = new URLSearchParams({ code }).toString();
     const response = await axios.post(`${KAKAO_BACKEND_URL}?${params}`, null, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
-    console.log("카카오 로그인 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("카카오 로그인 처리 중 오류 발생", error);
@@ -50,7 +48,6 @@ export const handleKakaoCallback = async (code: string) => {
 };
 
 export const handleNaverCallback = async (code: string) => {
-  console.log("네이버 인가코드:", code);
   try {
     // 쿼리 파라미터로 코드를 전달합니다.
     const params = new URLSearchParams({ code });
@@ -58,8 +55,6 @@ export const handleNaverCallback = async (code: string) => {
       `${NAVER_BACKEND_URL}?${params.toString()}`
     );
 
-    // 성공적으로 로그인한 경우 사용자 정보를 반환
-    console.log("네이버 로그인 성공:", response.data);
     return response.data; // 사용자 정보 반환
   } catch (error) {
     console.error("네이버 로그인 처리 중 오류 발생", error);

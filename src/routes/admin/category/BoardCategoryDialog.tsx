@@ -108,7 +108,6 @@ function BoardCategoryDialog({ open, onClose, categoryId }: BoardCategoryDialogP
       if (!values.color) {
         values.color = "#000000"; 
       }
-      console.log(values);
       
       mutation.mutate(values as any); // mutation 실행
     },

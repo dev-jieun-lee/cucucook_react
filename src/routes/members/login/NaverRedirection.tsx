@@ -15,7 +15,6 @@ const NaverCallback = () => {
         try {
           const data = await handleNaverCallback(code);
           // 이후 사용자 정보를 처리 (예: 로그인 상태 업데이트)
-          console.log("사용자 정보:", data);
           setUser({
             userId: data.member.userId,
             name: data.member.name,

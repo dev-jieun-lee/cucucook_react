@@ -50,7 +50,6 @@ export function useEmailVerification() {
   const handleSendCode = (email: string) => {
     sendVerificationCodeMutation.mutate(email, {
       onSuccess: (data) => {
-        console.log("인증 코드 발송 응답 데이터:", data); // 응답 데이터 콘솔 로그
         setIsCodeSent(true);
         setTimer(60); // 타이머를 60초로 초기화
         setEmailSendResult(t("members.verification_code_sent"));
@@ -68,7 +67,6 @@ export function useEmailVerification() {
       { email, code },
       {
         onSuccess: (data) => {
-          console.log("인증 코드 검증 응답 데이터:", data); // 응답 데이터 콘솔 로그
           if (data.success) {
             setIsCodeVerified(true);
             setVerificationResult(t("members.verification_success"));

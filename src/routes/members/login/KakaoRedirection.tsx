@@ -17,7 +17,6 @@ const KakaoCallback = () => {
       setIsProcessing(true);
       handleKakaoCallback(code)
         .then((data) => {
-          console.log("카카오 로그인 성공:", data);
           setUser({
             userId: data.member.userId,
             name: data.member.name,

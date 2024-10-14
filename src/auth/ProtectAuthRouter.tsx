@@ -23,7 +23,6 @@ export const ProtectAuthRouter = () => {
   }
 
   if (!isAuth) {
-    console.log(isLoggedIn);
     Swal.fire({
       icon: "error",
       title: t("text.error"),
