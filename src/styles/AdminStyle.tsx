@@ -12,7 +12,7 @@ export const DeleteIconButton = styled(IconButton)`
   margin: -5px;
   width: 30px;
   height: 30px;
-  .delete-icon{
+  .delete-icon {
     transform: scale(0.9);
   }
 `;
@@ -27,26 +27,26 @@ export const AdminHeaderListItem = styled(ListItem)`
   ${media.small`
     font-size : 14px;
   `};
-  .no{
-    flex : 1;
+  .no {
+    flex: 1;
   }
-  .user-id{
-    flex : 3;
+  .user-id {
+    flex: 3;
     ${media.small`
       display : none;
     `};
   }
-  .user-name{
-    flex : 3;
+  .user-name {
+    flex: 3;
   }
-  .date{
-    flex : 2;
+  .date {
+    flex: 2;
   }
-  .role{
-    flex : 1;
+  .role {
+    flex: 1;
   }
-  .name-area{
-    flex : 6;
+  .name-area {
+    flex: 6;
     display: flex;
     text-align: center;
     ${media.small`
@@ -54,34 +54,33 @@ export const AdminHeaderListItem = styled(ListItem)`
       display : block;
     `};
   }
-  .division{
-    flex : 2;
+  .division {
+    flex: 2;
   }
-  .category{
-    flex : 2;
+  .category {
+    flex: 2;
   }
-  .category-en{
-    flex : 2;
+  .category-en {
+    flex: 2;
   }
-  .color{
-    flex : 1;
+  .color {
+    flex: 1;
   }
-  .category-area{
-    display : flex;
-    flex : 4;
-    .category-en{
+  .category-area {
+    display: flex;
+    flex: 4;
+    .category-en {
       ${media.small`
         display : none;
       `};
     }
   }
-  .delete{
+  .delete {
     ${media.small`
       display : none;
     `};
   }
 `;
-
 
 export const AdminRowListItem = styled(ListItem)`
   width: 100%;
@@ -96,88 +95,88 @@ export const AdminRowListItem = styled(ListItem)`
     cursor: pointer;
     background-color: ${(props) => props.theme.tableHoverColor};
   }
-  .no{
-    flex : 1;
+  .no {
+    flex: 1;
     ${media.small`
       font-size : 14px;
     `};
   }
-  .user-id{
-    flex : 3;
-    width : 90%;
-    white-space: nowrap;         
-    overflow: hidden;    
-    text-overflow: ellipsis; 
+  .user-id {
+    flex: 3;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     ${media.small`
       flex : 2;
       font-size : 13px;
-      color: ${(props : any) => props.theme.navBorderColor};
+      color: ${(props: any) => props.theme.navBorderColor};
     `};
   }
-  .user-name{
-    flex : 3;
+  .user-name {
+    flex: 3;
     ${media.small`
       flex : 2;
     `};
   }
-  .date{
-    flex : 2;
+  .date {
+    flex: 2;
     font-size: 14px;
     ${media.small`
       font-size : 12px;
       color: ${(props: any) => props.theme.navBorderColor};
     `};
   }
-  .role{
-    flex : 1;
+  .role {
+    flex: 1;
     ${media.small`
       font-size : 14px;
     `};
   }
-  .name-area{
-    flex : 6;
+  .name-area {
+    flex: 6;
     display: flex;
     text-align: center;
     ${media.small`
       flex : 2;
-      display : block;
+      display : grid;
       text-align : left;
     `};
   }
-  .division{
-    flex : 2;
-    width : 90%;
-    white-space: nowrap;         
-    overflow: hidden;    
-    text-overflow: ellipsis; 
+  .division {
+    flex: 2;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     ${media.small`
       font-size : 14px;
     `};
   }
-  .category{
-    flex : 2;
-    width : 90%;
-    white-space: nowrap;         
-    overflow: hidden;    
-    text-overflow: ellipsis; 
+  .category {
+    flex: 2;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .color{
-    flex : 1;
+  .color {
+    flex: 1;
   }
-  .category-area{
-    display : flex;
-    flex : 4;
-    width : 90%;
-    white-space: nowrap;         
-    overflow: hidden;    
-    text-overflow: ellipsis; 
+  .category-area {
+    display: flex;
+    flex: 4;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     ${media.small`
       display : block;
       font-size : 14px;
       
     `};
   }
-  .delete{
+  .delete {
     ${media.small`
       display : none;
     `};
