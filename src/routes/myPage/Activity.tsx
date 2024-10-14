@@ -70,12 +70,7 @@ function Activity() {
         fetchMyRecipeList(memberId, 3, "", ""),
         fetchMyComments(memberId, 1, 3, "", ""),
       ]);
-      console.log(stats);
 
-      console.log("Liked Recipes:", likedRecipes); // 데이터 로그 출력
-      console.log("Posts:", posts);
-      console.log("Recipes:", recipes);
-      console.log("Replies:", replies);
       setLikeCount(stats.likeCount);
       setWriteCount(stats.writeCount);
       setReplyCount(stats.replyCount);

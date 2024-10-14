@@ -33,18 +33,9 @@ function handleApiError(error: unknown) {
 // 내정보 비밀번호 검증 API 호출
 export const verifyPassword = async (userId: string, password: string) => {
   try {
-    // API 호출 전 콘솔 로그
-    console.log(
-      `비밀번호 검증 API 호출 시도: userId=${userId}, password=******`
-    );
 
     // API 호출
     const response = await api.post("/verify-password", { userId, password });
-
-    // 응답 상태와 데이터 출력
-    console.log("비밀번호 검증 성공");
-    console.log("응답 상태 코드:", response.status);
-    console.log("응답 데이터:", response.data);
 
     return response.data;
   } catch (error) {
@@ -66,12 +57,10 @@ export const verifyPassword = async (userId: string, password: string) => {
 // 비밀번호 변경 API 호출
 export const changePassword = async (userId: string, newPassword: string) => {
   try {
-    console.log(`비밀번호 변경 시도: userId=${userId}`);
     const response = await api.post("/change-password", {
       userId,
       newPassword,
     });
-    console.log("비밀번호 변경 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -86,11 +75,7 @@ export const updateUserInfo = async (
   phone: string
 ) => {
   try {
-    console.log(
-      `회원 정보 수정 시도: userId=${userId}, name=${name}, email=${email}, phone=${phone}`
-    );
     const response = await api.put("/update", { userId, name, email, phone });
-    console.log("회원 정보 수정 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -100,10 +85,8 @@ export const updateUserInfo = async (
 //내정보 - 회원 탈퇴 API 호출
 export const deleteUserAccount = async (userId: string) => {
   try {
-    console.log(`회원 탈퇴 시도: userId=${userId}`);
     const response = await api.delete(`/delete/${userId}`);
     Cookies.remove("token");
-    console.log("회원 탈퇴 및 토큰 삭제 완료");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -113,9 +96,7 @@ export const deleteUserAccount = async (userId: string) => {
 // SNS 연동 API 호출
 export const connectSNS = async (userId: string, snsType: string) => {
   try {
-    console.log(`SNS 연동 시도: userId=${userId}, snsType=${snsType}`);
     const response = await api.post("/connect-sns", { userId, snsType });
-    console.log("SNS 연동 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -125,9 +106,7 @@ export const connectSNS = async (userId: string, snsType: string) => {
 // SNS 연동 해제 API 호출
 export const disconnectSNS = async (userId: string, snsType: string) => {
   try {
-    console.log(`SNS 연동 해제 시도: userId=${userId}, snsType=${snsType}`);
     const response = await api.post("/disconnect-sns", { userId, snsType });
-    console.log("SNS 연동 해제 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -137,9 +116,7 @@ export const disconnectSNS = async (userId: string, snsType: string) => {
 // 비밀번호 초기화 API 호출
 export const resetPassword = async (email: string) => {
   try {
-    console.log(`비밀번호 초기화 시도: email=${email}`);
     const response = await api.post("/reset-password", { email });
-    console.log("비밀번호 초기화 요청 성공");
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -185,9 +162,6 @@ export const fetchMyWrites = async (
   searchType: string
 ) => {
   try {
-    // 여기서 boardDivision을 로깅합니다.
-    //console.log("Fetching writes with boardDivision:", boardDivision);
-
     const response = await axios.get(`${BASE_URL}/getMyBoards`, {
       params: {
         memberId,
@@ -232,7 +206,6 @@ export async function changePasswordByUser(
   memberId: string,
   newPassword: string
 ) {
-  console.log(`비밀번호 변경 요청: memberId=${memberId}`);
   try {
     const response = await axios.post(
       `${BASE_URL}/ChangePasswordByUserAccordion`,
@@ -241,7 +214,6 @@ export async function changePasswordByUser(
         newPassword,
       }
     );
-    console.log("비밀번호 변경 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("비밀번호 변경 실패:", error);
@@ -265,7 +237,6 @@ export const fetchActivityStats = async (memberId: number) => {
 // 최신 게시글 5개 가져오는 함수
 export const fetchMemberBoardList = async (memberId: number, limit: number) => {
   try {
-    //console.log("최신게시글 Params:", { memberId, limit });
 
     // 백엔드 API 호출
     const response = await axios.get(`${BASE_URL}/getMemberBoardList`, {
@@ -274,7 +245,6 @@ export const fetchMemberBoardList = async (memberId: number, limit: number) => {
         limit, // 가져올 게시글 수 (최신순으로 5개)
       },
     });
-    //  console.log("최신게시글esponse from API:", response.data);
 
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
@@ -310,7 +280,6 @@ export const fetchMyComments = async (
   searchType: string
 ) => {
   try {
-    // console.log(" 최신 댓글5개 Params:", { memberId, page, pageSize });
     const response = await axios.get(`${BASE_URL}/getMyComments`, {
       params: {
         memberId,
@@ -320,7 +289,6 @@ export const fetchMyComments = async (
         searchType,
       },
     });
-    // console.log("최신 댓글Response from API:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching comments:", error);
@@ -337,8 +305,6 @@ export const fetchMyRecipeList = async (
   start?: number
 ) => {
   try {
-    // console.log("레시피 Params:", { memberId, limit });
-
     // 백엔드 API 호출
     const response = await axios.get(`${BASE_URL}/getMemberRecipeList`, {
       params: {
@@ -350,7 +316,6 @@ export const fetchMyRecipeList = async (
       },
     });
 
-    console.log("레시피 Response from API:", response.data);
     // 서버에서 반환된 게시글 목록을 리턴
     return response.data;
   } catch (err) {
@@ -382,7 +347,6 @@ export const fetchLikedRecipes = async (memberId: number) => {
     const response = await axios.get(`${BASE_URL}/getLikedRecipes`, {
       params: { memberId },
     });
-    // console.log("찜한 레시피 목록 로드 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("찜한 레시피 목록 로드 실패:", error);
@@ -400,11 +364,6 @@ export const getRecipeLikeListOtherInfo = async (
   keyword?: string // `keyword` 파라미터를 추가하여 검색 기능을 통합
 ) => {
   try {
-    // 파라미터 확인 로그
-    console.log(
-      `API 호출: memberId=${memberId}, recipeCategoryId=${recipeCategoryId}, orderby=${orderby}, display=${display}, start=${start}, keyword=${keyword}`
-    );
-
     // 서버로 API 요청을 보낼 때 keyword 파라미터도 함께 전달
     const response = await axios.get(`${BASE_URL}/getRecipeLikeListOtherInfo`, {
       params: {
@@ -417,7 +376,6 @@ export const getRecipeLikeListOtherInfo = async (
       },
     });
 
-    console.log("찜한 레시피 목록 로드 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("API 호출 오류:", error);

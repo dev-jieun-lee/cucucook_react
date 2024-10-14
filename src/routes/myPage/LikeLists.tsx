@@ -59,6 +59,7 @@ const LikeLists = () => {
 
   // 데이터 가져오기 함수
   const fetchData = async (page: number, keyword: string) => {
+
     
     // if (loading || isFetching) return; 
     setLoading(true);
@@ -73,6 +74,10 @@ const LikeLists = () => {
         startValue,
         search
       );
+
+      // if(response.length < itemsPerPage){
+      //   return;
+      // }
       if (response && response.length > 0) {
         setLikedRecipes((prevRecipes) =>
           triggerSearch ? response : [...prevRecipes, ...response]

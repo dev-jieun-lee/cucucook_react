@@ -23,17 +23,10 @@ export async function login(form: {
 }) {
   try {
     const response = await api.post("/login", form);
-    console.log("로그인 응답데이터", response.data);
 
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data) {
-      // 서버에서 전달된 전체 응답 데이터 출력
-      console.log("서버 응답 데이터:", error.response.data);
-
-      // 실패 횟수와 잠금 시간을 출력
-      console.log("실패 횟수:", error.response.data.failedAttempts || 0);
-      console.log("잠금 시간:", error.response.data.lockoutTime || "없음");
     } else {
       console.error("알 수 없는 오류 발생:", error);
     }
@@ -45,7 +38,6 @@ export async function login(form: {
 export async function logout() {
   try {
     const response = await api.post("/logout");
-    console.log("로그아웃 응답데이터", response.data);
 
     return response.data;
   } catch (error) {
@@ -55,24 +47,18 @@ export async function logout() {
 // 핸드폰번호 중복체크
 export async function phoneCheck(form: any) {
   const response = await axios.post(`${BASE_URL}/check-phone`, form);
-  console.log("핸드폰번호 중복체크 응답데이터", response.data);
   return response.data;
 }
 
 // 아이디 중복체크
 export async function idCheck(id: string) {
   const response = await axios.get(`${BASE_URL}/check-id/${id}`);
-  console.log(
-    "아이디중복체크 응답데이터( true -사용가능, false - 사용불가",
-    response.data
-  );
   return response.data;
 }
 
 // 회원가입
 export async function register(form: any) {
   const response = await axios.post(`${BASE_URL}/register`, form);
-  console.log("회원가입 응답데이터", response.data);
   return response.data;
 }
 
@@ -82,7 +68,6 @@ export const findId = async (data: {
   email: string;
   verificationCode: string;
 }) => {
-  console.log("아이디찾기data:", data);
   const response = await fetch("/api/members/find-id", {
     method: "POST",
     headers: {
@@ -104,7 +89,6 @@ export const useSendEmailVerificationCode = () =>
     api
       .post("/sendVerificationCode", { email })
       .then((response) => {
-        console.log("이메일 인증 코드 발송 성공:", response.data);
         return response.data;
       })
   );
@@ -115,7 +99,6 @@ export const useVerifyEmailCode = () =>
     api
       .post("/verify", { email, code })
       .then((response) => {
-        console.log("이메일 인증 코드 검증 성공:", response.data);
         return response.data;
       })
   );
@@ -167,10 +150,6 @@ export async function checkUserInfoExists(
     email,
     id,
   });
-  console.log(
-    "이름, 이메일, 아이디로 존재 여부 확인 응답데이터",
-    response.data
-  );
   return response.data; // 서버가 { exists: true/false } 형태로 반환한다고 가정
 }
 // 사용자 정보 확인 훅
@@ -182,15 +161,10 @@ export const useCheckUserInfoExists = () =>
 
 // 회원 정보를 가져오는 API 호출 함수
 export async function getMember(memberId: string) {
-  console.log(`회원 정보 조회 요청: memberId=${memberId}`); // 요청 로그
   try {
     const response = await axios.get(`${BASE_URL}/getMember`, {
       params: { memberId },
     });
-
-    console.log("서버 응답 상태 코드:", response.status); // 응답 상태 코드 로그
-    console.log("서버 응답 헤더:", response.headers); // 응답 헤더 로그
-    console.log("회원 정보 조회 성공:", response.data); // 응답 성공 로그
 
     return response.data; // 전체 회원 정보를 반환
   } catch (error) {
@@ -209,11 +183,9 @@ export async function getMember(memberId: string) {
 // 회원 탈퇴 API 호출 함수
 export const deleteAccount = async (memberId: string) => {
   try {
-    console.log(`회원 탈퇴 시도: memberId=${memberId}`);
     const response = await axios.delete(
       `${BASE_URL}/deleteAccount/${memberId}`
     );
-    console.log("회원 탈퇴 성공:", response.data);
     return response.data;
   } catch (error) {
     console.error("회원 탈퇴 실패:", error);
@@ -235,6 +207,5 @@ export async function autoLogin() {
     const response = await api.get("/getAutoLogin");
     return response.data;
   } catch (error) {
-   
   }
 }

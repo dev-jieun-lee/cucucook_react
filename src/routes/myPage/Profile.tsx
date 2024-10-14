@@ -45,10 +45,8 @@ const Profile: React.FC<{}> = () => {
 
         // 성공 여부에 따라 처리
         if (response && response.success) {
-          console.log("비밀번호 검증 성공");
             navigate("/mypage/profile/userInfo");
         } else {
-          console.log("비밀번호 검증 실패 또는 알 수 없는 오류");
           setErrors({ password: t("mypage.Invalid password") });
         }
       } catch (error) {
