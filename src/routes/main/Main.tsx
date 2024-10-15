@@ -196,7 +196,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
             <div className="notice-table">
               <MainNoticeTable>
                 <List>
-                  <ListItem className="list-item header">
+                  <ListItem className="header">
                     <Box className="item-category">
                       <span>{t("text.category")}</span>
                     </Box>
