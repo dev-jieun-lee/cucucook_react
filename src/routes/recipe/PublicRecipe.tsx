@@ -1,5 +1,5 @@
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
-import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
@@ -22,6 +22,7 @@ import {
   RecipeView,
   TitleBox,
 } from "../../styles/RecipeStyle";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 const PublicRecipe = () => {
   const customStyles = recipeCommonStyles();
@@ -113,6 +114,17 @@ const PublicRecipe = () => {
           <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
             <TitleBox margin={"20px 0"}>
               <PageTitleBasic>
+                <Tooltip title={t("text.go_back")}>
+                  <IconButton
+                    className="back"
+                    color="primary"
+                    aria-label="add"
+                    style={{ marginTop: "-5px" }}
+                    onClick={() => navigate(-1)}
+                  >
+                    <ArrowBackIosNewIcon />
+                  </IconButton>
+                </Tooltip>
                 {t("text.public_recipe")} &nbsp;
                 {t("text.detail_more")}
               </PageTitleBasic>

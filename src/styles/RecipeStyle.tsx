@@ -8,6 +8,11 @@ export const TitleBox = styled(Box)`
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
+  .list-btn{
+    ${media.small`
+      display : none;
+    `};
+  }
 `;
 export const ContentsGrid = styled(Grid)``;
 

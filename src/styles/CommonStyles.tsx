@@ -75,6 +75,19 @@ export const PageTitleBasic = styled.div`
   font-size: 25px;
   font-weight: 600;
   color: ${(props) => props.theme.mainColor};
+  display: flex;
+  ${media.small`
+    font-size: 20px;
+  `};
+  ${media.xsmall`
+    font-size: 16px;
+  `};
+  .back{
+    display : none;
+    ${media.small`
+      display : block;
+    `};
+  }
 `;
 
 export const PageSubTitleBasic = styled.div`

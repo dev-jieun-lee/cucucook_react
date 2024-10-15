@@ -9,7 +9,9 @@ import {
   Button,
   Divider,
   Grid,
+  IconButton,
   Pagination,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -45,6 +47,7 @@ import {
 } from "../../styles/RecipeStyle";
 import RecipeCommentListBox from "./RecipeCommentList";
 import RecipeCommentWriteBox from "./RecipeCommentWrite";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 const MemberRecipe = () => {
   const { t, i18n } = useTranslation();
@@ -317,6 +320,17 @@ const MemberRecipe = () => {
         <Box component="section" sx={{ width: "100%"}} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
+              <Tooltip title={t("text.go_back")}>
+                <IconButton
+                  className="back"
+                  color="primary"
+                  aria-label="add"
+                  style={{ marginTop: "-5px" }}
+                  onClick={() => navigate(-1)}
+                >
+                  <ArrowBackIosNewIcon />
+                </IconButton>
+              </Tooltip>
               {t("text.member_recipe")} &nbsp;
               {t("text.detail_more")}
             </PageTitleBasic>
@@ -352,7 +366,7 @@ const MemberRecipe = () => {
                     </Button>
                   </>
                 )}
-              <Button variant="outlined" onClick={handleRecipeListClick}>
+              <Button className="list-btn" variant="outlined" onClick={handleRecipeListClick}>
                 {t("text.list")}
               </Button>
             </Box>
