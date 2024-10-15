@@ -515,10 +515,21 @@ const MemberRecipe = () => {
                                   </Box>
                                 </Button>
                               ) : (
-                                <Box display="flex" alignItems="center">
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  sx={{
+                                    fontSize: "0.875rem",
+                                    padding: "8px 6px",
+                                    minWidth: "64px",
+                                    justifyContent: "center",
+                                  }}
+                                >
                                   <FavoriteBorderIcon
                                     fontSize="small"
-                                    style={{ verticalAlign: "middle" }}
+                                    style={{
+                                      verticalAlign: "middle",
+                                    }}
                                   />
                                   <Box component="span" ml={0.5}>
                                     {likeCount}

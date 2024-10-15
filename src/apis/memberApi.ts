@@ -207,5 +207,7 @@ export async function autoLogin() {
     const response = await api.get("/getAutoLogin");
     return response.data;
   } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
