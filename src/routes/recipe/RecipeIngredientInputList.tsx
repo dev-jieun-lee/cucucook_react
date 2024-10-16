@@ -49,7 +49,7 @@ const RecpieIngredientInputList: React.FC<RecipeIngredientInputListProps> = ({
     );
   };
   return (
-    <Box sx={{ padding: 2, display: "inline-block" }}>
+    <Box sx={{ padding: 2, display: "inline-block", width: "100%" }}>
       {values.map((input, index) => {
         const indexStr = index.toString();
         // errors와 touched 상태 가져오기
@@ -86,7 +86,10 @@ const RecpieIngredientInputList: React.FC<RecipeIngredientInputListProps> = ({
                   }}
                 >
                   <Grid item>
-                    <FormControl className="width-max">
+                    <FormControl
+                      className="width-max"
+                      sx={{ marginBottom: "10px" }}
+                    >
                       <InputLabel htmlFor={`ingredient_name_${index}`} shrink>
                         {t("text.ingredient_name")}
                       </InputLabel>
@@ -112,7 +115,10 @@ const RecpieIngredientInputList: React.FC<RecipeIngredientInputListProps> = ({
                     </FormControl>
                   </Grid>
                   <Grid item>
-                    <FormControl className="width-max">
+                    <FormControl
+                      className="width-max"
+                      sx={{ marginBottom: "10px" }}
+                    >
                       <InputLabel htmlFor={`ingredient_amount_${index}`} shrink>
                         {t("text.ingredient_amount")}
                       </InputLabel>

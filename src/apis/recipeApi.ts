@@ -147,7 +147,6 @@ export async function getRecipeCategoryListWithMemberRecipeCount(params: any) {
 
 //회원 레시피용 카테고리 가져오기
 export async function getRecipeCategoryListForWrite(params: any) {
-  console.log("???");
   const response = await api.get(`/getRecipeCategoryListForWrite`, {
     params: params,
   });

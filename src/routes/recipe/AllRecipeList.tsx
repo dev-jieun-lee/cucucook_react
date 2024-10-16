@@ -113,7 +113,6 @@ const AllRecipeList = () => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        console.log(data);
         if (data && data.success) {
           setMemberLoading(true);
           setMemberMessage(data.message);
