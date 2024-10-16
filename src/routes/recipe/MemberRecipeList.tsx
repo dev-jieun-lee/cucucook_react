@@ -160,6 +160,10 @@ const MemberRecipe = () => {
 
           setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
           setMessage(data.message);
+        } else {
+          setLoading(false);
+          setHasMore(false);
+          setMessage(data.message);
         }
       },
       onError: (error) => {

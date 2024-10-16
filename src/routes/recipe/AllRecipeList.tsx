@@ -113,6 +113,7 @@ const AllRecipeList = () => {
     {
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
+        console.log(data);
         if (data && data.success) {
           setMemberLoading(true);
           setMemberMessage(data.message);
@@ -121,6 +122,9 @@ const AllRecipeList = () => {
             isLike: recipeItem.memberRecipeLike || false,
           }));
           setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
+        } else {
+          setMemberLoading(false);
+          setMemberMessage(t("CODE." + data.message));
         }
       },
       onError: (error) => {
