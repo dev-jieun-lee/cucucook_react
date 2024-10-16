@@ -4,7 +4,6 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import CloseIcon from '@mui/icons-material/Close';
 import { HexColorPicker } from "react-colorful";
-import { deleteBoardCategory, getBoardCategory, insertBoardCategory, updateBoardCategory } from "../../../apis/boardApi";
 import { useMutation, useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import Swal from "sweetalert2";
@@ -12,6 +11,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { BoardButtonArea } from "../../../styles/BoardStyle";
 import { DialogForm, DialogTitleArea } from "../../../styles/CommonStyles";
+import { deleteBoardCategory, getBoardCategory, insertBoardCategory, updateBoardCategory } from "../../../apis/adminApi";
 
 interface BoardCategoryDialogProps {
   open: boolean;
