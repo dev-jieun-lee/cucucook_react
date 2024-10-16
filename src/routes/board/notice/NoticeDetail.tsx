@@ -31,9 +31,10 @@ function NoticeDetail() {
 
   const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
+  const currentLang = i18n.language;
 
   //카테고리 포함 데이터 받아오기
   const getBoardWithCategory = async () => {
@@ -146,7 +147,11 @@ function NoticeDetail() {
           <CustomCategory
             style={{ color: `${boardWithCategory.category.color}` }}
           >
-            [ {boardWithCategory?.category.name} ]
+            [{" "}
+            {currentLang === "ko"
+              ? boardWithCategory?.category.name
+              : boardWithCategory?.category.nameEn}{" "}
+            ]
           </CustomCategory>
           <p className="title">{boardWithCategory?.data.title}</p>
         </div>

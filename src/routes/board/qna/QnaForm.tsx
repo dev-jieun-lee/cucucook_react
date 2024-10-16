@@ -49,14 +49,12 @@ interface UploadFiles {
 function QnaForm() {
   const sanitizer = dompurify.sanitize;
   const { user } = useAuth(); //로그인 상태관리
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const navigate = useNavigate();
   const [uploadFiles, setUploadFiles] = useState<UploadFiles[]>([]);
   const [delFileIds, setDelFileIds] = useState<string[]>([]);
-  const [uploadFileList, setUploadFileList] = useState<UploadFiles[]>([
-    { file: null, fileName: "", fileType: "", fileSize: "", fileId: "" },
-  ]);
+  const currentLang = i18n.language;
 
   //qna 카테고리 데이터 받아오기
   const getBoardCategoryListApi = async () => {
@@ -295,7 +293,7 @@ function QnaForm() {
                     key={category.boardCategoryId}
                     value={category.boardCategoryId}
                   >
-                    {category.name}
+                    {currentLang === "ko" ? category.name : category.nameEn}
                   </MenuItem>
                 ))}
               </Select>

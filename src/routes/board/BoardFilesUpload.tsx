@@ -179,6 +179,7 @@ const BoardFilesUpload: React.FC<{
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
+          onClick={handleUploadClick}
         >
           {uploadFiles.length > 0 ? (
             <Box className="file-list-box">
@@ -194,9 +195,11 @@ const BoardFilesUpload: React.FC<{
                       <IconButton
                         edge="end"
                         aria-label="delete"
-                        onClick={(e) =>
-                          handleDeleteFile(e, index, uploadFileItem.fileId)
-                        }
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteFile(e, index, uploadFileItem.fileId);
+                        }}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -224,7 +227,16 @@ const BoardFilesUpload: React.FC<{
               ))}
             </Box>
           ) : (
-            <Box className="file-upload-box-wrap" onClick={handleUploadClick}>
+            <Box
+              className="file-upload-box-wrap"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (uploadRef.current) {
+                  uploadRef.current.click();
+                }
+              }}
+            >
               <Box className="file-upload-box">
                 <FileUploadIcon />
                 <Typography component="div">

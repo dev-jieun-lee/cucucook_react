@@ -163,7 +163,6 @@ const MemberRecipe = () => {
         } else {
           setLoading(false);
           setHasMore(false);
-          setMessage(data.message);
         }
       },
       onError: (error) => {

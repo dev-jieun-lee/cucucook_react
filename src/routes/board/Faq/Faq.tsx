@@ -52,10 +52,11 @@ function Faq() {
   const [triggerSearch, setTriggerSearch] = useState(true); // 검색 실행 트리거
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<string | false>(false);
   const sanitizer = dompurify.sanitize;
+  const currentLang = i18n.language;
 
   // // 아코디언 패널 상태 관리
   const handleChange =
@@ -304,7 +305,7 @@ function Faq() {
                 key={category.boardCategoryId}
                 value={category.boardCategoryId}
               >
-                {category.name}
+                {currentLang === "ko" ? category.name : category.nameEn}
               </MenuItem>
             ))}
           </Select>
@@ -357,7 +358,11 @@ function Faq() {
                         style={{ color: `${boardItem.category.color}` }}
                         className="category"
                       >
-                        [ {boardItem.category.name} ]
+                        [{" "}
+                        {currentLang === "ko"
+                          ? boardItem.category.name
+                          : boardItem.category.nameEn}{" "}
+                        ]
                       </CustomCategory>
                       <div className="title">
                         <span className="q">Q.</span>

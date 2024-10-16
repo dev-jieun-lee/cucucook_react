@@ -38,8 +38,9 @@ import { CustomCategory } from "../../styles/BoardStyle";
 import dayjs from "dayjs";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const currentLang = i18n.language;
 
   // 데이터를 불러오는 API 호출 함수
   const getBoardListApi = () => {
@@ -217,7 +218,11 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                         <Box className="contents">
                           <Box className="item-category-row">
                             <span style={{ color: item.category.color }}>
-                              [ {item.category.name} ]
+                              [{" "}
+                              {currentLang === "ko"
+                                ? item.category.name
+                                : item.category.nameEn}{" "}
+                              ]
                             </span>
                           </Box>
                           <Box className="item-title-row">

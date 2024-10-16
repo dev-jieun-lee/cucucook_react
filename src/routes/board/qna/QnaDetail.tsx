@@ -57,7 +57,7 @@ function QnaDetail() {
   const sanitizer = dompurify.sanitize;
   const { user } = useAuth(); //로그인 상태관리
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams(); //보드 아이디 파라미터 받아오기
   const [isReply, setIsReply] = useState(false);
@@ -73,6 +73,7 @@ function QnaDetail() {
   const [uploadFileList, setUploadFileList] = useState<UploadFiles[]>([
     { file: null, fileName: "", fileType: "", fileSize: "", fileId: "" },
   ]);
+  const currentLang = i18n.language;
 
   //카테고리 포함 데이터 받아오기
   const getBoardWithCategory = async () => {
@@ -107,15 +108,12 @@ function QnaDetail() {
       setPBoardData(parentPosts);
       setReBoardData(replyPosts);
 
-
       return boardWithCategory;
     } catch (error) {
       console.error(error);
       return null;
     }
   };
-
-
 
   //파일데이터 가져오기
   const getUploadFileListData: any = async (boardId: any) => {
@@ -154,7 +152,6 @@ function QnaDetail() {
     staleTime: 0,
   });
 
-
   useEffect(() => {
     if (reBoardData.length > 0) {
       setReBoardId(reBoardData[0].boardId);
@@ -162,14 +159,12 @@ function QnaDetail() {
         const uploadFiles = await getUploadFileListData(reBoardData[0].boardId);
         setUploadFileList(uploadFiles);
       };
-     
+
       fetchUploadListData();
-    }
-    else{
+    } else {
       setReBoardId("");
     }
   }, [reBoardData]);
-
 
   //삭제
   const { mutate: deleteBoardMutation } = useMutation(
@@ -337,7 +332,11 @@ function QnaDetail() {
               <CustomCategory
                 style={{ color: `${boardWithCategory.category.color}` }}
               >
-                [ {boardWithCategory?.category.name} ]
+                [{" "}
+                {currentLang === "ko"
+                  ? boardWithCategory?.category.name
+                  : boardWithCategory?.category.nameEn}{" "}
+                ]
               </CustomCategory>
               <p className="title">{pBoardData[0]?.title}</p>
             </div>
