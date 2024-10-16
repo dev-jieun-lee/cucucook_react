@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   margin: 0 auto;
   /* padding: 0 2%; */
   align-items: center;
-  text-align: center;
+  /* text-align: center; */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -127,6 +127,7 @@ export const SearchArea = styled.div`
   `};
 
   .select-category {
+    text-align : center;
     width: 150px;
     margin-right: 50px;
     ${media.small`

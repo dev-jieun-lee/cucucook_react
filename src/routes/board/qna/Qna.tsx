@@ -45,6 +45,7 @@ import Loading from "../../../components/Loading";
 import { useAuth } from "../../../auth/AuthContext";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import dayjs from "dayjs";
+import NoData from "../../../components/NoData";
 
 function Qna() {
   const { user } = useAuth(); //로그인 상태관리
@@ -390,7 +391,7 @@ function Qna() {
                 </BoardRowListItem>
               ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
 

@@ -42,6 +42,7 @@ import { DeleteIconButton } from "../../styles/AdminStyle";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Loading from "../../components/Loading";
+import NoData from "../../components/NoData";
 
 const MyWrites: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
@@ -335,7 +336,7 @@ const MyWrites: React.FC<{}> = () => {
               </MypageRowListItem>
             ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

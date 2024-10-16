@@ -36,6 +36,7 @@ import {
 } from "../../styles/MainStyle";
 import { CustomCategory } from "../../styles/BoardStyle";
 import dayjs from "dayjs";
+import NoData from "../../components/NoData";
 
 function Main({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
@@ -232,7 +233,7 @@ function Main({ isDarkMode }: { isDarkMode: boolean }) {
                       </ListItem>
                     ))
                   ) : (
-                    <Typography>{t("sentence.no_data")}</Typography>
+                    <NoData/>
                   )}
                 </List>
               </MainNoticeTable>

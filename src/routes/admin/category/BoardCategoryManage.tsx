@@ -44,6 +44,7 @@ import BoardCategoryDialog from "./BoardCategoryDialog";
 import Swal from "sweetalert2";
 import { ContentsArea, CustomCategory } from "../../../styles/BoardStyle";
 import { deleteBoardCategory, getBoardCategoryList } from "../../../apis/adminApi";
+import NoData from "../../../components/NoData";
 
 function BoardCategoryManage() {
   const { user } = useAuth(); //로그인 상태관리
@@ -397,7 +398,7 @@ function BoardCategoryManage() {
                 </AdminRowListItem>
               ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

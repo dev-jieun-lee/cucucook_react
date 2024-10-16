@@ -1,7 +1,11 @@
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 function LoadingNoMargin() {
-  return <CircularProgress />;
+  return (
+    <Box sx={{margin : "10px auto", width : "100%", textAlign : "center"}}>
+      <CircularProgress />
+    </Box>
+  )
 }
 
 export default LoadingNoMargin;

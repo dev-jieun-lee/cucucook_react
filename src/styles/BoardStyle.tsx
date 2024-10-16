@@ -326,14 +326,14 @@ export const DetailContents = styled.div`
   width: 100%;
   /* flex-grow: 1;  */
   min-height: 560px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   margin-bottom: 20px;
-  padding: 20px 15px;
+  /* padding: 20px 15px; */
   border-bottom: 1px solid;
   border-color: ${(props) => props.theme.navBorderColor};
-  .board-contents {
+  /* .board-contents {
     float: left;
-  }
+  } */
 `;
 
 export const ParentBoardData = styled.div`
@@ -345,16 +345,16 @@ export const ParentBoardData = styled.div`
     min-height: 350px;
     overflow-y: auto;
     margin-bottom: -40px;
-    .board-contents {
+    /* .board-contents {
       float: left;
-    }
+    } */
   }
 `;
 export const QnaContentsArea = styled.div`
   width: 100%;
   .board-contents {
     width: 100%;
-    text-align: left;
+    /* text-align: left; */
     padding: 10px 20px;
     min-height: 300px;
     max-height: 500px;
@@ -528,6 +528,7 @@ export const UploadBoxContainer = styled(Box)`
       }
     }
     .file-upload-box-wrap {
+      text-align: center;
       display: flex;
       width: 100%;
       height: 100%;
