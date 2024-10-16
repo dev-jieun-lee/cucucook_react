@@ -35,7 +35,7 @@ const PublicRecipe = () => {
   const currentLang = i18n.language;
 
   const categories = [
-    ["전체", "All"],
+    ["전체", "ALL"],
     ["국&찌개", "Soup & Stew"],
     ["반찬", "Side dish"],
     ["밥", "Rice"],
@@ -53,7 +53,7 @@ const PublicRecipe = () => {
   // 기존 값에 이어붙이기용
   const [recipes, setRecipes] = useState<any[]>([]);
   //선택된 카테고리값
-  const [selectedCategory, setSelectedCategory] = useState<string>(t(""));
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const display = 20;
   const [message, setMessage] = useState("");
 
