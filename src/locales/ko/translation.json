@@ -432,7 +432,8 @@
     "E_AUTH": "로그인이 필요합니다. 로그인 해주세요.",
     "E_ROLE": "접근 권한이 없습니다.",
     "E_LOGIN_EXPIRED": "로그인이 만료되었습니다. 다시 로그인 해주세요.",
-    "E_UNUSABLE_EXTENSION": "사용 불가한 확장자 입니다. [{{extension}}]"
+    "E_UNUSABLE_EXTENSION": "사용 불가한 확장자 입니다. [{{extension}}]",
+    "E_MAX_UPLOAD_SIZE": "파일용량 (개당 10MB, 총 50MB) 제한 파일 사이즈를 확인해주세요."
   },
   "error": {
     "required": "{{value}}은(는) 필수 입력 항목입니다.",

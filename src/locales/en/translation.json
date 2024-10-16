@@ -435,7 +435,8 @@
     "E_AUTH": "Login is required. Please log in.",
     "E_ROLE": "You do not have permission to access.",
     "E_LOGIN_EXPIRED": "Your session has expired. Please log in again.",
-    "E_UNUSABLE_EXTENSION": "This extension is not allowed. [{{extension}}]"
+    "E_UNUSABLE_EXTENSION": "This extension is not allowed. [{{extension}}]",
+    "E_MAX_UPLOAD_SIZE": "Please check the file size limit (10MB each, 50MB total)."
   },
   "error": {
     "required": "{{value}} is a required entry,",

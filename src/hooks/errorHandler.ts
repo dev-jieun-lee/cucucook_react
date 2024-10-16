@@ -38,9 +38,10 @@ export const handleApiError = (
       Swal.fire({
         icon: "error",
         title: t("text.error"),
-        text: t("CODE.E_SERVER_CODE", {
-          status: error.response.status,
-        }),
+        text: t(`CODE.${error.response.data.message}`),
+        // text: t("CODE.E_SERVER_CODE", {
+        //   status: error.response.status,
+        // }),
         showConfirmButton: true,
         confirmButtonText: t("text.check"),
       }).then(() => {});
