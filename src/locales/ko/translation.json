@@ -311,10 +311,10 @@
   "recipe": {
     "alert": {
       "delete_recipe_confirm": "레시피를 삭제하시겠습니까?",
-      "delete_recipe_sucecss": "레시피를 삭제했습니다.",
+      "delete_recipe_success": "레시피를 삭제했습니다.",
       "delete_recipe_error": "레시피를 삭제하지 못했습니다.",
       "delete_comment_confirm": "댓글을 삭제하시겠습니까?",
-      "delete_comment_sucecss": "댓글을 삭제했습니다.",
+      "delete_comment_success": "댓글을 삭제했습니다.",
       "delete_comment_error": "댓글을 삭제하지 못했습니다.",
       "empty_rate": "평점은 최소 1점 이상이어야 합니다.",
       "empty_comment": "내용을 입력해 주세요.",
@@ -322,7 +322,7 @@
       "update": "수정이 완료되었습니다.",
       "cancel": "게시글 작성을 정말 취소하시겠습니까?",
       "delete_recipe_category_confirm": "레시피 카테고리를 삭제하시겠습니까?",
-      "delete_recipe_category_sucecss": "레시피 카테고리를 삭제했습니다.",
+      "delete_recipe_category_success": "레시피 카테고리를 삭제했습니다.",
       "delete_recipe_category_error": "레시피 카테고리를 삭제하지 못했습니다."
     },
     "sentence": {

@@ -211,7 +211,7 @@ const MyReplys: React.FC<{}> = () => {
         Swal.fire({
           icon: "success",
           title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          text: t("recipe.alert.delete_comment_confirm_success"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
@@ -244,7 +244,7 @@ const MyReplys: React.FC<{}> = () => {
         Swal.fire({
           icon: "success",
           title: t("text.delete"),
-          text: t("recipe.alert.delete_comment_confirm_sucecss"),
+          text: t("recipe.alert.delete_comment_confirm_success"),
           showConfirmButton: true,
           confirmButtonText: t("text.check"),
         });
@@ -381,7 +381,7 @@ const MyReplys: React.FC<{}> = () => {
               </MypageRowListItem>
             ))
           ) : (
-            <NoData/>
+            <NoData />
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>
