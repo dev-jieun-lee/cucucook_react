@@ -85,7 +85,7 @@ const RecipeCommentListBox: React.FC<{
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
-            text: t("recipe.alert.delete_comment_sucecss"),
+            text: t("recipe.alert.delete_comment_success"),
             showConfirmButton: true,
             confirmButtonText: t("text.check"),
           });
@@ -118,7 +118,7 @@ const RecipeCommentListBox: React.FC<{
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
-            text: t("recipe.alert.delete_comment_sucecss"),
+            text: t("recipe.alert.delete_comment_success"),
             showConfirmButton: true,
             confirmButtonText: t("text.check"),
           });

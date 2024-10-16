@@ -182,7 +182,7 @@ const MemberRecipe = () => {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
-            text: t("recipe.alert.delete_recipe_sucecss"),
+            text: t("recipe.alert.delete_recipe_success"),
             showConfirmButton: true,
             confirmButtonText: t("text.check"),
             timer: 1000,
@@ -193,7 +193,7 @@ const MemberRecipe = () => {
           Swal.fire({
             icon: "error",
             title: t("text.delete"),
-            text: t("recipe.alert.delete_comment_sucecss"),
+            text: t("recipe.alert.delete_comment_success"),
             showConfirmButton: true,
             confirmButtonText: t("text.check"),
           });
@@ -317,7 +317,7 @@ const MemberRecipe = () => {
   return (
     <Wrapper>
       <RecipeView>
-        <Box component="section" sx={{ width: "100%"}} padding={"20px 0"}>
+        <Box component="section" sx={{ width: "100%" }} padding={"20px 0"}>
           <TitleBox margin={"20px 0"}>
             <PageTitleBasic>
               <Tooltip title={t("text.go_back")}>
@@ -366,7 +366,11 @@ const MemberRecipe = () => {
                     </Button>
                   </>
                 )}
-              <Button className="list-btn" variant="outlined" onClick={handleRecipeListClick}>
+              <Button
+                className="list-btn"
+                variant="outlined"
+                onClick={handleRecipeListClick}
+              >
                 {t("text.list")}
               </Button>
             </Box>

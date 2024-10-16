@@ -192,7 +192,7 @@ function RecipeCategoryManage() {
           Swal.fire({
             icon: "success",
             title: t("text.delete"),
-            text: t("recipe.alert.delete_recipe_category_sucecss"),
+            text: t("recipe.alert.delete_recipe_category_success"),
             showConfirmButton: true,
             confirmButtonText: t("text.check"),
           }).then(() => {
@@ -392,7 +392,7 @@ function RecipeCategoryManage() {
               </AdminRowListItem>
             ))
           ) : (
-            <NoData/>
+            <NoData />
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

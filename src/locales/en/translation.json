@@ -314,10 +314,10 @@
   "recipe": {
     "alert": {
       "delete_recipe_confirm": "Are you sure you want to delete this recipe?",
-      "delete_recipe_sucecss": "Recipe deleted.",
+      "delete_recipe_success": "Recipe deleted.",
       "delete_recipe_error": "Failed to delete the recipe.",
       "delete_comment_confirm": "Are you sure you want to delete this comment?",
-      "delete_comment_sucecss": "Comment deleted.",
+      "delete_comment_success": "Comment deleted.",
       "delete_comment_error": "Failed to delete the comment.",
       "empty_rate": "Rating must be at least 1 point.",
       "empty_comment": "Please enter content.",
