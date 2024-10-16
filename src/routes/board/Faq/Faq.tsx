@@ -41,6 +41,7 @@ import {
   Wrapper,
 } from "../../../styles/CommonStyles";
 import BoardFilesList from "../BoardFilesList";
+import NoData from "../../../components/NoData";
 
 function Faq() {
   const { user } = useAuth(); //로그인 상태관리
@@ -406,7 +407,7 @@ function Faq() {
               </Accordion>
             ))
         ) : (
-          <div>{t("sentence.no_data")}</div>
+          <NoData/>
         )}
         <CustomPagination className="pagination" spacing={2}>
           <Pagination

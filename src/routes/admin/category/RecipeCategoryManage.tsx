@@ -47,6 +47,7 @@ import {
   deleteRecipeCategory,
   getRecipeCategoryListForAdmin,
 } from "../../../apis/adminApi";
+import NoData from "../../../components/NoData";
 
 function RecipeCategoryManage() {
   const navigate = useNavigate();
@@ -391,7 +392,7 @@ function RecipeCategoryManage() {
               </AdminRowListItem>
             ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

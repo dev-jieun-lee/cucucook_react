@@ -44,6 +44,7 @@ import {
   CustomCategory,
 } from "../../../styles/BoardStyle";
 import dayjs from "dayjs";
+import NoData from "../../../components/NoData";
 
 function Notice() {
   const { user } = useAuth(); //로그인 상태관리
@@ -366,7 +367,7 @@ function Notice() {
                 </BoardRowListItem>
               ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

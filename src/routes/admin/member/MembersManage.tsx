@@ -33,6 +33,7 @@ import { ContentsArea } from "../../../styles/BoardStyle";
 import { getMemberList } from "../../../apis/memberApi";
 import { AdminHeaderListItem, AdminRowListItem } from "../../../styles/AdminStyle";
 import dayjs from "dayjs";
+import NoData from "../../../components/NoData";
 
 function MembersManage() {
   const { user } = useAuth(); //로그인 상태관리
@@ -236,7 +237,7 @@ function MembersManage() {
               </AdminRowListItem>
             ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>

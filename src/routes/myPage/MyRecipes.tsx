@@ -22,6 +22,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
 import { useQuery } from "react-query";
 import ScrollTop from "../../components/ScrollTop";
+import NoData from "../../components/NoData";
 
 const MyRecipes = () => {
   const { t } = useTranslation();
@@ -304,7 +305,7 @@ const MyRecipes = () => {
               </>
             ) : (
               <Grid padding={"20px 0"} item xs={12}>
-                {loading ? <Loading /> : <>No data found.</>}
+                <NoData/>
               </Grid>
             )}
           </Grid>

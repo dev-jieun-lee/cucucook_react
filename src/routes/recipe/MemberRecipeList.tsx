@@ -39,6 +39,7 @@ import {
   ThumbnailButton,
   TitleBox,
 } from "../../styles/RecipeStyle";
+import NoData from "../../components/NoData";
 const MemberRecipe = () => {
   // 파라미터 받아오기
   const { order } = useParams();
@@ -590,7 +591,7 @@ const MemberRecipe = () => {
             </>
           ) : (
             <Grid padding={"20px 0"} item xs={12} sm={12} md={12}>
-              {loading ? <Loading /> : <>{t("CODE." + message)}</>}
+              {loading ? <Loading /> : <NoData/>}
             </Grid>
           )}
         </Grid>

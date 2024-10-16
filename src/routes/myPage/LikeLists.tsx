@@ -30,6 +30,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SearchIcon from "@mui/icons-material/Search";
 import ScrollTop from "../../components/ScrollTop";
 import { getRecipeLikeListOtherInfo } from "../../apis/mypageApi";
+import NoData from "../../components/NoData";
 
 const LikeLists = () => {
   const { t } = useTranslation();
@@ -311,7 +312,7 @@ const LikeLists = () => {
               </>
             ) : (
               <Grid padding={"20px 0"} item xs={12}>
-                {loading ? <Loading /> : <>No data found.</>}
+                <NoData/>
               </Grid>
             )}
           </Grid>

@@ -39,6 +39,7 @@ import dayjs from "dayjs";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Loading from "../../components/Loading";
 import { useNavigate } from "react-router-dom";
+import NoData from "../../components/NoData";
 
 function Activity() {
   const { user } = useAuth();
@@ -123,7 +124,7 @@ function Activity() {
   }
 
   return (
-    <Wrapper>
+    <Wrapper style={{textAlign : "center"}}>
       <MyPageTitle>
         <span>{t("mypage.greetings", { name: user?.name })}</span>
       </MyPageTitle>
@@ -195,7 +196,7 @@ function Activity() {
                   </ActivityRowListItem>
                 ))
               ) : (
-                <Typography>{t("sentence.no_data")}</Typography>
+                <NoData/>
               )}
             </List>
             {likedRecipes && likedRecipes.length > 0 ? (
@@ -255,7 +256,7 @@ function Activity() {
                   </ActivityRowListItem>
                 ))
               ) : (
-                <Typography>{t("sentence.no_data")}</Typography>
+                <NoData/>
               )}
             </List>
             {latestRecipes && latestRecipes.length > 0 ? (
@@ -328,7 +329,7 @@ function Activity() {
                   </ActivityRowListItem>
                 ))
               ) : (
-                <Typography>{t("sentence.no_data")}</Typography>
+                <NoData/>
               )}
             </List>
             {latestPosts && latestPosts.length > 0 ? (
@@ -391,7 +392,7 @@ function Activity() {
                   </ActivityRowListItem>
                 ))
               ) : (
-                <Typography>{t("sentence.no_data")}</Typography>
+                <NoData/>
               )}
             </List>
             {latestReplies && latestReplies.length > 0 ? (

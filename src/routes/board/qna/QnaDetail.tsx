@@ -77,6 +77,8 @@ function QnaDetail() {
 
   //카테고리 포함 데이터 받아오기
   const getBoardWithCategory = async () => {
+    console.log("Ddd");
+    
     try {
       // 보드 데이터 가져오기
       const board = await getBoardWithReplies(boardId);
@@ -138,6 +140,7 @@ function QnaDetail() {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const boardList = await getBoardWithCategory(); // 데이터 불러오기
+    
     setLoading(false);
     return boardList;
   };
@@ -369,7 +372,7 @@ function QnaDetail() {
               }}
             ></div>
             <BoardFilesList boardId={pBoardData[0]?.boardId || ""} />
-            {user?.memberId === pBoardData[0]?.memberId ? (
+            {user?.memberId.toString() === pBoardData[0]?.memberId.toString() ? (
               <div className="btn-area">
                 <Button
                   className="update-btn"

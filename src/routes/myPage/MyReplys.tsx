@@ -45,6 +45,7 @@ import {
   deleteRecipeCommentHasChild,
 } from "../../apis/recipeApi";
 import { fetchMyReplies } from "../../apis/mypageApi";
+import NoData from "../../components/NoData";
 
 const MyReplys: React.FC<{}> = () => {
   const [loading, setLoading] = useState(true);
@@ -380,7 +381,7 @@ const MyReplys: React.FC<{}> = () => {
               </MypageRowListItem>
             ))
           ) : (
-            <Typography>{t("sentence.no_data")}</Typography>
+            <NoData/>
           )}
         </List>
         <CustomPagination className="pagination" spacing={2}>
