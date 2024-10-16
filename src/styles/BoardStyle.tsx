@@ -334,6 +334,19 @@ export const DetailContents = styled.div`
   /* .board-contents {
     float: left;
   } */
+
+  .ql-align-right {
+    text-align: right;
+  }
+  .ql-align-center {
+    text-align: center;
+  }
+  .ql-align-left {
+    text-align: left;
+  }
+  .ql-align-justify {
+    text-align: justify;
+  }
 `;
 
 export const ParentBoardData = styled.div`
