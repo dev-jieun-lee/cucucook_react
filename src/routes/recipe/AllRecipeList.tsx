@@ -121,6 +121,9 @@ const AllRecipeList = () => {
             isLike: recipeItem.memberRecipeLike || false,
           }));
           setRecipes((prevRecipes) => [...prevRecipes, ...(finalData ?? [])]);
+        } else {
+          setMemberLoading(false);
+          setMemberMessage(t("CODE." + data.message));
         }
       },
       onError: (error) => {

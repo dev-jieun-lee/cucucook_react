@@ -70,6 +70,7 @@ function MemberRecipeWrite() {
     try {
       const params = {};
       const getRecipeCategoryList = await getRecipeCategoryListForWrite(params);
+
       return getRecipeCategoryList.data;
     } catch (error) {
       handleApiError(error, navigate, t);
