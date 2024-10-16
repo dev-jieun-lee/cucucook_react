@@ -266,7 +266,7 @@ const AllRecipeList = () => {
           <PageTitleBasic>{t("text.member_recipe")}</PageTitleBasic>
           <Button
             variant="text"
-            onClick={() => handleMoreViewClick("/recipe/member_recipe")}
+            onClick={() => handleMoreViewClick("/recipe/member_recipe_list")}
           >
             <Add /> {t("text.more_view")}
           </Button>
