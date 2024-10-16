@@ -30,9 +30,18 @@ import {
 } from "../../styles/RecipeStyle";
 
 const PublicRecipe = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const categories = ["전체", "국&찌개", "반찬", "밥", "일품", "후식"];
+  const currentLang = i18n.language;
+
+  const categories = [
+    ["전체", "All"],
+    ["국&찌개", "Soup & Stew"],
+    ["반찬", "Side dish"],
+    ["밥", "Rice"],
+    ["일품", "A la carte"],
+    ["후식", "Dessert"],
+  ];
   // 검색어
   const [searchTerm, setSearchTerm] = useState("");
   // 로딩 상태 관리
@@ -44,7 +53,7 @@ const PublicRecipe = () => {
   // 기존 값에 이어붙이기용
   const [recipes, setRecipes] = useState<any[]>([]);
   //선택된 카테고리값
-  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const [selectedCategory, setSelectedCategory] = useState<string>(t(""));
   const display = 20;
   const [message, setMessage] = useState("");
 
@@ -194,12 +203,12 @@ const PublicRecipe = () => {
             >
               {categories.map((category) => (
                 <Button
-                  key={category}
+                  key={category[0]}
                   variant="text"
                   sx={{
                     backgroundColor: "transparent",
                     color:
-                      selectedCategory === category
+                      selectedCategory === category[0]
                         ? "primary.main"
                         : "text.primary",
                     "&:hover": {
@@ -210,9 +219,9 @@ const PublicRecipe = () => {
                       backgroundColor: "none",
                     },
                   }}
-                  onClick={() => handleCategoryClick(category)}
+                  onClick={() => handleCategoryClick(category[0])}
                 >
-                  {category}
+                  {currentLang === "ko" ? category[0] : category[1]}
                 </Button>
               ))}
             </Stack>

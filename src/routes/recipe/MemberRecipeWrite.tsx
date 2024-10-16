@@ -70,7 +70,6 @@ function MemberRecipeWrite() {
     try {
       const params = {};
       const getRecipeCategoryList = await getRecipeCategoryListForWrite(params);
-
       return getRecipeCategoryList.data;
     } catch (error) {
       handleApiError(error, navigate, t);
@@ -435,7 +434,7 @@ function MemberRecipeWrite() {
                           >
                             {currentLang === "ko"
                               ? category.name
-                              : category.name_en}
+                              : category.nameEn}
                           </MenuItem>
                         )
                       )}
@@ -480,7 +479,7 @@ function MemberRecipeWrite() {
                           >
                             {currentLang === "ko"
                               ? category.name
-                              : category.name_en}
+                              : category.nameEn}
                           </MenuItem>
                         )
                       )}
@@ -591,7 +590,7 @@ function MemberRecipeWrite() {
                           >
                             {currentLang === "ko"
                               ? category.name
-                              : category.name_en}
+                              : category.nameEn}
                           </MenuItem>
                         )
                       )}

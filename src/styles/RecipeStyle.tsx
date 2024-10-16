@@ -8,7 +8,7 @@ export const TitleBox = styled(Box)`
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
-  .list-btn{
+  .list-btn {
     ${media.small`
       display : none;
     `};
@@ -206,6 +206,7 @@ export const RecipeView = styled.div`
         font-size: 1rem;
       }
       text-align: center;
+      align-content: center;
 
       ${media["extra-medium"]`
         border-left: 1px solid ${(props: any) => props.theme.mainColor};

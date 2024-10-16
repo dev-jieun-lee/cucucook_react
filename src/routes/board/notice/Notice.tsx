@@ -56,8 +56,9 @@ function Notice() {
   const [triggerSearch, setTriggerSearch] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalCount, setTotalCount] = useState(0); // 총 게시물 수
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const currentLang = i18n.language;
 
   const display = 10; // 한 페이지에 표시할 게시물 수
 
@@ -268,7 +269,7 @@ function Notice() {
                 key={category.boardCategoryId}
                 value={category.boardCategoryId}
               >
-                {category.name}
+                {currentLang === "ko" ? category.name : category.nameEn}
               </MenuItem>
             ))}
           </Select>
@@ -340,7 +341,11 @@ function Notice() {
                         style={{ color: `${item.category.color}` }}
                         className="category"
                       >
-                        [ {item.category.name} ]
+                        [{" "}
+                        {currentLang === "ko"
+                          ? item.category.name
+                          : item.category.nameEn}{" "}
+                        ]
                       </CustomCategory>
                     </Box>
                     <Box className="title">

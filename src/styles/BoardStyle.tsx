@@ -474,6 +474,7 @@ export const UploadBoxContainer = styled(Box)`
     height: 200px;
     overflow-x: hidden;
     overflow-y: auto;
+    cursor: pointer;
 
     &.isDrag {
       border: 1px solid ${(props) => props.theme.mainColor};
