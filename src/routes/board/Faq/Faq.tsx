@@ -383,26 +383,30 @@ function Faq() {
                     }}
                   ></div>
                   <BoardFilesList boardId={boardItem.boardId || ""} />
-                  <div className="btn-area">
-                    <Button
-                      className="update-btn"
-                      type="button"
-                      color="primary"
-                      variant="contained"
-                      onClick={() => onClickRegister(boardItem.boardId)}
-                    >
-                      {t("text.update")}
-                    </Button>
-                    <Button
-                      className="delete-btn"
-                      type="button"
-                      color="warning"
-                      variant="contained"
-                      onClick={() => onClickDelete(boardItem.boardId)}
-                    >
-                      {t("text.delete")}
-                    </Button>
-                  </div>
+                  {user?.role === "0" ? (
+                    <div className="btn-area">
+                      <Button
+                        className="update-btn"
+                        type="button"
+                        color="primary"
+                        variant="contained"
+                        onClick={() => onClickRegister(boardItem.boardId)}
+                      >
+                        {t("text.update")}
+                      </Button>
+                      <Button
+                        className="delete-btn"
+                        type="button"
+                        color="warning"
+                        variant="contained"
+                        onClick={() => onClickDelete(boardItem.boardId)}
+                      >
+                        {t("text.delete")}
+                      </Button>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </AccordionDetails>
               </Accordion>
             ))
