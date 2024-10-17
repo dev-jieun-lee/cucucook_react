@@ -159,7 +159,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               className="email-btn"
               color="secondary"
               variant="outlined"
-              onClick={() => handleSendCode(formik.values.email)}
+              onClick={() => handleSendCode(formik.values.email, true)}
               fullWidth
               disabled={
                 !formik.values.name ||

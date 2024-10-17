@@ -256,7 +256,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                 className="email-btn"
                 variant="outlined"
                 color="secondary"
-                onClick={() => handleSendCode(formik.values.email)}
+                onClick={() => handleSendCode(formik.values.email, false)}
                 disabled={isCodeSent}
               >
                 {t("members.send_code")}

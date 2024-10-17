@@ -66,7 +66,7 @@ export const findId = async (data: {
   email: string;
   verificationCode: string;
 }) => {
-  const response = await fetch("/api/members/find-id", {
+  const response = await fetch(`${BASE_URL}/find-id`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -86,9 +86,9 @@ export const useSendEmailVerificationCode = () => {
   const { t } = useTranslation(); // i18next 사용
 
   return useMutation(
-    (email: string) =>
+    ({ email, skipEmailCheck }: { email: string; skipEmailCheck: boolean }) =>
       axios
-        .post(`${BASE_URL}/sendVerificationCode`, { email })
+        .post(`${BASE_URL}/sendVerificationCode`, { email, skipEmailCheck })
         .then((response) => {}),
     {
       onSuccess: () => {
@@ -132,7 +132,7 @@ export const fetchPassword = async (data: {
   userId: string;
   verificationCode: string;
 }) => {
-  const response = await api.post("/find-pw", data);
+  const response = await api.post(`${BASE_URL}/find-pw`, data);
 
   if (response.status !== 200) {
     throw new Error("비밀번호 찾기 오류");
@@ -147,7 +147,7 @@ export const useFetchPassword = () => useMutation(fetchPassword);
 // JWT 토큰 검증 요청
 export async function validateToken(token: string) {
   try {
-    const response = await api.post("/validateToken", { token });
+    const response = await api.post(`${BASE_URL}/validateToken`, { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
   } catch (error) {}
 }
