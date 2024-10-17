@@ -87,9 +87,9 @@ export const useSendEmailVerificationCode = () => {
 
   return useMutation(
     (email: string) =>
-      axios.post("/sendVerificationCode", { email }).then((response) => {
-        return response.data;
-      }),
+      axios
+        .post(`${BASE_URL}/sendVerificationCode`, { email })
+        .then((response) => {}),
     {
       onSuccess: () => {
         alert(t("email_verification.sent")); // 성공 시 번역된 메시지 사용
