@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AxiosError } from "axios";
-import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
 import { useMutation } from "react-query";
+import { useTranslation } from "react-i18next";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
@@ -83,24 +83,26 @@ export const findId = async (data: {
 
 // 이메일 인증 코드 발송
 export const useSendEmailVerificationCode = () => {
+  const { t } = useTranslation(); // i18next 사용
+
   return useMutation(
     (email: string) =>
-      api.post("/sendVerificationCode", { email }).then((response) => {
+      axios.post("/sendVerificationCode", { email }).then((response) => {
         return response.data;
       }),
     {
       onSuccess: () => {
-        alert("인증 코드가 이메일로 발송되었습니다.");
+        alert(t("email_verification.sent")); // 성공 시 번역된 메시지 사용
       },
       onError: (error: unknown) => {
         if (error instanceof AxiosError) {
           if (error.response && error.response.status === 409) {
-            alert("이미 가입된 이메일입니다.");
+            alert(t("email_verification.email_exists")); // 이메일 중복 오류 메시지
           } else {
-            alert("이메일 전송에 실패했습니다. 다시 시도해 주세요.");
+            alert(t("email_verification.failed")); // 전송 실패 메시지
           }
         } else {
-          alert("알 수 없는 오류가 발생했습니다.");
+          alert(t("common.unknown_error")); // 알 수 없는 오류 메시지
         }
       },
     }

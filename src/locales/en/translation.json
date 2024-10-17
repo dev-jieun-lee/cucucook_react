@@ -442,5 +442,13 @@
     "required": "{{value}} is a required entry,",
     "max_length": "{{value}} must be no more than {{length}} characters",
     "format": "The {{value}} format is invalid."
+  },
+  "email_verification": {
+    "sent": "The verification code has been sent to your email.",
+    "email_exists": "This email is already registered.",
+    "failed": "Failed to send the email. Please try again."
+  },
+  "common": {
+    "unknown_error": "An unknown error occurred."
   }
 }
