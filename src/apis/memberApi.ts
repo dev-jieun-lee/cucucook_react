@@ -87,7 +87,7 @@ export const useSendEmailVerificationCode = () => {
 
   return useMutation(
     (email: string) =>
-      axios.post("/sendVerificationCode", { email }).then((response) => {
+      api.post("/sendVerificationCode", { email }).then((response) => {
         return response.data;
       }),
     {
