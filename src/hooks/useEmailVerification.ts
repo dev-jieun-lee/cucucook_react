@@ -47,18 +47,21 @@ export function useEmailVerification() {
   }, [isCodeSent, timer, t]);
 
   // 인증 코드 발송 처리 함수
-  const handleSendCode = (email: string) => {
-    sendVerificationCodeMutation.mutate(email, {
-      onSuccess: (data) => {
-        setIsCodeSent(true);
-        setTimer(60); // 타이머를 60초로 초기화
-        setEmailSendResult(t("members.verification_code_sent"));
-      },
-      onError: (error) => {
-        console.error("인증 코드 발송 오류:", error); // 오류 콘솔 로그
-        setEmailSendResult(t("members.verification_code_error"));
-      },
-    });
+  const handleSendCode = (email: string, skipEmailCheck: boolean) => {
+    sendVerificationCodeMutation.mutate(
+      { email, skipEmailCheck }, // 객체로 전달
+      {
+        onSuccess: (data) => {
+          setIsCodeSent(true);
+          setTimer(60); // 타이머를 60초로 초기화
+          setEmailSendResult(t("members.verification_code_sent"));
+        },
+        onError: (error) => {
+          console.error("인증 코드 발송 오류:", error); // 오류 콘솔 로그
+          setEmailSendResult(t("members.verification_code_error"));
+        },
+      }
+    );
   };
 
   // 인증 코드 검증 처리 함수

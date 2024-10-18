@@ -113,7 +113,7 @@ function FindId({ isDarkMode }: { isDarkMode: boolean }) {
                   className="find-btn"
                   color="secondary"
                   variant="outlined"
-                  onClick={() => handleSendCode(formik.values.email)}
+                  onClick={() => handleSendCode(formik.values.email, true)}
                   fullWidth
                   disabled={
                     !formik.values.name || !formik.values.email || isCodeSent

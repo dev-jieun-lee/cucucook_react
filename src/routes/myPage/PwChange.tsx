@@ -1,7 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { TitleCenter, Wrapper } from "../../styles/CommonStyles";
 import { PwChangeArea, UserInfoForm } from "../../styles/MypageStyle";
-import { Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+} from "@mui/material";
 import { LoginWrapper } from "../../styles/LoginStyle";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -13,8 +22,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { BoardButtonArea } from "../../styles/BoardStyle";
 import { useNavigate } from "react-router-dom";
 
-
-function PwChange(){
+function PwChange() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const memberId = user ? user.memberId.toString() : null;
@@ -25,7 +33,7 @@ function PwChange(){
     enableReinitialize: true,
     initialValues: {
       newPassword: "",
-      confirmNewPassword: ""
+      confirmNewPassword: "",
     },
     validate: (values) => {
       const errors: { newPassword?: string; confirmNewPassword?: string } = {};
@@ -47,8 +55,7 @@ function PwChange(){
   });
 
   const mutation = useMutation(
-    (values: any) =>
-      changePasswordByUser(memberId!, values.newPassword),
+    (values: any) => changePasswordByUser(memberId!, values.newPassword),
     {
       onSuccess: (data) => {
         Swal.fire({
@@ -59,7 +66,7 @@ function PwChange(){
           confirmButtonText: t("text.check"),
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.reload();
+            navigate(-1);
           }
         });
       },
@@ -90,14 +97,12 @@ function PwChange(){
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  return(
+  return (
     <Wrapper>
       <TitleCenter>{t("mypage.change_password")}</TitleCenter>
       <LoginWrapper>
         <UserInfoForm onSubmit={formik.handleSubmit}>
-          <FormControl
-            className="input-form"
-          >
+          <FormControl className="input-form">
             <InputLabel htmlFor="newPassword">
               {t("mypage.new_password")}
             </InputLabel>
@@ -125,9 +130,7 @@ function PwChange(){
             )}
           </FormControl>
 
-          <FormControl
-            className="input-form"
-          >
+          <FormControl className="input-form">
             <InputLabel htmlFor="confirmNewPassword">
               {t("mypage.confirm_new_password")}
             </InputLabel>
@@ -151,10 +154,12 @@ function PwChange(){
               }
             />
             {formik.errors.confirmNewPassword && (
-              <FormHelperText error>{formik.errors.confirmNewPassword}</FormHelperText>
+              <FormHelperText error>
+                {formik.errors.confirmNewPassword}
+              </FormHelperText>
             )}
           </FormControl>
-          <BoardButtonArea style={{marginTop :  '25px'}}>
+          <BoardButtonArea style={{ marginTop: "25px" }}>
             <Button
               className="cancel-btn"
               type="button"
@@ -169,7 +174,9 @@ function PwChange(){
               type="submit"
               variant="contained"
               onClick={handleSaveChangesClick}
-              disabled={!!formik.errors.confirmNewPassword || !formik.values.newPassword}
+              disabled={
+                !!formik.errors.confirmNewPassword || !formik.values.newPassword
+              }
             >
               {t("text.save")}
             </Button>
@@ -177,7 +184,7 @@ function PwChange(){
         </UserInfoForm>
       </LoginWrapper>
     </Wrapper>
-  )
+  );
 }
 
 export default PwChange;

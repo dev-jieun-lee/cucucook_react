@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -39,6 +39,11 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
   const [loginError, setLoginError] = useState<string | null>(null);
   const fetchPasswordMutation = useFetchPassword(); // 비밀번호 찾기 API 훅 사용
 
+  useEffect(() => {
+    if (isCodeVerified) {
+    }
+  }, [isCodeVerified]); // isCodeVerified가 true로 변경될 때 UI 업데이트
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -51,8 +56,13 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
       if (!values.name) errors.name = t("members.name_required");
       if (!values.email) errors.email = t("members.email_required");
       if (!values.userId) errors.userId = t("members.id_required");
-      if (isCodeSent && !values.verificationCode)
-        errors.verificationCode = t("members.verification_code_required");
+      // 인증 코드가 전송된 상태에서 오류 메시지 처리
+      if (isCodeSent && !isCodeVerified) {
+        if (!values.verificationCode) {
+          // 인증 코드가 입력되지 않았을 때 오류 메시지
+          errors.verificationCode = t("members.verification_code_required");
+        }
+      }
       return errors;
     },
     onSubmit: (values) => {
@@ -159,7 +169,7 @@ function FindPw({ isDarkMode }: { isDarkMode: boolean }) {
               className="email-btn"
               color="secondary"
               variant="outlined"
-              onClick={() => handleSendCode(formik.values.email)}
+              onClick={() => handleSendCode(formik.values.email, true)}
               fullWidth
               disabled={
                 !formik.values.name ||
