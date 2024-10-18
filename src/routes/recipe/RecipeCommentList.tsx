@@ -179,8 +179,12 @@ const RecipeCommentListBox: React.FC<{
 
                         gridTemplateColumns:
                           comment.status === "0"
-                            ? "1fr 100px"
-                            : "30px 1fr 100px",
+                            ? user?.memberId
+                              ? "1fr 100px"
+                              : "1fr"
+                            : user?.memberId
+                            ? "30px 1fr 100px"
+                            : "30px 1fr",
                         "& > .MuiGrid-item": {
                           padding: 0,
                           margin: 0,
@@ -237,7 +241,7 @@ const RecipeCommentListBox: React.FC<{
                             : t("recipe.sentence.delete_comment")}
                         </Box>
                       </Grid>
-                      {comment.delYn === "N" && (
+                      {comment.delYn === "N" && user?.memberId && (
                         <>
                           <Grid
                             item

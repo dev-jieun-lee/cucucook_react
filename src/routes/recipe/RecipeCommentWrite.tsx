@@ -173,22 +173,22 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
           <>
             <Box className="comment-wirte-container">
               <Grid
+                className="rate-write"
                 container
                 spacing={2}
                 sx={{
                   display: "grid",
                   gap: 2,
-                  gridTemplateColumns: "40px 1fr",
                   "& > .MuiGrid-item": {
                     padding: 0,
                     margin: 0,
-                    width: 100,
+                    width: "100%",
                   },
                   ...customStyles.resetMuiGrid,
                   paddingBottom: "10px",
                 }}
               >
-                <Grid sx={{ textAlign: "center" }}>{t("text.rate")}</Grid>
+                <Grid>{t("text.rate")}</Grid>
                 <Grid>
                   <Tooltip
                     title={formik.errors.rate ? String(formik.errors.rate) : ""}
@@ -212,21 +212,21 @@ const RecipeCommentWriteBox: React.FC<RecipeCommentWriteBoxProps> = ({
                 </Grid>
               </Grid>
               <Grid
+                className="comment-write"
                 container
                 spacing={2}
                 sx={{
                   display: "grid",
                   gap: 2,
-                  gridTemplateColumns: "40px 1fr",
                   "& > .MuiGrid-item": {
                     padding: 0,
                     margin: 0,
-                    width: 100,
+                    width: "100%",
                   },
                   ...customStyles.resetMuiGrid,
                 }}
               >
-                <Grid sx={{ textAlign: "center" }}>{t("text.comment")}</Grid>
+                <Grid>{t("text.comment")}</Grid>
                 <Grid>
                   <TextField
                     disabled={!user?.memberId}
