@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import {
@@ -212,6 +212,13 @@ const Signup = ({ isDarkMode }: { isDarkMode: boolean }) => {
     const filteredValue = convertToHangul(value);
     formik.setFieldValue("name", filteredValue);
   };
+
+  useEffect(() => {
+    if (!email) {
+      alert(t("members.email_code_error"));
+      navigate("/signup/intro");
+    }
+  }, []);
 
   return (
     <Wrapper>
