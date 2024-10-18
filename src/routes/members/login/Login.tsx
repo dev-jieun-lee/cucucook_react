@@ -38,7 +38,6 @@ function Login() {
   const [saveId, setSaveId] = useState(
     () => localStorage.getItem("saveId") === "true"
   );
-  const [loginError, setLoginError] = useState<string | null>(null);
   const [lockoutTimer, setLockoutTimer] = useState<number | null>(null);
   const remainingTimeRef = useRef<{ minutes: number; seconds: number }>({
     minutes: 0,
