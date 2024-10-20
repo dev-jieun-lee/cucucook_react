@@ -187,13 +187,13 @@ function Header({ isDarkMode, onToggleTheme }: any) {
                 }}
               >
                 <IconButton className="icon-btn" color="primary" aria-hidden={false}>
-                  <LoginIcon />
+                  <LoginIcon aria-hidden={false} />
                 </IconButton>
                 <span>{t("members.login")}</span>
               </div>
             )}
             <IconButton  aria-hidden={false}  className="icon-btn" onClick={toggleDrawer(false)} ref={closeButtonRef}>
-              <CloseIcon /> {/* 드로어 닫기 버튼 */}
+              <CloseIcon  aria-hidden={false}/> {/* 드로어 닫기 버튼 */}
             </IconButton>
           </DrawerTop>
           <DrawerMenu toggleDrawer={toggleDrawer} /> {/* 드로어 메뉴 */}
