@@ -36,10 +36,19 @@ function Header({ isDarkMode, onToggleTheme }: any) {
   const closeButtonRef = useRef<HTMLButtonElement>(null); // 드로어 닫기 버튼 참조
 
   // 드로어 열기/닫기
+  // const toggleDrawer = (newOpen: boolean) => () => {
+  //   setOpen(newOpen); // 상태 업데이트
+  // };
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen); // 상태 업데이트
+    if (newOpen) {
+      // 드로어가 열릴 때 닫기 버튼에 포커스 설정
+      setTimeout(() => closeButtonRef.current?.focus(), 100);
+    } else {
+      // 드로어가 닫힐 때 드로어 열기 버튼으로 포커스 이동
+      setTimeout(() => drawerButtonRef.current?.focus(), 100);
+    }
   };
-
 
   // 스크롤 이벤트 핸들러
   const handleScroll = () => {
