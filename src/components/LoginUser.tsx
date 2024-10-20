@@ -38,16 +38,9 @@ function LoginUser({ toggleDrawer }: any) {
   } = useMutation(logout, {
     onSuccess: () => {
       // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
-      // console.log(toggleDrawer);
-      // if(toggleDrawer === undefined){
-        navigate("/"); // 메인 페이지로 이동
-      // }else{
-      //   toggleDrawer(false)();
-      //   setTimeout(() => {
-      //     navigate("/"); // 메인 페이지로 이동
-      //     setUser(null);
-      //   }, 100);
-      // }
+      navigate("/"); // 메인 페이지로 이동
+      window.location.reload();
+      setUser(null);
     },
     onError: (error) => {
       console.error("로그아웃 오류: ", error); // 오류 처리
