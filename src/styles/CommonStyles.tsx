@@ -112,18 +112,15 @@ export const ScrollBtnFab = styled(Fab)`
 
 //검색 스타일
 export const SearchArea = styled.div`
-  /* margin: 30px ; */
   margin-top: 40px;
   margin-bottom: 25px;
   display: flex;
   justify-content: center;
+  text-align: center;
   ${media.small`
     display: block;
-    /* margin-left : 50px; */
   `};
   ${media.xsmall`
-    /* margin-left : 25px;
-    margin-right : 25px; */
   `};
 
   .select-category {
@@ -133,17 +130,17 @@ export const SearchArea = styled.div`
     ${media.small`
     margin : 0 auto;
     margin-bottom : 10px;
-    margin-right : 20px;
-    /* margin-left : 50px; */
   `};
   }
 
   .select-category-item {
     width: 200px;
-    /* margin-right: 50px; */
   }
   .search-input {
     width: 350px;
+    ${media.small`
+      width: 100%;
+    `};
   }
 `;
 
