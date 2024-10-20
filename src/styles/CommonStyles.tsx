@@ -82,8 +82,8 @@ export const PageTitleBasic = styled.div`
   ${media.xsmall`
     font-size: 16px;
   `};
-  .back{
-    display : none;
+  .back {
+    display: none;
     ${media.small`
       display : block;
     `};
@@ -124,7 +124,7 @@ export const SearchArea = styled.div`
   `};
 
   .select-category {
-    text-align : center;
+    text-align: center;
     width: 150px;
     margin-right: 50px;
     ${media.small`

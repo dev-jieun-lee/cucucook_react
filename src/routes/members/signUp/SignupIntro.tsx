@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // useState import 추가
+import React, { useEffect, useState } from "react"; // useState import 추가
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -10,6 +10,7 @@ import {
   Box,
   Typography,
   FormHelperText,
+  CircularProgress,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -23,7 +24,8 @@ import {
 } from "../../../styles/LoginStyle";
 import { useEmailVerification } from "../../../hooks/useEmailVerification";
 import PersonIcon from "@mui/icons-material/Person";
-
+import MarkdownIt from "markdown-it";
+const mdParser = new MarkdownIt();
 function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     verificationCode,
     setVerificationCode,
     isCodeSent,
+    isLoading,
     isCodeVerified,
     handleSendCode,
     handleVerifyCode,
@@ -87,7 +90,6 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     formik.setFieldValue("agreePrivacy", checked);
     formik.setFieldValue("agreeMarketing", checked);
   };
-
   // 이메일 핸들링 함수
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -104,6 +106,10 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
     const sanitizedValue = value.replace(/[^a-zA-Z0-9._%+-@]/g, "");
     formik.setFieldValue("email", sanitizedValue); // sanitizedValue로 필드 값 업데이트
   };
+
+  useEffect(() => {
+    formik.validateForm();
+  }, [formik.values.agreeTerms, formik.values.agreePrivacy]);
 
   return (
     <Wrapper>
@@ -125,10 +131,15 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   border: "1px solid #ccc",
                   padding: "10px",
                   position: "relative",
+                  textAlign: "left",
                 }}
               >
                 <Typography variant="body2">
-                  {t("AgreeContents.terms_content")}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: mdParser.render(t("AgreeContents.terms_content")),
+                    }}
+                  />
                 </Typography>
               </Box>
               <CheckBoxContainer>
@@ -161,10 +172,17 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   border: "1px solid #ccc",
                   padding: "10px",
                   position: "relative",
+                  textAlign: "left",
                 }}
               >
                 <Typography variant="body2">
-                  {t("AgreeContents.privacy_content")}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: mdParser.render(
+                        t("AgreeContents.privacy_content")
+                      ),
+                    }}
+                  />
                 </Typography>
               </Box>
               <CheckBoxContainer>
@@ -233,8 +251,8 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
           </FormGroup>
 
           {/* 이메일 인증 섹션 */}
-          <Grid container spacing={2} alignItems="center" marginTop={4}>
-            <Grid item xs={10}>
+          <Grid container spacing={1} alignItems="center" marginTop={4}>
+            <Grid item xs={8} sm={10}>
               <TextField
                 fullWidth
                 id="email"
@@ -251,26 +269,30 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                 } // 이메일 오류 메시지 표시
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={4} sm={2}>
               <Button
                 className="email-btn"
                 variant="outlined"
                 color="secondary"
-                onClick={() => handleSendCode(formik.values.email)}
-                disabled={isCodeSent}
+                onClick={() => handleSendCode(formik.values.email, false)}
+                disabled={isLoading || isCodeSent}
               >
-                {t("members.send_code")}
+                {isLoading ? ( // 로딩 중일 때는 CircularProgress 스피너를 표시
+                  <CircularProgress color="secondary" />
+                ) : (
+                  t("members.send_code")
+                )}
               </Button>
             </Grid>
             {isCodeSent && (
               <Grid
                 container
-                spacing={2}
+                spacing={1}
                 alignItems="center"
                 marginTop={1}
                 marginLeft={0}
               >
-                <Grid item xs={10}>
+                <Grid item xs={8} sm={10}>
                   <TextField
                     fullWidth
                     id="verificationCode"
@@ -280,7 +302,7 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                     onChange={(e) => setVerificationCode(e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={2}>
                   <Button
                     className="email-btn"
                     variant="outlined"

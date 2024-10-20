@@ -9,8 +9,6 @@ function DrawerMenu({ toggleDrawer }: any) {
   const { user } = useAuth(); //로그인 상태관리
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isClose, setIsClose] = useState(false);
-  const [path, setPath] = useState("");
 
   // 메뉴 항목 정의
   const RecipeMenuItems = [
@@ -38,15 +36,11 @@ function DrawerMenu({ toggleDrawer }: any) {
 
   // 페이지 이동 함수
   const handleListItemClick = (path: string) => {
-    setIsClose(true);
-    setPath(path);
+    toggleDrawer(false)();
+    setTimeout(() => {
+      navigate(path); // 드로어가 닫힌 후에 페이지 이동
+    }, 100);
   };
-
-  useEffect(() => {
-    if (isClose) {
-      navigate(path);
-    }
-  }, [isClose]);
 
   // 메뉴 생성 함수
   const renderMenuItems = (items: { label: string; path: string }[]) => {

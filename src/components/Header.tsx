@@ -52,7 +52,10 @@ function Header({ isDarkMode, onToggleTheme }: any) {
 
   // 로그인 페이지 이동
   const handleLoginClick = () => {
-    navigate("/login"); // 페이지 이동
+    toggleDrawer(false)();
+    setTimeout(() => {
+      navigate("/login"); // 드로어가 닫힌 후에 페이지 이동
+    }, 100);
   };
 
   // 검색창 열기/닫기
@@ -160,14 +163,13 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             {user ? (
               // 로그인 상태일 때 로그아웃 버튼
               <div className="icon-btn profile">
-                <LoginUser />
+                <LoginUser toggleDrawer={toggleDrawer} />
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
               <div
                 className="drawer-login-btn"
                 onClick={() => {
-                  toggleDrawer(false)(); // 드로어 닫기
                   handleLoginClick(); // 로그인 페이지 이동
                 }}
               >

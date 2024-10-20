@@ -20,6 +20,7 @@ export function useEmailVerification() {
     null
   ); // 인증 결과 메시지
   const [emailSendResult, setEmailSendResult] = useState<string | null>(null); // 이메일 발송 결과 메시지
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // 이메일 인증 코드 발송 Mutation 훅
   const sendVerificationCodeMutation = useSendEmailVerificationCode();
@@ -31,13 +32,16 @@ export function useEmailVerification() {
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isCodeSent && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setIsCodeSent(false);
-      setVerificationResult(t("members.verification_code_expired"));
+    if (!isCodeVerified) {
+      if (isCodeSent && timer > 0) {
+        interval = setInterval(() => {
+          setTimer((prevTimer) => prevTimer - 1);
+        }, 1000);
+      } else if (timer === 0) {
+        setIsCodeSent(false);
+        setIsCodeSent(isCodeVerified);
+        setVerificationResult(t("members.verification_code_expired"));
+      }
     }
 
     // 컴포넌트 언마운트 시 interval 정리
@@ -46,19 +50,37 @@ export function useEmailVerification() {
     };
   }, [isCodeSent, timer, t]);
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   // 인증 코드 발송 처리 함수
-  const handleSendCode = (email: string) => {
-    sendVerificationCodeMutation.mutate(email, {
-      onSuccess: (data) => {
-        setIsCodeSent(true);
-        setTimer(60); // 타이머를 60초로 초기화
-        setEmailSendResult(t("members.verification_code_sent"));
-      },
-      onError: (error) => {
-        console.error("인증 코드 발송 오류:", error); // 오류 콘솔 로그
-        setEmailSendResult(t("members.verification_code_error"));
-      },
-    });
+  const handleSendCode = (email: string, skipEmailCheck: boolean) => {
+    setIsLoading(true);
+
+    if (!email) {
+      alert(t("members.email_required2"));
+      setIsLoading(false);
+      return;
+    } else if (!emailRegex.test(email)) {
+      alert(t("members.email_invalid"));
+      setIsLoading(false);
+      return;
+    }
+
+    sendVerificationCodeMutation.mutate(
+      { email, skipEmailCheck }, // 객체로 전달
+      {
+        onSuccess: (data) => {
+          setIsCodeSent(true);
+          setTimer(60); // 타이머를 60초로 초기화
+          setEmailSendResult(t("members.verification_code_sent"));
+          setIsLoading(false);
+        },
+        onError: (error) => {
+          console.error("인증 코드 발송 오류:", error); // 오류 콘솔 로그
+          setEmailSendResult(t("members.verification_code_error"));
+          setIsLoading(false);
+        },
+      }
+    );
   };
 
   // 인증 코드 검증 처리 함수
@@ -97,6 +119,7 @@ export function useEmailVerification() {
     verificationCode,
     setVerificationCode,
     isCodeSent,
+    isLoading,
     isCodeVerified,
     timer,
     setTimer,

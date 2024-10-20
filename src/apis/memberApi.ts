@@ -1,6 +1,7 @@
 import axios from "axios";
-import Cookies from "js-cookie"; // js-cookie 라이브러리 추가
+import { AxiosError } from "axios";
 import { useMutation } from "react-query";
+import { useTranslation } from "react-i18next";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const BASE_URL = apiUrl + "/api/members";
@@ -13,7 +14,6 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 
 // 로그인 요청
 export async function login(form: {
@@ -30,7 +30,6 @@ export async function login(form: {
     } else {
       console.error("알 수 없는 오류 발생:", error);
     }
-
   }
 }
 
@@ -40,8 +39,7 @@ export async function logout() {
     const response = await api.post("/logout");
 
     return response.data;
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // 핸드폰번호 중복체크
@@ -68,7 +66,7 @@ export const findId = async (data: {
   email: string;
   verificationCode: string;
 }) => {
-  const response = await fetch("/api/members/find-id", {
+  const response = await fetch(`${BASE_URL}/find-id`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -84,23 +82,39 @@ export const findId = async (data: {
 };
 
 // 이메일 인증 코드 발송
-export const useSendEmailVerificationCode = () =>
-  useMutation((email: string) =>
-    api
-      .post("/sendVerificationCode", { email })
-      .then((response) => {
-        return response.data;
-      })
+export const useSendEmailVerificationCode = () => {
+  const { t } = useTranslation(); // i18next 사용
+
+  return useMutation(
+    ({ email, skipEmailCheck }: { email: string; skipEmailCheck: boolean }) =>
+      axios
+        .post(`${BASE_URL}/sendVerificationCode`, { email, skipEmailCheck })
+        .then((response) => {}),
+    {
+      onSuccess: () => {
+        alert(t("email_verification.sent")); // 성공 시 번역된 메시지 사용
+      },
+      onError: (error: unknown) => {
+        if (error instanceof AxiosError) {
+          if (error.response && error.response.status === 409) {
+            alert(t("email_verification.email_exists")); // 이메일 중복 오류 메시지
+          } else {
+            alert(t("email_verification.failed")); // 전송 실패 메시지
+          }
+        } else {
+          alert(t("common.unknown_error")); // 알 수 없는 오류 메시지
+        }
+      },
+    }
   );
+};
 
 // 이메일 인증 코드 검증
 export const useVerifyEmailCode = () =>
   useMutation(({ email, code }: { email: string; code: string }) =>
-    api
-      .post("/verify", { email, code })
-      .then((response) => {
-        return response.data;
-      })
+    api.post("/verify", { email, code }).then((response) => {
+      return response.data;
+    })
   );
 
 // 이메일 중복 체크 API
@@ -118,7 +132,7 @@ export const fetchPassword = async (data: {
   userId: string;
   verificationCode: string;
 }) => {
-  const response = await api.post("/find-pw", data);
+  const response = await api.post(`${BASE_URL}/find-pw`, data);
 
   if (response.status !== 200) {
     throw new Error("비밀번호 찾기 오류");
@@ -133,10 +147,9 @@ export const useFetchPassword = () => useMutation(fetchPassword);
 // JWT 토큰 검증 요청
 export async function validateToken(token: string) {
   try {
-    const response = await api.post("/validateToken", { token });
+    const response = await api.post(`${BASE_URL}/validateToken`, { token });
     return response.data; // { valid: boolean } 형태의 데이터 반환
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // 이메일, 이름, ID로 사용자 존재 여부 확인 API

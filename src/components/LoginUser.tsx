@@ -13,7 +13,7 @@ import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../apis/memberApi";
 
-function LoginUser() {
+function LoginUser({ toggleDrawer }: any) {
   const { t } = useTranslation(); // 번역 함수
   const { setUser, setLoggedIn, user, isLoggedIn } = useAuth();
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); //스낵바
@@ -38,8 +38,11 @@ function LoginUser() {
   } = useMutation(logout, {
     onSuccess: () => {
       // 로그아웃 성공 시 상태 업데이트 및 페이지 이동
-      navigate("/"); // 메인 페이지로 이동
-      setUser(null);
+      toggleDrawer(false)();
+      setTimeout(() => {
+        navigate("/"); // 메인 페이지로 이동
+        setUser(null);
+      }, 100);
     },
     onError: (error) => {
       console.error("로그아웃 오류: ", error); // 오류 처리
