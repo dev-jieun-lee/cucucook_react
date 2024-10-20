@@ -179,6 +179,7 @@ export const RecipeView = styled.div`
       padding: 10px;
       color: ${(props) => props.theme.textColor};
       border-bottom: 1px solid ${(props) => props.theme.contrastColor};
+      text-align: center;
       h6 {
         font-size: 1rem;
         font-weight: bold;
@@ -235,10 +236,24 @@ export const RecipeView = styled.div`
 
 export const RecipeCommentWrite = styled.div`
   text-align: left;
+
   .comment-wirte-container {
     border: 1px solid ${(props) => props.theme.searchBorderColor};
     border-radius: 4px;
     padding: 20px;
+    .rate-write,
+    .comment-write {
+      grid-template-columns: 75px 1fr;
+      > div:first-child {
+        text-align: center;
+      }
+      ${media.small`
+        > div:first-child {
+          text-align:left;
+        }
+        grid-template-columns: 1fr;
+      `};
+    }
   }
   .right-button {
     text-align: right;

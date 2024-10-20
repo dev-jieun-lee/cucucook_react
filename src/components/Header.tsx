@@ -7,7 +7,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode"; // 어두운 모드 아
 import LoginIcon from "@mui/icons-material/Login"; // 로그인 아이콘
 // 로그아웃 아이콘
 import { useAnimation } from "framer-motion"; // 애니메이션 라이브러리
-import { useEffect, useState } from "react"; // React 훅
+import { useEffect, useRef, useState } from "react"; // React 훅
 import { useNavigate } from "react-router-dom"; // 페이지 이동 훅
 import { useForm } from "react-hook-form"; // 폼 관리 훅
 import { useTranslation } from "react-i18next"; // 다국어 지원 훅
@@ -25,17 +25,29 @@ interface IForm {
 }
 
 function Header({ isDarkMode, onToggleTheme }: any) {
-  const { setUser, setLoggedIn, user, isLoggedIn } = useAuth(); //로그인 상태관리
-  const { t } = useTranslation(); // 번역 함수
-  const [searchOpen, setSearchOpen] = useState(false); // 검색창 상태
-  const [isScrolled, setIsScrolled] = useState(false); // 스크롤 상태
+  const {user } = useAuth(); //로그인 상태관리
+  const { t } = useTranslation();
+  const [searchOpen, setSearchOpen] = useState(false); 
+  const [isScrolled, setIsScrolled] = useState(false); 
   const [open, setOpen] = useState(false); // 드로어 상태
-  const inputAnimation = useAnimation(); // 애니메이션 제어
-  const navigate = useNavigate(); // 페이지 이동 함수
+  const inputAnimation = useAnimation(); 
+  const navigate = useNavigate(); 
+  const drawerButtonRef = useRef<HTMLButtonElement>(null); // 드로어 버튼 참조
+  const closeButtonRef = useRef<HTMLButtonElement>(null); // 드로어 닫기 버튼 참조
 
   // 드로어 열기/닫기
+  // const toggleDrawer = (newOpen: boolean) => () => {
+  //   setOpen(newOpen); // 상태 업데이트
+  // };
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen); // 상태 업데이트
+    if (newOpen) {
+      // 드로어가 열릴 때 닫기 버튼에 포커스 설정
+      setTimeout(() => closeButtonRef.current?.focus(), 100);
+    } else {
+      // 드로어가 닫힐 때 드로어 열기 버튼으로 포커스 이동
+      setTimeout(() => drawerButtonRef.current?.focus(), 100);
+    }
   };
 
   // 스크롤 이벤트 핸들러
@@ -52,7 +64,10 @@ function Header({ isDarkMode, onToggleTheme }: any) {
 
   // 로그인 페이지 이동
   const handleLoginClick = () => {
-    navigate("/login"); // 페이지 이동
+    toggleDrawer(false)();
+    setTimeout(() => {
+      navigate("/login"); // 드로어가 닫힌 후에 페이지 이동
+    }, 100);
   };
 
   // 검색창 열기/닫기
@@ -120,6 +135,7 @@ function Header({ isDarkMode, onToggleTheme }: any) {
           <IconButton
             className="drawer-icon"
             color="primary"
+            ref={drawerButtonRef}
             onClick={toggleDrawer(true)} // 드로어 열기
           >
             <MenuIcon />
@@ -160,25 +176,24 @@ function Header({ isDarkMode, onToggleTheme }: any) {
             {user ? (
               // 로그인 상태일 때 로그아웃 버튼
               <div className="icon-btn profile">
-                <LoginUser />
+                <LoginUser toggleDrawer={toggleDrawer} />
               </div>
             ) : (
               // 로그인 상태가 아닐 때 로그인 버튼
               <div
                 className="drawer-login-btn"
                 onClick={() => {
-                  toggleDrawer(false)(); // 드로어 닫기
                   handleLoginClick(); // 로그인 페이지 이동
                 }}
               >
-                <IconButton className="icon-btn" color="primary">
-                  <LoginIcon />
+                <IconButton className="icon-btn" color="primary" aria-hidden={false}>
+                  <LoginIcon aria-hidden={false} />
                 </IconButton>
                 <span>{t("members.login")}</span>
               </div>
             )}
-            <IconButton className="icon-btn" onClick={toggleDrawer(false)}>
-              <CloseIcon /> {/* 드로어 닫기 버튼 */}
+            <IconButton  aria-hidden={false}  className="icon-btn" onClick={toggleDrawer(false)} ref={closeButtonRef}>
+              <CloseIcon  aria-hidden={false}/> {/* 드로어 닫기 버튼 */}
             </IconButton>
           </DrawerTop>
           <DrawerMenu toggleDrawer={toggleDrawer} /> {/* 드로어 메뉴 */}

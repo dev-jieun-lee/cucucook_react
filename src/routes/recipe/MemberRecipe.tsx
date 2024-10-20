@@ -566,7 +566,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -576,7 +576,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -587,7 +587,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -597,7 +597,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -609,7 +609,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -619,7 +619,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -633,7 +633,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -643,7 +643,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -654,7 +654,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -664,7 +664,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -676,7 +676,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={2}
+                          md={3}
                           className="recipe-info-grid-title"
                         >
                           <Typography variant="subtitle2">
@@ -686,7 +686,7 @@ const MemberRecipe = () => {
                         <Grid
                           item
                           xs={12}
-                          md={10}
+                          md={9}
                           className="recipe-info-grid-text"
                         >
                           <Typography variant="subtitle2">
@@ -751,7 +751,6 @@ const MemberRecipe = () => {
                               padding: "5px",
                               width: 100,
                             },
-                            margin: "10px",
                           }}
                           key={memberRecipeProcessItem.recipeProcessId}
                         >

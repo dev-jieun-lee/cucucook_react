@@ -97,7 +97,7 @@ export const LoginWrapper = styled.div`
     height: 53px;
   }
 
-  .chk-area{
+  .chk-area {
     margin-bottom: 20px;
   }
 `;
@@ -156,6 +156,7 @@ export const SignupIntroWrapper = styled.div`
     height: 53px;
     margin-top: -3px;
     font-size: 15px;
+    width: 100%;
   }
   .submit-btn {
     margin-top: 50px;
