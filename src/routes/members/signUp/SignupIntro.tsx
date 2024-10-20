@@ -134,13 +134,11 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   textAlign: "left",
                 }}
               >
-                <Typography variant="body2">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: mdParser.render(t("AgreeContents.terms_content")),
-                    }}
-                  />
-                </Typography>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: mdParser.render(t("AgreeContents.terms_content")),
+                  }}
+                />
               </Box>
               <CheckBoxContainer>
                 <LeftAlignedFormControlLabel
@@ -175,15 +173,13 @@ function SignupIntro({ isDarkMode }: { isDarkMode: boolean }) {
                   textAlign: "left",
                 }}
               >
-                <Typography variant="body2">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: mdParser.render(
-                        t("AgreeContents.privacy_content")
-                      ),
-                    }}
-                  />
-                </Typography>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: mdParser.render(
+                      t("AgreeContents.privacy_content")
+                    ),
+                  }}
+                />
               </Box>
               <CheckBoxContainer>
                 <LeftAlignedFormControlLabel

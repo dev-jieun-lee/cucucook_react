@@ -24,7 +24,7 @@ function DrawerMenu({ toggleDrawer }: any) {
   ];
 
   const MypageMenuItems = [
-    { label: t("menu.mypage.profile"), path: "/mypage/profile" },
+    { label: t("mypage.profile"), path: "/mypage/profile" },
     { label: t("mypage.activity"), path: "/mypage/activity" },
   ];
 
