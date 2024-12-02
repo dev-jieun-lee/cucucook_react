@@ -1,17 +1,18 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "../auth/AuthContext";
 import Swal from "sweetalert2";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
-export const ProtectAuthRouter = () => {
-  const { isLoggedIn } = useAuth();
+export const ProtectRoleRouter = () => {
+  const { user, isLoggedIn } = useAuth();
   const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(true);
 
-  //로그인권한
-  const isAuth = isLoggedIn;
+  //관리자권한
+  const isAuth = isLoggedIn && (user?.role === "0" || user?.role === "2");
+
   useEffect(() => {
     if (isLoggedIn !== undefined) {
       setIsLoading(false);
@@ -26,12 +27,11 @@ export const ProtectAuthRouter = () => {
     Swal.fire({
       icon: "error",
       title: t("text.error"),
-      text: t("CODE.E_AUTH"),
+      text: t("CODE.E_ROLE"),
       showConfirmButton: true,
       confirmButtonText: t("text.check"),
     });
-
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
   return <Outlet />;
 };

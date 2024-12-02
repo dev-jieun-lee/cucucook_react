@@ -9,8 +9,8 @@ import MypageSideMenu from "./memu/sideMenu/MypageSideMenu";
 
 import KakaoCallback from "./routes/members/login/KakaoRedirection";
 import NaverCallback from "./routes/members/login/NaverRedirection";
-import { ProtectAuthRouter } from "./auth/ProtectAuthRouter";
-import { ProtectRoleRouter } from "./auth/ProtectRoleRouter";
+import { ProtectAuthRouter } from "./ProtectRouter/ProtectAuthRouter";
+import { ProtectRoleRouter } from "./ProtectRouter/ProtectRoleRouter";
 import AdminSideMenu from "./memu/sideMenu/AdminSideMenu";
 
 //메인
