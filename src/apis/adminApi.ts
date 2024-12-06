@@ -1,7 +1,7 @@
 import axios from "axios";
-const apiUrl = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL;
 
-const BASE_URL = apiUrl + "/api/admin";
+const BASE_URL = API_URL + "/api/admin";
 
 // 기본 Axios 인스턴스 생성 (공통 헤더 넣기 위함)
 const api = axios.create({
